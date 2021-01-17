@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,6 +13,12 @@
 		845504F825B1C38300715C3B /* TabBarAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845504F725B1C38300715C3B /* TabBarAssembly.swift */; };
 		8491A80825B4314E009EDFC2 /* AssetsImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8491A80725B4314E009EDFC2 /* AssetsImages.swift */; };
 		8491A81225B46073009EDFC2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8491A81125B46073009EDFC2 /* GoogleService-Info.plist */; };
+		8491A83825B46BCF009EDFC2 /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8491A83725B46BCF009EDFC2 /* FirebaseAuthService.swift */; };
+		8491A83B25B46D49009EDFC2 /* NetworkResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8491A83A25B46D49009EDFC2 /* NetworkResult.swift */; };
+		8491A84025B47DE8009EDFC2 /* RegistrationInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8491A83F25B47DE8009EDFC2 /* RegistrationInteractor.swift */; };
+		8491A84325B47DF6009EDFC2 /* RegistrationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8491A84225B47DF6009EDFC2 /* RegistrationPresenter.swift */; };
+		8491A84625B47E03009EDFC2 /* RegistrationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8491A84525B47E03009EDFC2 /* RegistrationRouter.swift */; };
+		8491A84925B47E0D009EDFC2 /* RegistrationAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8491A84825B47E0D009EDFC2 /* RegistrationAssembly.swift */; };
 		84B2E65325B0267700B27457 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B2E65225B0267700B27457 /* AppDelegate.swift */; };
 		84B2E65525B0267700B27457 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B2E65425B0267700B27457 /* SceneDelegate.swift */; };
 		84B2E65725B0267700B27457 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B2E65625B0267700B27457 /* HomeViewController.swift */; };
@@ -36,6 +42,12 @@
 		845504F725B1C38300715C3B /* TabBarAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarAssembly.swift; sourceTree = "<group>"; };
 		8491A80725B4314E009EDFC2 /* AssetsImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetsImages.swift; sourceTree = "<group>"; };
 		8491A81125B46073009EDFC2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8491A83725B46BCF009EDFC2 /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
+		8491A83A25B46D49009EDFC2 /* NetworkResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkResult.swift; sourceTree = "<group>"; };
+		8491A83F25B47DE8009EDFC2 /* RegistrationInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationInteractor.swift; sourceTree = "<group>"; };
+		8491A84225B47DF6009EDFC2 /* RegistrationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationPresenter.swift; sourceTree = "<group>"; };
+		8491A84525B47E03009EDFC2 /* RegistrationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationRouter.swift; sourceTree = "<group>"; };
+		8491A84825B47E0D009EDFC2 /* RegistrationAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationAssembly.swift; sourceTree = "<group>"; };
 		84B2E64F25B0267700B27457 /* Instagram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Instagram.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84B2E65225B0267700B27457 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		84B2E65425B0267700B27457 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -82,8 +94,11 @@
 		8445928D25B41E3A0028EE6A /* Registration */ = {
 			isa = PBXGroup;
 			children = (
-				8445929125B41E7D0028EE6A /* RegistrationView.swift */,
-				8445928E25B41E6D0028EE6A /* RegistrationViewController.swift */,
+				8491A83D25B478DE009EDFC2 /* RegistrationView */,
+				8491A83F25B47DE8009EDFC2 /* RegistrationInteractor.swift */,
+				8491A84225B47DF6009EDFC2 /* RegistrationPresenter.swift */,
+				8491A84525B47E03009EDFC2 /* RegistrationRouter.swift */,
+				8491A84825B47E0D009EDFC2 /* RegistrationAssembly.swift */,
 			);
 			path = Registration;
 			sourceTree = "<group>";
@@ -120,6 +135,32 @@
 			path = Constants;
 			sourceTree = "<group>";
 		};
+		8491A83525B46BA1009EDFC2 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				8491A83625B46BBD009EDFC2 /* Firebase */,
+				8491A83A25B46D49009EDFC2 /* NetworkResult.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		8491A83625B46BBD009EDFC2 /* Firebase */ = {
+			isa = PBXGroup;
+			children = (
+				8491A83725B46BCF009EDFC2 /* FirebaseAuthService.swift */,
+			);
+			path = Firebase;
+			sourceTree = "<group>";
+		};
+		8491A83D25B478DE009EDFC2 /* RegistrationView */ = {
+			isa = PBXGroup;
+			children = (
+				8445929125B41E7D0028EE6A /* RegistrationView.swift */,
+				8445928E25B41E6D0028EE6A /* RegistrationViewController.swift */,
+			);
+			path = RegistrationView;
+			sourceTree = "<group>";
+		};
 		84B2E64625B0267700B27457 = {
 			isa = PBXGroup;
 			children = (
@@ -146,6 +187,7 @@
 				8491A80625B43116009EDFC2 /* Constants */,
 				84B2E66B25B04EFD00B27457 /* Utility */,
 				845504FA25B1D59A00715C3B /* Entities */,
+				8491A83525B46BA1009EDFC2 /* Services */,
 				84B2E67125B04F8400B27457 /* Modules */,
 			);
 			path = Instagram;
@@ -217,7 +259,6 @@
 				248C4CE7BEA633E83D55B427 /* Pods-Instagram.debug.xcconfig */,
 				AC01405E30E4478582768FE7 /* Pods-Instagram.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -335,16 +376,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8491A84925B47E0D009EDFC2 /* RegistrationAssembly.swift in Sources */,
 				84B2E68925B0513C00B27457 /* HomeAssembly.swift in Sources */,
+				8491A84325B47DF6009EDFC2 /* RegistrationPresenter.swift in Sources */,
 				84B2E65725B0267700B27457 /* HomeViewController.swift in Sources */,
 				845504F825B1C38300715C3B /* TabBarAssembly.swift in Sources */,
 				8445929225B41E7D0028EE6A /* RegistrationView.swift in Sources */,
 				8445928F25B41E6D0028EE6A /* RegistrationViewController.swift in Sources */,
 				84B2E65325B0267700B27457 /* AppDelegate.swift in Sources */,
 				8445929625B425210028EE6A /* CustomViewController.swift in Sources */,
+				8491A84025B47DE8009EDFC2 /* RegistrationInteractor.swift in Sources */,
+				8491A83B25B46D49009EDFC2 /* NetworkResult.swift in Sources */,
+				8491A84625B47E03009EDFC2 /* RegistrationRouter.swift in Sources */,
 				84B2E66E25B04F6100B27457 /* TabBarController.swift in Sources */,
 				84B2E67B25B050CE00B27457 /* HomePresenter.swift in Sources */,
 				84B2E67625B0509700B27457 /* HomeView.swift in Sources */,
+				8491A83825B46BCF009EDFC2 /* FirebaseAuthService.swift in Sources */,
 				8491A80825B4314E009EDFC2 /* AssetsImages.swift in Sources */,
 				84B2E68625B0512100B27457 /* HomeRouter.swift in Sources */,
 				84B2E65525B0267700B27457 /* SceneDelegate.swift in Sources */,
