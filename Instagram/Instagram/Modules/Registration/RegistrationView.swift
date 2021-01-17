@@ -15,9 +15,11 @@ final class RegistrationView: UIView {
         static let profileImageButtonBottomSpace: CGFloat = 20
         static let profileImageButtonSize: CGFloat = 110
         
-        static let textFieldBottomSpace: CGFloat = 10
+        static let textFieldBottomSpace: CGFloat = 8
         static let textFieldHorizontalSpace: CGFloat = 40
         static let textFieldHeight: CGFloat = 40
+        
+        static let signUpButtonTopSpace: CGFloat = 16
     }
     
     private enum TextFieldPlaceholders {
@@ -199,7 +201,7 @@ private extension RegistrationView {
         RegistrationView.setupStackViewLayout(signUpButton,
                                               superview: self,
                                               topView: passwordTextField,
-                                              verticalSpace: Metrics.textFieldBottomSpace,
+                                              verticalSpace: Metrics.signUpButtonTopSpace,
                                               horizontalSpace: Metrics.textFieldHorizontalSpace,
                                               height: Metrics.textFieldHeight)
     }

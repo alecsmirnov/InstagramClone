@@ -8,5 +8,6 @@
 import UIKit
 
 enum AssetsImages {
+    static let instagramIcon = UIImage(named: "instagramIcon")
     static let profileImage = UIImage(named: "profileImage")
 }
