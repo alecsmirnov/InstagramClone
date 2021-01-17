@@ -7,16 +7,41 @@
 
 import UIKit
 
+protocol RegistrationViewDelegate: AnyObject {
+    func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView)
+    func registrationViewDidPressSignInButton(_ registrationView: RegistrationView)
+}
+
 final class RegistrationView: UIView {
     // MARK: Properties
+    
+    weak var delegate: RegistrationViewDelegate?
+    
+    var email: String? {
+        return emailTextField.text
+    }
+    
+    var fullName: String? {
+        return fullNameTextField.text
+    }
+    
+    var username: String? {
+        return usernameTextField.text
+    }
+    
+    var password: String? {
+        return passwordTextField.text
+    }
+    
+    // MARK: Constants
     
     private enum Metrics {
         static let profileImageButtonTopSpace: CGFloat = 40
         static let profileImageButtonBottomSpace: CGFloat = 20
         static let profileImageButtonSize: CGFloat = 110
         
-        static let textFieldBottomSpace: CGFloat = 8
-        static let textFieldHorizontalSpace: CGFloat = 40
+        static let textFieldBottomSpace: CGFloat = 6
+        static let textFieldHorizontalSpace: CGFloat = 20
         static let textFieldHeight: CGFloat = 40
         
         static let signUpButtonTopSpace: CGFloat = 16
@@ -36,9 +61,9 @@ final class RegistrationView: UIView {
     
     private enum Colors {
         static let profileImageButtonTintColor = UIColor(white: 0, alpha: 0.9)
-        static let textFieldBackground = UIColor(white: 0, alpha: 0.01)
+        static let textFieldBackground = UIColor(white: 0, alpha: 0.02)
         static let signUpButtonTitle = UIColor.white
-        static let signUpButtonBackground = UIColor(red: 0.58, green: 0.8, blue: 0.95, alpha: 1)
+        static let signUpButtonBackground = UIColor(red: 0.25, green: 0.36, blue: 0.9, alpha: 1)
     }
     
     private enum Constants {
@@ -62,7 +87,7 @@ final class RegistrationView: UIView {
         super.init(frame: .zero)
         
         setupAppearance()
-//        setupActions()
+        setupActions()
         setupLayout()
     }
     
@@ -123,6 +148,18 @@ private extension RegistrationView {
         textField.borderStyle = .roundedRect
         textField.backgroundColor = Colors.textFieldBackground
         textField.font = .systemFont(ofSize: Constants.fontSize)
+    }
+}
+
+// MARK: - Actions
+
+private extension RegistrationView {
+    func setupActions() {
+        signUpButton.addTarget(self, action: #selector(didPressSignUpButton), for: .touchUpInside)
+    }
+    
+    @objc func didPressSignUpButton() {
+        delegate?.registrationViewDidPressSignUpButton(self)
     }
 }
 
