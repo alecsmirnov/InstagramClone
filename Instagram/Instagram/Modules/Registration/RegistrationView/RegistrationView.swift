@@ -40,11 +40,10 @@ final class RegistrationView: UIView {
         static let profileImageButtonBottomSpace: CGFloat = 20
         static let profileImageButtonSize: CGFloat = 110
         
-        static let textFieldBottomSpace: CGFloat = 6
-        static let textFieldHorizontalSpace: CGFloat = 20
-        static let textFieldHeight: CGFloat = 40
-        
-        static let signUpButtonTopSpace: CGFloat = 16
+        static let stackViewHorizontalSpace: CGFloat = 20
+        static let stackViewSpace: CGFloat = 6
+        static let stackViewPasswordTextFieldSpace: CGFloat = 16
+        static let stackViewSubviewHeight: CGFloat = 40
     }
     
     private enum TextFieldPlaceholders {
@@ -64,10 +63,13 @@ final class RegistrationView: UIView {
         static let textFieldBackground = UIColor(white: 0, alpha: 0.02)
         static let signUpButtonTitle = UIColor.white
         static let signUpButtonBackground = UIColor(red: 0.25, green: 0.36, blue: 0.9, alpha: 1)
+        
+        static let alert = UIColor(red: 0.99, green: 0.11, blue: 0.11, alpha: 1)
     }
     
     private enum Constants {
         static let fontSize: CGFloat = 14
+        static let alertFontSize: CGFloat = 12
         
         static let signUpButtonCornerRadius: CGFloat = 4
     }
@@ -76,6 +78,7 @@ final class RegistrationView: UIView {
     
     private let scrollView = UIScrollView()
     private let contentView = UIView()
+    private let stackView = UIStackView()
     
     private let profileImageButton = UIButton(type: .system)
     private let emailTextField = UITextField()
@@ -84,8 +87,32 @@ final class RegistrationView: UIView {
     private let passwordTextField = UITextField()
     private let signUpButton = UIButton(type: .system)
     
-    private let emailAlertLabel = UILabel()
-    private let passwordAlertLabel = UILabel()
+    private lazy var emailAlertLabel: UILabel = {
+        let label = UILabel()
+        
+        label.font = .systemFont(ofSize: Constants.alertFontSize)
+        label.textColor = Colors.alert
+        
+        return label
+    }()
+    
+    private let usernameAlertLabel: UILabel = {
+        let label = UILabel()
+        
+        label.font = .systemFont(ofSize: Constants.alertFontSize)
+        label.textColor = Colors.alert
+        
+        return label
+    }()
+    
+    private let passwordAlertLabel: UILabel = {
+        let label = UILabel()
+        
+        label.font = .systemFont(ofSize: Constants.alertFontSize)
+        label.textColor = Colors.alert
+        
+        return label
+    }()
     
     // MARK: Initialization
     
@@ -93,9 +120,10 @@ final class RegistrationView: UIView {
         super.init(frame: .zero)
         
         setupAppearance()
-        setupActions()
         setupLayout()
-        setupKeyboardObservers()
+        setupActions()
+        setupGestures()
+        setupKeyboardEvents()
     }
     
     required init?(coder: NSCoder) {
@@ -103,19 +131,61 @@ final class RegistrationView: UIView {
     }
     
     deinit {
-        removeKeyboardObservers()
+        removeKeyboardEvents()
     }
 }
 
 // MARK: - Public Methods
 
 extension RegistrationView {
-    func showEmailAlertLabel() {
+    func showEmailAlertLabel(text: String) {
+        insertSubviewToStackView(emailAlertLabel, below: emailTextField)
         
+        emailAlertLabel.text = text
     }
     
     func hideEmailAlertLabel() {
+        removeSubviewFromStackView(emailAlertLabel)
+    }
+    
+    func showUsernameAlertLabel(text: String) {
+        insertSubviewToStackView(usernameAlertLabel, below: usernameTextField)
         
+        usernameAlertLabel.text = text
+    }
+    
+    func hideUsernameAlertLabel() {
+        removeSubviewFromStackView(usernameAlertLabel)
+    }
+    
+    func showPasswordAlertLabel(text: String) {
+        insertSubviewToStackView(passwordAlertLabel, below: passwordTextField)
+        
+        passwordAlertLabel.text = text
+        
+        stackView.setCustomSpacing(Metrics.stackViewSpace, after: passwordTextField)
+        stackView.setCustomSpacing(Metrics.stackViewPasswordTextFieldSpace, after: passwordAlertLabel)
+    }
+    
+    func hidePasswordAlertLabel() {
+        removeSubviewFromStackView(passwordAlertLabel)
+        
+        stackView.setCustomSpacing(Metrics.stackViewPasswordTextFieldSpace, after: passwordTextField)
+    }
+}
+
+// MARK: - Private Methods
+
+private extension RegistrationView {
+    func insertSubviewToStackView(_ subview: UIView, below view: UIView) {
+        if let index = stackView.arrangedSubviews.firstIndex(of: view) {
+            stackView.insertArrangedSubview(subview, at: index + 1)
+        }
+    }
+    
+    func removeSubviewFromStackView(_ subview: UIView) {
+        stackView.removeArrangedSubview(subview)
+        subview.removeFromSuperview()
     }
 }
 
@@ -125,12 +195,24 @@ private extension RegistrationView {
     func setupAppearance() {
         backgroundColor = .systemBackground
         
+        setupScrollViewAppearance()
+        setupStackViewAppearance()
+        
         setupProfileImageButtonAppearance()
         setupEmailTextFieldAppearance()
         setupFullNameTextFieldAppearance()
         setupUsernameTextFieldAppearance()
         setupPasswordTextFieldAppearance()
         setupSignUpButtonAppearance()
+    }
+    
+    func setupScrollViewAppearance() {
+        scrollView.delaysContentTouches = false
+    }
+    
+    func setupStackViewAppearance() {
+        stackView.axis = .vertical
+        stackView.alignment = .fill
     }
     
     func setupProfileImageButtonAppearance() {
@@ -175,18 +257,6 @@ private extension RegistrationView {
     }
 }
 
-// MARK: - Actions
-
-private extension RegistrationView {
-    func setupActions() {
-        signUpButton.addTarget(self, action: #selector(didPressSignUpButton), for: .touchUpInside)
-    }
-    
-    @objc func didPressSignUpButton() {
-        delegate?.registrationViewDidPressSignUpButton(self)
-    }
-}
-
 // MARK: - Layout
 
 private extension RegistrationView {
@@ -195,6 +265,7 @@ private extension RegistrationView {
         
         setupScrollViewLayout()
         setupContentViewLayout()
+        setupStackViewLayout()
         
         setupProfileImageButtonLayout()
         setupEmailTextFieldLayout()
@@ -208,13 +279,14 @@ private extension RegistrationView {
         addSubview(scrollView)
         
         scrollView.addSubview(contentView)
-        
         contentView.addSubview(profileImageButton)
-        contentView.addSubview(emailTextField)
-        contentView.addSubview(fullNameTextField)
-        contentView.addSubview(usernameTextField)
-        contentView.addSubview(passwordTextField)
-        contentView.addSubview(signUpButton)
+        contentView.addSubview(stackView)
+        
+        stackView.addArrangedSubview(emailTextField)
+        stackView.addArrangedSubview(fullNameTextField)
+        stackView.addArrangedSubview(usernameTextField)
+        stackView.addArrangedSubview(passwordTextField)
+        stackView.addArrangedSubview(signUpButton)
     }
     
     func setupScrollViewLayout() {
@@ -240,6 +312,22 @@ private extension RegistrationView {
         ])
     }
     
+    func setupStackViewLayout() {
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: profileImageButton.bottomAnchor,
+                                           constant: Metrics.profileImageButtonBottomSpace),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,
+                                               constant: Metrics.stackViewHorizontalSpace),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
+                                                constant: -Metrics.stackViewHorizontalSpace),
+        ])
+        
+        stackView.spacing = Metrics.stackViewSpace
+        stackView.setCustomSpacing(Metrics.stackViewPasswordTextFieldSpace, after: passwordTextField)
+    }
+    
     func setupProfileImageButtonLayout() {
         profileImageButton.translatesAutoresizingMaskIntoConstraints = false
         
@@ -253,76 +341,83 @@ private extension RegistrationView {
     }
     
     func setupEmailTextFieldLayout() {
-        RegistrationView.setupStackViewLayout(emailTextField,
-                                              superview: contentView,
-                                              topView: profileImageButton,
-                                              verticalSpace: Metrics.profileImageButtonBottomSpace,
-                                              horizontalSpace: Metrics.textFieldHorizontalSpace,
-                                              height: Metrics.textFieldHeight)
+        RegistrationView.setupStackViewSubviewLayout(emailTextField, height: Metrics.stackViewSubviewHeight)
     }
     
     func setupFullNameTextFieldLayout() {
-        RegistrationView.setupStackViewLayout(fullNameTextField,
-                                              superview: contentView,
-                                              topView: emailTextField,
-                                              verticalSpace: Metrics.textFieldBottomSpace,
-                                              horizontalSpace: Metrics.textFieldHorizontalSpace,
-                                              height: Metrics.textFieldHeight)
+        RegistrationView.setupStackViewSubviewLayout(fullNameTextField, height: Metrics.stackViewSubviewHeight)
     }
     
     func setupUsernameTextFieldLayout() {
-        RegistrationView.setupStackViewLayout(usernameTextField,
-                                              superview: contentView,
-                                              topView: fullNameTextField,
-                                              verticalSpace: Metrics.textFieldBottomSpace,
-                                              horizontalSpace: Metrics.textFieldHorizontalSpace,
-                                              height: Metrics.textFieldHeight)
+        RegistrationView.setupStackViewSubviewLayout(usernameTextField, height: Metrics.stackViewSubviewHeight)
     }
     
     func setupPasswordTextFieldLayout() {
-        RegistrationView.setupStackViewLayout(passwordTextField,
-                                              superview: contentView,
-                                              topView: usernameTextField,
-                                              verticalSpace: Metrics.textFieldBottomSpace,
-                                              horizontalSpace: Metrics.textFieldHorizontalSpace,
-                                              height: Metrics.textFieldHeight)
+        RegistrationView.setupStackViewSubviewLayout(passwordTextField, height: Metrics.stackViewSubviewHeight)
     }
     
     func setupSignUpButtonLayout() {
-        RegistrationView.setupStackViewLayout(signUpButton,
-                                              superview: contentView,
-                                              topView: passwordTextField,
-                                              verticalSpace: Metrics.signUpButtonTopSpace,
-                                              horizontalSpace: Metrics.textFieldHorizontalSpace,
-                                              height: Metrics.textFieldHeight)
+        RegistrationView.setupStackViewSubviewLayout(signUpButton, height: Metrics.stackViewSubviewHeight)
     }
 }
 
 // MARK: - Layout Helpers
 
 private extension RegistrationView {
-    static func setupStackViewLayout(
-        _ view: UIView,
-        superview: UIView,
-        topView: UIView,
-        verticalSpace: CGFloat,
-        horizontalSpace: CGFloat,
-        height: CGFloat
-    ) {
-        view.translatesAutoresizingMaskIntoConstraints = false
+    static func setupStackViewSubviewLayout(_ subview: UIView, height: CGFloat) {
+        subview.translatesAutoresizingMaskIntoConstraints = false
         
-        NSLayoutConstraint.activate([
-            view.topAnchor.constraint(equalTo: topView.bottomAnchor, constant: verticalSpace),
-            view.leftAnchor.constraint(equalTo: superview.leftAnchor, constant: horizontalSpace),
-            view.rightAnchor.constraint(equalTo: superview.rightAnchor, constant: -horizontalSpace),
-            view.heightAnchor.constraint(equalToConstant: height),
-        ])
+        subview.heightAnchor.constraint(equalToConstant: height).isActive = true
+    }
+}
+
+// MARK: - Actions
+
+private extension RegistrationView {
+    func setupActions() {
+        signUpButton.addTarget(self, action: #selector(didPressSignUpButton), for: .touchUpInside)
+    }
+    
+    @objc func didPressSignUpButton() {
+        delegate?.registrationViewDidPressSignUpButton(self)
+    }
+}
+
+// MARK: - Gestures
+
+private extension RegistrationView {
+    func setupGestures() {
+        setupKeyboardDismissGesture()
+    }
+    
+    func setupKeyboardDismissGesture() {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGestureRecognizer.cancelsTouchesInView = false
+        
+        addGestureRecognizer(tapGestureRecognizer)
+    }
+    
+    @objc func dismissKeyboard() {
+        endEditing(true)
     }
 }
 
 // MARK: - Keyboard Events
 
 private extension RegistrationView {
+    func setupKeyboardEvents() {
+        emailTextField.delegate = self
+        fullNameTextField.delegate = self
+        usernameTextField.delegate = self
+        passwordTextField.delegate = self
+        
+        setupKeyboardObservers()
+    }
+    
+    func removeKeyboardEvents() {
+        removeKeyboardObservers()
+    }
+    
     func setupKeyboardObservers() {
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(keyboardWillShow),
@@ -348,5 +443,21 @@ private extension RegistrationView {
     @objc func keyboardWillHide(notification: NSNotification) {
         scrollView.contentInset.bottom = 0
         scrollView.verticalScrollIndicatorInsets.bottom = scrollView.contentInset.bottom
+    }
+}
+
+// MARK: - UITextFieldDelegate
+
+extension RegistrationView: UITextFieldDelegate {
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        
+        switch textField {
+        case emailTextField: hideEmailAlertLabel()
+        case usernameTextField: hideUsernameAlertLabel()
+        case passwordTextField: hidePasswordAlertLabel()
+        default: break
+        }
+        
+        return true
     }
 }
