@@ -72,6 +72,8 @@ final class RegistrationView: UIView {
         static let alertFontSize: CGFloat = 12
         
         static let signUpButtonCornerRadius: CGFloat = 4
+        static let signUpButtonEnableAlpha: CGFloat = 1
+        static let signUpButtonDisableAlpha: CGFloat = 0.4
     }
     
     // MARK: Subviews
@@ -175,12 +177,12 @@ extension RegistrationView {
     
     func enableSignUpButton() {
         signUpButton.isEnabled = true
-        signUpButton.alpha = 1
+        signUpButton.alpha = Constants.signUpButtonEnableAlpha
     }
     
     func disableSignUpButton() {
         signUpButton.isEnabled = false
-        signUpButton.alpha = 0.4
+        signUpButton.alpha = Constants.signUpButtonDisableAlpha
     }
 }
 
@@ -266,6 +268,8 @@ private extension RegistrationView {
         textField.backgroundColor = Colors.textFieldBackground
         textField.font = .systemFont(ofSize: Constants.fontSize)
         textField.clearButtonMode = .whileEditing
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
     }
 }
 
@@ -394,6 +398,10 @@ private extension RegistrationView {
     }
     
     @objc func didPressSignUpButton() {
+        hideEmailAlertLabel()
+        hideUsernameAlertLabel()
+        hidePasswordAlertLabel()
+        
         delegate?.registrationViewDidPressSignUpButton(self)
     }
     
@@ -482,6 +490,18 @@ extension RegistrationView: UITextFieldDelegate {
         case usernameTextField: hideUsernameAlertLabel()
         case passwordTextField: hidePasswordAlertLabel()
         default: break
+        }
+        
+        return true
+    }
+    
+    func textField(
+        _ textField: UITextField,
+        shouldChangeCharactersIn range: NSRange,
+        replacementString string: String
+    ) -> Bool {
+        if textField == passwordTextField && !passwordTextField.isSecureTextEntry {
+            passwordTextField.isSecureTextEntry = true
         }
         
         return true
