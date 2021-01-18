@@ -172,6 +172,16 @@ extension RegistrationView {
         
         stackView.setCustomSpacing(Metrics.stackViewPasswordTextFieldSpace, after: passwordTextField)
     }
+    
+    func enableSignUpButton() {
+        signUpButton.isEnabled = true
+        signUpButton.alpha = 1
+    }
+    
+    func disableSignUpButton() {
+        signUpButton.isEnabled = false
+        signUpButton.alpha = 0.4
+    }
 }
 
 // MARK: - Private Methods
@@ -242,6 +252,8 @@ private extension RegistrationView {
         signUpButton.titleLabel?.font = .boldSystemFont(ofSize: Constants.fontSize)
         signUpButton.backgroundColor = Colors.signUpButtonBackground
         signUpButton.layer.cornerRadius = Constants.signUpButtonCornerRadius
+        
+        disableSignUpButton()
     }
 }
 
@@ -376,10 +388,24 @@ private extension RegistrationView {
 private extension RegistrationView {
     func setupActions() {
         signUpButton.addTarget(self, action: #selector(didPressSignUpButton), for: .touchUpInside)
+        
+        emailTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        passwordTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
     @objc func didPressSignUpButton() {
         delegate?.registrationViewDidPressSignUpButton(self)
+    }
+    
+    @objc func textFieldDidChange() {
+        let isValidEmail = !(emailTextField.text?.isEmpty ?? true)
+        let isValidPassword = !(passwordTextField.text?.isEmpty ?? true)
+        
+        if isValidEmail && isValidPassword {
+            enableSignUpButton()
+        } else {
+            disableSignUpButton()
+        }
     }
 }
 
