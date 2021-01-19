@@ -85,10 +85,14 @@ extension RegistrationPresenter: IRegistrationPresenter {
     
     func didPressSignUpButton(email: String?, fullName: String?, username: String?, password: String?) {
         guard let email = email,
+              let fullName = fullName?.isEmpty ?? true ? nil : fullName,
               let username = username,
               let password = password else { return }
         
-        interactor?.signUp(withEmail: email, fullName: fullName, username: username, password: password)
+        interactor?.signUp(withEmail: email,
+                           fullName: fullName,
+                           username: username,
+                           password: password)
     }
     
     func didPressSignInButton() {
