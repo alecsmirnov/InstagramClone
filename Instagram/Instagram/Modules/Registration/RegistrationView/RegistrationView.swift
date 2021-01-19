@@ -111,6 +111,15 @@ final class RegistrationView: UIView {
         return label
     }()
     
+    private let passwordAlertLabel: UILabel = {
+        let label = UILabel()
+        
+        label.font = .systemFont(ofSize: Constants.alertFontSize)
+        label.textColor = Colors.alert
+        
+        return label
+    }()
+    
     // MARK: Initialization
     
     init() {
@@ -153,6 +162,21 @@ extension RegistrationView {
     
     func hideUsernameAlertLabel() {
         removeSubviewFromStackView(usernameAlertLabel)
+    }
+    
+    func showPasswordAlertLabel(text: String) {
+        insertSubviewToStackView(passwordAlertLabel, below: passwordTextField)
+        
+        stackView.setCustomSpacing(Metrics.stackViewSpace, after: passwordTextField)
+        stackView.setCustomSpacing(Metrics.stackViewPasswordTextFieldSpace, after: passwordAlertLabel)
+        
+        passwordAlertLabel.text = text
+    }
+    
+    func hidePasswordAlertLabel() {
+        removeSubviewFromStackView(passwordAlertLabel)
+        
+        stackView.setCustomSpacing(Metrics.stackViewPasswordTextFieldSpace, after: passwordTextField)
     }
     
     func enableSignUpButton() {

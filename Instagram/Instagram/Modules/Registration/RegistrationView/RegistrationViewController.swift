@@ -9,10 +9,15 @@ import UIKit
 
 protocol IRegistrationViewController: AnyObject {
     func showInvalidEmailAlert()
+    func showAlreadyInUseEmailAlert()
     func hideEmailAlert()
     
     func showInvalidUsernameAlert()
+    func showAlreadyInUseUsernameAlert()
     func hideUsernameAlert()
+    
+    func showShortPasswordAlert()
+    func hidePasswordAlert()
     
     func enableSignUpButton()
     func disableSignUpButton()
@@ -47,6 +52,10 @@ extension RegistrationViewController: IRegistrationViewController {
         customView?.showEmailAlertLabel(text: "Invalid Email address")
     }
     
+    func showAlreadyInUseEmailAlert() {
+        customView?.showEmailAlertLabel(text: "Email address already in use")
+    }
+    
     func hideEmailAlert() {
         customView?.hideEmailAlertLabel()
     }
@@ -55,8 +64,22 @@ extension RegistrationViewController: IRegistrationViewController {
         customView?.showUsernameAlertLabel(text: "Invalid Username")
     }
     
+    func showAlreadyInUseUsernameAlert() {
+        customView?.showUsernameAlertLabel(text: "Username already in use")
+    }
+    
     func hideUsernameAlert() {
         customView?.hideUsernameAlertLabel()
+    }
+    
+    func showShortPasswordAlert() {
+        let text = "Password must be \(InputValidation.passwordLengthMin) or more characters"
+        
+        customView?.showPasswordAlertLabel(text: text)
+    }
+    
+    func hidePasswordAlert() {
+        customView?.hidePasswordAlertLabel()
     }
     
     func enableSignUpButton() {

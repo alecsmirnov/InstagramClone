@@ -15,6 +15,8 @@ enum RegistrationAssembly {
         
         viewController.presenter = presenter
         
+        interactor.presenter = presenter
+        
         presenter.viewController = viewController
         presenter.interactor = interactor
         presenter.router = router

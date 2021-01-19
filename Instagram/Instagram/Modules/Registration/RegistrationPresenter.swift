@@ -22,7 +22,7 @@ final class RegistrationPresenter {
     var router: IRegistrationRouter?
     
     private var isValidEmail = false
-    private var isValidUsername: Bool?
+    private var isValidUsername = false
     private var isValidPassword = false
 }
 
@@ -40,6 +40,12 @@ extension RegistrationPresenter: IRegistrationPresenter {
             viewController?.showInvalidEmailAlert()
         }
         
+        if isValidEmail {
+            isValidEmail = false
+            
+            interactor?.isUserExist(withEmail: email)
+        }
+        
         validateInput()
     }
     
@@ -48,26 +54,88 @@ extension RegistrationPresenter: IRegistrationPresenter {
 
         isValidUsername = InputValidation.isValidUsername(username)
         
-        if isValidUsername ?? false || username.isEmpty {
+        if isValidUsername || username.isEmpty {
             viewController?.hideUsernameAlert()
         } else {
             viewController?.showInvalidUsernameAlert()
+        }
+        
+        if isValidUsername {
+            isValidUsername = false
+            
+            interactor?.isUserExist(withUsername: username)
         }
         
         validateInput()
     }
     
     func passwordDidChange(_ password: String?) {
-        isValidPassword = !(password?.isEmpty ?? true)
+        guard let password = password else { return }
+        
+        isValidPassword = InputValidation.passwordLengthMin <= password.count
+        
+        if isValidPassword || password.isEmpty {
+            viewController?.hidePasswordAlert()
+        } else {
+            viewController?.showShortPasswordAlert()
+        }
         
         validateInput()
     }
     
     func didPressSignUpButton(email: String?, fullName: String?, username: String?, password: String?) {
+        guard let email = email,
+              let username = username,
+              let password = password else { return }
         
+        interactor?.signUp(withEmail: email, fullName: fullName, username: username, password: password)
     }
     
     func didPressSignInButton() {
+        
+    }
+}
+
+// MARK: - IRegistrationInteractorOutput
+
+extension RegistrationPresenter: IRegistrationInteractorOutput {
+    func isUserWithEmailExist() {
+        isValidEmail = false
+        
+        viewController?.showAlreadyInUseEmailAlert()
+        
+        validateInput()
+    }
+    
+    func isUserWithEmailNotExist() {
+        isValidEmail = true
+        
+        viewController?.hideEmailAlert()
+        
+        validateInput()
+    }
+    
+    func isUserWithUsernameExist() {
+        isValidUsername = false
+        
+        viewController?.showAlreadyInUseUsernameAlert()
+        
+        validateInput()
+    }
+    
+    func isUserWithUsernameNotExist() {
+        isValidUsername = true
+        
+        viewController?.hideUsernameAlert()
+        
+        validateInput()
+    }
+    
+    func signUpSuccess() {
+        
+    }
+    
+    func signUpFailure() {
         
     }
 }
@@ -76,7 +144,7 @@ extension RegistrationPresenter: IRegistrationPresenter {
 
 private extension RegistrationPresenter {
     func validateInput() {
-        if isValidEmail && isValidUsername ?? true && isValidPassword {
+        if isValidEmail && isValidUsername && isValidPassword {
             viewController?.enableSignUpButton()
         } else {
             viewController?.disableSignUpButton()
