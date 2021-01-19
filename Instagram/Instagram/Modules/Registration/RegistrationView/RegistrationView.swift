@@ -10,6 +10,10 @@ import UIKit
 protocol RegistrationViewDelegate: AnyObject {
     func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView)
     func registrationViewDidPressSignInButton(_ registrationView: RegistrationView)
+    
+    func registrationViewEmailDidChange(_ registrationView: RegistrationView, email: String?)
+    func registrationViewUsernameDidChange(_ registrationView: RegistrationView, username: String?)
+    func registrationViewPasswordDidChange(_ registrationView: RegistrationView, password: String?)
 }
 
 final class RegistrationView: UIView {
@@ -107,15 +111,6 @@ final class RegistrationView: UIView {
         return label
     }()
     
-    private let passwordAlertLabel: UILabel = {
-        let label = UILabel()
-        
-        label.font = .systemFont(ofSize: Constants.alertFontSize)
-        label.textColor = Colors.alert
-        
-        return label
-    }()
-    
     // MARK: Initialization
     
     init() {
@@ -158,21 +153,6 @@ extension RegistrationView {
     
     func hideUsernameAlertLabel() {
         removeSubviewFromStackView(usernameAlertLabel)
-    }
-    
-    func showPasswordAlertLabel(text: String) {
-        insertSubviewToStackView(passwordAlertLabel, below: passwordTextField)
-        
-        passwordAlertLabel.text = text
-        
-        stackView.setCustomSpacing(Metrics.stackViewSpace, after: passwordTextField)
-        stackView.setCustomSpacing(Metrics.stackViewPasswordTextFieldSpace, after: passwordAlertLabel)
-    }
-    
-    func hidePasswordAlertLabel() {
-        removeSubviewFromStackView(passwordAlertLabel)
-        
-        stackView.setCustomSpacing(Metrics.stackViewPasswordTextFieldSpace, after: passwordTextField)
     }
     
     func enableSignUpButton() {
@@ -393,26 +373,24 @@ private extension RegistrationView {
     func setupActions() {
         signUpButton.addTarget(self, action: #selector(didPressSignUpButton), for: .touchUpInside)
         
-        emailTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
-        passwordTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        emailTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        usernameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        passwordTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
     }
     
     @objc func didPressSignUpButton() {
         hideEmailAlertLabel()
         hideUsernameAlertLabel()
-        hidePasswordAlertLabel()
         
         delegate?.registrationViewDidPressSignUpButton(self)
     }
     
-    @objc func textFieldDidChange() {
-        let isValidEmail = !(emailTextField.text?.isEmpty ?? true)
-        let isValidPassword = !(passwordTextField.text?.isEmpty ?? true)
-        
-        if isValidEmail && isValidPassword {
-            enableSignUpButton()
-        } else {
-            disableSignUpButton()
+    @objc func textFieldDidChange(_ textField: UITextField) {
+        switch textField {
+        case emailTextField: delegate?.registrationViewEmailDidChange(self, email: email)
+        case usernameTextField: delegate?.registrationViewUsernameDidChange(self, username: username)
+        case passwordTextField: delegate?.registrationViewPasswordDidChange(self, password: password)
+        default: break
         }
     }
 }
@@ -488,7 +466,6 @@ extension RegistrationView: UITextFieldDelegate {
         switch textField {
         case emailTextField: hideEmailAlertLabel()
         case usernameTextField: hideUsernameAlertLabel()
-        case passwordTextField: hidePasswordAlertLabel()
         default: break
         }
         

@@ -8,8 +8,14 @@
 import UIKit
 
 protocol IRegistrationViewController: AnyObject {
-    func showEmailAlert()
-    func showPasswordAlert()
+    func showInvalidEmailAlert()
+    func hideEmailAlert()
+    
+    func showInvalidUsernameAlert()
+    func hideUsernameAlert()
+    
+    func enableSignUpButton()
+    func disableSignUpButton()
 }
 
 final class RegistrationViewController: CustomViewController<RegistrationView> {
@@ -37,12 +43,28 @@ private extension RegistrationViewController {
 // MARK: - IRegistrationViewController
 
 extension RegistrationViewController: IRegistrationViewController {
-    func showEmailAlert() {
-        customView?.showEmailAlertLabel(text: "Invalid email address")
+    func showInvalidEmailAlert() {
+        customView?.showEmailAlertLabel(text: "Invalid Email address")
     }
     
-    func showPasswordAlert() {
-        customView?.showPasswordAlertLabel(text: "Short password")
+    func hideEmailAlert() {
+        customView?.hideEmailAlertLabel()
+    }
+    
+    func showInvalidUsernameAlert() {
+        customView?.showUsernameAlertLabel(text: "Invalid Username")
+    }
+    
+    func hideUsernameAlert() {
+        customView?.hideUsernameAlertLabel()
+    }
+    
+    func enableSignUpButton() {
+        customView?.enableSignUpButton()
+    }
+    
+    func disableSignUpButton() {
+        customView?.disableSignUpButton()
     }
 }
 
@@ -58,5 +80,17 @@ extension RegistrationViewController: RegistrationViewDelegate {
     
     func registrationViewDidPressSignInButton(_ registrationView: RegistrationView) {
         presenter?.didPressSignInButton()
+    }
+    
+    func registrationViewEmailDidChange(_ registrationView: RegistrationView, email: String?) {
+        presenter?.emailDidChange(email)
+    }
+    
+    func registrationViewUsernameDidChange(_ registrationView: RegistrationView, username: String?) {
+        presenter?.usernameDidChange(username)
+    }
+    
+    func registrationViewPasswordDidChange(_ registrationView: RegistrationView, password: String?) {
+        presenter?.passwordDidChange(password)
     }
 }
