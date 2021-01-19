@@ -78,6 +78,8 @@ final class RegistrationView: UIView {
         static let signUpButtonCornerRadius: CGFloat = 4
         static let signUpButtonEnableAlpha: CGFloat = 1
         static let signUpButtonDisableAlpha: CGFloat = 0.4
+        
+        static let textFieldInputDelay = 0.6
     }
     
     // MARK: Subviews
@@ -397,9 +399,9 @@ private extension RegistrationView {
     func setupActions() {
         signUpButton.addTarget(self, action: #selector(didPressSignUpButton), for: .touchUpInside)
         
-        emailTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        usernameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        passwordTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        emailTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
+        usernameTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
+        passwordTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
     }
     
     @objc func didPressSignUpButton() {
@@ -409,7 +411,15 @@ private extension RegistrationView {
         delegate?.registrationViewDidPressSignUpButton(self)
     }
     
-    @objc func textFieldDidChange(_ textField: UITextField) {
+    @objc func textFieldDidChangeWithDelay(_ textField: UITextField) {
+        NSObject.cancelPreviousPerformRequests(withTarget: self,
+                                               selector: #selector(textFieldDidChange(_:)),
+                                               object: textField)
+        
+        perform(#selector(textFieldDidChange(_:)), with: textField, afterDelay: Constants.textFieldInputDelay)
+    }
+    
+    @objc func textFieldDidChange(_ textField: UITextField) {        
         switch textField {
         case emailTextField: delegate?.registrationViewEmailDidChange(self, email: email)
         case usernameTextField: delegate?.registrationViewUsernameDidChange(self, username: username)
