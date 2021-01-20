@@ -372,6 +372,8 @@ private extension RegistrationView {
     
     func setupPasswordTextFieldLayout() {
         RegistrationView.setupStackViewSubviewLayout(passwordTextField, height: Metrics.stackViewSubviewHeight)
+        
+        passwordTextField.isSecureTextEntry = true
     }
     
     func setupSignUpButtonLayout() {
@@ -407,11 +409,8 @@ private extension RegistrationView {
     }
     
     @objc func didPressSignUpButton() {
-        hideEmailAlertLabel()
-        hideUsernameAlertLabel()
-        
-        let profileImage = (profileImageButton.currentImage == AssetsImages.profileImage) ?
-            nil : profileImageButton.currentImage
+        let isDefaultProfileImage = profileImageButton.currentImage == AssetsImages.profileImage
+        let profileImage = isDefaultProfileImage ? nil : profileImageButton.currentImage
         
         let info = RegistrationInfo(profileImage: profileImage,
                                     email: emailTextField.text,
@@ -467,11 +466,6 @@ private extension RegistrationView {
 
 private extension RegistrationView {
     func setupKeyboardEvents() {
-        emailTextField.delegate = self
-        fullNameTextField.delegate = self
-        usernameTextField.delegate = self
-        passwordTextField.delegate = self
-        
         setupKeyboardObservers()
     }
     
@@ -504,34 +498,5 @@ private extension RegistrationView {
     @objc func keyboardWillHide(notification: NSNotification) {
         scrollView.contentInset.bottom = 0
         scrollView.verticalScrollIndicatorInsets.bottom = scrollView.contentInset.bottom
-    }
-}
-
-// MARK: - UITextFieldDelegate
-
-extension RegistrationView: UITextFieldDelegate {
-    func textFieldShouldClear(_ textField: UITextField) -> Bool {
-        switch textField {
-        case emailTextField:
-            hideEmailAlertLabel()
-        case usernameTextField:
-            hideUsernameAlertLabel()
-        default:
-            break
-        }
-        
-        return true
-    }
-    
-    func textField(
-        _ textField: UITextField,
-        shouldChangeCharactersIn range: NSRange,
-        replacementString string: String
-    ) -> Bool {
-        if textField == passwordTextField && !passwordTextField.isSecureTextEntry {
-            passwordTextField.isSecureTextEntry = true
-        }
-        
-        return true
     }
 }
