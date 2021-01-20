@@ -13,9 +13,9 @@ protocol RegistrationViewDelegate: AnyObject {
     func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView, withInfo info: RegistrationInfo)
     func registrationViewDidPressSignInButton(_ registrationView: RegistrationView)
     
-    func registrationViewEmailDidChange(_ registrationView: RegistrationView, email: String?)
-    func registrationViewUsernameDidChange(_ registrationView: RegistrationView, username: String?)
-    func registrationViewPasswordDidChange(_ registrationView: RegistrationView, password: String?)
+    func registrationViewEmailDidChange(_ registrationView: RegistrationView, email: String)
+    func registrationViewUsernameDidChange(_ registrationView: RegistrationView, username: String)
+    func registrationViewPasswordDidChange(_ registrationView: RegistrationView, password: String)
 }
 
 final class RegistrationView: UIView {
@@ -432,10 +432,14 @@ private extension RegistrationView {
     
     @objc func textFieldDidChange(_ textField: UITextField) {        
         switch textField {
-        case emailTextField: delegate?.registrationViewEmailDidChange(self, email: emailTextField.text)
-        case usernameTextField: delegate?.registrationViewUsernameDidChange(self, username: usernameTextField.text)
-        case passwordTextField: delegate?.registrationViewPasswordDidChange(self, password: passwordTextField.text)
-        default: break
+        case emailTextField:
+            delegate?.registrationViewEmailDidChange(self, email: emailTextField.text ?? "")
+        case usernameTextField:
+            delegate?.registrationViewUsernameDidChange(self, username: usernameTextField.text ?? "")
+        case passwordTextField:
+            delegate?.registrationViewPasswordDidChange(self, password: passwordTextField.text ?? "")
+        default:
+            break
         }
     }
 }
@@ -507,11 +511,13 @@ private extension RegistrationView {
 
 extension RegistrationView: UITextFieldDelegate {
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
-        
         switch textField {
-        case emailTextField: hideEmailAlertLabel()
-        case usernameTextField: hideUsernameAlertLabel()
-        default: break
+        case emailTextField:
+            hideEmailAlertLabel()
+        case usernameTextField:
+            hideUsernameAlertLabel()
+        default:
+            break
         }
         
         return true

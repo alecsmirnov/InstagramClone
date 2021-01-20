@@ -110,15 +110,15 @@ extension RegistrationViewController: RegistrationViewDelegate {
         presenter?.didPressSignInButton()
     }
     
-    func registrationViewEmailDidChange(_ registrationView: RegistrationView, email: String?) {
+    func registrationViewEmailDidChange(_ registrationView: RegistrationView, email: String) {
         presenter?.emailDidChange(email)
     }
     
-    func registrationViewUsernameDidChange(_ registrationView: RegistrationView, username: String?) {
+    func registrationViewUsernameDidChange(_ registrationView: RegistrationView, username: String) {
         presenter?.usernameDidChange(username)
     }
     
-    func registrationViewPasswordDidChange(_ registrationView: RegistrationView, password: String?) {
+    func registrationViewPasswordDidChange(_ registrationView: RegistrationView, password: String) {
         presenter?.passwordDidChange(password)
     }
 }

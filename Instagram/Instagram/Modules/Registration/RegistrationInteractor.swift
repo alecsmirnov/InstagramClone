@@ -6,18 +6,27 @@
 //
 
 protocol IRegistrationInteractor: AnyObject {
-    func isUserExist(withEmail email: String)
-    func isUserExist(withUsername username: String)
+    func checkEmail(_ email: String)
+    func checkUsername(_ username: String)
+    func checkPassword(_ password: String)
     
     func signUp(withInfo info: RegistrationInfo)
 }
 
 protocol IRegistrationInteractorOutput: AnyObject {
+    func isValidEmail()
+    func isInvalidEmail()
     func isUserWithEmailExist()
-    func isUserWithEmailNotExist()
+    func isEmptyEmail()
     
+    func isValidUsername()
+    func isInvalidUsername()
     func isUserWithUsernameExist()
-    func isUserWithUsernameNotExist()
+    func isEmptyUsername()
+    
+    func isValidPassword()
+    func isInvalidPassword()
+    func isEmptyPassword()
     
     func signUpSuccess()
     func signUpFailure()
@@ -30,24 +39,64 @@ final class RegistrationInteractor {
 // MARK: - IRegistrationInteractor
 
 extension RegistrationInteractor: IRegistrationInteractor {
-    func isUserExist(withEmail email: String) {
+    func checkEmail(_ email: String) {
+        guard !email.isEmpty else {
+            presenter?.isEmptyEmail()
+            
+            return
+        }
+        
+        guard InputValidation.isValidEmail(email) else {
+            presenter?.isInvalidEmail()
+            
+            return
+        }
+
         FirebaseUserService.isUserExist(withEmail: email) { [self] isExist in
             if isExist {
                 presenter?.isUserWithEmailExist()
             } else {
-                presenter?.isUserWithEmailNotExist()
+                presenter?.isValidEmail()
             }
         }
     }
     
-    func isUserExist(withUsername username: String) {
+    func checkUsername(_ username: String) {
+        guard !username.isEmpty else {
+            presenter?.isEmptyUsername()
+            
+            return
+        }
+        
+        guard InputValidation.isValidUsername(username) else {
+            presenter?.isInvalidUsername()
+            
+            return
+        }
+        
         FirebaseUserService.isUserExist(withUsername: username) { [self] isExist in
             if isExist {
                 presenter?.isUserWithUsernameExist()
             } else {
-                presenter?.isUserWithUsernameNotExist()
+                presenter?.isValidUsername()
             }
         }
+    }
+    
+    func checkPassword(_ password: String) {
+        guard !password.isEmpty else {
+            presenter?.isEmptyPassword()
+            
+            return
+        }
+        
+        guard InputValidation.passwordLengthMin <= password.count else {
+            presenter?.isInvalidPassword()
+            
+            return
+        }
+        
+        presenter?.isValidPassword()
     }
     
     func signUp(withInfo info: RegistrationInfo) {

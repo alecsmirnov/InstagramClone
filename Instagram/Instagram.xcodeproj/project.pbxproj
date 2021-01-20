@@ -112,10 +112,10 @@
 		8445928D25B41E3A0028EE6A /* Registration */ = {
 			isa = PBXGroup;
 			children = (
+				84FE47E525B83D770048F5AA /* RegistrationModel */,
 				8491A83D25B478DE009EDFC2 /* RegistrationView */,
 				8491A83F25B47DE8009EDFC2 /* RegistrationInteractor.swift */,
 				8491A84225B47DF6009EDFC2 /* RegistrationPresenter.swift */,
-				84FE47E525B83D770048F5AA /* RegistrationEntities */,
 				8491A84525B47E03009EDFC2 /* RegistrationRouter.swift */,
 				8491A84825B47E0D009EDFC2 /* RegistrationAssembly.swift */,
 			);
@@ -305,12 +305,12 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		84FE47E525B83D770048F5AA /* RegistrationEntities */ = {
+		84FE47E525B83D770048F5AA /* RegistrationModel */ = {
 			isa = PBXGroup;
 			children = (
 				84FE47E125B832F50048F5AA /* RegistrationInfo.swift */,
 			);
-			path = RegistrationEntities;
+			path = RegistrationModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
