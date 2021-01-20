@@ -46,31 +46,29 @@ extension FirebaseUserService {
         createUserAccount(withEmail: email, password: password) { result in
             switch result {
             case .success(let identifier):
+                var profileImageURL: String?
+                
+                if let profileImageData = profileImageData {
+                    uploadUserProfilePNGImageData(profileImageData, identifier: identifier) { result in
+                        switch result {
+                        case .success(let urlString):
+                            profileImageURL = urlString
+                        case .failure(let error):
+                            assertionFailure(error.localizedDescription)
+                        }
+                    }
+                }
+                
                 createUserRecord(identifier: identifier,
                                  email: email,
                                  fullName: fullName,
-                                 username: username) { error in
+                                 username: username,
+                                 profileImageURL: profileImageURL) { error in
                     if let error = error {
                         assertionFailure(error.localizedDescription)
-                        
-                        completion(false)
-                    } else {
-                        guard let profileImageData = profileImageData else {
-                            completion(true)
-                            
-                            return
-                        }
-                        
-                        uploadUserProfilePNGImageData(profileImageData, identifier: identifier) { error in
-                            if let error = error {
-                                assertionFailure(error.localizedDescription)
-                                
-                                completion(false)
-                            } else {
-                                completion(true)
-                            }
-                        }
                     }
+                    
+                    completion(error == nil)
                 }
             case .failure(let error):
                 assertionFailure(error.localizedDescription)
@@ -107,9 +105,10 @@ private extension FirebaseUserService {
         email: String,
         fullName: String?,
         username: String,
+        profileImageURL: String?,
         completion: @escaping (Error?) -> Void
     ) {
-        let userNode = UserNode(email: email, fullName: fullName, username: username)
+        let userNode = UserNode(email: email, fullName: fullName, username: username, profileImageURL: profileImageURL)
         
         if let userDictionary = JSONCoding.toDictionary(userNode) {
             databaseReference.child(FirebaseTables.users)
@@ -122,11 +121,29 @@ private extension FirebaseUserService {
 
     static func uploadUserProfilePNGImageData(_ data: Data,
                                               identifier: String,
-                                              completion: @escaping (Error?) -> Void) {
-        storageReference.child(FirebaseStorages.profileImages)
-                        .child("\(identifier).png")
-                        .putData(data, metadata: nil) { _, error in
-            completion(error)
+                                              completion: @escaping (NetworkResult<String, Error>) -> Void) {
+        let imageDataReference = storageReference.child(FirebaseStorages.profileImages).child("\(identifier).png")
+        
+        imageDataReference.putData(data, metadata: nil) { metadata, error in
+            guard metadata != nil, error == nil else {
+                if let error = error {
+                    completion(.failure(error))
+                }
+                
+                return
+            }
+            
+            imageDataReference.downloadURL { url, error in
+                guard let urlString = url?.absoluteString, error == nil else {
+                    if let error = error {
+                        completion(.failure(error))
+                    }
+                    
+                    return
+                }
+                
+                completion(.success(urlString))
+            }
         }
     }
 }

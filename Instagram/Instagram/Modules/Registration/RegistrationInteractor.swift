@@ -101,9 +101,10 @@ extension RegistrationInteractor: IRegistrationInteractor {
     
     func signUp(withInfo info: RegistrationInfo) {
         guard let email = info.email,
-              let fullName = (info.fullName?.isEmpty ?? true) ? nil : info.fullName,
               let username = info.username,
               let password = info.password else { return }
+        
+        let fullName = (info.fullName?.isEmpty ?? true) ? nil : info.fullName
         
         let compressedProfileImage = info.profileImage?.resize(withWidth: SharedMetrics.profileImageSize,
                                                                height: SharedMetrics.profileImageSize,
