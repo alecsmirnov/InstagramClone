@@ -7,19 +7,14 @@
 
 import FirebaseAuth
 import FirebaseDatabase
+import FirebaseStorage
 
 enum FirebaseUserService {
-    // MARK: Errors
-    
-    private enum CreateUserError: Error {
-        case emailAlreadyInUse
-        case undefined
-    }
-    
     // MARK: Properties
     
     private static let authReference = FirebaseAuth.Auth.auth()
     private static let databaseReference = Database.database().reference()
+    private static let storageReference = Storage.storage().reference()
 }
 
 // MARK: - Public Methods
@@ -45,6 +40,7 @@ extension FirebaseUserService {
         fullName: String?,
         username: String,
         password: String,
+        profileImageData: Data?,
         completion: @escaping (Bool) -> Void
     ) {
         createUserAccount(withEmail: email, password: password) { result in
@@ -59,7 +55,21 @@ extension FirebaseUserService {
                         
                         completion(false)
                     } else {
-                        completion(true)
+                        guard let profileImageData = profileImageData else {
+                            completion(true)
+                            
+                            return
+                        }
+                        
+                        uploadUserProfilePNGImageData(profileImageData, identifier: identifier) { error in
+                            if let error = error {
+                                assertionFailure(error.localizedDescription)
+                                
+                                completion(false)
+                            } else {
+                                completion(true)
+                            }
+                        }
                     }
                 }
             case .failure(let error):
@@ -107,6 +117,16 @@ private extension FirebaseUserService {
                              .setValue(userDictionary) { error, _ in
                 completion(error)
             }
+        }
+    }
+
+    static func uploadUserProfilePNGImageData(_ data: Data,
+                                              identifier: String,
+                                              completion: @escaping (Error?) -> Void) {
+        storageReference.child(FirebaseStorages.profileImages)
+                        .child("\(identifier).png")
+                        .putData(data, metadata: nil) { _, error in
+            completion(error)
         }
     }
 }

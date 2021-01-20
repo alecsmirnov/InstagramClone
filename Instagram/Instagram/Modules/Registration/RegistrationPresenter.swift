@@ -10,7 +10,7 @@ protocol IRegistrationPresenter {
     func usernameDidChange(_ username: String?)
     func passwordDidChange(_ password: String?)
     
-    func didPressSignUpButton(email: String?, fullName: String?, username: String?, password: String?)
+    func didPressSignUpButton(withInfo info: RegistrationInfo)
     func didPressSignInButton()
 }
 
@@ -83,16 +83,8 @@ extension RegistrationPresenter: IRegistrationPresenter {
         validateInput()
     }
     
-    func didPressSignUpButton(email: String?, fullName: String?, username: String?, password: String?) {
-        guard let email = email,
-              let fullName = fullName?.isEmpty ?? true ? nil : fullName,
-              let username = username,
-              let password = password else { return }
-        
-        interactor?.signUp(withEmail: email,
-                           fullName: fullName,
-                           username: username,
-                           password: password)
+    func didPressSignUpButton(withInfo info: RegistrationInfo) {
+        interactor?.signUp(withInfo: info)
     }
     
     func didPressSignInButton() {

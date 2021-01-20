@@ -28,6 +28,8 @@ final class RegistrationViewController: CustomViewController<RegistrationView> {
     
     var presenter: IRegistrationPresenter?
     
+    private var imagePicker: ImagePicker?
+    
     // MARK: Lifecycle
     
     override func viewDidLoad() {
@@ -42,6 +44,8 @@ final class RegistrationViewController: CustomViewController<RegistrationView> {
 private extension RegistrationViewController {
     func setupViewDelegates() {
         customView?.delegate = self
+        
+        imagePicker = ImagePicker(presentationController: self, delegate: self)
     }
 }
 
@@ -73,9 +77,9 @@ extension RegistrationViewController: IRegistrationViewController {
     }
     
     func showShortPasswordAlert() {
-        let text = "Password must be \(InputValidation.passwordLengthMin) or more characters"
-        
-        customView?.showPasswordAlertLabel(text: text)
+        customView?.showPasswordAlertLabel(
+            text: "Password must be \(InputValidation.passwordLengthMin) or more characters"
+        )
     }
     
     func hidePasswordAlert() {
@@ -94,11 +98,12 @@ extension RegistrationViewController: IRegistrationViewController {
 // MARK: - RegistrationViewDelegate
 
 extension RegistrationViewController: RegistrationViewDelegate {
-    func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView) {
-        presenter?.didPressSignUpButton(email: registrationView.email,
-                                        fullName: registrationView.fullName,
-                                        username: registrationView.username,
-                                        password: registrationView.password)
+    func registrationViewDidPressProfileImageButton(_ registrationView: RegistrationView) {
+        imagePicker?.takePhoto()
+    }
+    
+    func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView, withInfo info: RegistrationInfo) {
+        presenter?.didPressSignUpButton(withInfo: info)
     }
     
     func registrationViewDidPressSignInButton(_ registrationView: RegistrationView) {
@@ -115,5 +120,13 @@ extension RegistrationViewController: RegistrationViewDelegate {
     
     func registrationViewPasswordDidChange(_ registrationView: RegistrationView, password: String?) {
         presenter?.passwordDidChange(password)
+    }
+}
+
+// MARK: - ImagePickerDelegate
+
+extension RegistrationViewController: ImagePickerDelegate {
+    func imagePicker(_ imagePicker: ImagePicker, didSelectImage image: UIImage?) {
+        customView?.setProfileImage(image)
     }
 }

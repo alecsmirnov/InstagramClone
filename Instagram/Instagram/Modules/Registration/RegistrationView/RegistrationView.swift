@@ -8,7 +8,9 @@
 import UIKit
 
 protocol RegistrationViewDelegate: AnyObject {
-    func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView)
+    func registrationViewDidPressProfileImageButton(_ registrationView: RegistrationView)
+    
+    func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView, withInfo info: RegistrationInfo)
     func registrationViewDidPressSignInButton(_ registrationView: RegistrationView)
     
     func registrationViewEmailDidChange(_ registrationView: RegistrationView, email: String?)
@@ -20,22 +22,6 @@ final class RegistrationView: UIView {
     // MARK: Properties
     
     weak var delegate: RegistrationViewDelegate?
-    
-    var email: String? {
-        return emailTextField.text
-    }
-    
-    var fullName: String? {
-        return fullNameTextField.text
-    }
-    
-    var username: String? {
-        return usernameTextField.text
-    }
-    
-    var password: String? {
-        return passwordTextField.text
-    }
     
     // MARK: Constants
     
@@ -74,6 +60,8 @@ final class RegistrationView: UIView {
     private enum Constants {
         static let fontSize: CGFloat = 14
         static let alertFontSize: CGFloat = 12
+        
+        static let profileImageButtonBorderWidth: CGFloat = 1
         
         static let signUpButtonCornerRadius: CGFloat = 4
         static let signUpButtonEnableAlpha: CGFloat = 1
@@ -146,6 +134,10 @@ final class RegistrationView: UIView {
 // MARK: - Public Methods
 
 extension RegistrationView {
+    func setProfileImage(_ image: UIImage?) {
+        profileImageButton.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
+    
     func showEmailAlertLabel(text: String) {
         insertSubviewToStackView(emailAlertLabel, below: emailTextField)
         
@@ -236,6 +228,10 @@ private extension RegistrationView {
     func setupProfileImageButtonAppearance() {
         profileImageButton.setImage(AssetsImages.profileImage, for: .normal)
         profileImageButton.tintColor = Colors.profileImageButtonTintColor
+        profileImageButton.layer.cornerRadius = Metrics.profileImageButtonSize / 2
+        profileImageButton.layer.masksToBounds = true
+        profileImageButton.layer.borderColor = Colors.profileImageButtonTintColor.cgColor
+        profileImageButton.layer.borderWidth = Constants.profileImageButtonBorderWidth
     }
     
     func setupEmailTextFieldAppearance() {
@@ -397,6 +393,8 @@ private extension RegistrationView {
 
 private extension RegistrationView {
     func setupActions() {
+        profileImageButton.addTarget(self, action: #selector(didPressProfileImageButton), for: .touchUpInside)
+        
         signUpButton.addTarget(self, action: #selector(didPressSignUpButton), for: .touchUpInside)
         
         emailTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
@@ -404,11 +402,24 @@ private extension RegistrationView {
         passwordTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
     }
     
+    @objc func didPressProfileImageButton() {
+        delegate?.registrationViewDidPressProfileImageButton(self)
+    }
+    
     @objc func didPressSignUpButton() {
         hideEmailAlertLabel()
         hideUsernameAlertLabel()
         
-        delegate?.registrationViewDidPressSignUpButton(self)
+        let profileImage = (profileImageButton.currentImage == AssetsImages.profileImage) ?
+            nil : profileImageButton.currentImage
+        
+        let info = RegistrationInfo(profileImage: profileImage,
+                                    email: emailTextField.text,
+                                    fullName: fullNameTextField.text,
+                                    username: usernameTextField.text,
+                                    password: passwordTextField.text)
+        
+        delegate?.registrationViewDidPressSignUpButton(self, withInfo: info)
     }
     
     @objc func textFieldDidChangeWithDelay(_ textField: UITextField) {
@@ -421,9 +432,9 @@ private extension RegistrationView {
     
     @objc func textFieldDidChange(_ textField: UITextField) {        
         switch textField {
-        case emailTextField: delegate?.registrationViewEmailDidChange(self, email: email)
-        case usernameTextField: delegate?.registrationViewUsernameDidChange(self, username: username)
-        case passwordTextField: delegate?.registrationViewPasswordDidChange(self, password: password)
+        case emailTextField: delegate?.registrationViewEmailDidChange(self, email: emailTextField.text)
+        case usernameTextField: delegate?.registrationViewUsernameDidChange(self, username: usernameTextField.text)
+        case passwordTextField: delegate?.registrationViewPasswordDidChange(self, password: passwordTextField.text)
         default: break
         }
     }
