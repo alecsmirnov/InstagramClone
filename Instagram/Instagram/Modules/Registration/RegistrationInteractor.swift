@@ -10,7 +10,7 @@ protocol IRegistrationInteractor: AnyObject {
     func checkUsername(_ username: String)
     func checkPassword(_ password: String)
     
-    func signUp(withInfo info: RegistrationInfo)
+    func signUp(withInfo info: Registration)
 }
 
 protocol IRegistrationInteractorOutput: AnyObject {
@@ -25,7 +25,7 @@ protocol IRegistrationInteractorOutput: AnyObject {
     func isEmptyUsername()
     
     func isValidPassword()
-    func isInvalidPassword()
+    func isInvalidPassword(lengthMin: Int)
     func isEmptyPassword()
     
     func signUpSuccess()
@@ -91,7 +91,7 @@ extension RegistrationInteractor: IRegistrationInteractor {
         }
         
         guard InputValidation.passwordLengthMin <= password.count else {
-            presenter?.isInvalidPassword()
+            presenter?.isInvalidPassword(lengthMin: InputValidation.passwordLengthMin)
             
             return
         }
@@ -99,22 +99,17 @@ extension RegistrationInteractor: IRegistrationInteractor {
         presenter?.isValidPassword()
     }
     
-    func signUp(withInfo info: RegistrationInfo) {
-        guard let email = info.email,
-              let username = info.username,
-              let password = info.password else { return }
+    func signUp(withInfo info: Registration) {
+        guard !info.email.isEmpty, !info.username.isEmpty, !info.password.isEmpty else { return }
         
-        let fullName = (info.fullName?.isEmpty ?? true) ? nil : info.fullName
+        let profileImageData = info.profileImage?.resize(withWidth: SharedMetrics.profileImageSize,
+                                                         height: SharedMetrics.profileImageSize,
+                                                         contentMode: .aspectFill).pngData()
         
-        let compressedProfileImage = info.profileImage?.resize(withWidth: SharedMetrics.profileImageSize,
-                                                               height: SharedMetrics.profileImageSize,
-                                                               contentMode: .aspectFill)
-        let profileImageData = compressedProfileImage?.pngData()
-        
-        FirebaseUserService.createUser(withEmail: email,
-                                       fullName: fullName,
-                                       username: username,
-                                       password: password,
+        FirebaseUserService.createUser(withEmail: info.email,
+                                       fullName: info.fullName.isEmpty ? nil : info.fullName,
+                                       username: info.username,
+                                       password: info.password,
                                        profileImageData: profileImageData) { [self] isUserCreated in
             if isUserCreated {
                 presenter?.signUpSuccess()

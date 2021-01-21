@@ -10,7 +10,7 @@ import UIKit
 protocol RegistrationViewDelegate: AnyObject {
     func registrationViewDidPressProfileImageButton(_ registrationView: RegistrationView)
     
-    func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView, withInfo info: RegistrationInfo)
+    func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView, withInfo info: Registration)
     func registrationViewDidPressSignInButton(_ registrationView: RegistrationView)
     
     func registrationViewEmailDidChange(_ registrationView: RegistrationView, email: String)
@@ -226,7 +226,7 @@ private extension RegistrationView {
     }
     
     func setupProfileImageButtonAppearance() {
-        profileImageButton.setImage(AssetsImages.profileImage, for: .normal)
+        profileImageButton.setImage(AssetsImages.profile, for: .normal)
         profileImageButton.tintColor = Colors.profileImageButtonTintColor
         profileImageButton.layer.cornerRadius = Metrics.profileImageButtonSize / 2
         profileImageButton.layer.masksToBounds = true
@@ -409,14 +409,14 @@ private extension RegistrationView {
     }
     
     @objc func didPressSignUpButton() {
-        let isDefaultProfileImage = profileImageButton.currentImage == AssetsImages.profileImage
+        let isDefaultProfileImage = profileImageButton.currentImage == AssetsImages.profile
         let profileImage = isDefaultProfileImage ? nil : profileImageButton.currentImage
         
-        let info = RegistrationInfo(profileImage: profileImage,
-                                    email: emailTextField.text,
-                                    fullName: fullNameTextField.text,
-                                    username: usernameTextField.text,
-                                    password: passwordTextField.text)
+        let info = Registration(profileImage: profileImage,
+                                email: emailTextField.text ?? "",
+                                fullName: fullNameTextField.text ?? "",
+                                username: usernameTextField.text ?? "",
+                                password: passwordTextField.text ?? "")
         
         delegate?.registrationViewDidPressSignUpButton(self, withInfo: info)
     }

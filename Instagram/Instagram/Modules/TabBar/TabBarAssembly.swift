@@ -8,21 +8,37 @@
 import UIKit
 
 final class TabBarAssembly {
-    // MARK: Properties
+    // MARK: Constants
     
-    private enum Constants {
-        static let homeTabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house"), tag: 0)
+    private enum Colors {
+        static let tint = UIColor.black
+    }
+    
+    private enum TabBarItems {
+        static let home = UITabBarItem(title: nil,
+                                       image: AssetsImages.homeUnselected,
+                                       selectedImage: AssetsImages.homeSelected)
+        static let profile = UITabBarItem(title: nil,
+                                          image: AssetsImages.profileUnselected,
+                                          selectedImage: AssetsImages.profileSelected)
     }
 }
 
 // MARK: - Public Methods
 
 extension TabBarAssembly {
-    static func createTabBarController() -> TabBarController {
-        let homeTab = createNavigationController(viewController: HomeAssembly.createHomeViewController(),
-                                                 tabBarItem: Constants.homeTabBarItem)
+    static func createTabBarController() -> UITabBarController {
+        let homeViewController = HomeAssembly.createHomeViewController()
+        let profileViewController = ProfileAssembly.createProfileViewController()
         
-        let tabBarController = TabBarController(viewControllers: [homeTab])
+        let homeTab = createNavigationController(viewController: homeViewController, tabBarItem: TabBarItems.home)
+        let profileTab = createNavigationController(viewController: profileViewController,
+                                                    tabBarItem: TabBarItems.profile)
+        
+        let tabBarController = UITabBarController()
+        
+        tabBarController.viewControllers = [homeTab, profileTab]
+        tabBarController.tabBar.tintColor = Colors.tint
         
         return tabBarController
     }
@@ -35,8 +51,9 @@ private extension TabBarAssembly {
         viewController: UIViewController,
         tabBarItem: UITabBarItem
     ) -> UINavigationController {
-        viewController.tabBarItem = tabBarItem
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.tabBarItem = tabBarItem
         
-        return UINavigationController(rootViewController: viewController)
+        return navigationController
     }
 }

@@ -7,12 +7,8 @@
 
 import UIKit
 
-final class HomeViewController: UIViewController {
+final class HomeViewController: CustomViewController<HomeView> {
     // MARK: Lifecycle
-    
-    override func loadView() {
-        view = HomeView()
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

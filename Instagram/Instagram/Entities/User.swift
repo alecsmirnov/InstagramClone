@@ -1,11 +1,11 @@
 //
-//  UserNode.swift
+//  User.swift
 //  Instagram
 //
-//  Created by Admin on 19.01.2021.
+//  Created by Admin on 21.01.2021.
 //
 
-struct UserNode {
+struct User {
     let email: String
     let fullName: String?
     let username: String
@@ -14,7 +14,7 @@ struct UserNode {
 
 // MARK: - Codable
 
-extension UserNode: Codable {
+extension User: Codable {
     enum CodingKeys: String, CodingKey {
         case email
         case fullName = "full_name"

@@ -8,6 +8,10 @@
 import UIKit
 
 enum AssetsImages {
-    static let instagramIcon = UIImage(named: "instagramIcon")
-    static let profileImage = UIImage(named: "profileImage")
+    static let instagramIcon = UIImage(named: "instagram_icon")
+    static let profile = UIImage(named: "profile_default")
+    static let profileUnselected = UIImage(named: "profile_unselected")
+    static let profileSelected = UIImage(named: "profile_selected")
+    static let homeUnselected = UIImage(named: "home_unselected")
+    static let homeSelected = UIImage(named: "home_selected")
 }

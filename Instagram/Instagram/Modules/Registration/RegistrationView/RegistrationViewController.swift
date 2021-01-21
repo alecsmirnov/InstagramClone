@@ -16,7 +16,7 @@ protocol IRegistrationViewController: AnyObject {
     func showAlreadyInUseUsernameAlert()
     func hideUsernameAlert()
     
-    func showShortPasswordAlert()
+    func showShortPasswordAlert(lengthMin: Int)
     func hidePasswordAlert()
     
     func enableSignUpButton()
@@ -76,10 +76,8 @@ extension RegistrationViewController: IRegistrationViewController {
         customView?.hideUsernameAlertLabel()
     }
     
-    func showShortPasswordAlert() {
-        customView?.showPasswordAlertLabel(
-            text: "Password must be \(InputValidation.passwordLengthMin) or more characters"
-        )
+    func showShortPasswordAlert(lengthMin: Int) {
+        customView?.showPasswordAlertLabel(text: "Password must be \(lengthMin) or more characters")
     }
     
     func hidePasswordAlert() {
@@ -102,7 +100,7 @@ extension RegistrationViewController: RegistrationViewDelegate {
         imagePicker?.takePhoto()
     }
     
-    func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView, withInfo info: RegistrationInfo) {
+    func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView, withInfo info: Registration) {
         presenter?.didPressSignUpButton(withInfo: info)
     }
     
