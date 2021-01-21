@@ -8,8 +8,6 @@
 import UIKit
 
 protocol RegistrationViewDelegate: AnyObject {
-    func registrationViewDidPressProfileImageButton(_ registrationView: RegistrationView)
-    
     func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView, withInfo info: Registration)
     func registrationViewDidPressSignInButton(_ registrationView: RegistrationView)
     
@@ -21,7 +19,15 @@ protocol RegistrationViewDelegate: AnyObject {
 final class RegistrationView: UIView {
     // MARK: Properties
     
-    weak var delegate: RegistrationViewDelegate?
+    weak var delegate: RegistrationViewDelegate? {
+        didSet {
+            guard let presentationController = delegate as? UIViewController else { return }
+            
+            imagePicker = ImagePicker(presentationController: presentationController, delegate: self)
+        }
+    }
+    
+    private var imagePicker: ImagePicker?
     
     // MARK: Constants
     
@@ -49,7 +55,8 @@ final class RegistrationView: UIView {
     }
     
     private enum Colors {
-        static let profileImageButtonTintColor = UIColor(white: 0, alpha: 0.9)
+        static let profileImageButtonTint = UIColor(white: 0, alpha: 0.9)
+        static let profileImageButtonBorder = UIColor.systemGray5
         static let textFieldBackground = UIColor(white: 0, alpha: 0.02)
         static let signUpButtonTitle = UIColor.white
         static let signUpButtonBackground = UIColor(red: 0.25, green: 0.36, blue: 0.9, alpha: 1)
@@ -134,10 +141,6 @@ final class RegistrationView: UIView {
 // MARK: - Public Methods
 
 extension RegistrationView {
-    func setProfileImage(_ image: UIImage?) {
-        profileImageButton.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
-    }
-    
     func showEmailAlertLabel(text: String) {
         insertSubviewToStackView(emailAlertLabel, below: emailTextField)
         
@@ -227,10 +230,10 @@ private extension RegistrationView {
     
     func setupProfileImageButtonAppearance() {
         profileImageButton.setImage(AssetsImages.profile, for: .normal)
-        profileImageButton.tintColor = Colors.profileImageButtonTintColor
+        profileImageButton.tintColor = Colors.profileImageButtonTint
         profileImageButton.layer.cornerRadius = Metrics.profileImageButtonSize / 2
         profileImageButton.layer.masksToBounds = true
-        profileImageButton.layer.borderColor = Colors.profileImageButtonTintColor.cgColor
+        profileImageButton.layer.borderColor = Colors.profileImageButtonBorder.cgColor
         profileImageButton.layer.borderWidth = Constants.profileImageButtonBorderWidth
     }
     
@@ -405,7 +408,7 @@ private extension RegistrationView {
     }
     
     @objc func didPressProfileImageButton() {
-        delegate?.registrationViewDidPressProfileImageButton(self)
+        imagePicker?.takePhoto()
     }
     
     @objc func didPressSignUpButton() {
@@ -498,5 +501,13 @@ private extension RegistrationView {
     @objc func keyboardWillHide(notification: NSNotification) {
         scrollView.contentInset.bottom = 0
         scrollView.verticalScrollIndicatorInsets.bottom = scrollView.contentInset.bottom
+    }
+}
+
+// MARK: - ImagePickerDelegate
+
+extension RegistrationView: ImagePickerDelegate {
+    func imagePicker(_ imagePicker: ImagePicker, didSelectImage image: UIImage?) {
+        profileImageButton.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
     }
 }

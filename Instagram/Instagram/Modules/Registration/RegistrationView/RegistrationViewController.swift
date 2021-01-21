@@ -28,24 +28,12 @@ final class RegistrationViewController: CustomViewController<RegistrationView> {
     
     var presenter: IRegistrationPresenter?
     
-    private var imagePicker: ImagePicker?
-    
     // MARK: Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupViewDelegates()
-    }
-}
-
-// MARK: - Private Methods
-
-private extension RegistrationViewController {
-    func setupViewDelegates() {
         customView?.delegate = self
-        
-        imagePicker = ImagePicker(presentationController: self, delegate: self)
     }
 }
 
@@ -95,11 +83,7 @@ extension RegistrationViewController: IRegistrationViewController {
 
 // MARK: - RegistrationViewDelegate
 
-extension RegistrationViewController: RegistrationViewDelegate {
-    func registrationViewDidPressProfileImageButton(_ registrationView: RegistrationView) {
-        imagePicker?.takePhoto()
-    }
-    
+extension RegistrationViewController: RegistrationViewDelegate {    
     func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView, withInfo info: Registration) {
         presenter?.didPressSignUpButton(withInfo: info)
     }
@@ -118,13 +102,5 @@ extension RegistrationViewController: RegistrationViewDelegate {
     
     func registrationViewPasswordDidChange(_ registrationView: RegistrationView, password: String) {
         presenter?.passwordDidChange(password)
-    }
-}
-
-// MARK: - ImagePickerDelegate
-
-extension RegistrationViewController: ImagePickerDelegate {
-    func imagePicker(_ imagePicker: ImagePicker, didSelectImage image: UIImage?) {
-        customView?.setProfileImage(image)
     }
 }
