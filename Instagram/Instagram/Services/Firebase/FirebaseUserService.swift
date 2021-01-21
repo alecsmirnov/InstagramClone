@@ -50,29 +50,25 @@ extension FirebaseUserService {
         createUserAccount(withEmail: email, password: password) { result in
             switch result {
             case .success(let identifier):
-                var profileImageURL: String?
-                
                 if let profileImageData = profileImageData {
                     uploadUserProfilePNGImageData(profileImageData, identifier: identifier) { result in
                         switch result {
-                        case .success(let urlString):
-                            profileImageURL = urlString
+                        case .success(let profileImageURL):
+                            createUserRecord(identifier: identifier,
+                                             email: email,
+                                             fullName: fullName,
+                                             username: username,
+                                             profileImageURL: profileImageURL) { error in
+                                if let error = error {
+                                    assertionFailure(error.localizedDescription)
+                                }
+                                
+                                completion(error == nil)
+                            }
                         case .failure(let error):
                             assertionFailure(error.localizedDescription)
                         }
                     }
-                }
-                
-                createUserRecord(identifier: identifier,
-                                 email: email,
-                                 fullName: fullName,
-                                 username: username,
-                                 profileImageURL: profileImageURL) { error in
-                    if let error = error {
-                        assertionFailure(error.localizedDescription)
-                    }
-                    
-                    completion(error == nil)
                 }
             case .failure(let error):
                 assertionFailure(error.localizedDescription)
