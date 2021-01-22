@@ -15,12 +15,14 @@ final class TabBarAssembly {
     }
     
     private enum TabBarItems {
-        static let home = UITabBarItem(title: nil,
-                                       image: AssetsImages.homeUnselected,
-                                       selectedImage: AssetsImages.homeSelected)
-        static let profile = UITabBarItem(title: nil,
-                                          image: AssetsImages.profileUnselected,
-                                          selectedImage: AssetsImages.profileSelected)
+        static let home = UITabBarItem(
+            title: nil,
+            image: AssetsImages.homeUnselected,
+            selectedImage: AssetsImages.homeSelected)
+        static let profile = UITabBarItem(
+            title: nil,
+            image: AssetsImages.profileUnselected,
+            selectedImage: AssetsImages.profileSelected)
     }
 }
 
@@ -28,16 +30,17 @@ final class TabBarAssembly {
 
 extension TabBarAssembly {
     static func createTabBarController() -> UITabBarController {
-        let homeViewController = HomeAssembly.createHomeViewController()
+        //let homeViewController = HomeAssembly.createHomeViewController()
         let profileViewController = ProfileAssembly.createProfileViewController()
         
-        let homeTab = createNavigationController(viewController: homeViewController, tabBarItem: TabBarItems.home)
-        let profileTab = createNavigationController(viewController: profileViewController,
-                                                    tabBarItem: TabBarItems.profile)
+        //let homeTab = createNavigationController(viewController: homeViewController, tabBarItem: TabBarItems.home)
+        let profileTab = createNavigationController(
+            viewController: profileViewController,
+            tabBarItem: TabBarItems.profile)
         
         let tabBarController = UITabBarController()
         
-        tabBarController.viewControllers = [homeTab, profileTab]
+        tabBarController.viewControllers = [profileTab]
         tabBarController.tabBar.tintColor = Colors.tint
         
         return tabBarController

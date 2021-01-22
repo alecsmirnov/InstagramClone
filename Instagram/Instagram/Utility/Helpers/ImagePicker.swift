@@ -28,6 +28,10 @@ final class ImagePicker: NSObject {
     
     // MARK: Initialization
     
+    override init() {
+        super.init()
+    }
+    
     init(presentationController: UIViewController, delegate: ImagePickerDelegate) {
         super.init()
 

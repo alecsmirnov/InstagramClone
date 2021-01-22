@@ -18,7 +18,7 @@ enum JSONCoding {
             
             dictionary = dictionaryData as? [String: Any]
         } catch let error {
-            assertionFailure(error.localizedDescription)
+            print("Unable to encode into dictionary: \(error.localizedDescription)")
         }
         
         return dictionary
@@ -33,7 +33,7 @@ enum JSONCoding {
             
             jsonType = try jsonDecoder.decode(T.self, from: jsonData)
         } catch let error {
-            assertionFailure(error.localizedDescription)
+            print("Unable to decode type: \(error.localizedDescription)")
         }
         
         return jsonType

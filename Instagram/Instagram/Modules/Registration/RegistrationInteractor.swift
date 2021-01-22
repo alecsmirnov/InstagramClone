@@ -102,15 +102,17 @@ extension RegistrationInteractor: IRegistrationInteractor {
     func signUp(withInfo info: Registration) {
         guard !info.email.isEmpty, !info.username.isEmpty, !info.password.isEmpty else { return }
         
-        let profileImageData = info.profileImage?.resize(withWidth: SharedMetrics.profileImageSize,
-                                                         height: SharedMetrics.profileImageSize,
-                                                         contentMode: .aspectFill).pngData()
+        let profileImageData = info.profileImage?.resize(
+            withWidth: SharedMetrics.profileImageSize,
+            height: SharedMetrics.profileImageSize,
+            contentMode: .aspectFill).pngData()
         
-        FirebaseUserService.createUser(withEmail: info.email,
-                                       fullName: info.fullName.isEmpty ? nil : info.fullName,
-                                       username: info.username,
-                                       password: info.password,
-                                       profileImageData: profileImageData) { [self] isUserCreated in
+        FirebaseUserService.createUser(
+            withEmail: info.email,
+            fullName: info.fullName.isEmpty ? nil : info.fullName,
+            username: info.username,
+            password: info.password,
+            profileImageData: profileImageData) { [self] isUserCreated in
             if isUserCreated {
                 presenter?.signUpSuccess()
             } else {

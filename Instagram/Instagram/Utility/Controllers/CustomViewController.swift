@@ -12,7 +12,7 @@ class CustomViewController<CustomView: UIView>: UIViewController {
     
     internal var customView: CustomView? {
         guard let view = view as? CustomView else {
-            assertionFailure("view is not a CustomView instance")
+            print("view is not a CustomView instance")
             
             return nil
         }

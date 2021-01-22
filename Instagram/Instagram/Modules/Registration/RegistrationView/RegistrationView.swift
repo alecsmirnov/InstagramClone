@@ -337,12 +337,15 @@ private extension RegistrationView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: profileImageButton.bottomAnchor,
-                                           constant: Metrics.profileImageButtonBottomSpace),
-            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,
-                                               constant: Metrics.stackViewHorizontalSpace),
-            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
-                                                constant: -Metrics.stackViewHorizontalSpace),
+            stackView.topAnchor.constraint(
+                equalTo: profileImageButton.bottomAnchor,
+                constant: Metrics.profileImageButtonBottomSpace),
+            stackView.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor,
+                constant: Metrics.stackViewHorizontalSpace),
+            stackView.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: -Metrics.stackViewHorizontalSpace),
         ])
         
         stackView.spacing = Metrics.stackViewSpace
@@ -353,8 +356,9 @@ private extension RegistrationView {
         profileImageButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            profileImageButton.topAnchor.constraint(equalTo: contentView.topAnchor,
-                                                    constant: Metrics.profileImageButtonTopSpace),
+            profileImageButton.topAnchor.constraint(
+                equalTo: contentView.topAnchor,
+                constant: Metrics.profileImageButtonTopSpace),
             profileImageButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             profileImageButton.heightAnchor.constraint(equalToConstant: Metrics.profileImageButtonSize),
             profileImageButton.widthAnchor.constraint(equalToConstant: Metrics.profileImageButtonSize),
@@ -415,19 +419,21 @@ private extension RegistrationView {
         let isDefaultProfileImage = profileImageButton.currentImage == AssetsImages.profile
         let profileImage = isDefaultProfileImage ? nil : profileImageButton.currentImage
         
-        let info = Registration(profileImage: profileImage,
-                                email: emailTextField.text ?? "",
-                                fullName: fullNameTextField.text ?? "",
-                                username: usernameTextField.text ?? "",
-                                password: passwordTextField.text ?? "")
+        let info = Registration(
+            profileImage: profileImage,
+            email: emailTextField.text ?? "",
+            fullName: fullNameTextField.text ?? "",
+            username: usernameTextField.text ?? "",
+            password: passwordTextField.text ?? "")
         
         delegate?.registrationViewDidPressSignUpButton(self, withInfo: info)
     }
     
     @objc func textFieldDidChangeWithDelay(_ textField: UITextField) {
-        NSObject.cancelPreviousPerformRequests(withTarget: self,
-                                               selector: #selector(textFieldDidChange(_:)),
-                                               object: textField)
+        NSObject.cancelPreviousPerformRequests(
+            withTarget: self,
+            selector: #selector(textFieldDidChange(_:)),
+            object: textField)
         
         perform(#selector(textFieldDidChange(_:)), with: textField, afterDelay: Constants.textFieldInputDelay)
     }
@@ -477,12 +483,14 @@ private extension RegistrationView {
     }
     
     func setupKeyboardObservers() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillShow),
-                                               name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillHide),
-                                               name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     func removeKeyboardObservers() {
@@ -491,8 +499,12 @@ private extension RegistrationView {
     }
     
     @objc func keyboardWillShow(notification: NSNotification) {
-        guard let userInfo = notification.userInfo,
-              let keyboardSize = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        guard
+            let userInfo = notification.userInfo,
+            let keyboardSize = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue
+        else {
+            return
+        }
         
         scrollView.contentInset.bottom = keyboardSize.cgRectValue.height
         scrollView.verticalScrollIndicatorInsets.bottom = scrollView.contentInset.bottom

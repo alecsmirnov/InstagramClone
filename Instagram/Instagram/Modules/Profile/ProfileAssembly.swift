@@ -15,7 +15,7 @@ enum ProfileAssembly {
         
         viewController.presenter = presenter
         
-        //interactor.presenter = presenter
+        interactor.presenter = presenter
         
         presenter.viewController = viewController
         presenter.interactor = interactor

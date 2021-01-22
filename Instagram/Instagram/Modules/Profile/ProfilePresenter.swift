@@ -6,7 +6,7 @@
 //
 
 protocol IProfilePresenter: AnyObject {
-    
+    func viewDidLoad()
 }
 
 final class ProfilePresenter {
@@ -18,5 +18,19 @@ final class ProfilePresenter {
 // MARK: - IProfilePresenter
 
 extension ProfilePresenter: IProfilePresenter {
+    func viewDidLoad() {
+        interactor?.fetchUser()
+    }
+}
+
+// MARK: - IProfileInteractorOutput
+
+extension ProfilePresenter: IProfileInteractorOutput {
+    func fetchUserSuccess(_ user: User) {
+        viewController?.setUser(user)
+    }
     
+    func fetchUserFailure() {
+        
+    }
 }

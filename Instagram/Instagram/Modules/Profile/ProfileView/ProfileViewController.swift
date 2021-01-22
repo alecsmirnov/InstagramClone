@@ -8,7 +8,7 @@
 import UIKit
 
 protocol IProfileViewController: AnyObject {
-    func setTitle(text: String)
+    func setUser(_ user: User)
 }
 
 final class ProfileViewController: CustomViewController<ProfileView> {
@@ -21,14 +21,16 @@ final class ProfileViewController: CustomViewController<ProfileView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setTitle(text: "test title")
+        presenter?.viewDidLoad()
     }
 }
 
 // MARK: - IProfileViewController
 
 extension ProfileViewController: IProfileViewController {
-    func setTitle(text: String) {
-        navigationItem.title = text
+    func setUser(_ user: User) {
+        navigationItem.title = user.username
+        
+        customView?.setUser(user)
     }
 }
