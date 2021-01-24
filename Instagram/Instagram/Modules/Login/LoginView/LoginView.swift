@@ -8,14 +8,11 @@
 import UIKit
 
 protocol LoginViewDelegate: AnyObject {
-    func registrationViewDidPressSignInButton(
-        _ registrationView: RegistrationView,
-        withEmail email: String,
-        password: String)
-    func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView)
+    func loginViewDidPressSignInButton(_ registrationView: LoginView, withEmail email: String, password: String)
+    func loginViewDidPressSignUpButton(_ registrationView: LoginView)
     
-    func registrationViewEmailDidChange(_ registrationView: RegistrationView, email: String)
-    func registrationViewPasswordDidChange(_ registrationView: RegistrationView, password: String)
+    func loginViewEmailDidChange(_ registrationView: LoginView, email: String)
+    func loginViewPasswordDidChange(_ registrationView: LoginView, password: String)
 }
 
 final class LoginView: UIView {
@@ -34,6 +31,9 @@ final class LoginView: UIView {
     private let emailTextField = UITextField()
     private let passwordTextField = UITextField()
     private let signInButton = UIButton(type: .system)
+    
+    private let separatorView = UIView()
+    private let signUpButton = UIButton(type: .system)
     
     private lazy var emailAlertLabel: UILabel = {
         let label = UILabel()
@@ -60,7 +60,8 @@ final class LoginView: UIView {
         
         setupAppearance()
         setupLayout()
-//        setupActions()
+        setupActions()
+        setupGestures()
     }
     
     required init?(coder: NSCoder) {
@@ -77,6 +78,9 @@ private extension LoginView {
         setupScrollViewAppearance()
         setupLogoImageViewAppearance()
         setupStackViewAppearance()
+        setupSignInButtonAppearance()
+        setupSeparatorViewAppearance()
+        setupSignUpButtonAppearance()
     }
     
     func setupScrollViewAppearance() {
@@ -98,18 +102,24 @@ private extension LoginView {
         LoginView.setupStackViewTextFieldAppearance(
             passwordTextField,
             placeholder: LoginRegistrationConstants.TextFieldPlaceholders.password)
-        
-        setupStackViewSignUpButtonAppearance()
     }
     
-    func setupStackViewSignUpButtonAppearance() {
-        signInButton.setTitle(LoginRegistrationConstants.ButtonTitles.signIn, for: .normal)
+    func setupSignInButtonAppearance() {
+        signInButton.setTitle(LoginRegistrationConstants.ButtonTitles.signInMain, for: .normal)
         signInButton.setTitleColor(LoginRegistrationConstants.Colors.mainButtonTitle, for: .normal)
         signInButton.titleLabel?.font = .boldSystemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
         signInButton.backgroundColor = LoginRegistrationConstants.Colors.mainButtonBackground
         signInButton.layer.cornerRadius = LoginRegistrationConstants.Metrics.mainButtonCornerRadius
         
         //disableSignInButton()
+    }
+    
+    func setupSeparatorViewAppearance() {
+        separatorView.backgroundColor = LoginRegistrationConstants.Colors.separatorView
+    }
+    
+    func setupSignUpButtonAppearance() {
+        signUpButton.setTitle(LoginRegistrationConstants.ButtonTitles.signUpExtra, for: .normal)
     }
 }
 
@@ -138,6 +148,8 @@ private extension LoginView {
         setupContentViewLayout()
         setupLogoImageViewLayout()
         setupStackViewLayout()
+        setupSeparatorViewLayout()
+        setupSignUpButtonLayout()
     }
     
     func setupSubviews() {
@@ -145,6 +157,8 @@ private extension LoginView {
         
         scrollView.addSubview(screenView)
         screenView.addSubview(contentView)
+        screenView.addSubview(separatorView)
+        screenView.addSubview(signUpButton)
         
         contentView.addSubview(logoImageView)
         contentView.addSubview(stackView)
@@ -228,6 +242,31 @@ private extension LoginView {
         
         passwordTextField.isSecureTextEntry = true
     }
+    
+    func setupSeparatorViewLayout() {
+        separatorView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            separatorView.bottomAnchor.constraint(
+                equalTo: signUpButton.topAnchor,
+                constant: -LoginRegistrationConstants.Metrics.extraButtonVerticalSpace),
+            separatorView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            separatorView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            separatorView.heightAnchor.constraint(
+                equalToConstant: LoginRegistrationConstants.Metrics.separatorViewWidth),
+        ])
+    }
+    
+    func setupSignUpButtonLayout() {
+        signUpButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            signUpButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            signUpButton.bottomAnchor.constraint(
+                equalTo: screenView.bottomAnchor,
+                constant: -LoginRegistrationConstants.Metrics.extraButtonVerticalSpace),
+        ])
+    }
 }
 
 // MARK: - Layout Helpers
@@ -237,5 +276,66 @@ private extension LoginView {
         subview.translatesAutoresizingMaskIntoConstraints = false
         
         subview.heightAnchor.constraint(equalToConstant: height).isActive = true
+    }
+}
+
+// MARK: - Actions
+
+private extension LoginView {
+    func setupActions() {
+        emailTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
+        passwordTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
+        
+        signInButton.addTarget(self, action: #selector(didPressSignInButton), for: .touchUpInside)
+        signUpButton.addTarget(self, action: #selector(didPressSignUpButton), for: .touchUpInside)
+    }
+    
+    @objc func textFieldDidChangeWithDelay(_ textField: UITextField) {
+        NSObject.cancelPreviousPerformRequests(
+            withTarget: self,
+            selector: #selector(textFieldDidChange(_:)),
+            object: textField)
+        
+        perform(
+            #selector(textFieldDidChange(_:)),
+            with: textField,
+            afterDelay: LoginRegistrationConstants.Constants.textFieldInputDelay)
+    }
+    
+    @objc func textFieldDidChange(_ textField: UITextField) {
+        switch textField {
+        case emailTextField:
+            delegate?.loginViewEmailDidChange(self, email: emailTextField.text ?? "")
+        case passwordTextField:
+            delegate?.loginViewPasswordDidChange(self, password: passwordTextField.text ?? "")
+        default:
+            break
+        }
+    }
+    
+    @objc func didPressSignInButton() {
+        delegate?.loginViewDidPressSignInButton(
+            self,
+            withEmail: emailTextField.text ?? "",
+            password: passwordTextField.text ?? "")
+    }
+    
+    @objc func didPressSignUpButton() {
+        delegate?.loginViewDidPressSignUpButton(self)
+    }
+}
+
+// MARK: - Gestures
+
+private extension LoginView {
+    func setupGestures() {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGestureRecognizer.cancelsTouchesInView = false
+        
+        addGestureRecognizer(tapGestureRecognizer)
+    }
+    
+    @objc func dismissKeyboard() {
+        endEditing(true)
     }
 }

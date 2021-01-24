@@ -165,6 +165,7 @@ private extension RegistrationView {
         setupScrollViewAppearance()
         setupProfileImageButtonAppearance()
         setupStackViewAppearance()
+        setupUpButtonAppearance()
     }
     
     func setupScrollViewAppearance() {
@@ -196,12 +197,10 @@ private extension RegistrationView {
         RegistrationView.setupStackViewTextFieldAppearance(
             passwordTextField,
             placeholder: LoginRegistrationConstants.TextFieldPlaceholders.password)
-        
-        setupStackViewSignUpButtonAppearance()
     }
     
-    func setupStackViewSignUpButtonAppearance() {
-        signUpButton.setTitle(LoginRegistrationConstants.ButtonTitles.signUp, for: .normal)
+    func setupUpButtonAppearance() {
+        signUpButton.setTitle(LoginRegistrationConstants.ButtonTitles.signUpMain, for: .normal)
         signUpButton.setTitleColor(LoginRegistrationConstants.Colors.mainButtonTitle, for: .normal)
         signUpButton.titleLabel?.font = .boldSystemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
         signUpButton.backgroundColor = LoginRegistrationConstants.Colors.mainButtonBackground
@@ -351,29 +350,15 @@ private extension RegistrationView {
     func setupActions() {
         profileImageButton.addTarget(self, action: #selector(didPressProfileImageButton), for: .touchUpInside)
         
-        signUpButton.addTarget(self, action: #selector(didPressSignUpButton), for: .touchUpInside)
-        
         emailTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
         usernameTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
         passwordTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
+        
+        signUpButton.addTarget(self, action: #selector(didPressSignUpButton), for: .touchUpInside)
     }
     
     @objc func didPressProfileImageButton() {
         imagePicker?.takePhoto()
-    }
-    
-    @objc func didPressSignUpButton() {
-        let isDefaultProfileImage = profileImageButton.currentImage == LoginRegistrationConstants.Images.profile
-        let profileImage = isDefaultProfileImage ? nil : profileImageButton.currentImage
-        
-        let info = Registration(
-            profileImage: profileImage,
-            email: emailTextField.text ?? "",
-            fullName: fullNameTextField.text ?? "",
-            username: usernameTextField.text ?? "",
-            password: passwordTextField.text ?? "")
-        
-        delegate?.registrationViewDidPressSignUpButton(self, withInfo: info)
     }
     
     @objc func textFieldDidChangeWithDelay(_ textField: UITextField) {
@@ -400,16 +385,26 @@ private extension RegistrationView {
             break
         }
     }
+    
+    @objc func didPressSignUpButton() {
+        let isDefaultProfileImage = profileImageButton.currentImage == LoginRegistrationConstants.Images.profile
+        let profileImage = isDefaultProfileImage ? nil : profileImageButton.currentImage
+        
+        let info = Registration(
+            profileImage: profileImage,
+            email: emailTextField.text ?? "",
+            fullName: fullNameTextField.text ?? "",
+            username: usernameTextField.text ?? "",
+            password: passwordTextField.text ?? "")
+        
+        delegate?.registrationViewDidPressSignUpButton(self, withInfo: info)
+    }
 }
 
 // MARK: - Gestures
 
 private extension RegistrationView {
     func setupGestures() {
-        setupKeyboardDismissGesture()
-    }
-    
-    func setupKeyboardDismissGesture() {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGestureRecognizer.cancelsTouchesInView = false
         

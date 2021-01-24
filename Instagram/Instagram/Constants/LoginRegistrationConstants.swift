@@ -19,6 +19,9 @@ enum LoginRegistrationConstants {
         static let stackViewSubviewHeight: CGFloat = 40
         
         static let mainButtonCornerRadius: CGFloat = 4
+        static let extraButtonVerticalSpace: CGFloat = 10
+        
+        static let separatorViewWidth: CGFloat = 1.5
         
         static let fontSize: CGFloat = 14
         static let alertFontSize: CGFloat = 12
@@ -33,6 +36,8 @@ enum LoginRegistrationConstants {
         static let mainButtonTitle = UIColor.white
         static let mainButtonBackground = UIColor(red: 0.25, green: 0.36, blue: 0.9, alpha: 1)
         
+        static let separatorView = UIColor.systemGray5
+        
         static let alert = UIColor(red: 0.99, green: 0.11, blue: 0.11, alpha: 1)
     }
     
@@ -44,8 +49,11 @@ enum LoginRegistrationConstants {
     }
     
     enum ButtonTitles {
-        static let signUp = "Sign Up"
-        static let signIn = "Sign In"
+        static let signUpMain = "Sign Up"
+        static let signInMain = "Sign In"
+        
+        static let signUpExtra = "Don't have an account? Sign Up"
+        static let signInExtra = "Already have an account? Sign In"
     }
     
     enum Images {
