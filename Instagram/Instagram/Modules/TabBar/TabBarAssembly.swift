@@ -38,9 +38,14 @@ extension TabBarAssembly {
             viewController: profileViewController,
             tabBarItem: TabBarItems.profile)
         
+        let registrationViewController = RegistrationAssembly.createRegistrationViewController()
+        let registrationTab = createNavigationController(
+            viewController: registrationViewController,
+            tabBarItem: TabBarItems.home)
+        
         let tabBarController = UITabBarController()
         
-        tabBarController.viewControllers = [profileTab]
+        tabBarController.viewControllers = [profileTab, registrationTab]
         tabBarController.tabBar.tintColor = Colors.tint
         
         return tabBarController

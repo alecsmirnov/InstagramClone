@@ -145,7 +145,7 @@ private extension FirebaseUserService {
         profileImageURL: String?,
         completion: @escaping (Bool) -> Void
     ) {
-        let user = User(email: email, fullName: fullName, username: username, profileImageURL: profileImageURL)
+        let user = User(fullName: fullName, username: username, profileImageURL: profileImageURL)
         
         if let userDictionary = JSONCoding.toDictionary(user) {
             databaseReference
@@ -159,8 +159,27 @@ private extension FirebaseUserService {
                     
                     return
                 }
-                    
-                completion(true)
+                
+                let userPrivateInfo = UserPrivateInfo(email: email, gender: nil, phone: nil)
+                
+                if let userPrivateInfoDictionary = JSONCoding.toDictionary(userPrivateInfo) {
+                    databaseReference
+                        .child(FirebaseTables.usersPrivateInfo)
+                        .child(identifier)
+                        .setValue(userPrivateInfoDictionary) { error, _ in
+                        guard error == nil else {
+                            print("Failed to create user private info record: \(error?.localizedDescription ?? "")")
+                            
+                            databaseReference.child(FirebaseTables.users).child(identifier).removeValue()
+                            
+                            completion(false)
+                            
+                            return
+                        }
+                        
+                        completion(true)
+                    }
+                }
             }
         }
     }

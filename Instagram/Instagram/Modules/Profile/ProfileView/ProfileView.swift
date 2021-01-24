@@ -16,11 +16,13 @@ final class ProfileView: UIView {
     
     private enum Metrics {
         static let headerViewHeight: CGFloat = 200
+        
+        static let estimatedHeight: CGFloat = 44
     }
     
     // MARK: Subviews
     
-    private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
     
     // MARK: Initialization
     
@@ -29,9 +31,6 @@ final class ProfileView: UIView {
         
         setupAppearance()
         setupLayout()
-//        setupActions()
-//        setupGestures()
-//        setupKeyboardEvents()
     }
     
     required init?(coder: NSCoder) {
@@ -66,16 +65,18 @@ private extension ProfileView {
     
     func setupCollectionViewAppearance() {
         collectionView.backgroundColor = .clear
+        collectionView.delaysContentTouches = false
         
         collectionView.dataSource = self
         collectionView.delegate = self
         
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "headerCell")
-        
         collectionView.register(
-            ProfileViewHeader.self,
+            ProfileHeaderCollectionViewCell.self,
+            forCellWithReuseIdentifier: ProfileHeaderCollectionViewCell.reuseIdentifier)
+        collectionView.register(
+            ProfileCollectionReusableView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: ProfileViewHeader.reuseIdentifier)
+            withReuseIdentifier: ProfileCollectionReusableView.reuseIdentifier)
     }
 }
 
@@ -101,20 +102,48 @@ private extension ProfileView {
             collectionView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
         ])
+        
+        let itemLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .estimated(44))
+        
+        let item = NSCollectionLayoutItem(layoutSize: itemLayoutSize)
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemLayoutSize, subitem: item, count: 1)
+        
+        let headerLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .estimated(44))
+        
+        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: headerLayoutSize,
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top)
+
+        let section = NSCollectionLayoutSection(group: group)
+        
+        section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0)
+        section.interGroupSpacing = 10
+        section.boundarySupplementaryItems = [sectionHeader]
+
+        let collectionViewCompositionalLayout = UICollectionViewCompositionalLayout(section: section)
+        
+        collectionView.collectionViewLayout = collectionViewCompositionalLayout
     }
 }
 
 // MARK: - UICollectionViewDataSource
 extension ProfileView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4
+        return 1
     }
 
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "headerCell", for: indexPath)
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: ProfileHeaderCollectionViewCell.reuseIdentifier,
+            for: indexPath)
         
         cell.backgroundColor = .blue
         
@@ -128,8 +157,8 @@ extension ProfileView: UICollectionViewDataSource {
     ) -> UICollectionReusableView {        
         guard let header = collectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
-            withReuseIdentifier: ProfileViewHeader.reuseIdentifier,
-            for: indexPath) as? ProfileViewHeader
+            withReuseIdentifier: ProfileCollectionReusableView.reuseIdentifier,
+            for: indexPath) as? ProfileCollectionReusableView
         else {
             return UICollectionReusableView()
         }
@@ -151,11 +180,5 @@ extension ProfileView: UICollectionViewDelegate {
 // MARK: - UICollectionViewDelegateFlowLayout
 
 extension ProfileView: UICollectionViewDelegateFlowLayout {
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        referenceSizeForHeaderInSection section: Int
-    ) -> CGSize {
-        CGSize(width: UIScreen.main.bounds.width, height: Metrics.headerViewHeight)
-    }
+
 }

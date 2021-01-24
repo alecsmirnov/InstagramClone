@@ -6,7 +6,6 @@
 //
 
 struct User {
-    let email: String
     let fullName: String?
     let username: String
     let profileImageURL: String?
@@ -16,7 +15,6 @@ struct User {
 
 extension User: Codable {
     enum CodingKeys: String, CodingKey {
-        case email
         case fullName = "full_name"
         case username
         case profileImageURL = "profile_image_url"
