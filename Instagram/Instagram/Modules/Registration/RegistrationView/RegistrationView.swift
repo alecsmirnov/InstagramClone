@@ -436,7 +436,7 @@ extension RegistrationView: KeyboardAppearanceListenerDelegate {
     func keyboardAppearanceListener(
         _ listener: KeyboardAppearanceListener,
         keyboardWillShowWith notification: NSNotification
-    ) {
+    ) {        
         guard
             let userInfo = notification.userInfo,
             let keyboardSize = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue

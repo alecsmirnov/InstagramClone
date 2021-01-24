@@ -19,12 +19,14 @@ protocol KeyboardAppearanceListenerDelegate: AnyObject {
 final class KeyboardAppearanceListener {
     // MARK: Properties
     
-    weak var delegate: KeyboardAppearanceListenerDelegate?
+    private weak var delegate: KeyboardAppearanceListenerDelegate?
     
     // MARK: Initialization
     
-    init(delegate: KeyboardAppearanceListenerDelegate? = nil) {
+    init(delegate: KeyboardAppearanceListenerDelegate) {
         self.delegate = delegate
+        
+        setupKeyboardObservers()
     }
     
     deinit {
