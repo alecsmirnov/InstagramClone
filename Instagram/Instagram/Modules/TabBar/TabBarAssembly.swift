@@ -14,15 +14,22 @@ final class TabBarAssembly {
         static let tint = UIColor.black
     }
     
+    private enum Images {
+        static let homeUnselected = UIImage(named: "home_unselected")
+        static let homeSelected = UIImage(named: "home_selected")
+        static let profileUnselected = UIImage(named: "profile_unselected")
+        static let profileSelected = UIImage(named: "profile_selected")
+    }
+    
     private enum TabBarItems {
         static let home = UITabBarItem(
             title: nil,
-            image: AssetsImages.homeUnselected,
-            selectedImage: AssetsImages.homeSelected)
+            image: Images.homeUnselected,
+            selectedImage: Images.homeSelected)
         static let profile = UITabBarItem(
             title: nil,
-            image: AssetsImages.profileUnselected,
-            selectedImage: AssetsImages.profileSelected)
+            image: Images.profileUnselected,
+            selectedImage: Images.profileSelected)
     }
 }
 

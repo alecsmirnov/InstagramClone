@@ -48,6 +48,11 @@ enum LoginRegistrationConstants {
         static let signIn = "Sign In"
     }
     
+    enum Images {
+        static let logoBlack = UIImage(named: "instagram_logo_black")
+        static let profile = UIImage(named: "profile_default")
+    }
+    
     enum Constants {
         static let mainButtonEnableAlpha: CGFloat = 1
         static let mainButtonDisableAlpha: CGFloat = 0.4

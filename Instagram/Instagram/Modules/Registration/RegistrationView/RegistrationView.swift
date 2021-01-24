@@ -172,7 +172,7 @@ private extension RegistrationView {
     }
     
     func setupProfileImageButtonAppearance() {
-        profileImageButton.setImage(AssetsImages.profile, for: .normal)
+        profileImageButton.setImage(LoginRegistrationConstants.Images.profile, for: .normal)
         profileImageButton.tintColor = LoginRegistrationConstants.Colors.profileImageButtonTint
         profileImageButton.layer.cornerRadius = LoginRegistrationConstants.Metrics.profileImageButtonSize / 2
         profileImageButton.layer.masksToBounds = true
@@ -242,7 +242,6 @@ private extension RegistrationView {
         addSubview(scrollView)
         
         scrollView.addSubview(screenView)
-        
         screenView.addSubview(contentView)
         
         contentView.addSubview(profileImageButton)
@@ -364,7 +363,7 @@ private extension RegistrationView {
     }
     
     @objc func didPressSignUpButton() {
-        let isDefaultProfileImage = profileImageButton.currentImage == AssetsImages.profile
+        let isDefaultProfileImage = profileImageButton.currentImage == LoginRegistrationConstants.Images.profile
         let profileImage = isDefaultProfileImage ? nil : profileImageButton.currentImage
         
         let info = Registration(
