@@ -12,12 +12,18 @@ final class ProfileView: UIView {
     
     private var user: User?
     
+    private lazy var collectionViewGridLayout = ProfileView.createGridLayout()
+    private lazy var collectionViewListLayout = ProfileView.createListLayout()
+    
     // MARK: Constants
     
     private enum Metrics {
-        static let headerViewHeight: CGFloat = 200
-        
         static let estimatedHeight: CGFloat = 44
+        static let gridCellSpace: CGFloat = 1.2
+    }
+    
+    private enum Constants {
+        static let columnsCount = 3
     }
     
     // MARK: Subviews
@@ -87,6 +93,7 @@ private extension ProfileView {
         setupSubviews()
         
         setupCollectionViewLayout()
+        setupCollectionViewGridLayout()
     }
     
     func setupSubviews() {
@@ -102,39 +109,72 @@ private extension ProfileView {
             collectionView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
         ])
-        
+    }
+    
+    func setupCollectionViewGridLayout() {
+        collectionView.collectionViewLayout = collectionViewGridLayout
+    }
+    
+    func setupCollectionViewListLayout() {
+        collectionView.collectionViewLayout = collectionViewListLayout
+    }
+}
+
+// MARK: - Layout Helpers
+
+private extension ProfileView {
+    static func createGridLayout() -> UICollectionViewCompositionalLayout {
         let itemLayoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(44))
+            heightDimension: .fractionalWidth(1 / CGFloat(Constants.columnsCount)))
+        
+        let item = NSCollectionLayoutItem(layoutSize: itemLayoutSize)
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: itemLayoutSize,
+            subitem: item,
+            count: Constants.columnsCount)
+        
+        group.interItemSpacing = .fixed(Metrics.gridCellSpace)
+        
+        let section = NSCollectionLayoutSection(group: group)
+        
+        section.boundarySupplementaryItems = [createSectionHeader()]
+        
+        return UICollectionViewCompositionalLayout(section: section)
+    }
+    
+    static func createListLayout() -> UICollectionViewCompositionalLayout {
+        let itemLayoutSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .estimated(Metrics.estimatedHeight))
         
         let item = NSCollectionLayoutItem(layoutSize: itemLayoutSize)
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemLayoutSize, subitem: item, count: 1)
+        let section = NSCollectionLayoutSection(group: group)
         
+        section.boundarySupplementaryItems = [createSectionHeader()]
+        
+        return UICollectionViewCompositionalLayout(section: section)
+    }
+    
+    static func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
         let headerLayoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(44))
+            heightDimension: .estimated(Metrics.estimatedHeight))
         
         let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: headerLayoutSize,
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top)
-
-        let section = NSCollectionLayoutSection(group: group)
         
-        section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0)
-        section.interGroupSpacing = 10
-        section.boundarySupplementaryItems = [sectionHeader]
-
-        let collectionViewCompositionalLayout = UICollectionViewCompositionalLayout(section: section)
-        
-        collectionView.collectionViewLayout = collectionViewCompositionalLayout
+        return sectionHeader
     }
 }
 
 // MARK: - UICollectionViewDataSource
 extension ProfileView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        return 26
     }
 
     func collectionView(

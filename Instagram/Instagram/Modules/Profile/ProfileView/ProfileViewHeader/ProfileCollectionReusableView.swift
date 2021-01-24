@@ -53,6 +53,8 @@ final class ProfileCollectionReusableView: UICollectionReusableView {
         
         static let separatorViewWidth: CGFloat = 0.6
         
+        static let toolbarStackViewHeight: CGFloat = 44
+        
         static let bioTopInset: CGFloat = 2
         static let websiteTopInset: CGFloat = 4
         
@@ -80,10 +82,10 @@ final class ProfileCollectionReusableView: UICollectionReusableView {
     }
     
     private enum Colors {
-        static let profileImageViewBorder = UIColor.systemGray3
+        static let profileImageViewBorder = UIColor.lightGray
         static let userStatsStackViewTitle = UIColor.systemGray
-        static let editFollowButtonBorder = UIColor.systemGray
-        static let separatorView = UIColor.systemGray3
+        static let editFollowButtonBorder = UIColor.lightGray
+        static let separatorView = UIColor.lightGray
         static let toolbarStackViewButtonTint = UIColor(white: 0, alpha: 0.4)
     }
     
@@ -339,11 +341,10 @@ private extension ProfileCollectionReusableView {
         toolbarStackView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            toolbarStackView.topAnchor.constraint(
-                equalTo: separatorView.bottomAnchor,
-                constant: Metrics.profileInfoVerticalSpace / 2),
+            toolbarStackView.topAnchor.constraint(equalTo: separatorView.bottomAnchor),
             toolbarStackView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             toolbarStackView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            toolbarStackView.heightAnchor.constraint(equalToConstant: Metrics.toolbarStackViewHeight),
         ])
         
         let bottomConstraint = toolbarStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)

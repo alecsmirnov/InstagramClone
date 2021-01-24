@@ -51,7 +51,7 @@ private extension ProfileHeaderCollectionViewCell {
     
     func setupTextLabelAppearance() {
         textLabel.numberOfLines = 0
-        textLabel.text = "Test\nTest 2\nTest 3\nTest 4"
+        //textLabel.text = "Test\nTest 2\nTest 3\nTest 4"
     }
 }
 
