@@ -103,8 +103,8 @@ extension RegistrationInteractor: IRegistrationInteractor {
         guard !info.email.isEmpty, !info.username.isEmpty, !info.password.isEmpty else { return }
         
         let profileImageData = info.profileImage?.resize(
-            withWidth: SharedMetrics.profileImageSize,
-            height: SharedMetrics.profileImageSize,
+            withWidth: LoginRegistrationConstants.Metrics.profileImageButtonSize,
+            height: LoginRegistrationConstants.Metrics.profileImageButtonSize,
             contentMode: .aspectFill).pngData()
         
         FirebaseUserService.createUser(

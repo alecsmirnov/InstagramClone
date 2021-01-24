@@ -28,6 +28,10 @@ final class RegistrationViewController: CustomViewController<RegistrationView> {
     
     var presenter: IRegistrationPresenter?
     
+    override var shouldAutorotate: Bool {
+        return false
+    }
+    
     // MARK: Lifecycle
     
     override func viewDidLoad() {

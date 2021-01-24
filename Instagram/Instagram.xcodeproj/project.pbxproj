@@ -20,6 +20,8 @@
 		845455EE25BD8A220007C9A2 /* LoginPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455ED25BD8A220007C9A2 /* LoginPresenter.swift */; };
 		845455F125BD8A300007C9A2 /* LoginRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455F025BD8A300007C9A2 /* LoginRouter.swift */; };
 		845455F425BD8A410007C9A2 /* LoginAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455F325BD8A410007C9A2 /* LoginAssembly.swift */; };
+		845455F725BDA5830007C9A2 /* LoginRegistrationConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455F625BDA5830007C9A2 /* LoginRegistrationConstants.swift */; };
+		845455FB25BDAC460007C9A2 /* KeyboardAppearanceListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455FA25BDAC460007C9A2 /* KeyboardAppearanceListener.swift */; };
 		845504F825B1C38300715C3B /* TabBarAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845504F725B1C38300715C3B /* TabBarAssembly.swift */; };
 		845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A1D3D25BAB50700F4004B /* UIImageView+download.swift */; };
 		845A1D4925BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A1D4825BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift */; };
@@ -57,7 +59,6 @@
 		84FE47C125B814AF0048F5AA /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FE47C025B814AF0048F5AA /* ImagePicker.swift */; };
 		84FE47D625B81FD50048F5AA /* FirebaseStorages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FE47D525B81FD50048F5AA /* FirebaseStorages.swift */; };
 		84FE47DA25B8230E0048F5AA /* UIImage+resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FE47D925B8230E0048F5AA /* UIImage+resize.swift */; };
-		84FE47E825B840130048F5AA /* SharedMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FE47E725B840130048F5AA /* SharedMetrics.swift */; };
 		9DFC1E389EC702ABE81B355C /* Pods_Instagram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36B5F8DC54A8206E88CDD9B6 /* Pods_Instagram.framework */; };
 /* End PBXBuildFile section */
 
@@ -77,6 +78,8 @@
 		845455ED25BD8A220007C9A2 /* LoginPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPresenter.swift; sourceTree = "<group>"; };
 		845455F025BD8A300007C9A2 /* LoginRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRouter.swift; sourceTree = "<group>"; };
 		845455F325BD8A410007C9A2 /* LoginAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginAssembly.swift; sourceTree = "<group>"; };
+		845455F625BDA5830007C9A2 /* LoginRegistrationConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRegistrationConstants.swift; sourceTree = "<group>"; };
+		845455FA25BDAC460007C9A2 /* KeyboardAppearanceListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAppearanceListener.swift; sourceTree = "<group>"; };
 		845504F725B1C38300715C3B /* TabBarAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarAssembly.swift; sourceTree = "<group>"; };
 		845A1D3D25BAB50700F4004B /* UIImageView+download.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+download.swift"; sourceTree = "<group>"; };
 		845A1D4825BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -116,7 +119,6 @@
 		84FE47C025B814AF0048F5AA /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		84FE47D525B81FD50048F5AA /* FirebaseStorages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseStorages.swift; sourceTree = "<group>"; };
 		84FE47D925B8230E0048F5AA /* UIImage+resize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+resize.swift"; sourceTree = "<group>"; };
-		84FE47E725B840130048F5AA /* SharedMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedMetrics.swift; sourceTree = "<group>"; };
 		AC01405E30E4478582768FE7 /* Pods-Instagram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Instagram.release.xcconfig"; path = "Target Support Files/Pods-Instagram/Pods-Instagram.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -203,6 +205,7 @@
 				845B8C9825B6AC8000FE5ED6 /* InputValidation.swift */,
 				845B8CB425B6D3C300FE5ED6 /* JSONCoding.swift */,
 				84FE47C025B814AF0048F5AA /* ImagePicker.swift */,
+				845455FA25BDAC460007C9A2 /* KeyboardAppearanceListener.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -230,7 +233,7 @@
 				8491A80725B4314E009EDFC2 /* AssetsImages.swift */,
 				845B8CBD25B6D99200FE5ED6 /* FirebaseTables.swift */,
 				84FE47D525B81FD50048F5AA /* FirebaseStorages.swift */,
-				84FE47E725B840130048F5AA /* SharedMetrics.swift */,
+				845455F625BDA5830007C9A2 /* LoginRegistrationConstants.swift */,
 			);
 			path = Constants;
 			sourceTree = "<group>";
@@ -528,7 +531,6 @@
 				84E660AC25B955460036AB9F /* ProfileAssembly.swift in Sources */,
 				845455EE25BD8A220007C9A2 /* LoginPresenter.swift in Sources */,
 				84B2E68925B0513C00B27457 /* HomeAssembly.swift in Sources */,
-				84FE47E825B840130048F5AA /* SharedMetrics.swift in Sources */,
 				84FE47C125B814AF0048F5AA /* ImagePicker.swift in Sources */,
 				8491A84325B47DF6009EDFC2 /* RegistrationPresenter.swift in Sources */,
 				845455F425BD8A410007C9A2 /* LoginAssembly.swift in Sources */,
@@ -551,6 +553,7 @@
 				8491A84625B47E03009EDFC2 /* RegistrationRouter.swift in Sources */,
 				84B2E67B25B050CE00B27457 /* HomePresenter.swift in Sources */,
 				84E660A925B955390036AB9F /* ProfileRouter.swift in Sources */,
+				845455FB25BDAC460007C9A2 /* KeyboardAppearanceListener.swift in Sources */,
 				84FE47D625B81FD50048F5AA /* FirebaseStorages.swift in Sources */,
 				84B2E67625B0509700B27457 /* HomeView.swift in Sources */,
 				845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */,
@@ -569,6 +572,7 @@
 				845D7D8825BC1E64001E5037 /* SelfSizedTextView.swift in Sources */,
 				845455DD25BD46C40007C9A2 /* ProfileEdit.swift in Sources */,
 				845B8CB525B6D3C300FE5ED6 /* JSONCoding.swift in Sources */,
+				845455F725BDA5830007C9A2 /* LoginRegistrationConstants.swift in Sources */,
 				84B2E68125B0510700B27457 /* HomeInteractor.swift in Sources */,
 				845455D525BD44460007C9A2 /* UserPrivateInfo.swift in Sources */,
 				84FE47DA25B8230E0048F5AA /* UIImage+resize.swift in Sources */,
