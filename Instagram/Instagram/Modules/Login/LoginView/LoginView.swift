@@ -15,7 +15,7 @@ protocol LoginViewDelegate: AnyObject {
     func loginViewPasswordDidChange(_ registrationView: LoginView, password: String)
 }
 
-final class LoginView: UIView {
+final class LoginView: LoginRegistrationBaseView {
     // MARK: Properties
     
     weak var delegate: LoginViewDelegate?
@@ -55,13 +55,12 @@ final class LoginView: UIView {
     
     // MARK: Initialization
     
-    init() {
-        super.init(frame: .zero)
+    override init() {
+        super.init()
         
         setupAppearance()
         setupLayout()
         setupActions()
-        setupGestures()
     }
     
     required init?(coder: NSCoder) {
@@ -96,10 +95,10 @@ private extension LoginView {
         stackView.axis = .vertical
         stackView.alignment = .fill
         
-        LoginView.setupStackViewTextFieldAppearance(
+        LoginRegistrationBaseView.setupStackViewTextFieldAppearance(
             emailTextField,
             placeholder: LoginRegistrationConstants.TextFieldPlaceholders.email)
-        LoginView.setupStackViewTextFieldAppearance(
+        LoginRegistrationBaseView.setupStackViewTextFieldAppearance(
             passwordTextField,
             placeholder: LoginRegistrationConstants.TextFieldPlaceholders.password)
     }
@@ -120,20 +119,6 @@ private extension LoginView {
     
     func setupSignUpButtonAppearance() {
         signUpButton.setTitle(LoginRegistrationConstants.ButtonTitles.signUpExtra, for: .normal)
-    }
-}
-
-// MARK: - Appearance Helpers
-
-private extension LoginView {
-    static func setupStackViewTextFieldAppearance(_ textField: UITextField, placeholder: String) {
-        textField.placeholder = placeholder
-        textField.borderStyle = .roundedRect
-        textField.backgroundColor = LoginRegistrationConstants.Colors.textFieldBackground
-        textField.font = .systemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
-        textField.clearButtonMode = .whileEditing
-        textField.autocorrectionType = .no
-        textField.autocapitalizationType = .none
     }
 }
 
@@ -236,9 +221,9 @@ private extension LoginView {
         
         let stackViewSubviewHeight = LoginRegistrationConstants.Metrics.stackViewSubviewHeight
         
-        LoginView.setupStackViewSubviewLayout(emailTextField, height: stackViewSubviewHeight)
-        LoginView.setupStackViewSubviewLayout(passwordTextField, height: stackViewSubviewHeight)
-        LoginView.setupStackViewSubviewLayout(signInButton, height: stackViewSubviewHeight)
+        LoginRegistrationBaseView.setupStackViewSubviewLayout(emailTextField, height: stackViewSubviewHeight)
+        LoginRegistrationBaseView.setupStackViewSubviewLayout(passwordTextField, height: stackViewSubviewHeight)
+        LoginRegistrationBaseView.setupStackViewSubviewLayout(signInButton, height: stackViewSubviewHeight)
         
         passwordTextField.isSecureTextEntry = true
     }
@@ -266,16 +251,6 @@ private extension LoginView {
                 equalTo: screenView.bottomAnchor,
                 constant: -LoginRegistrationConstants.Metrics.extraButtonVerticalSpace),
         ])
-    }
-}
-
-// MARK: - Layout Helpers
-
-private extension LoginView {
-    static func setupStackViewSubviewLayout(_ subview: UIView, height: CGFloat) {
-        subview.translatesAutoresizingMaskIntoConstraints = false
-        
-        subview.heightAnchor.constraint(equalToConstant: height).isActive = true
     }
 }
 
@@ -322,20 +297,5 @@ private extension LoginView {
     
     @objc func didPressSignUpButton() {
         delegate?.loginViewDidPressSignUpButton(self)
-    }
-}
-
-// MARK: - Gestures
-
-private extension LoginView {
-    func setupGestures() {
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tapGestureRecognizer.cancelsTouchesInView = false
-        
-        addGestureRecognizer(tapGestureRecognizer)
-    }
-    
-    @objc func dismissKeyboard() {
-        endEditing(true)
     }
 }

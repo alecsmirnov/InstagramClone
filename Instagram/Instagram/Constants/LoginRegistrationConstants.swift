@@ -21,7 +21,7 @@ enum LoginRegistrationConstants {
         static let mainButtonCornerRadius: CGFloat = 4
         static let extraButtonVerticalSpace: CGFloat = 10
         
-        static let separatorViewWidth: CGFloat = 1.5
+        static let separatorViewWidth: CGFloat = 1.4
         
         static let fontSize: CGFloat = 14
         static let alertFontSize: CGFloat = 12

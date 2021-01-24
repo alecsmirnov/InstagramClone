@@ -16,7 +16,7 @@ protocol RegistrationViewDelegate: AnyObject {
     func registrationViewPasswordDidChange(_ registrationView: RegistrationView, password: String)
 }
 
-final class RegistrationView: UIView {
+final class RegistrationView: LoginRegistrationBaseView {
     // MARK: Properties
     
     weak var delegate: RegistrationViewDelegate? {
@@ -74,13 +74,12 @@ final class RegistrationView: UIView {
     
     // MARK: Initialization
     
-    init() {
-        super.init(frame: .zero)
+    override init() {
+        super.init()
         
         setupAppearance()
         setupLayout()
         setupActions()
-        setupGestures()
     }
     
     required init?(coder: NSCoder) {
@@ -185,16 +184,16 @@ private extension RegistrationView {
         stackView.axis = .vertical
         stackView.alignment = .fill
         
-        RegistrationView.setupStackViewTextFieldAppearance(
+        LoginRegistrationBaseView.setupStackViewTextFieldAppearance(
             emailTextField,
             placeholder: LoginRegistrationConstants.TextFieldPlaceholders.email)
-        RegistrationView.setupStackViewTextFieldAppearance(
+        LoginRegistrationBaseView.setupStackViewTextFieldAppearance(
             fullNameTextField,
             placeholder: LoginRegistrationConstants.TextFieldPlaceholders.fullName)
-        RegistrationView.setupStackViewTextFieldAppearance(
+        LoginRegistrationBaseView.setupStackViewTextFieldAppearance(
             usernameTextField,
             placeholder: LoginRegistrationConstants.TextFieldPlaceholders.username)
-        RegistrationView.setupStackViewTextFieldAppearance(
+        LoginRegistrationBaseView.setupStackViewTextFieldAppearance(
             passwordTextField,
             placeholder: LoginRegistrationConstants.TextFieldPlaceholders.password)
     }
@@ -207,20 +206,6 @@ private extension RegistrationView {
         signUpButton.layer.cornerRadius = LoginRegistrationConstants.Metrics.mainButtonCornerRadius
         
         disableSignUpButton()
-    }
-}
-
-// MARK: - Appearance Helpers
-
-private extension RegistrationView {
-    static func setupStackViewTextFieldAppearance(_ textField: UITextField, placeholder: String) {
-        textField.placeholder = placeholder
-        textField.borderStyle = .roundedRect
-        textField.backgroundColor = LoginRegistrationConstants.Colors.textFieldBackground
-        textField.font = .systemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
-        textField.clearButtonMode = .whileEditing
-        textField.autocorrectionType = .no
-        textField.autocapitalizationType = .none
     }
 }
 
@@ -324,23 +309,13 @@ private extension RegistrationView {
         
         let stackViewSubviewHeight = LoginRegistrationConstants.Metrics.stackViewSubviewHeight
         
-        RegistrationView.setupStackViewSubviewLayout(emailTextField, height: stackViewSubviewHeight)
-        RegistrationView.setupStackViewSubviewLayout(fullNameTextField, height: stackViewSubviewHeight)
-        RegistrationView.setupStackViewSubviewLayout(usernameTextField, height: stackViewSubviewHeight)
-        RegistrationView.setupStackViewSubviewLayout(passwordTextField, height: stackViewSubviewHeight)
-        RegistrationView.setupStackViewSubviewLayout(signUpButton, height: stackViewSubviewHeight)
+        LoginRegistrationBaseView.setupStackViewSubviewLayout(emailTextField, height: stackViewSubviewHeight)
+        LoginRegistrationBaseView.setupStackViewSubviewLayout(fullNameTextField, height: stackViewSubviewHeight)
+        LoginRegistrationBaseView.setupStackViewSubviewLayout(usernameTextField, height: stackViewSubviewHeight)
+        LoginRegistrationBaseView.setupStackViewSubviewLayout(passwordTextField, height: stackViewSubviewHeight)
+        LoginRegistrationBaseView.setupStackViewSubviewLayout(signUpButton, height: stackViewSubviewHeight)
         
         passwordTextField.isSecureTextEntry = true
-    }
-}
-
-// MARK: - Layout Helpers
-
-private extension RegistrationView {
-    static func setupStackViewSubviewLayout(_ subview: UIView, height: CGFloat) {
-        subview.translatesAutoresizingMaskIntoConstraints = false
-        
-        subview.heightAnchor.constraint(equalToConstant: height).isActive = true
     }
 }
 
@@ -398,21 +373,6 @@ private extension RegistrationView {
             password: passwordTextField.text ?? "")
         
         delegate?.registrationViewDidPressSignUpButton(self, withInfo: info)
-    }
-}
-
-// MARK: - Gestures
-
-private extension RegistrationView {
-    func setupGestures() {
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tapGestureRecognizer.cancelsTouchesInView = false
-        
-        addGestureRecognizer(tapGestureRecognizer)
-    }
-    
-    @objc func dismissKeyboard() {
-        endEditing(true)
     }
 }
 

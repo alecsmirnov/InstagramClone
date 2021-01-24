@@ -22,6 +22,7 @@
 		845455F425BD8A410007C9A2 /* LoginAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455F325BD8A410007C9A2 /* LoginAssembly.swift */; };
 		845455F725BDA5830007C9A2 /* LoginRegistrationConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455F625BDA5830007C9A2 /* LoginRegistrationConstants.swift */; };
 		845455FB25BDAC460007C9A2 /* KeyboardAppearanceListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455FA25BDAC460007C9A2 /* KeyboardAppearanceListener.swift */; };
+		845455FF25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455FE25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift */; };
 		845504F825B1C38300715C3B /* TabBarAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845504F725B1C38300715C3B /* TabBarAssembly.swift */; };
 		845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A1D3D25BAB50700F4004B /* UIImageView+download.swift */; };
 		845A1D4925BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A1D4825BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift */; };
@@ -79,6 +80,7 @@
 		845455F325BD8A410007C9A2 /* LoginAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginAssembly.swift; sourceTree = "<group>"; };
 		845455F625BDA5830007C9A2 /* LoginRegistrationConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRegistrationConstants.swift; sourceTree = "<group>"; };
 		845455FA25BDAC460007C9A2 /* KeyboardAppearanceListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAppearanceListener.swift; sourceTree = "<group>"; };
+		845455FE25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRegistrationBaseView.swift; sourceTree = "<group>"; };
 		845504F725B1C38300715C3B /* TabBarAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarAssembly.swift; sourceTree = "<group>"; };
 		845A1D3D25BAB50700F4004B /* UIImageView+download.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+download.swift"; sourceTree = "<group>"; };
 		845A1D4825BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -221,6 +223,7 @@
 			children = (
 				845D7D8725BC1E64001E5037 /* SelfSizedTextView.swift */,
 				845D7D8D25BC472C001E5037 /* StatisticButton.swift */,
+				845455FE25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -567,6 +570,7 @@
 				84B2E65525B0267700B27457 /* SceneDelegate.swift in Sources */,
 				845D7D8825BC1E64001E5037 /* SelfSizedTextView.swift in Sources */,
 				845455DD25BD46C40007C9A2 /* ProfileEdit.swift in Sources */,
+				845455FF25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift in Sources */,
 				845B8CB525B6D3C300FE5ED6 /* JSONCoding.swift in Sources */,
 				845455F725BDA5830007C9A2 /* LoginRegistrationConstants.swift in Sources */,
 				84B2E68125B0510700B27457 /* HomeInteractor.swift in Sources */,
