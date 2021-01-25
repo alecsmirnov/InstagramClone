@@ -192,6 +192,16 @@ private extension RegistrationView {
         LoginRegistrationBaseView.setupStackViewTextFieldAppearance(
             passwordTextField,
             placeholder: LoginRegistrationConstants.TextFieldPlaceholders.password)
+        
+        emailTextField.delegate = self
+        fullNameTextField.delegate = self
+        usernameTextField.delegate = self
+        passwordTextField.delegate = self
+        
+        emailTextField.returnKeyType = .continue
+        fullNameTextField.returnKeyType = .continue
+        usernameTextField.returnKeyType = .continue
+        passwordTextField.returnKeyType = .done
     }
     
     func setupSignUpButtonAppearance() {
@@ -420,6 +430,31 @@ private extension RegistrationView {
     
     @objc func didPressLogInButton() {
         delegate?.registrationViewDidPressLogInButton(self)
+    }
+}
+
+// MARK: - UITextFieldDelegate
+
+extension RegistrationView: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        switch textField {
+        case emailTextField:
+            fullNameTextField.becomeFirstResponder()
+        case fullNameTextField:
+            usernameTextField.becomeFirstResponder()
+        case usernameTextField:
+            passwordTextField.becomeFirstResponder()
+        case passwordTextField:
+            guard signUpButton.isEnabled else { return true }
+            
+            passwordTextField.resignFirstResponder()
+            
+            didPressSignUpButton()
+        default:
+            break
+        }
+        
+        return true
     }
 }
 

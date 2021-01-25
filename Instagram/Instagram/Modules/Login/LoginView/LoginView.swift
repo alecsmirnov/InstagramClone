@@ -160,10 +160,11 @@ private extension LoginView {
             passwordTextField,
             placeholder: LoginRegistrationConstants.TextFieldPlaceholders.password)
         
-        // TODO: return key actions (login and registration)
+        emailTextField.delegate = self
+        passwordTextField.delegate = self
         
-        //emailTextField.returnKeyType = .continue
-        //passwordTextField.returnKeyType = .done
+        emailTextField.returnKeyType = .continue
+        passwordTextField.returnKeyType = .done
     }
     
     func setupLogInButtonAppearance() {
@@ -369,5 +370,29 @@ private extension LoginView {
     
     @objc func didPressSignUpButton() {
         delegate?.loginViewDidPressSignUpButton(self)
+    }
+}
+
+// MARK: - UITextFieldDelegate
+
+extension LoginView: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        switch textField {
+        case emailTextField:
+            passwordTextField.becomeFirstResponder()
+        case passwordTextField:
+            guard logInButton.isEnabled else { return true }
+            
+            passwordTextField.resignFirstResponder()
+            
+            delegate?.loginViewDidPressLogInButton(
+                self,
+                withEmail: emailTextField.text ?? "",
+                password: passwordTextField.text ?? "")
+        default:
+            break
+        }
+        
+        return true
     }
 }
