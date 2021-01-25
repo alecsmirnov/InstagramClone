@@ -11,7 +11,7 @@ protocol IRegistrationPresenter {
     func passwordDidChange(_ password: String)
     
     func didPressSignUpButton(withInfo info: Registration)
-    func didPressSignInButton()
+    func didPressLogInButton()
 }
 
 final class RegistrationPresenter {
@@ -53,8 +53,8 @@ extension RegistrationPresenter: IRegistrationPresenter {
         interactor?.signUp(withInfo: info)
     }
     
-    func didPressSignInButton() {
-        
+    func didPressLogInButton() {
+        router?.closeRegistrationRouter()
     }
 }
 

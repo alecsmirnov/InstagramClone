@@ -9,7 +9,7 @@ import UIKit
 
 protocol RegistrationViewDelegate: AnyObject {
     func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView, withInfo info: Registration)
-    func registrationViewDidPressSignInButton(_ registrationView: RegistrationView)
+    func registrationViewDidPressLogInButton(_ registrationView: RegistrationView)
     
     func registrationViewEmailDidChange(_ registrationView: RegistrationView, email: String)
     func registrationViewUsernameDidChange(_ registrationView: RegistrationView, username: String)
@@ -44,6 +44,9 @@ final class RegistrationView: LoginRegistrationBaseView {
     private let usernameTextField = UITextField()
     private let passwordTextField = UITextField()
     private let signUpButton = UIButton(type: .system)
+    
+    private let separatorView = UIView()
+    private let logInButton = TwoPartsButton()
     
     private lazy var emailAlertLabel: UILabel = {
         let label = UILabel()
@@ -164,7 +167,9 @@ private extension RegistrationView {
         setupScrollViewAppearance()
         setupProfileImageButtonAppearance()
         setupStackViewAppearance()
-        setupUpButtonAppearance()
+        setupSignUpButtonAppearance()
+        setupSeparatorViewAppearance()
+        setupLogInButtonAppearance()
     }
     
     func setupScrollViewAppearance() {
@@ -198,7 +203,7 @@ private extension RegistrationView {
             placeholder: LoginRegistrationConstants.TextFieldPlaceholders.password)
     }
     
-    func setupUpButtonAppearance() {
+    func setupSignUpButtonAppearance() {
         signUpButton.setTitle(LoginRegistrationConstants.ButtonTitles.signUpMain, for: .normal)
         signUpButton.setTitleColor(LoginRegistrationConstants.Colors.mainButtonTitle, for: .normal)
         signUpButton.titleLabel?.font = .boldSystemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
@@ -206,6 +211,23 @@ private extension RegistrationView {
         signUpButton.layer.cornerRadius = LoginRegistrationConstants.Metrics.mainButtonCornerRadius
         
         disableSignUpButton()
+    }
+    
+    func setupSeparatorViewAppearance() {
+        separatorView.backgroundColor = LoginRegistrationConstants.Colors.separatorView
+    }
+    
+    func setupLogInButtonAppearance() {
+        logInButton.firstPartText = LoginRegistrationConstants.ButtonTitles.logInExtraFirstPart
+        logInButton.secondPartText = LoginRegistrationConstants.ButtonTitles.logInExtraSecondPart
+        
+        logInButton.firstPartFont = .systemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
+        logInButton.secondPartFont = .boldSystemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
+        
+        logInButton.firstPartColor = LoginRegistrationConstants.Colors.extendButtonFirstPart
+        logInButton.secondPartColor = LoginRegistrationConstants.Colors.extendButtonSecondPart
+        
+        logInButton.titleLabel?.adjustsFontSizeToFitWidth = true
     }
 }
 
@@ -220,6 +242,8 @@ private extension RegistrationView {
         setupContentViewLayout()
         setupProfileImageButtonLayout()
         setupStackViewLayout()
+        setupSeparatorViewLayout()
+        setupLogInButtonLayout()
     }
     
     func setupSubviews() {
@@ -227,6 +251,8 @@ private extension RegistrationView {
         
         scrollView.addSubview(screenView)
         screenView.addSubview(contentView)
+        screenView.addSubview(separatorView)
+        screenView.addSubview(logInButton)
         
         contentView.addSubview(profileImageButton)
         contentView.addSubview(stackView)
@@ -317,6 +343,31 @@ private extension RegistrationView {
         
         passwordTextField.isSecureTextEntry = true
     }
+    
+    func setupSeparatorViewLayout() {
+        separatorView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            separatorView.bottomAnchor.constraint(
+                equalTo: logInButton.topAnchor,
+                constant: -LoginRegistrationConstants.Metrics.extraButtonVerticalSpace),
+            separatorView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            separatorView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            separatorView.heightAnchor.constraint(
+                equalToConstant: LoginRegistrationConstants.Metrics.separatorViewWidth),
+        ])
+    }
+    
+    func setupLogInButtonLayout() {
+        logInButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            logInButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            logInButton.bottomAnchor.constraint(
+                equalTo: screenView.bottomAnchor,
+                constant: -LoginRegistrationConstants.Metrics.extraButtonVerticalSpace),
+        ])
+    }
 }
 
 // MARK: - Actions
@@ -330,6 +381,7 @@ private extension RegistrationView {
         passwordTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
         
         signUpButton.addTarget(self, action: #selector(didPressSignUpButton), for: .touchUpInside)
+        logInButton.addTarget(self, action: #selector(didPressLogInButton), for: .touchUpInside)
     }
     
     @objc func didPressProfileImageButton() {
@@ -373,6 +425,10 @@ private extension RegistrationView {
             password: passwordTextField.text ?? "")
         
         delegate?.registrationViewDidPressSignUpButton(self, withInfo: info)
+    }
+    
+    @objc func didPressLogInButton() {
+        delegate?.registrationViewDidPressLogInButton(self)
     }
 }
 

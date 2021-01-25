@@ -6,7 +6,7 @@
 //
 
 protocol IRegistrationRouter {
-    
+    func closeRegistrationRouter()
 }
 
 final class RegistrationRouter {
@@ -17,6 +17,10 @@ final class RegistrationRouter {
     }
 }
 
+// MARK: - IRegistrationRouter
+
 extension RegistrationRouter: IRegistrationRouter {
-    
+    func closeRegistrationRouter() {
+        viewController?.dismiss(animated: false)
+    }
 }

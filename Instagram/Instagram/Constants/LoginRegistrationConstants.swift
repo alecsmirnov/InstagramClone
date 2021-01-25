@@ -38,6 +38,9 @@ enum LoginRegistrationConstants {
         
         static let separatorView = UIColor.systemGray5
         
+        static let extendButtonFirstPart = UIColor.systemGray
+        static let extendButtonSecondPart = UIColor.black
+        
         static let alert = UIColor(red: 0.99, green: 0.11, blue: 0.11, alpha: 1)
     }
     
@@ -50,10 +53,13 @@ enum LoginRegistrationConstants {
     
     enum ButtonTitles {
         static let signUpMain = "Sign Up"
-        static let signInMain = "Sign In"
+        static let logInMain = "Log In"
         
-        static let signUpExtra = "Don't have an account? Sign Up"
-        static let signInExtra = "Already have an account? Sign In"
+        static let signUpExtraFirstPart = "Don't have an account?"
+        static let signUpExtraSecondPart = "Sign Up"
+        
+        static let logInExtraFirstPart = "Already have an account?"
+        static let logInExtraSecondPart = "Log In"
     }
     
     enum Images {

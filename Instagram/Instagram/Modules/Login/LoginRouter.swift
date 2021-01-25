@@ -6,7 +6,7 @@
 //
 
 protocol ILoginRouter {
-    
+    func openRegistrationViewController()
 }
 
 final class LoginRouter {
@@ -17,6 +17,14 @@ final class LoginRouter {
     }
 }
 
+// MARK: - ILoginRouter
+
 extension LoginRouter: ILoginRouter {
-    
+    func openRegistrationViewController() {
+        let registrationViewController = RegistrationAssembly.createRegistrationViewController()
+        
+        registrationViewController.modalPresentationStyle = .fullScreen
+        
+        viewController?.present(registrationViewController, animated: false)
+    }
 }

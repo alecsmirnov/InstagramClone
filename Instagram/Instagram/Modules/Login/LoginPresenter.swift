@@ -6,7 +6,8 @@
 //
 
 protocol ILoginPresenter {
-
+    func didPressLogInButton()
+    func didPressSignUpButton()
 }
 
 final class LoginPresenter {
@@ -18,7 +19,13 @@ final class LoginPresenter {
 // MARK: - ILoginPresenter
 
 extension LoginPresenter: ILoginPresenter {
-
+    func didPressLogInButton() {
+        
+    }
+    
+    func didPressSignUpButton() {
+        router?.openRegistrationViewController()
+    }
 }
 
 // MARK: - ILoginInteractorOutput

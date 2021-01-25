@@ -8,7 +8,7 @@
 import UIKit
 
 protocol LoginViewDelegate: AnyObject {
-    func loginViewDidPressSignInButton(_ registrationView: LoginView, withEmail email: String, password: String)
+    func loginViewDidPressLogInButton(_ registrationView: LoginView, withEmail email: String, password: String)
     func loginViewDidPressSignUpButton(_ registrationView: LoginView)
     
     func loginViewEmailDidChange(_ registrationView: LoginView, email: String)
@@ -30,10 +30,10 @@ final class LoginView: LoginRegistrationBaseView {
     private let stackView = UIStackView()
     private let emailTextField = UITextField()
     private let passwordTextField = UITextField()
-    private let signInButton = UIButton(type: .system)
+    private let logInButton = UIButton(type: .system)
     
     private let separatorView = UIView()
-    private let signUpButton = UIButton(type: .system)
+    private let signUpButton = TwoPartsButton()
     
     private lazy var emailAlertLabel: UILabel = {
         let label = UILabel()
@@ -77,7 +77,7 @@ private extension LoginView {
         setupScrollViewAppearance()
         setupLogoImageViewAppearance()
         setupStackViewAppearance()
-        setupSignInButtonAppearance()
+        setupLogInButtonAppearance()
         setupSeparatorViewAppearance()
         setupSignUpButtonAppearance()
     }
@@ -103,14 +103,14 @@ private extension LoginView {
             placeholder: LoginRegistrationConstants.TextFieldPlaceholders.password)
     }
     
-    func setupSignInButtonAppearance() {
-        signInButton.setTitle(LoginRegistrationConstants.ButtonTitles.signInMain, for: .normal)
-        signInButton.setTitleColor(LoginRegistrationConstants.Colors.mainButtonTitle, for: .normal)
-        signInButton.titleLabel?.font = .boldSystemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
-        signInButton.backgroundColor = LoginRegistrationConstants.Colors.mainButtonBackground
-        signInButton.layer.cornerRadius = LoginRegistrationConstants.Metrics.mainButtonCornerRadius
+    func setupLogInButtonAppearance() {
+        logInButton.setTitle(LoginRegistrationConstants.ButtonTitles.logInMain, for: .normal)
+        logInButton.setTitleColor(LoginRegistrationConstants.Colors.mainButtonTitle, for: .normal)
+        logInButton.titleLabel?.font = .boldSystemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
+        logInButton.backgroundColor = LoginRegistrationConstants.Colors.mainButtonBackground
+        logInButton.layer.cornerRadius = LoginRegistrationConstants.Metrics.mainButtonCornerRadius
         
-        //disableSignInButton()
+        //disableLogInButton()
     }
     
     func setupSeparatorViewAppearance() {
@@ -118,7 +118,16 @@ private extension LoginView {
     }
     
     func setupSignUpButtonAppearance() {
-        signUpButton.setTitle(LoginRegistrationConstants.ButtonTitles.signUpExtra, for: .normal)
+        signUpButton.firstPartText = LoginRegistrationConstants.ButtonTitles.signUpExtraFirstPart
+        signUpButton.secondPartText = LoginRegistrationConstants.ButtonTitles.signUpExtraSecondPart
+        
+        signUpButton.firstPartFont = .systemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
+        signUpButton.secondPartFont = .boldSystemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
+        
+        signUpButton.firstPartColor = LoginRegistrationConstants.Colors.extendButtonFirstPart
+        signUpButton.secondPartColor = LoginRegistrationConstants.Colors.extendButtonSecondPart
+        
+        signUpButton.titleLabel?.adjustsFontSizeToFitWidth = true
     }
 }
 
@@ -150,7 +159,7 @@ private extension LoginView {
         
         stackView.addArrangedSubview(emailTextField)
         stackView.addArrangedSubview(passwordTextField)
-        stackView.addArrangedSubview(signInButton)
+        stackView.addArrangedSubview(logInButton)
     }
     
     func setupScrollViewLayout() {
@@ -223,7 +232,7 @@ private extension LoginView {
         
         LoginRegistrationBaseView.setupStackViewSubviewLayout(emailTextField, height: stackViewSubviewHeight)
         LoginRegistrationBaseView.setupStackViewSubviewLayout(passwordTextField, height: stackViewSubviewHeight)
-        LoginRegistrationBaseView.setupStackViewSubviewLayout(signInButton, height: stackViewSubviewHeight)
+        LoginRegistrationBaseView.setupStackViewSubviewLayout(logInButton, height: stackViewSubviewHeight)
         
         passwordTextField.isSecureTextEntry = true
     }
@@ -261,7 +270,7 @@ private extension LoginView {
         emailTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
         passwordTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
         
-        signInButton.addTarget(self, action: #selector(didPressSignInButton), for: .touchUpInside)
+        logInButton.addTarget(self, action: #selector(didPressLogInButton), for: .touchUpInside)
         signUpButton.addTarget(self, action: #selector(didPressSignUpButton), for: .touchUpInside)
     }
     
@@ -288,8 +297,8 @@ private extension LoginView {
         }
     }
     
-    @objc func didPressSignInButton() {
-        delegate?.loginViewDidPressSignInButton(
+    @objc func didPressLogInButton() {
+        delegate?.loginViewDidPressLogInButton(
             self,
             withEmail: emailTextField.text ?? "",
             password: passwordTextField.text ?? "")

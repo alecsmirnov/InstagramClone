@@ -94,9 +94,9 @@ final class ProfileCollectionReusableView: UICollectionReusableView {
     private let profileImageView = UIImageView()
     
     private let userStatsStackView = UIStackView()
-    private let postsButton = StatisticButton()
-    private let followersButton = StatisticButton()
-    private let followingButton = StatisticButton()
+    private let postsButton = TwoPartsButton()
+    private let followersButton = TwoPartsButton()
+    private let followingButton = TwoPartsButton()
     
     private let editFollowButton = UIButton(type: .system)
     
@@ -170,13 +170,17 @@ private extension ProfileCollectionReusableView {
         userStatsStackView.axis = .horizontal
         userStatsStackView.distribution = .fillEqually
         
-        postsButton.titleColor = Colors.userStatsStackViewTitle
-        followersButton.titleColor = Colors.userStatsStackViewTitle
-        followingButton.titleColor = Colors.userStatsStackViewTitle
+        postsButton.secondPartColor = Colors.userStatsStackViewTitle
+        followersButton.secondPartColor = Colors.userStatsStackViewTitle
+        followingButton.secondPartColor = Colors.userStatsStackViewTitle
         
-        postsButton.titleText = UserStatsStackViewTitles.posts
-        followersButton.titleText = UserStatsStackViewTitles.followers
-        followingButton.titleText = UserStatsStackViewTitles.following
+        postsButton.divider = "\n"
+        followersButton.divider = "\n"
+        followingButton.divider = "\n"
+        
+        postsButton.secondPartText = UserStatsStackViewTitles.posts
+        followersButton.secondPartText = UserStatsStackViewTitles.followers
+        followingButton.secondPartText = UserStatsStackViewTitles.following
     }
     
     func setupEditFollowButtonAppearance() {

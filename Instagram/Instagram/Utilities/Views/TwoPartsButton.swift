@@ -1,5 +1,5 @@
 //
-//  StatisticButton.swift
+//  TwoPartsButton.swift
 //  Instagram
 //
 //  Created by Admin on 23.01.2021.
@@ -7,40 +7,46 @@
 
 import UIKit
 
-final class StatisticButton: UIButton {
+final class TwoPartsButton: UIButton {
     // MARK: Properties
     
-    var numberText: String = "0" {
+    var firstPartText: String = "" {
         didSet {
             setupAppearance()
         }
     }
     
-    var titleText: String = "stat" {
+    var secondPartText: String = "" {
         didSet {
             setupAppearance()
         }
     }
     
-    var numberFontSize: CGFloat = 16 {
+    var firstPartFont: UIFont = .systemFont(ofSize: Constants.defaultFontSize) {
         didSet {
             setupAppearance()
         }
     }
     
-    var titleFontSize: CGFloat = 14 {
+    var secondPartFont: UIFont = .systemFont(ofSize: Constants.defaultFontSize) {
         didSet {
             setupAppearance()
         }
     }
     
-    var numberColor: UIColor = .black {
+    var firstPartColor: UIColor = .black {
         didSet {
             setupAppearance()
         }
     }
     
-    var titleColor: UIColor = .black {
+    var secondPartColor: UIColor = .black {
+        didSet {
+            setupAppearance()
+        }
+    }
+    
+    var divider: String = " " {
         didSet {
             setupAppearance()
         }
@@ -59,6 +65,8 @@ final class StatisticButton: UIButton {
     // MARK: Constants
     
     private enum Constants {
+        static let defaultFontSize: CGFloat = 14
+        
         static let highlightAnimationDuration = 0.3
         
         static let defaultAlpha: CGFloat = 1
@@ -80,36 +88,24 @@ final class StatisticButton: UIButton {
 
 // MARK: - Private Methods
 
-private extension StatisticButton {
+private extension TwoPartsButton {
     func setupAppearance() {
-        setupTextAppearance()
-        setupTitleLabelAppearance()
-    }
-    
-    func setupTextAppearance() {
         let numberAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.boldSystemFont(ofSize: numberFontSize),
-            .foregroundColor: numberColor,
-        ]
+            .font: firstPartFont,
+            .foregroundColor: firstPartColor]
         let titleAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: titleFontSize),
-            .foregroundColor: titleColor,
-        ]
+            .font: secondPartFont,
+            .foregroundColor: secondPartColor]
         
-        let numberAttributedText = NSAttributedString(string: numberText, attributes: numberAttributes)
-        let titleAttributedText = NSAttributedString(string: titleText, attributes: titleAttributes)
+        let firstPartAttributedText = NSAttributedString(string: firstPartText, attributes: numberAttributes)
+        let secondPartAttributedText = NSAttributedString(string: secondPartText, attributes: titleAttributes)
         
         let attributedTitleText = NSMutableAttributedString()
         
-        attributedTitleText.append(numberAttributedText)
-        attributedTitleText.append(NSAttributedString(string: "\n"))
-        attributedTitleText.append(titleAttributedText)
+        attributedTitleText.append(firstPartAttributedText)
+        attributedTitleText.append(NSAttributedString(string: divider))
+        attributedTitleText.append(secondPartAttributedText)
         
         setAttributedTitle(attributedTitleText, for: .normal)
-    }
-    
-    func setupTitleLabelAppearance() {
-        titleLabel?.numberOfLines = 2
-        titleLabel?.textAlignment = .center
     }
 }
