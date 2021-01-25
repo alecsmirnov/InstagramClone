@@ -94,27 +94,33 @@ final class RegistrationView: LoginRegistrationBaseView {
 
 extension RegistrationView {
     func showEmailAlertLabel(text: String) {
-        insertSubviewToStackView(emailAlertLabel, below: emailTextField)
+        LoginRegistrationBaseView.insertSubviewToStackView(emailAlertLabel, stackView: stackView, below: emailTextField)
         
         emailAlertLabel.text = text
     }
     
     func hideEmailAlertLabel() {
-        removeSubviewFromStackView(emailAlertLabel)
+        LoginRegistrationBaseView.removeSubviewFromStackView(emailAlertLabel, stackView: stackView)
     }
     
     func showUsernameAlertLabel(text: String) {
-        insertSubviewToStackView(usernameAlertLabel, below: usernameTextField)
+        LoginRegistrationBaseView.insertSubviewToStackView(
+            usernameAlertLabel,
+            stackView: stackView,
+            below: usernameTextField)
         
         usernameAlertLabel.text = text
     }
     
     func hideUsernameAlertLabel() {
-        removeSubviewFromStackView(usernameAlertLabel)
+        LoginRegistrationBaseView.removeSubviewFromStackView(usernameAlertLabel, stackView: stackView)
     }
     
     func showPasswordAlertLabel(text: String) {
-        insertSubviewToStackView(passwordAlertLabel, below: passwordTextField)
+        LoginRegistrationBaseView.insertSubviewToStackView(
+            passwordAlertLabel,
+            stackView: stackView,
+            below: passwordTextField)
         
         stackView.setCustomSpacing(LoginRegistrationConstants.Metrics.stackViewSpace, after: passwordTextField)
         stackView.setCustomSpacing(
@@ -125,7 +131,7 @@ extension RegistrationView {
     }
     
     func hidePasswordAlertLabel() {
-        removeSubviewFromStackView(passwordAlertLabel)
+        LoginRegistrationBaseView.removeSubviewFromStackView(passwordAlertLabel, stackView: stackView)
         
         stackView.setCustomSpacing(
             LoginRegistrationConstants.Metrics.stackViewPasswordTextFieldSpace,
@@ -140,21 +146,6 @@ extension RegistrationView {
     func disableSignUpButton() {
         signUpButton.isEnabled = false
         signUpButton.alpha = LoginRegistrationConstants.Constants.mainButtonDisableAlpha
-    }
-}
-
-// MARK: - Private Methods
-
-private extension RegistrationView {
-    func insertSubviewToStackView(_ subview: UIView, below view: UIView) {
-        if let index = stackView.arrangedSubviews.firstIndex(of: view) {
-            stackView.insertArrangedSubview(subview, at: index + 1)
-        }
-    }
-    
-    func removeSubviewFromStackView(_ subview: UIView) {
-        stackView.removeArrangedSubview(subview)
-        subview.removeFromSuperview()
     }
 }
 

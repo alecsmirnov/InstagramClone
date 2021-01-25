@@ -6,7 +6,7 @@
 //
 
 protocol IProfileRouter: AnyObject {
-    
+    func showLoginViewController()
 }
 
 final class ProfileRouter {
@@ -20,5 +20,9 @@ final class ProfileRouter {
 // MARK: - IProfileRouter
 
 extension ProfileRouter: IProfileRouter {
-    
+    func showLoginViewController() {
+        let loginViewController = LoginAssembly.createLoginViewController()
+        
+        RootViewControllerSwitcher.setRootViewController(loginViewController)
+    }
 }

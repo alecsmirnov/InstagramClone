@@ -54,7 +54,7 @@ extension RegistrationPresenter: IRegistrationPresenter {
     }
     
     func didPressLogInButton() {
-        router?.closeRegistrationRouter()
+        router?.closeRegistrationViewController()
     }
 }
 

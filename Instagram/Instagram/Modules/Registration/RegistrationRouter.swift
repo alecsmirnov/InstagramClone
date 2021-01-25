@@ -6,7 +6,9 @@
 //
 
 protocol IRegistrationRouter {
-    func closeRegistrationRouter()
+    func closeRegistrationViewController()
+    
+    func showTabBarController()
 }
 
 final class RegistrationRouter {
@@ -20,7 +22,13 @@ final class RegistrationRouter {
 // MARK: - IRegistrationRouter
 
 extension RegistrationRouter: IRegistrationRouter {
-    func closeRegistrationRouter() {
-        viewController?.dismiss(animated: false)
+    func closeRegistrationViewController() {        
+        viewController?.dismiss(animated: true)
+    }
+    
+    func showTabBarController() {
+        let tabBarController = TabBarAssembly.createTabBarController()
+        
+        RootViewControllerSwitcher.setRootViewController(tabBarController)
     }
 }

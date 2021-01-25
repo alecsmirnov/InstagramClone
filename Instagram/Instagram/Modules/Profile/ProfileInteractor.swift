@@ -7,6 +7,10 @@
 
 protocol IProfileInteractor: AnyObject {
     func fetchUser()
+    
+    // TODO: move to Menu module
+    
+    func signOut()
 }
 
 protocol IProfileInteractorOutput: AnyObject {
@@ -33,5 +37,9 @@ extension ProfileInteractor: IProfileInteractor {
             
             presenter?.fetchUserSuccess(user)
         }
+    }
+    
+    func signOut() {
+        FirebaseUserService.signOut()
     }
 }

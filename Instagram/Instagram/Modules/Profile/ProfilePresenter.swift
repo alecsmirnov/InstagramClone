@@ -7,6 +7,8 @@
 
 protocol IProfilePresenter: AnyObject {
     func viewDidLoad()
+    
+    func didPressMenuButton()
 }
 
 final class ProfilePresenter {
@@ -20,6 +22,14 @@ final class ProfilePresenter {
 extension ProfilePresenter: IProfilePresenter {
     func viewDidLoad() {
         interactor?.fetchUser()
+    }
+    
+    func didPressMenuButton() {
+        // TODO: move to Menu module
+        
+        interactor?.signOut()
+        
+        router?.showLoginViewController()
     }
 }
 

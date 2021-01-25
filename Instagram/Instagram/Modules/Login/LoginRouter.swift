@@ -6,7 +6,8 @@
 //
 
 protocol ILoginRouter {
-    func openRegistrationViewController()
+    func showRegistrationViewController()
+    func showTabBarController()
 }
 
 final class LoginRouter {
@@ -20,11 +21,18 @@ final class LoginRouter {
 // MARK: - ILoginRouter
 
 extension LoginRouter: ILoginRouter {
-    func openRegistrationViewController() {
+    func showRegistrationViewController() {
         let registrationViewController = RegistrationAssembly.createRegistrationViewController()
         
-        registrationViewController.modalPresentationStyle = .fullScreen
+        registrationViewController.modalPresentationStyle = .custom
+        registrationViewController.modalTransitionStyle = .crossDissolve
         
-        viewController?.present(registrationViewController, animated: false)
+        viewController?.present(registrationViewController, animated: true)
+    }
+    
+    func showTabBarController() {
+        let tabBarController = TabBarAssembly.createTabBarController()
+        
+        RootViewControllerSwitcher.setRootViewController(tabBarController)
     }
 }

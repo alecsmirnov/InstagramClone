@@ -58,4 +58,15 @@ internal extension LoginRegistrationBaseView {
         
         subview.heightAnchor.constraint(equalToConstant: height).isActive = true
     }
+    
+    static func insertSubviewToStackView(_ subview: UIView, stackView: UIStackView, below view: UIView) {
+        if let index = stackView.arrangedSubviews.firstIndex(of: view) {
+            stackView.insertArrangedSubview(subview, at: index + 1)
+        }
+    }
+    
+    static func removeSubviewFromStackView(_ subview: UIView, stackView: UIStackView) {
+        stackView.removeArrangedSubview(subview)
+        subview.removeFromSuperview()
+    }
 }

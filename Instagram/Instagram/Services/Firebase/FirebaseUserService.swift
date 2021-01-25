@@ -12,8 +12,22 @@ import FirebaseStorage
 enum FirebaseUserService {
     // MARK: Properties
     
+    static var isUserSignedIn: Bool {
+        return authReference.currentUser != nil
+    }
+    
     static var currentUserIdentifier: String? {
         return authReference.currentUser?.uid
+    }
+    
+    // MARK: Constants
+    
+    // MARK: Properties
+    
+    enum SignInError: Error {
+        case userNotFound
+        case wrongPassword
+        case tooManyRequests
     }
     
     private static let authReference = FirebaseAuth.Auth.auth()
@@ -92,7 +106,40 @@ extension FirebaseUserService {
                     completion(isUserCreated)
                 }
             }
+            
+            print("User successfully created")
         }
+    }
+    
+    static func signIn(withEmail email: String, password: String, completion: @escaping (SignInError?) -> Void) {
+        authReference.signIn(withEmail: email, password: password) { authResult, error in
+            guard let authResult = authResult else {
+                if let error = error as NSError? {
+                    print("Failed to sign in with email and password: \(error.localizedDescription)")
+                    
+                    switch error.code {
+                    case
+                        AuthErrorCode.userNotFound.rawValue: completion(.userNotFound)
+                    case
+                        AuthErrorCode.wrongPassword.rawValue: completion(.wrongPassword)
+                    case
+                        AuthErrorCode.tooManyRequests.rawValue: completion(.tooManyRequests)
+                    default:
+                        break
+                    }
+                }
+                
+                return
+            }
+            
+            print("User \(authResult.user.uid) is logged in")
+            
+            completion(nil)
+        }
+    }
+    
+    static func signOut() {
+        try? authReference.signOut()
     }
     
     static func fetchUser(withIdentifier identifier: String, completion: @escaping (User?) -> Void) {

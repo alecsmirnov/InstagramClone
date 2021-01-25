@@ -22,6 +22,26 @@ final class ProfileViewController: CustomViewController<ProfileView> {
         super.viewDidLoad()
         
         presenter?.viewDidLoad()
+        
+        setupMenuButton()
+    }
+}
+
+// MARK: - Appearance
+
+private extension ProfileViewController {
+    func setupMenuButton() {
+        let menuBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "xmark.square"),
+            style: .plain,
+            target: self,
+            action: #selector(didPressCloseButton))
+        
+        navigationItem.rightBarButtonItem = menuBarButtonItem
+    }
+    
+    @objc func didPressCloseButton() {
+        presenter?.didPressMenuButton()
     }
 }
 

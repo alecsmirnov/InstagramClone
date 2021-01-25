@@ -18,7 +18,15 @@ protocol LoginViewDelegate: AnyObject {
 final class LoginView: LoginRegistrationBaseView {
     // MARK: Properties
     
-    weak var delegate: LoginViewDelegate?
+    weak var delegate: LoginViewDelegate? {
+        didSet {
+            guard let presentationController = delegate as? UIViewController else { return }
+            
+            simpleAlert = SimpleAlert(presentationController: presentationController)
+        }
+    }
+    
+    private var simpleAlert: SimpleAlert?
     
     // MARK: Subviews
     
@@ -68,6 +76,56 @@ final class LoginView: LoginRegistrationBaseView {
     }
 }
 
+// MARK: - Public Methods
+
+extension LoginView {
+    func showEmailAlertLabel(text: String) {
+        LoginRegistrationBaseView.insertSubviewToStackView(emailAlertLabel, stackView: stackView, below: emailTextField)
+        
+        emailAlertLabel.text = text
+    }
+    
+    func hideEmailAlertLabel() {
+        LoginRegistrationBaseView.removeSubviewFromStackView(emailAlertLabel, stackView: stackView)
+    }
+    
+    func showPasswordAlertLabel(text: String) {
+        LoginRegistrationBaseView.insertSubviewToStackView(
+            passwordAlertLabel,
+            stackView: stackView,
+            below: passwordTextField)
+        
+        stackView.setCustomSpacing(LoginRegistrationConstants.Metrics.stackViewSpace, after: passwordTextField)
+        stackView.setCustomSpacing(
+            LoginRegistrationConstants.Metrics.stackViewPasswordTextFieldSpace,
+            after: passwordAlertLabel)
+        
+        passwordAlertLabel.text = text
+    }
+    
+    func hidePasswordAlertLabel() {
+        LoginRegistrationBaseView.removeSubviewFromStackView(passwordAlertLabel, stackView: stackView)
+        
+        stackView.setCustomSpacing(
+            LoginRegistrationConstants.Metrics.stackViewPasswordTextFieldSpace,
+            after: passwordTextField)
+    }
+    
+    func showSimpleAlert(title: String, text: String) {
+        simpleAlert?.showAlert(title: title, message: text)
+    }
+    
+    func enableLogInButton() {
+        logInButton.isEnabled = true
+        logInButton.alpha = LoginRegistrationConstants.Constants.mainButtonEnableAlpha
+    }
+    
+    func disableLogInButton() {
+        logInButton.isEnabled = false
+        logInButton.alpha = LoginRegistrationConstants.Constants.mainButtonDisableAlpha
+    }
+}
+
 // MARK: - Appearance
 
 private extension LoginView {
@@ -101,6 +159,11 @@ private extension LoginView {
         LoginRegistrationBaseView.setupStackViewTextFieldAppearance(
             passwordTextField,
             placeholder: LoginRegistrationConstants.TextFieldPlaceholders.password)
+        
+        // TODO: return key actions (login and registration)
+        
+        //emailTextField.returnKeyType = .continue
+        //passwordTextField.returnKeyType = .done
     }
     
     func setupLogInButtonAppearance() {
@@ -110,7 +173,7 @@ private extension LoginView {
         logInButton.backgroundColor = LoginRegistrationConstants.Colors.mainButtonBackground
         logInButton.layer.cornerRadius = LoginRegistrationConstants.Metrics.mainButtonCornerRadius
         
-        //disableLogInButton()
+        disableLogInButton()
     }
     
     func setupSeparatorViewAppearance() {
