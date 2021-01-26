@@ -173,14 +173,32 @@ private extension ProfileCollectionReusableView {
         postsButton.secondPartColor = Colors.userStatsStackViewTitle
         followersButton.secondPartColor = Colors.userStatsStackViewTitle
         followingButton.secondPartColor = Colors.userStatsStackViewTitle
+
+        postsButton.secondPartText = UserStatsStackViewTitles.posts
+        followersButton.secondPartText = UserStatsStackViewTitles.followers
+        followingButton.secondPartText = UserStatsStackViewTitles.following
+        
+        postsButton.firstPartFont = .boldSystemFont(ofSize: 16)
+        followersButton.firstPartFont = .boldSystemFont(ofSize: 16)
+        followingButton.firstPartFont = .boldSystemFont(ofSize: 16)
+        
+        postsButton.titleLabel?.textAlignment = .center
+        followersButton.titleLabel?.textAlignment = .center
+        followingButton.titleLabel?.textAlignment = .center
+        
+        postsButton.titleLabel?.numberOfLines = 2
+        followersButton.titleLabel?.numberOfLines = 2
+        followingButton.titleLabel?.numberOfLines = 2
         
         postsButton.divider = "\n"
         followersButton.divider = "\n"
         followingButton.divider = "\n"
         
-        postsButton.secondPartText = UserStatsStackViewTitles.posts
-        followersButton.secondPartText = UserStatsStackViewTitles.followers
-        followingButton.secondPartText = UserStatsStackViewTitles.following
+        // TEMP
+        
+        postsButton.firstPartText = "0"
+        followersButton.firstPartText = "0"
+        followingButton.firstPartText = "0"
     }
     
     func setupEditFollowButtonAppearance() {
