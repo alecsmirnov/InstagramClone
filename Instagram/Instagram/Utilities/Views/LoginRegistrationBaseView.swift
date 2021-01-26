@@ -26,7 +26,6 @@ class LoginRegistrationBaseView: UIView {
 private extension LoginRegistrationBaseView {
     func setupGestures() {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tapGestureRecognizer.cancelsTouchesInView = false
         
         addGestureRecognizer(tapGestureRecognizer)
     }
@@ -44,7 +43,6 @@ internal extension LoginRegistrationBaseView {
         textField.borderStyle = .roundedRect
         textField.backgroundColor = LoginRegistrationConstants.Colors.textFieldBackground
         textField.font = .systemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
-        textField.clearButtonMode = .whileEditing
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .none
     }
@@ -55,7 +53,6 @@ internal extension LoginRegistrationBaseView {
 internal extension LoginRegistrationBaseView {
     static func setupStackViewSubviewLayout(_ subview: UIView, height: CGFloat) {
         subview.translatesAutoresizingMaskIntoConstraints = false
-        
         subview.heightAnchor.constraint(equalToConstant: height).isActive = true
     }
     

@@ -39,10 +39,10 @@ final class RegistrationView: LoginRegistrationBaseView {
     private let contentView = UIView()
     private let profileImageButton = UIButton(type: .system)
     private let stackView = UIStackView()
-    private let emailTextField = UITextField()
-    private let fullNameTextField = UITextField()
-    private let usernameTextField = UITextField()
-    private let passwordTextField = UITextField()
+    private let emailTextField = SecureTextField()
+    private let fullNameTextField = SecureTextField()
+    private let usernameTextField = SecureTextField()
+    private let passwordTextField = SecureTextField(isSecurityControlHidden: false, isSecureTextEntry: true)
     private let signUpButton = UIButton(type: .system)
     
     private let separatorView = UIView()
@@ -341,8 +341,6 @@ private extension RegistrationView {
         LoginRegistrationBaseView.setupStackViewSubviewLayout(usernameTextField, height: stackViewSubviewHeight)
         LoginRegistrationBaseView.setupStackViewSubviewLayout(passwordTextField, height: stackViewSubviewHeight)
         LoginRegistrationBaseView.setupStackViewSubviewLayout(signUpButton, height: stackViewSubviewHeight)
-        
-        passwordTextField.isSecureTextEntry = true
     }
     
     func setupSeparatorViewLayout() {
