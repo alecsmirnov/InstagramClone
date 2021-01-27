@@ -364,6 +364,8 @@ private extension LoginView {
             self,
             withEmail: emailTextField.text ?? "",
             password: passwordTextField.text ?? "")
+        
+        endEditing(true)
     }
     
     @objc func didPressSignUpButton() {
@@ -379,14 +381,9 @@ extension LoginView: UITextFieldDelegate {
         case emailTextField:
             passwordTextField.becomeFirstResponder()
         case passwordTextField:
-            guard logInButton.isEnabled else { return true }
-            
-            passwordTextField.resignFirstResponder()
-            
-            delegate?.loginViewDidPressLogInButton(
-                self,
-                withEmail: emailTextField.text ?? "",
-                password: passwordTextField.text ?? "")
+            if logInButton.isEnabled {
+                didPressLogInButton()
+            }
         default:
             break
         }

@@ -424,6 +424,8 @@ private extension RegistrationView {
             password: passwordTextField.text ?? "")
         
         delegate?.registrationViewDidPressSignUpButton(self, withInfo: info)
+        
+        endEditing(true)
     }
     
     @objc func didPressLogInButton() {
@@ -443,11 +445,9 @@ extension RegistrationView: UITextFieldDelegate {
         case usernameTextField:
             passwordTextField.becomeFirstResponder()
         case passwordTextField:
-            guard signUpButton.isEnabled else { return true }
-            
-            passwordTextField.resignFirstResponder()
-            
-            didPressSignUpButton()
+            if signUpButton.isEnabled {
+                didPressSignUpButton()
+            }
         default:
             break
         }
