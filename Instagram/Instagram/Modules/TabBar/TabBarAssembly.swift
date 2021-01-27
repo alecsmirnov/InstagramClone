@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class TabBarAssembly {
+enum TabBarAssembly {
     // MARK: Constants
     
     private enum Metrics {
@@ -48,6 +48,14 @@ final class TabBarAssembly {
             image: Images.profileUnselected,
             selectedImage: Images.profileSelected)
     }
+    
+    private enum TabBarItemIndex: Int {
+        case home
+        case search
+        case plus
+        case like
+        case profile
+    }
 }
 
 // MARK: - Public Methods
@@ -66,10 +74,25 @@ extension TabBarAssembly {
             viewController: profileViewController,
             tabBarItem: TabBarItems.profile)
         
-        let tabBarController = UITabBarController()
+        let tabBarController = TabBarController()
         
-        tabBarController.viewControllers = [homeTab, searchTab, plusTab, likeTab, profileTab]
         tabBarController.tabBar.tintColor = Colors.tint
+        tabBarController.viewControllers = [homeTab, searchTab, plusTab, likeTab, profileTab]
+        
+        tabBarController.shouldSelectViewController = { tabBarController, viewController in
+            guard let index = tabBarController.viewControllers?.firstIndex(of: viewController) else { return true }
+            
+            if TabBarItemIndex(rawValue: index) == .plus {
+                let homeViewController = HomeAssembly.createHomeViewController()
+                homeViewController.view.backgroundColor = .red
+
+                tabBarController.present(homeViewController, animated: true)
+
+                return false
+            }
+            
+            return true
+        }
         
         return tabBarController
     }

@@ -23,6 +23,7 @@
 		845455F725BDA5830007C9A2 /* LoginRegistrationConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455F625BDA5830007C9A2 /* LoginRegistrationConstants.swift */; };
 		845455FB25BDAC460007C9A2 /* KeyboardAppearanceListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455FA25BDAC460007C9A2 /* KeyboardAppearanceListener.swift */; };
 		845455FF25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455FE25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift */; };
+		8454924925C19805005AB7DA /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454924825C19805005AB7DA /* TabBarController.swift */; };
 		84549BA425BEC7AE007D24E2 /* SimpleAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BA325BEC7AE007D24E2 /* SimpleAlert.swift */; };
 		84549BA925BED392007D24E2 /* NetworkResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BA825BED392007D24E2 /* NetworkResult.swift */; };
 		84549BAD25BEEC32007D24E2 /* LaunchAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BAC25BEEC32007D24E2 /* LaunchAssembly.swift */; };
@@ -86,6 +87,7 @@
 		845455F625BDA5830007C9A2 /* LoginRegistrationConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRegistrationConstants.swift; sourceTree = "<group>"; };
 		845455FA25BDAC460007C9A2 /* KeyboardAppearanceListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAppearanceListener.swift; sourceTree = "<group>"; };
 		845455FE25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRegistrationBaseView.swift; sourceTree = "<group>"; };
+		8454924825C19805005AB7DA /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		84549BA325BEC7AE007D24E2 /* SimpleAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleAlert.swift; sourceTree = "<group>"; };
 		84549BA825BED392007D24E2 /* NetworkResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkResult.swift; sourceTree = "<group>"; };
 		84549BAC25BEEC32007D24E2 /* LaunchAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAssembly.swift; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 		845504F125B1C26300715C3B /* TabBar */ = {
 			isa = PBXGroup;
 			children = (
+				8454924825C19805005AB7DA /* TabBarController.swift */,
 				845504F725B1C38300715C3B /* TabBarAssembly.swift */,
 			);
 			path = TabBar;
@@ -563,6 +566,7 @@
 				845455E525BD894A0007C9A2 /* LoginView.swift in Sources */,
 				8445929225B41E7D0028EE6A /* RegistrationView.swift in Sources */,
 				845455D225BD44380007C9A2 /* UserPublicInfo.swift in Sources */,
+				8454924925C19805005AB7DA /* TabBarController.swift in Sources */,
 				8445928F25B41E6D0028EE6A /* RegistrationViewController.swift in Sources */,
 				84B2E65325B0267700B27457 /* AppDelegate.swift in Sources */,
 				84549BA925BED392007D24E2 /* NetworkResult.swift in Sources */,
