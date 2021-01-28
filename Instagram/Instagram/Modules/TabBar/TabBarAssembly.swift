@@ -66,7 +66,9 @@ extension TabBarAssembly {
         let homeTab = createNavigationController(viewController: homeViewController, tabBarItem: TabBarItems.home)
         
         let searchTab = createNavigationController(viewController: UIViewController(), tabBarItem: TabBarItems.search)
+        
         let plusTab = createNavigationController(viewController: UIViewController(), tabBarItem: TabBarItems.plus)
+        
         let likeTab = createNavigationController(viewController: UIViewController(), tabBarItem: TabBarItems.like)
         
         let profileViewController = ProfileAssembly.createProfileViewController()
@@ -83,10 +85,10 @@ extension TabBarAssembly {
             guard let index = tabBarController.viewControllers?.firstIndex(of: viewController) else { return true }
             
             if TabBarItemIndex(rawValue: index) == .plus {
-                let homeViewController = HomeAssembly.createHomeViewController()
-                homeViewController.view.backgroundColor = .red
+                let newPostViewController = HomeAssembly.createHomeViewController()
+                let newPostNavigationController = UINavigationController(rootViewController: newPostViewController)
 
-                tabBarController.present(homeViewController, animated: true)
+                tabBarController.present(newPostNavigationController, animated: true)
 
                 return false
             }

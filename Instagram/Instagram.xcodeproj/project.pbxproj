@@ -10,6 +10,12 @@
 		8445928F25B41E6D0028EE6A /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8445928E25B41E6D0028EE6A /* RegistrationViewController.swift */; };
 		8445929225B41E7D0028EE6A /* RegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8445929125B41E7D0028EE6A /* RegistrationView.swift */; };
 		8445929625B425210028EE6A /* CustomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8445929525B425210028EE6A /* CustomViewController.swift */; };
+		84488AB225C2F66E00173A19 /* NewPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84488AB125C2F66E00173A19 /* NewPostView.swift */; };
+		84488AB625C2F67E00173A19 /* NewPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84488AB525C2F67E00173A19 /* NewPostViewController.swift */; };
+		84488AB925C2F69F00173A19 /* NewPostInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84488AB825C2F69F00173A19 /* NewPostInteractor.swift */; };
+		84488ABC25C2F6A600173A19 /* NewPostPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84488ABB25C2F6A600173A19 /* NewPostPresenter.swift */; };
+		84488ABF25C2F6AD00173A19 /* NewPostRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84488ABE25C2F6AD00173A19 /* NewPostRouter.swift */; };
+		84488AC225C2F6B400173A19 /* NewPostAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84488AC125C2F6B400173A19 /* NewPostAssembly.swift */; };
 		845455D225BD44380007C9A2 /* UserPublicInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455D125BD44380007C9A2 /* UserPublicInfo.swift */; };
 		845455D525BD44460007C9A2 /* UserPrivateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455D425BD44460007C9A2 /* UserPrivateInfo.swift */; };
 		845455D925BD467A0007C9A2 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455D825BD467A0007C9A2 /* Profile.swift */; };
@@ -74,6 +80,12 @@
 		8445928E25B41E6D0028EE6A /* RegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewController.swift; sourceTree = "<group>"; };
 		8445929125B41E7D0028EE6A /* RegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationView.swift; sourceTree = "<group>"; };
 		8445929525B425210028EE6A /* CustomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViewController.swift; sourceTree = "<group>"; };
+		84488AB125C2F66E00173A19 /* NewPostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostView.swift; sourceTree = "<group>"; };
+		84488AB525C2F67E00173A19 /* NewPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostViewController.swift; sourceTree = "<group>"; };
+		84488AB825C2F69F00173A19 /* NewPostInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostInteractor.swift; sourceTree = "<group>"; };
+		84488ABB25C2F6A600173A19 /* NewPostPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostPresenter.swift; sourceTree = "<group>"; };
+		84488ABE25C2F6AD00173A19 /* NewPostRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostRouter.swift; sourceTree = "<group>"; };
+		84488AC125C2F6B400173A19 /* NewPostAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostAssembly.swift; sourceTree = "<group>"; };
 		845455D125BD44380007C9A2 /* UserPublicInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPublicInfo.swift; sourceTree = "<group>"; };
 		845455D425BD44460007C9A2 /* UserPrivateInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPrivateInfo.swift; sourceTree = "<group>"; };
 		845455D825BD467A0007C9A2 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
@@ -184,6 +196,27 @@
 				8445929525B425210028EE6A /* CustomViewController.swift */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		84488AB025C2F54B00173A19 /* NewPost */ = {
+			isa = PBXGroup;
+			children = (
+				84488AC425C2F6BA00173A19 /* NewPostView */,
+				84488AB825C2F69F00173A19 /* NewPostInteractor.swift */,
+				84488ABB25C2F6A600173A19 /* NewPostPresenter.swift */,
+				84488ABE25C2F6AD00173A19 /* NewPostRouter.swift */,
+				84488AC125C2F6B400173A19 /* NewPostAssembly.swift */,
+			);
+			path = NewPost;
+			sourceTree = "<group>";
+		};
+		84488AC425C2F6BA00173A19 /* NewPostView */ = {
+			isa = PBXGroup;
+			children = (
+				84488AB125C2F66E00173A19 /* NewPostView.swift */,
+				84488AB525C2F67E00173A19 /* NewPostViewController.swift */,
+			);
+			path = NewPostView;
 			sourceTree = "<group>";
 		};
 		845455E325BD89280007C9A2 /* LoginView */ = {
@@ -358,6 +391,7 @@
 				8445928C25B41DF50028EE6A /* Login */,
 				8445928D25B41E3A0028EE6A /* Registration */,
 				845504F125B1C26300715C3B /* TabBar */,
+				84488AB025C2F54B00173A19 /* NewPost */,
 				84B2E67225B0507200B27457 /* Home */,
 				84E6609925B954DF0036AB9F /* Profile */,
 			);
@@ -568,8 +602,10 @@
 				845455D225BD44380007C9A2 /* UserPublicInfo.swift in Sources */,
 				8454924925C19805005AB7DA /* TabBarController.swift in Sources */,
 				8445928F25B41E6D0028EE6A /* RegistrationViewController.swift in Sources */,
+				84488ABF25C2F6AD00173A19 /* NewPostRouter.swift in Sources */,
 				84B2E65325B0267700B27457 /* AppDelegate.swift in Sources */,
 				84549BA925BED392007D24E2 /* NetworkResult.swift in Sources */,
+				84488AB625C2F67E00173A19 /* NewPostViewController.swift in Sources */,
 				845455F125BD8A300007C9A2 /* LoginRouter.swift in Sources */,
 				8445929625B425210028EE6A /* CustomViewController.swift in Sources */,
 				84E660A325B955200036AB9F /* ProfileInteractor.swift in Sources */,
@@ -577,19 +613,23 @@
 				8491A84025B47DE8009EDFC2 /* RegistrationInteractor.swift in Sources */,
 				845B8CB225B6D2E100FE5ED6 /* FirebaseUserService.swift in Sources */,
 				84E6612825B9BC8A0036AB9F /* ProfileCollectionReusableView.swift in Sources */,
+				84488AB925C2F69F00173A19 /* NewPostInteractor.swift in Sources */,
 				845B8C9925B6AC8000FE5ED6 /* InputValidation.swift in Sources */,
+				84488ABC25C2F6A600173A19 /* NewPostPresenter.swift in Sources */,
 				8491A84625B47E03009EDFC2 /* RegistrationRouter.swift in Sources */,
 				84B2E67B25B050CE00B27457 /* HomePresenter.swift in Sources */,
 				84E660A925B955390036AB9F /* ProfileRouter.swift in Sources */,
 				845455FB25BDAC460007C9A2 /* KeyboardAppearanceListener.swift in Sources */,
 				84FE47D625B81FD50048F5AA /* FirebaseStorages.swift in Sources */,
 				84B2E67625B0509700B27457 /* HomeView.swift in Sources */,
+				84488AB225C2F66E00173A19 /* NewPostView.swift in Sources */,
 				84549BAD25BEEC32007D24E2 /* LaunchAssembly.swift in Sources */,
 				8454D3F625BFFC3F00D3CC9E /* SecureTextField.swift in Sources */,
 				845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */,
 				845455D925BD467A0007C9A2 /* Profile.swift in Sources */,
 				845D7D8E25BC472C001E5037 /* TwoPartsButton.swift in Sources */,
 				84E6610825B9936E0036AB9F /* User.swift in Sources */,
+				84488AC225C2F6B400173A19 /* NewPostAssembly.swift in Sources */,
 				845A1D4925BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift in Sources */,
 				84E660A025B955120036AB9F /* ProfileView.swift in Sources */,
 				845455E825BD89BD0007C9A2 /* LoginViewController.swift in Sources */,

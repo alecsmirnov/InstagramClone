@@ -5,8 +5,22 @@
 //  Created by Admin on 14.01.2021.
 //
 
-final class HomeAssembly {
+enum HomeAssembly {
     static func createHomeViewController() -> HomeViewController {
-        return HomeViewController()
+        let viewController = HomeViewController()
+        
+        let interactor = HomeInteractor()
+        let presenter = HomePresenter()
+        let router = HomeRouter(viewController: viewController)
+        
+        viewController.presenter = presenter
+        
+        interactor.presenter = presenter
+        
+        presenter.viewController = viewController
+        presenter.interactor = interactor
+        presenter.router = router
+        
+        return viewController
     }
 }

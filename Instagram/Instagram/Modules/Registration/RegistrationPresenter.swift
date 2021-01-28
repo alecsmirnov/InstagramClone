@@ -128,7 +128,7 @@ extension RegistrationPresenter: IRegistrationInteractorOutput {
     }
     
     func signUpSuccess() {
-
+        router?.showTabBarController()
     }
     
     func signUpFailure() {
