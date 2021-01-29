@@ -9,6 +9,7 @@ import UIKit
 
 protocol INewPostViewController: AnyObject {
     func setMediaFiles(_ mediaFiles: [MediaFileType])
+    func appendMediaFile(_ mediaFile: MediaFileType)
 }
 
 final class NewPostViewController: CustomViewController<NewPostView> {
@@ -47,6 +48,10 @@ final class NewPostViewController: CustomViewController<NewPostView> {
 extension NewPostViewController: INewPostViewController {
     func setMediaFiles(_ mediaFiles: [MediaFileType]) {
         customView?.setMediaFiles(mediaFiles)
+    }
+    
+    func appendMediaFile(_ mediaFile: MediaFileType) {
+        customView?.appendMediaFile(mediaFile)
     }
 }
 

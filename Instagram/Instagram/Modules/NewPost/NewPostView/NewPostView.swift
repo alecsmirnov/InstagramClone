@@ -12,6 +12,8 @@ final class NewPostView: UIView {
     
     private var mediaFiles = [MediaFileType]()
     
+    private var selectedMediaFileIndex: Int?
+    
     // MARK: Constants
     
     private enum Metrics {
@@ -45,6 +47,20 @@ final class NewPostView: UIView {
 extension NewPostView {
     func setMediaFiles(_ mediaFiles: [MediaFileType]) {
         self.mediaFiles = mediaFiles
+        
+        if selectedMediaFileIndex == nil {
+            selectedMediaFileIndex = 0
+        }
+    }
+    
+    func appendMediaFile(_ mediaFile: MediaFileType) {
+        mediaFiles.append(mediaFile)
+        
+        if selectedMediaFileIndex == nil {
+            selectedMediaFileIndex = 0
+        }
+        
+        collectionView.reloadData()
     }
 }
 
@@ -62,14 +78,15 @@ private extension NewPostView {
         collectionView.delaysContentTouches = false
         
         collectionView.dataSource = self
+        collectionView.delegate = self
         
         collectionView.register(
             MediaCell.self,
             forCellWithReuseIdentifier: MediaCell.reuseIdentifier)
         collectionView.register(
-            NewPostHeaderView.self,
+            MediaCell.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: NewPostHeaderView.reuseIdentifier)
+            withReuseIdentifier: MediaCell.reuseIdentifier)
     }
 }
 
@@ -164,12 +181,26 @@ extension NewPostView: UICollectionViewDataSource {
     ) -> UICollectionReusableView {
         guard let header = collectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
-            withReuseIdentifier: NewPostHeaderView.reuseIdentifier,
-            for: indexPath) as? NewPostHeaderView
+            withReuseIdentifier: MediaCell.reuseIdentifier,
+            for: indexPath) as? MediaCell
         else {
             return UICollectionReusableView()
         }
+        
+        if let selectedMediaFileIndex = selectedMediaFileIndex {
+            header.configure(withMediaFile: mediaFiles[selectedMediaFileIndex])
+        }
 
         return header
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension NewPostView: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedMediaFileIndex = indexPath.row
+        
+        collectionView.reloadData()
     }
 }

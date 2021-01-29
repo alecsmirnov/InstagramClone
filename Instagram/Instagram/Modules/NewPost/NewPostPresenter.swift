@@ -30,14 +30,18 @@ extension NewPostPresenter: INewPostPresenter {
     }
     
     func viewDidLoad() {
-        guard let mediaFiles = interactor?.fetchMediaFiles() else { return }
+        //guard let mediaFiles = interactor?.fetchMediaFiles() else { return }
+
+        //viewController?.setMediaFiles(mediaFiles)
         
-        viewController?.setMediaFiles(mediaFiles)
+        interactor?.fetchMediaFilesAsync()
     }
 }
 
 // MARK: - INewPostInteractorOutput
 
 extension NewPostPresenter: INewPostInteractorOutput {
-    
+    func fetchMediaFileSuccess(_ mediaFile: MediaFileType) {
+        viewController?.appendMediaFile(mediaFile)
+    }
 }
