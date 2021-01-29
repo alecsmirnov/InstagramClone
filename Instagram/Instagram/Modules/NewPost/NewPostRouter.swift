@@ -6,7 +6,7 @@
 //
 
 protocol INewPostRouter: AnyObject {
-    
+    func closeNewPostViewController()
 }
 
 final class NewPostRouter {
@@ -20,5 +20,7 @@ final class NewPostRouter {
 // MARK: - INewPostRouter
 
 extension NewPostRouter: INewPostRouter {
-    
+    func closeNewPostViewController() {
+        viewController?.dismiss(animated: true)
+    }
 }

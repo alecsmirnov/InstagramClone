@@ -27,6 +27,16 @@ final class ProfileViewController: CustomViewController<ProfileView> {
     }
 }
 
+// MARK: - IProfileViewController
+
+extension ProfileViewController: IProfileViewController {
+    func setUser(_ user: User) {
+        navigationItem.title = user.username
+        
+        customView?.setUser(user)
+    }
+}
+
 // MARK: - Appearance
 
 private extension ProfileViewController {
@@ -39,18 +49,12 @@ private extension ProfileViewController {
         
         navigationItem.rightBarButtonItem = menuBarButtonItem
     }
-    
-    @objc func didPressCloseButton() {
-        presenter?.didPressMenuButton()
-    }
 }
 
-// MARK: - IProfileViewController
+// MARK: - Actions
 
-extension ProfileViewController: IProfileViewController {
-    func setUser(_ user: User) {
-        navigationItem.title = user.username
-        
-        customView?.setUser(user)
+private extension ProfileViewController {
+    @objc func didPressCloseButton() {
+        presenter?.didPressMenuButton()
     }
 }

@@ -5,7 +5,13 @@
 //  Created by Admin on 28.01.2021.
 //
 
+import UIKit
+
 enum NewPostAssembly {
+    static func createNewPostNavigationController() -> UINavigationController {
+        return UINavigationController(rootViewController: createNewPostViewController())
+    }
+    
     static func createNewPostViewController() -> NewPostViewController {
         let viewController = NewPostViewController()
         

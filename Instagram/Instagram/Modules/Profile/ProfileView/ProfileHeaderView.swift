@@ -1,5 +1,5 @@
 //
-//  ProfileCollectionReusableView.swift
+//  ProfileHeaderView.swift
 //  Instagram
 //
 //  Created by Admin on 21.01.2021.
@@ -7,22 +7,22 @@
 
 import UIKit
 
-protocol ProfileCollectionReusableViewDelegate: AnyObject {
-    func profileCollectionReusableViewDidPressFollowersButton(_ view: ProfileCollectionReusableView)
-    func profileCollectionReusableViewDidPressFollowingButton(_ view: ProfileCollectionReusableView)
-    func profileCollectionReusableView(
-        _ view: ProfileCollectionReusableView,
-        didPressEditFollowButtonWith status: ProfileCollectionReusableView.EditFollowButtonStatus)
+protocol ProfileHeaderViewDelegate: AnyObject {
+    func profileHeaderViewDidPressFollowersButton(_ view: ProfileHeaderView)
+    func profileHeaderViewDidPressFollowingButton(_ view: ProfileHeaderView)
+    func profileHeaderViewD(
+        _ view: ProfileHeaderView,
+        didPressEditFollowButtonWith status: ProfileHeaderView.EditFollowButtonStatus)
 }
 
-final class ProfileCollectionReusableView: UICollectionReusableView {
+final class ProfileHeaderView: UICollectionReusableView {
     // MARK: Properties
     
     static var reuseIdentifier: String {
         return String(describing: self)
     }
     
-    weak var delegate: ProfileCollectionReusableViewDelegate?
+    weak var delegate: ProfileHeaderViewDelegate?
     
     var isCurrentUserProfile: Bool = true {
         didSet {
@@ -128,7 +128,7 @@ final class ProfileCollectionReusableView: UICollectionReusableView {
 
 // MARK: - Public Methods
 
-extension ProfileCollectionReusableView {
+extension ProfileHeaderView {
     
     
     func setUser(_ user: User) {
@@ -140,7 +140,7 @@ extension ProfileCollectionReusableView {
 
 // MARK: - Appearance
 
-private extension ProfileCollectionReusableView {
+private extension ProfileHeaderView {
     func setupAppearance() {
         setupProfileImageViewAppearance()
         setupUserStatsStackViewAppearance()
@@ -261,7 +261,7 @@ private extension ProfileCollectionReusableView {
 
 // MARK: - Layout
 
-private extension ProfileCollectionReusableView {
+private extension ProfileHeaderView {
     func setupLayout() {
         setupSubviews()
         

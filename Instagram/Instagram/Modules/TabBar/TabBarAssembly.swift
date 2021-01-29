@@ -85,10 +85,11 @@ extension TabBarAssembly {
             guard let index = tabBarController.viewControllers?.firstIndex(of: viewController) else { return true }
             
             if TabBarItemIndex(rawValue: index) == .plus {
-                let newPostViewController = HomeAssembly.createHomeViewController()
-                let newPostNavigationController = UINavigationController(rootViewController: newPostViewController)
+                let newPostViewController = NewPostAssembly.createNewPostNavigationController()
+                
+                newPostViewController.modalPresentationStyle = .fullScreen
 
-                tabBarController.present(newPostNavigationController, animated: true)
+                tabBarController.present(newPostViewController, animated: true)
 
                 return false
             }

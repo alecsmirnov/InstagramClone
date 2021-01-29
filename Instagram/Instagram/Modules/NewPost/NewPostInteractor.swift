@@ -6,7 +6,7 @@
 //
 
 protocol INewPostInteractor: AnyObject {
-    
+    func fetchMediaFiles() -> [MediaFileType]
 }
 
 protocol INewPostInteractorOutput: AnyObject {
@@ -20,5 +20,7 @@ final class NewPostInteractor {
 // MARK: - INewPostInteractor
 
 extension NewPostInteractor: INewPostInteractor {
-    
+    func fetchMediaFiles() -> [MediaFileType] {
+        return MediaService.fetchImages()
+    }
 }

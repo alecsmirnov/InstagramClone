@@ -80,9 +80,9 @@ private extension ProfileView {
             ProfileHeaderCollectionViewCell.self,
             forCellWithReuseIdentifier: ProfileHeaderCollectionViewCell.reuseIdentifier)
         collectionView.register(
-            ProfileCollectionReusableView.self,
+            ProfileHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: ProfileCollectionReusableView.reuseIdentifier)
+            withReuseIdentifier: ProfileHeaderView.reuseIdentifier)
     }
 }
 
@@ -197,8 +197,8 @@ extension ProfileView: UICollectionViewDataSource {
     ) -> UICollectionReusableView {        
         guard let header = collectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
-            withReuseIdentifier: ProfileCollectionReusableView.reuseIdentifier,
-            for: indexPath) as? ProfileCollectionReusableView
+            withReuseIdentifier: ProfileHeaderView.reuseIdentifier,
+            for: indexPath) as? ProfileHeaderView
         else {
             return UICollectionReusableView()
         }
