@@ -42,7 +42,7 @@ extension MediaService {
                 for: asset,
                 targetSize: targetSize,
                 contentMode: .aspectFit,
-                options: imageRequestOptions) { image, info in
+                options: imageRequestOptions) { image, _ in
                 if let image = image {
                     images.append(.image(image))
                 }
