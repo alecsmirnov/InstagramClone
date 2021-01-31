@@ -25,5 +25,8 @@ enum NewPostConstants {
         static let title = "New post"
         
         static let columnsCount = 4
+        
+        static let selectedCellAlpha: CGFloat = 0.4
+        static let unselectedCellAlpha: CGFloat = 1
     }
 }

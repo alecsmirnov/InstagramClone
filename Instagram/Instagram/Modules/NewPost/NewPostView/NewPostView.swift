@@ -179,9 +179,9 @@ extension NewPostView: UICollectionViewDataSource {
         cell.configure(withMediaFile: mediaFiles[indexPath.row])
 
         if let selectedMediaFileIndex = selectedMediaFileIndex, selectedMediaFileIndex == indexPath.row {
-            cell.selectCell()
+            cell.contentView.alpha = NewPostConstants.Constants.selectedCellAlpha
         } else {
-            cell.deselectCell()
+            cell.contentView.alpha = NewPostConstants.Constants.unselectedCellAlpha
         }
         
         if indexPath.row == mediaFiles.count - 1 {
