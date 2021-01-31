@@ -8,8 +8,9 @@
 import UIKit
 
 protocol INewPostViewController: AnyObject {
-    func setMediaFiles(_ mediaFiles: [MediaFileType])
     func appendMediaFile(_ mediaFile: MediaFileType)
+    
+    func setHeaderMediaFile(_ mediaFile: MediaFileType)
 }
 
 final class NewPostViewController: CustomViewController<NewPostView> {
@@ -21,23 +22,12 @@ final class NewPostViewController: CustomViewController<NewPostView> {
         return true
     }
     
-    // MARK: Constants
-    
-    private enum Images {
-        static let closeButton = UIImage(systemName: "xmark")
-        static let continueButton = UIImage(systemName: "arrow.right")
-    }
-    
-    private enum Constants {
-        static let title = "New post"
-    }
-    
     // MARK: Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        presenter?.viewDidLoad()
+        customView?.delegate = self
         
         setupAppearance()
     }
@@ -46,12 +36,24 @@ final class NewPostViewController: CustomViewController<NewPostView> {
 // MARK: - INewPostViewController
 
 extension NewPostViewController: INewPostViewController {
-    func setMediaFiles(_ mediaFiles: [MediaFileType]) {
-        customView?.setMediaFiles(mediaFiles)
-    }
-    
     func appendMediaFile(_ mediaFile: MediaFileType) {
         customView?.appendMediaFile(mediaFile)
+    }
+    
+    func setHeaderMediaFile(_ mediaFile: MediaFileType) {
+        customView?.setHeaderMediaFile(mediaFile)
+    }
+}
+
+// MARK: - NewPostViewDelegate
+
+extension NewPostViewController: NewPostViewDelegate {
+    func newPostViewDidRequestMedia(_ newPostView: NewPostView) {
+        presenter?.didRequestMedia()
+    }
+    
+    func newPostViewDidSelectMedia(_ newPostView: NewPostView, atIndex index: Int) {
+        presenter?.didSelectMedia(atIndex: index)
     }
 }
 
@@ -59,7 +61,7 @@ extension NewPostViewController: INewPostViewController {
 
 private extension NewPostViewController {
     func setupAppearance() {
-        navigationItem.title = Constants.title
+        navigationItem.title = NewPostConstants.Constants.title
         
         setupCloseButton()
         setupContinueButton()
@@ -67,7 +69,7 @@ private extension NewPostViewController {
     
     func setupCloseButton() {
         let closeBarButtonItem = UIBarButtonItem(
-            image: Images.closeButton,
+            image: NewPostConstants.Images.closeButton,
             style: .plain,
             target: self,
             action: #selector(didPressCloseButton))
@@ -77,7 +79,7 @@ private extension NewPostViewController {
     
     func setupContinueButton() {
         let continueBarButtonItem = UIBarButtonItem(
-            image: Images.continueButton,
+            image: NewPostConstants.Images.continueButton,
             style: .plain,
             target: self,
             action: #selector(didPressContinueButton))

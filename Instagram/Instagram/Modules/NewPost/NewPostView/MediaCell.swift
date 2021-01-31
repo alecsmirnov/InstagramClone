@@ -41,6 +41,14 @@ extension MediaCell {
             imageView.image = image
         }
     }
+    
+    func selectCell() {
+        imageView.alpha = 0.4
+    }
+    
+    func deselectCell() {
+        imageView.alpha = 1
+    }
 }
 
 // MARK: - Appearance

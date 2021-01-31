@@ -36,9 +36,9 @@
 		84549BB025BEFC2F007D24E2 /* RootViewControllerSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BAF25BEFC2F007D24E2 /* RootViewControllerSwitcher.swift */; };
 		8454D3F625BFFC3F00D3CC9E /* SecureTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D3F525BFFC3F00D3CC9E /* SecureTextField.swift */; };
 		845504F825B1C38300715C3B /* TabBarAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845504F725B1C38300715C3B /* TabBarAssembly.swift */; };
+		845800BD25C6AFA600816642 /* NewPostConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845800BC25C6AFA600816642 /* NewPostConstants.swift */; };
 		845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A1D3D25BAB50700F4004B /* UIImageView+download.swift */; };
 		845A1D4925BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A1D4825BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift */; };
-		845AE88925C411D7005A1155 /* NewPostHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE88825C411D7005A1155 /* NewPostHeaderView.swift */; };
 		845AE88D25C41B04005A1155 /* MediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE88C25C41B04005A1155 /* MediaService.swift */; };
 		845AE89225C42425005A1155 /* MediaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE89125C42425005A1155 /* MediaCell.swift */; };
 		845AE89625C42ABA005A1155 /* MediaFileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE89525C42ABA005A1155 /* MediaFileType.swift */; };
@@ -110,9 +110,9 @@
 		84549BAF25BEFC2F007D24E2 /* RootViewControllerSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewControllerSwitcher.swift; sourceTree = "<group>"; };
 		8454D3F525BFFC3F00D3CC9E /* SecureTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureTextField.swift; sourceTree = "<group>"; };
 		845504F725B1C38300715C3B /* TabBarAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarAssembly.swift; sourceTree = "<group>"; };
+		845800BC25C6AFA600816642 /* NewPostConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostConstants.swift; sourceTree = "<group>"; };
 		845A1D3D25BAB50700F4004B /* UIImageView+download.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+download.swift"; sourceTree = "<group>"; };
 		845A1D4825BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderCollectionViewCell.swift; sourceTree = "<group>"; };
-		845AE88825C411D7005A1155 /* NewPostHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostHeaderView.swift; sourceTree = "<group>"; };
 		845AE88C25C41B04005A1155 /* MediaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaService.swift; sourceTree = "<group>"; };
 		845AE89125C42425005A1155 /* MediaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCell.swift; sourceTree = "<group>"; };
 		845AE89525C42ABA005A1155 /* MediaFileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaFileType.swift; sourceTree = "<group>"; };
@@ -222,7 +222,6 @@
 			isa = PBXGroup;
 			children = (
 				845AE89125C42425005A1155 /* MediaCell.swift */,
-				845AE88825C411D7005A1155 /* NewPostHeaderView.swift */,
 				84488AB125C2F66E00173A19 /* NewPostView.swift */,
 				84488AB525C2F67E00173A19 /* NewPostViewController.swift */,
 			);
@@ -285,6 +284,7 @@
 				845B8CBD25B6D99200FE5ED6 /* FirebaseTables.swift */,
 				84FE47D525B81FD50048F5AA /* FirebaseStorages.swift */,
 				845455F625BDA5830007C9A2 /* LoginRegistrationConstants.swift */,
+				845800BC25C6AFA600816642 /* NewPostConstants.swift */,
 			);
 			path = Constants;
 			sourceTree = "<group>";
@@ -621,7 +621,6 @@
 				84FE47D625B81FD50048F5AA /* FirebaseStorages.swift in Sources */,
 				84B2E67625B0509700B27457 /* HomeView.swift in Sources */,
 				84488AB225C2F66E00173A19 /* NewPostView.swift in Sources */,
-				845AE88925C411D7005A1155 /* NewPostHeaderView.swift in Sources */,
 				84549BAD25BEEC32007D24E2 /* LaunchAssembly.swift in Sources */,
 				8454D3F625BFFC3F00D3CC9E /* SecureTextField.swift in Sources */,
 				845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */,
@@ -631,6 +630,7 @@
 				84488AC225C2F6B400173A19 /* NewPostAssembly.swift in Sources */,
 				845A1D4925BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift in Sources */,
 				84E660A025B955120036AB9F /* ProfileView.swift in Sources */,
+				845800BD25C6AFA600816642 /* NewPostConstants.swift in Sources */,
 				845455E825BD89BD0007C9A2 /* LoginViewController.swift in Sources */,
 				845AE89625C42ABA005A1155 /* MediaFileType.swift in Sources */,
 				84549BA425BEC7AE007D24E2 /* SimpleAlert.swift in Sources */,

@@ -82,19 +82,19 @@ extension LoginViewController: ILoginViewController {
 // MARK: - LoginViewDelegate
 
 extension LoginViewController: LoginViewDelegate {
-    func loginViewDidPressLogInButton(_ registrationView: LoginView, withEmail email: String, password: String) {
+    func loginViewDidPressLogInButton(_ loginView: LoginView, withEmail email: String, password: String) {
         presenter?.didPressLogInButton(withEmail: email, password: password)
     }
     
-    func loginViewDidPressSignUpButton(_ registrationView: LoginView) {
+    func loginViewDidPressSignUpButton(_ loginView: LoginView) {
         presenter?.didPressSignUpButton()
     }
     
-    func loginViewEmailDidChange(_ registrationView: LoginView, email: String) {
+    func loginViewEmailDidChange(_ loginView: LoginView, email: String) {
         presenter?.emailDidChange(email)
     }
     
-    func loginViewPasswordDidChange(_ registrationView: LoginView, password: String) {
+    func loginViewPasswordDidChange(_ loginView: LoginView, password: String) {
         presenter?.passwordDidChange(password)
     }
 }

@@ -6,28 +6,39 @@
 //
 
 protocol INewPostInteractor: AnyObject {
-    func fetchMediaFiles() -> [MediaFileType]
-    func fetchMediaFilesAsync()
+    func fetchMedia()
+    func fetchMedia(at index: Int)
 }
 
 protocol INewPostInteractorOutput: AnyObject {
-    func fetchMediaFileSuccess(_ mediaFile: MediaFileType)
+    func fetchMediaSuccess(_ mediaFile: MediaFileType)
+    func fetchMediaSuccess(_ mediaFile: MediaFileType, at index: Int)
 }
 
 final class NewPostInteractor {
+    // MARK: Properties
+    
     weak var presenter: INewPostInteractorOutput?
+    
+    private var mediaService = MediaService()
 }
 
 // MARK: - INewPostInteractor
 
 extension NewPostInteractor: INewPostInteractor {
-    func fetchMediaFiles() -> [MediaFileType] {
-        return MediaService.fetchImages()
+    func fetchMedia() {        
+        mediaService.fetchNextImage(targetSize: NewPostConstants.Metrics.gridCellSize) { [weak self] mediaFile in
+            guard let mediaFile = mediaFile else { return }
+            
+            self?.presenter?.fetchMediaSuccess(mediaFile)
+        }
     }
     
-    func fetchMediaFilesAsync() {
-        MediaService.fetchImagesAsync { [self] mediaFile in
-            presenter?.fetchMediaFileSuccess(mediaFile)
+    func fetchMedia(at index: Int) {
+        mediaService.fetchImage(at: index) { [weak self] mediaFile in
+            guard let mediaFile = mediaFile else { return }
+            
+            self?.presenter?.fetchMediaSuccess(mediaFile, at: index)
         }
     }
 }

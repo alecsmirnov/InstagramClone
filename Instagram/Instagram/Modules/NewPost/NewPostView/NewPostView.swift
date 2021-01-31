@@ -7,22 +7,22 @@
 
 import UIKit
 
+protocol NewPostViewDelegate: AnyObject {
+    func newPostViewDidRequestMedia(_ newPostView: NewPostView)
+    func newPostViewDidSelectMedia(_ newPostView: NewPostView, atIndex index: Int)
+}
+
 final class NewPostView: UIView {
     // MARK: Properties
     
+    weak var delegate: NewPostViewDelegate? {
+        didSet {
+            delegate?.newPostViewDidRequestMedia(self)
+        }
+    }
+    
     private var mediaFiles = [MediaFileType]()
-    
     private var selectedMediaFileIndex: Int?
-    
-    // MARK: Constants
-    
-    private enum Metrics {
-        static let gridCellSpace: CGFloat = 1.2
-    }
-    
-    private enum Constants {
-        static let columnsCount = 4
-    }
     
     // MARK: Subviews
     
@@ -45,12 +45,8 @@ final class NewPostView: UIView {
 // MARK: - Public Methods
 
 extension NewPostView {
-    func setMediaFiles(_ mediaFiles: [MediaFileType]) {
-        self.mediaFiles = mediaFiles
-        
-        if selectedMediaFileIndex == nil {
-            selectedMediaFileIndex = 0
-        }
+    func reloadData() {
+        collectionView.reloadData()
     }
     
     func appendMediaFile(_ mediaFile: MediaFileType) {
@@ -58,9 +54,18 @@ extension NewPostView {
         
         if selectedMediaFileIndex == nil {
             selectedMediaFileIndex = 0
+            
+            delegate?.newPostViewDidSelectMedia(self, atIndex: 0)
         }
         
         collectionView.reloadData()
+    }
+    
+    func setHeaderMediaFile(_ mediaFile: MediaFileType) {
+        if let headerView = collectionView.visibleSupplementaryViews(
+            ofKind: UICollectionView.elementKindSectionHeader).first as? MediaCell {
+            headerView.configure(withMediaFile: mediaFile)
+        }
     }
 }
 
@@ -80,9 +85,7 @@ private extension NewPostView {
         collectionView.dataSource = self
         collectionView.delegate = self
         
-        collectionView.register(
-            MediaCell.self,
-            forCellWithReuseIdentifier: MediaCell.reuseIdentifier)
+        collectionView.register(MediaCell.self, forCellWithReuseIdentifier: MediaCell.reuseIdentifier)
         collectionView.register(
             MediaCell.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
@@ -123,15 +126,15 @@ private extension NewPostView {
     static func createCollectionViewCompositionalLayout() -> UICollectionViewCompositionalLayout {
         let itemLayoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .fractionalWidth(1 / CGFloat(Constants.columnsCount)))
+            heightDimension: .fractionalWidth(1 / CGFloat(NewPostConstants.Constants.columnsCount)))
         
         let item = NSCollectionLayoutItem(layoutSize: itemLayoutSize)
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: itemLayoutSize,
             subitem: item,
-            count: Constants.columnsCount)
+            count: NewPostConstants.Constants.columnsCount)
         
-        group.interItemSpacing = .fixed(Metrics.gridCellSpace)
+        group.interItemSpacing = .fixed(NewPostConstants.Metrics.gridCellSpace)
         
         let headerLayoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
@@ -144,7 +147,11 @@ private extension NewPostView {
         
         let section = NSCollectionLayoutSection(group: group)
         
-        section.contentInsets = NSDirectionalEdgeInsets(top: Metrics.gridCellSpace, leading: 0, bottom: 0, trailing: 0)
+        section.contentInsets = NSDirectionalEdgeInsets(
+            top: NewPostConstants.Metrics.gridCellSpace,
+            leading: 0,
+            bottom: 0,
+            trailing: 0)
         section.boundarySupplementaryItems = [sectionHeader]
         
         return UICollectionViewCompositionalLayout(section: section)
@@ -170,6 +177,16 @@ extension NewPostView: UICollectionViewDataSource {
         }
         
         cell.configure(withMediaFile: mediaFiles[indexPath.row])
+
+        if let selectedMediaFileIndex = selectedMediaFileIndex, selectedMediaFileIndex == indexPath.row {
+            cell.selectCell()
+        } else {
+            cell.deselectCell()
+        }
+        
+        if indexPath.row == mediaFiles.count - 1 {
+            delegate?.newPostViewDidRequestMedia(self)
+        }
         
         return cell
     }
@@ -186,10 +203,6 @@ extension NewPostView: UICollectionViewDataSource {
         else {
             return UICollectionReusableView()
         }
-        
-        if let selectedMediaFileIndex = selectedMediaFileIndex {
-            header.configure(withMediaFile: mediaFiles[selectedMediaFileIndex])
-        }
 
         return header
     }
@@ -199,8 +212,22 @@ extension NewPostView: UICollectionViewDataSource {
 
 extension NewPostView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let previousSelectedMediaFileIndex = selectedMediaFileIndex
+        
         selectedMediaFileIndex = indexPath.row
         
-        collectionView.reloadData()
+        if previousSelectedMediaFileIndex != selectedMediaFileIndex {
+            setHeaderMediaFile(mediaFiles[indexPath.row])
+            
+            delegate?.newPostViewDidSelectMedia(self, atIndex: indexPath.row)
+            
+            if let previousSelectedMediaFileIndex = previousSelectedMediaFileIndex {
+                let previousIndexPath = IndexPath(row: previousSelectedMediaFileIndex, section: 0)
+
+                collectionView.reloadItems(at: [previousIndexPath])
+            }
+
+            collectionView.reloadItems(at: [indexPath])
+        }
     }
 }

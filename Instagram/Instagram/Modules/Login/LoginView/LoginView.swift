@@ -8,11 +8,11 @@
 import UIKit
 
 protocol LoginViewDelegate: AnyObject {
-    func loginViewDidPressLogInButton(_ registrationView: LoginView, withEmail email: String, password: String)
-    func loginViewDidPressSignUpButton(_ registrationView: LoginView)
+    func loginViewDidPressLogInButton(_ loginView: LoginView, withEmail email: String, password: String)
+    func loginViewDidPressSignUpButton(_ loginView: LoginView)
     
-    func loginViewEmailDidChange(_ registrationView: LoginView, email: String)
-    func loginViewPasswordDidChange(_ registrationView: LoginView, password: String)
+    func loginViewEmailDidChange(_ loginView: LoginView, email: String)
+    func loginViewPasswordDidChange(_ loginView: LoginView, password: String)
 }
 
 final class LoginView: LoginRegistrationBaseView {

@@ -6,88 +6,100 @@
 //
 
 import Photos
-import UIKit
 
-enum MediaService {
+final class MediaService {
+    // MARK: Properties
+    
+    private(set) var currentImageIndex = 0
+    
+    var imagesCount: Int {
+        return assets?.count ?? 0
+    }
+    
+    private let imageRequestOptions = MediaService.createImageRequestOptions()
+    
+    private var assets: PHFetchResult<PHAsset>?
+    private let cachingImageManager = PHCachingImageManager()
+    
     // MARK: Constants
     
     private enum SortDescriptorKeys {
         static let creationDate = "creationDate"
     }
     
-    private enum Constants {
-        static let defaultTargetSize = CGSize(width: 200, height: 200)
+    init() {
+        fetchImagesAssets()
     }
 }
 
 // MARK: - Public Methods
 
 extension MediaService {
-    static func fetchImages(fetchLimit: Int = 0, targetSize: CGSize = Constants.defaultTargetSize) -> [MediaFileType] {
-        var images = [MediaFileType]()
+    func fetchNextImage(
+        targetSize: CGSize = PHImageManagerMaximumSize,
+        completion: @escaping (MediaFileType?) -> Void
+    ) {
+        if currentImageIndex < imagesCount {
+            fetchImage(at: currentImageIndex, targetSize: targetSize, completion: completion)
         
-        let imagesAssets = createImageAssets(fetchLimit: fetchLimit)
-        let imageRequestOptions = createImageRequestOptions(async: false)
-        
-        imagesAssets.enumerateObjects { asset, _, _ in
-            PHImageManager.default().requestImage(
-                for: asset,
-                targetSize: targetSize,
-                contentMode: .aspectFit,
-                options: imageRequestOptions) { image, _ in
-                if let image = image {
-                    images.append(.image(image))
-                }
-            }
+            currentImageIndex += 1
         }
-        
-        return images
     }
     
-    static func fetchImagesAsync(
-        fetchLimit: Int = 0,
-        targetSize: CGSize = Constants.defaultTargetSize,
-        completion: @escaping (MediaFileType) -> Void
+    func fetchImage(
+        at index: Int,
+        targetSize: CGSize = PHImageManagerMaximumSize,
+        completion: @escaping (MediaFileType?) -> Void
     ) {
-        let imagesAssets = createImageAssets(fetchLimit: fetchLimit)
-        let imageRequestOptions = createImageRequestOptions(async: false)
-        
-        DispatchQueue.global(qos: .background).async {
-            imagesAssets.enumerateObjects { asset, _, _ in
-                PHImageManager.default().requestImage(
-                    for: asset,
-                    targetSize: targetSize,
-                    contentMode: .aspectFit,
-                    options: imageRequestOptions) { image, _ in
-                    if let image = image {
-                        DispatchQueue.main.async {
-                            completion(.image(image))
-                        }
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let asset = self?.assets?.object(at: index) else {
+                DispatchQueue.main.async {
+                    completion(nil)
+                }
+                
+                return
+            }
+            
+            self?.cachingImageManager.requestImage(
+                for: asset,
+                targetSize: targetSize,
+                contentMode: .aspectFill,
+                options: self?.imageRequestOptions) { image, _ in
+                if let image = image {
+                    DispatchQueue.main.async {
+                        completion(.image(image))
                     }
+                    
+                    self?.cachingImageManager.startCachingImages(
+                        for: [asset],
+                        targetSize: targetSize,
+                        contentMode: .default,
+                        options: self?.imageRequestOptions)
                 }
             }
         }
+    }
+    
+    func resetCurrentImageIndex() {
+        currentImageIndex = 0
     }
 }
 
 // MARK: - Private Methods
 
 private extension MediaService {
-    static func createImageAssets(fetchLimit: Int) -> PHFetchResult<PHAsset> {
+    func fetchImagesAssets() {
         let fetchOptions = PHFetchOptions()
-        
-        fetchOptions.fetchLimit = fetchLimit
+    
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: SortDescriptorKeys.creationDate, ascending: false)]
         
-        let imagesAssets = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-        
-        return imagesAssets
+        assets = PHAsset.fetchAssets(with: .image, options: fetchOptions)
     }
     
-    static func createImageRequestOptions(async: Bool) -> PHImageRequestOptions {
+    static func createImageRequestOptions() -> PHImageRequestOptions {
         let imageRequestOptions = PHImageRequestOptions()
         
-        imageRequestOptions.isSynchronous = !async
+        imageRequestOptions.isSynchronous = true
         imageRequestOptions.deliveryMode = .highQualityFormat
         
         return imageRequestOptions
