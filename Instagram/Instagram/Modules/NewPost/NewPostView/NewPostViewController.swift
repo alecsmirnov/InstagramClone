@@ -8,9 +8,8 @@
 import UIKit
 
 protocol INewPostViewController: AnyObject {
-    func appendMediaFile(_ mediaFile: MediaFileType)
-    
-    func setHeaderMediaFile(_ mediaFile: MediaFileType)
+    func appendCellMediaFile(_ mediaFile: MediaFileType)
+    func setOriginalMediaFile(_ mediaFile: MediaFileType)
 }
 
 final class NewPostViewController: CustomViewController<NewPostView> {
@@ -36,24 +35,24 @@ final class NewPostViewController: CustomViewController<NewPostView> {
 // MARK: - INewPostViewController
 
 extension NewPostViewController: INewPostViewController {
-    func appendMediaFile(_ mediaFile: MediaFileType) {
-        customView?.appendMediaFile(mediaFile)
+    func appendCellMediaFile(_ mediaFile: MediaFileType) {
+        customView?.appendCellMediaFile(mediaFile)
     }
     
-    func setHeaderMediaFile(_ mediaFile: MediaFileType) {
-        customView?.setHeaderMediaFile(mediaFile)
+    func setOriginalMediaFile(_ mediaFile: MediaFileType) {
+        customView?.setOriginalMediaFile(mediaFile)
     }
 }
 
 // MARK: - NewPostViewDelegate
 
 extension NewPostViewController: NewPostViewDelegate {
-    func newPostViewDidRequestMedia(_ newPostView: NewPostView) {
-        presenter?.didRequestMedia()
+    func newPostViewDidRequestCellMedia(_ newPostView: NewPostView) {
+        presenter?.didRequestCellMedia()
     }
     
-    func newPostViewDidSelectMedia(_ newPostView: NewPostView, atIndex index: Int) {
-        presenter?.didSelectMedia(atIndex: index)
+    func newPostViewDidRequestOriginalMedia(_ newPostView: NewPostView, atIndex index: Int) {
+        presenter?.didRequestOriginalMedia(at: index)
     }
 }
 
@@ -96,6 +95,12 @@ private extension NewPostViewController {
     }
     
     @objc func didPressContinueButton() {
+        guard let mediaFile = customView?.selectedMediaFile else {
+            // Media is not selected
+            
+            return
+        }
+        
         presenter?.didPressContinueButton()
     }
 }

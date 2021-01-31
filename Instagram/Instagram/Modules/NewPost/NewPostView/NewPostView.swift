@@ -8,8 +8,8 @@
 import UIKit
 
 protocol NewPostViewDelegate: AnyObject {
-    func newPostViewDidRequestMedia(_ newPostView: NewPostView)
-    func newPostViewDidSelectMedia(_ newPostView: NewPostView, atIndex index: Int)
+    func newPostViewDidRequestCellMedia(_ newPostView: NewPostView)
+    func newPostViewDidRequestOriginalMedia(_ newPostView: NewPostView, atIndex index: Int)
 }
 
 final class NewPostView: UIView {
@@ -17,9 +17,11 @@ final class NewPostView: UIView {
     
     weak var delegate: NewPostViewDelegate? {
         didSet {
-            delegate?.newPostViewDidRequestMedia(self)
+            delegate?.newPostViewDidRequestCellMedia(self)
         }
     }
+    
+    var selectedMediaFile: MediaFileType?
     
     private var mediaFiles = [MediaFileType]()
     private var selectedMediaFileIndex: Int?
@@ -44,28 +46,26 @@ final class NewPostView: UIView {
 
 // MARK: - Public Methods
 
-extension NewPostView {
-    func reloadData() {
-        collectionView.reloadData()
-    }
-    
-    func appendMediaFile(_ mediaFile: MediaFileType) {
+extension NewPostView {    
+    func appendCellMediaFile(_ mediaFile: MediaFileType) {
         mediaFiles.append(mediaFile)
         
         if selectedMediaFileIndex == nil {
             selectedMediaFileIndex = 0
             
-            delegate?.newPostViewDidSelectMedia(self, atIndex: 0)
+            delegate?.newPostViewDidRequestOriginalMedia(self, atIndex: 0)
         }
         
         collectionView.reloadData()
     }
     
-    func setHeaderMediaFile(_ mediaFile: MediaFileType) {
+    func setOriginalMediaFile(_ mediaFile: MediaFileType) {
         if let headerView = collectionView.visibleSupplementaryViews(
             ofKind: UICollectionView.elementKindSectionHeader).first as? MediaCell {
             headerView.configure(withMediaFile: mediaFile)
         }
+        
+        selectedMediaFile = mediaFile
     }
 }
 
@@ -185,7 +185,7 @@ extension NewPostView: UICollectionViewDataSource {
         }
         
         if indexPath.row == mediaFiles.count - 1 {
-            delegate?.newPostViewDidRequestMedia(self)
+            delegate?.newPostViewDidRequestCellMedia(self)
         }
         
         return cell
@@ -217,9 +217,9 @@ extension NewPostView: UICollectionViewDelegate {
         selectedMediaFileIndex = indexPath.row
         
         if previousSelectedMediaFileIndex != selectedMediaFileIndex {
-            setHeaderMediaFile(mediaFiles[indexPath.row])
+            setOriginalMediaFile(mediaFiles[indexPath.row])
             
-            delegate?.newPostViewDidSelectMedia(self, atIndex: indexPath.row)
+            delegate?.newPostViewDidRequestOriginalMedia(self, atIndex: indexPath.row)
             
             if let previousSelectedMediaFileIndex = previousSelectedMediaFileIndex {
                 let previousIndexPath = IndexPath(row: previousSelectedMediaFileIndex, section: 0)

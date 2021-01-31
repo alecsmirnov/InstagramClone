@@ -9,8 +9,8 @@ protocol INewPostPresenter: AnyObject {
     func didPressCloseButton()
     func didPressContinueButton()
     
-    func didRequestMedia()
-    func didSelectMedia(atIndex index: Int)
+    func didRequestCellMedia()
+    func didRequestOriginalMedia(at index: Int)
 }
 
 final class NewPostPresenter {
@@ -30,23 +30,23 @@ extension NewPostPresenter: INewPostPresenter {
         
     }
     
-    func didRequestMedia() {
-        interactor?.fetchMedia()
+    func didRequestCellMedia() {
+        interactor?.fetchCellMedia()
     }
     
-    func didSelectMedia(atIndex index: Int) {
-        interactor?.fetchMedia(at: index)
+    func didRequestOriginalMedia(at index: Int) {
+        interactor?.fetchOriginalMedia(at: index)
     }
 }
 
 // MARK: - INewPostInteractorOutput
 
 extension NewPostPresenter: INewPostInteractorOutput {
-    func fetchMediaSuccess(_ mediaFile: MediaFileType) {
-        viewController?.appendMediaFile(mediaFile)
+    func fetchCellMediaSuccess(_ mediaFile: MediaFileType) {
+        viewController?.appendCellMediaFile(mediaFile)
     }
     
-    func fetchMediaSuccess(_ mediaFile: MediaFileType, at index: Int) {
-        viewController?.setHeaderMediaFile(mediaFile)
+    func fetchOriginalMediaSuccess(_ mediaFile: MediaFileType, at index: Int) {
+        viewController?.setOriginalMediaFile(mediaFile)
     }
 }
