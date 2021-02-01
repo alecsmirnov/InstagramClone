@@ -10,6 +10,9 @@ import UIKit
 protocol INewPostViewController: AnyObject {
     func appendCellMediaFile(_ mediaFile: MediaFileType)
     func setOriginalMediaFile(_ mediaFile: MediaFileType)
+    
+    func enableContinueButton()
+    func disableContinueButton()
 }
 
 final class NewPostViewController: CustomViewController<NewPostView> {
@@ -41,6 +44,22 @@ extension NewPostViewController: INewPostViewController {
     
     func setOriginalMediaFile(_ mediaFile: MediaFileType) {
         customView?.setOriginalMediaFile(mediaFile)
+    }
+    
+    func enableContinueButton() {
+        let continueButton = navigationItem.rightBarButtonItem
+        
+        continueButton?.isEnabled = true
+        continueButton?.tintColor = view.superview?.tintColor?.withAlphaComponent(
+            NewPostConstants.Constants.continueButtonEnableAlpha)
+    }
+    
+    func disableContinueButton() {
+        let continueButton = navigationItem.rightBarButtonItem
+        
+        continueButton?.isEnabled = false
+        continueButton?.tintColor = view.superview?.tintColor.withAlphaComponent(
+            NewPostConstants.Constants.continueButtonDisableAlpha)
     }
 }
 
