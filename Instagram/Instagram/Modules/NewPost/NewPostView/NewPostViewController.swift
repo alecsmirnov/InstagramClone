@@ -47,19 +47,11 @@ extension NewPostViewController: INewPostViewController {
     }
     
     func enableContinueButton() {
-        let continueButton = navigationItem.rightBarButtonItem
-        
-        continueButton?.isEnabled = true
-        continueButton?.tintColor = view.superview?.tintColor?.withAlphaComponent(
-            NewPostConstants.Constants.continueButtonEnableAlpha)
+        changeContinueButtonStatus(isEnabled: true)
     }
     
     func disableContinueButton() {
-        let continueButton = navigationItem.rightBarButtonItem
-        
-        continueButton?.isEnabled = false
-        continueButton?.tintColor = view.superview?.tintColor.withAlphaComponent(
-            NewPostConstants.Constants.continueButtonDisableAlpha)
+        changeContinueButtonStatus(isEnabled: false)
     }
 }
 
@@ -91,18 +83,30 @@ private extension NewPostViewController {
             style: .plain,
             target: self,
             action: #selector(didPressCloseButton))
-        
+
         navigationItem.leftBarButtonItem = closeBarButtonItem
     }
     
     func setupContinueButton() {
-        let continueBarButtonItem = UIBarButtonItem(
-            image: NewPostConstants.Images.continueButton,
-            style: .plain,
-            target: self,
-            action: #selector(didPressContinueButton))
+        let continueButton = UIButton(type: .system)
+        let continueBarButtonItem = UIBarButtonItem(customView: continueButton)
         
+        continueButton.setImage(NewPostConstants.Images.continueButton, for: .normal)
+        continueButton.addTarget(self, action: #selector(didPressContinueButton), for: .touchUpInside)
+
         navigationItem.rightBarButtonItem = continueBarButtonItem
+    }
+    
+    func changeContinueButtonStatus(isEnabled: Bool) {
+        let continueButton = navigationItem.rightBarButtonItem
+        
+        continueButton?.isEnabled = isEnabled
+        
+        UIView.animate(withDuration: NewPostConstants.Constants.continueButtonAnimationDuration) {
+            continueButton?.customView?.alpha = isEnabled ?
+                NewPostConstants.Constants.continueButtonEnableAlpha :
+                NewPostConstants.Constants.continueButtonDisableAlpha
+        }
     }
 }
 

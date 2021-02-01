@@ -40,6 +40,10 @@ extension NewPostPresenter: INewPostPresenter {
     
     func didRequestOriginalMedia(at index: Int) {
         interactor?.fetchOriginalMedia(at: index)
+        
+        isMediaFilesExist = false
+        
+        viewController?.disableContinueButton()
     }
 }
 
@@ -49,14 +53,18 @@ extension NewPostPresenter: INewPostInteractorOutput {
     func fetchCellMediaSuccess(_ mediaFile: MediaFileType) {
         viewController?.appendCellMediaFile(mediaFile)
         
-        if !isMediaFilesExist {
+        //if !isMediaFilesExist {
             isMediaFilesExist = true
             
             viewController?.enableContinueButton()
-        }
+        //}
     }
     
     func fetchOriginalMediaSuccess(_ mediaFile: MediaFileType, at index: Int) {
         viewController?.setOriginalMediaFile(mediaFile)
+        
+        isMediaFilesExist = true
+        
+        viewController?.enableContinueButton()
     }
 }

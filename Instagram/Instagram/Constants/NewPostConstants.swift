@@ -26,8 +26,9 @@ enum NewPostConstants {
         
         static let columnsCount = 4
         
+        static let continueButtonAnimationDuration = 0.4
         static let continueButtonEnableAlpha: CGFloat = 1
-        static let continueButtonDisableAlpha: CGFloat = 0.6
+        static let continueButtonDisableAlpha: CGFloat = 0.8
         
         static let selectedCellAlpha: CGFloat = 0.4
         static let unselectedCellAlpha: CGFloat = 1
