@@ -14,13 +14,9 @@ protocol INewPostPresenter: AnyObject {
 }
 
 final class NewPostPresenter {
-    // MARK: Properties
-    
     weak var viewController: INewPostViewController?
     var interactor: INewPostInteractor?
     var router: INewPostRouter?
-    
-    private var isMediaFilesExist = false
 }
 
 // MARK: - INewPostPresenter
@@ -41,8 +37,6 @@ extension NewPostPresenter: INewPostPresenter {
     func didRequestOriginalMedia(at index: Int) {
         interactor?.fetchOriginalMedia(at: index)
         
-        isMediaFilesExist = false
-        
         viewController?.disableContinueButton()
     }
 }
@@ -52,18 +46,10 @@ extension NewPostPresenter: INewPostPresenter {
 extension NewPostPresenter: INewPostInteractorOutput {
     func fetchCellMediaSuccess(_ mediaFile: MediaFileType) {
         viewController?.appendCellMediaFile(mediaFile)
-        
-        //if !isMediaFilesExist {
-            isMediaFilesExist = true
-            
-            viewController?.enableContinueButton()
-        //}
     }
     
     func fetchOriginalMediaSuccess(_ mediaFile: MediaFileType, at index: Int) {
         viewController?.setOriginalMediaFile(mediaFile)
-        
-        isMediaFilesExist = true
         
         viewController?.enableContinueButton()
     }

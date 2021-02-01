@@ -38,6 +38,8 @@ final class RegistrationViewController: CustomViewController<RegistrationView> {
         super.viewDidLoad()
         
         customView?.delegate = self
+        
+        presenter?.viewDidLoad()
     }
 }
 

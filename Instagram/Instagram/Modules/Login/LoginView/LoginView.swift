@@ -173,8 +173,6 @@ private extension LoginView {
         logInButton.titleLabel?.font = .boldSystemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
         logInButton.backgroundColor = LoginRegistrationConstants.Colors.mainButtonBackground
         logInButton.layer.cornerRadius = LoginRegistrationConstants.Metrics.mainButtonCornerRadius
-        
-        disableLogInButton()
     }
     
     func setupSeparatorViewAppearance() {

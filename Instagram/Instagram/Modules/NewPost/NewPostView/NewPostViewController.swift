@@ -95,8 +95,6 @@ private extension NewPostViewController {
         continueButton.addTarget(self, action: #selector(didPressContinueButton), for: .touchUpInside)
 
         navigationItem.rightBarButtonItem = continueBarButtonItem
-        
-        changeContinueButtonStatus(isEnabled: false)
     }
     
     func changeContinueButtonStatus(isEnabled: Bool) {

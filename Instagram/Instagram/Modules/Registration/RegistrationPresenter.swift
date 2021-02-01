@@ -6,6 +6,8 @@
 //
 
 protocol IRegistrationPresenter {
+    func viewDidLoad()
+    
     func emailDidChange(_ email: String)
     func usernameDidChange(_ username: String)
     func passwordDidChange(_ password: String)
@@ -37,6 +39,10 @@ final class RegistrationPresenter {
 // MARK: - IRegistrationPresenter
 
 extension RegistrationPresenter: IRegistrationPresenter {
+    func viewDidLoad() {
+        viewController?.disableSignUpButton()
+    }
+    
     func emailDidChange(_ email: String) {
         interactor?.checkEmail(email)
     }

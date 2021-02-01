@@ -6,6 +6,8 @@
 //
 
 protocol ILoginPresenter {
+    func viewDidLoad()
+    
     func didPressLogInButton(withEmail email: String, password: String)
     func didPressSignUpButton()
     
@@ -32,6 +34,10 @@ final class LoginPresenter {
 // MARK: - ILoginPresenter
 
 extension LoginPresenter: ILoginPresenter {
+    func viewDidLoad() {
+        viewController?.disableLogInButton()
+    }
+    
     func didPressLogInButton(withEmail email: String, password: String) {
         interactor?.signIn(withEmail: email, password: password)
     }

@@ -36,6 +36,8 @@ final class LoginViewController: CustomViewController<LoginView> {
         super.viewDidLoad()
         
         customView?.delegate = self
+        
+        presenter?.viewDidLoad()
     }
 }
 

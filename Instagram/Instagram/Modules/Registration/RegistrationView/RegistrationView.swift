@@ -210,8 +210,6 @@ private extension RegistrationView {
         signUpButton.titleLabel?.font = .boldSystemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
         signUpButton.backgroundColor = LoginRegistrationConstants.Colors.mainButtonBackground
         signUpButton.layer.cornerRadius = LoginRegistrationConstants.Metrics.mainButtonCornerRadius
-        
-        disableSignUpButton()
     }
     
     func setupSeparatorViewAppearance() {
