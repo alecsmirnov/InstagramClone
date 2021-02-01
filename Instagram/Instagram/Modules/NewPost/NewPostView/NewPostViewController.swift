@@ -51,7 +51,7 @@ extension NewPostViewController: NewPostViewDelegate {
         presenter?.didRequestCellMedia()
     }
     
-    func newPostViewDidRequestOriginalMedia(_ newPostView: NewPostView, atIndex index: Int) {
+    func newPostViewDidRequestOriginalMedia(_ newPostView: NewPostView, at index: Int) {
         presenter?.didRequestOriginalMedia(at: index)
     }
 }
@@ -95,12 +95,6 @@ private extension NewPostViewController {
     }
     
     @objc func didPressContinueButton() {
-        guard let mediaFile = customView?.selectedMediaFile else {
-            // Media is not selected
-            
-            return
-        }
-        
-        presenter?.didPressContinueButton()
+        presenter?.didPressContinueButton(with: customView?.selectedMediaFile)
     }
 }

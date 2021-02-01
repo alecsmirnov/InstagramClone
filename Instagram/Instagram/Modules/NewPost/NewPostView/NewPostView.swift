@@ -9,7 +9,7 @@ import UIKit
 
 protocol NewPostViewDelegate: AnyObject {
     func newPostViewDidRequestCellMedia(_ newPostView: NewPostView)
-    func newPostViewDidRequestOriginalMedia(_ newPostView: NewPostView, atIndex index: Int)
+    func newPostViewDidRequestOriginalMedia(_ newPostView: NewPostView, at index: Int)
 }
 
 final class NewPostView: UIView {
@@ -53,7 +53,7 @@ extension NewPostView {
         if selectedMediaFileIndex == nil {
             selectedMediaFileIndex = 0
             
-            delegate?.newPostViewDidRequestOriginalMedia(self, atIndex: 0)
+            delegate?.newPostViewDidRequestOriginalMedia(self, at: 0)
         }
         
         collectionView.reloadData()
@@ -62,7 +62,7 @@ extension NewPostView {
     func setOriginalMediaFile(_ mediaFile: MediaFileType) {
         if let headerView = collectionView.visibleSupplementaryViews(
             ofKind: UICollectionView.elementKindSectionHeader).first as? MediaCell {
-            headerView.configure(withMediaFile: mediaFile)
+            headerView.configure(with: mediaFile)
         }
         
         selectedMediaFile = mediaFile
@@ -176,7 +176,7 @@ extension NewPostView: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
-        cell.configure(withMediaFile: mediaFiles[indexPath.row])
+        cell.configure(with: mediaFiles[indexPath.row])
 
         if let selectedMediaFileIndex = selectedMediaFileIndex, selectedMediaFileIndex == indexPath.row {
             cell.contentView.alpha = NewPostConstants.Constants.selectedCellAlpha
@@ -219,15 +219,18 @@ extension NewPostView: UICollectionViewDelegate {
         if previousSelectedMediaFileIndex != selectedMediaFileIndex {
             setOriginalMediaFile(mediaFiles[indexPath.row])
             
-            delegate?.newPostViewDidRequestOriginalMedia(self, atIndex: indexPath.row)
+            delegate?.newPostViewDidRequestOriginalMedia(self, at: indexPath.row)
             
             if let previousSelectedMediaFileIndex = previousSelectedMediaFileIndex {
                 let previousIndexPath = IndexPath(row: previousSelectedMediaFileIndex, section: 0)
 
                 collectionView.reloadItems(at: [previousIndexPath])
+                collectionView.reloadItems(at: [indexPath])
             }
-
-            collectionView.reloadItems(at: [indexPath])
+            
+            let topIndexPath = IndexPath(row: 0, section: 0)
+            
+            collectionView.scrollToItem(at: topIndexPath, at: .bottom, animated: true)
         }
     }
 }

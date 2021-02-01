@@ -7,6 +7,7 @@
 
 protocol INewPostRouter: AnyObject {
     func closeNewPostViewController()
+    func showUploadPostViewController()
 }
 
 final class NewPostRouter {
@@ -22,5 +23,11 @@ final class NewPostRouter {
 extension NewPostRouter: INewPostRouter {
     func closeNewPostViewController() {
         viewController?.dismiss(animated: true)
+    }
+    
+    func showUploadPostViewController() {
+        let uploadPostViewController = UploadPostAssembly.createUploadPostViewController()
+        
+        viewController?.navigationController?.pushViewController(uploadPostViewController, animated: true)
     }
 }

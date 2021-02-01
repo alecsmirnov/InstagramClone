@@ -12,7 +12,7 @@ enum NewPostAssembly {
         return UINavigationController(rootViewController: createNewPostViewController())
     }
     
-    static func createNewPostViewController() -> NewPostViewController {
+    private static func createNewPostViewController() -> NewPostViewController {
         let viewController = NewPostViewController()
         
         let interactor = NewPostInteractor()

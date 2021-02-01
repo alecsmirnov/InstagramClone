@@ -7,7 +7,7 @@
 
 protocol INewPostPresenter: AnyObject {
     func didPressCloseButton()
-    func didPressContinueButton()
+    func didPressContinueButton(with: MediaFileType?)
     
     func didRequestCellMedia()
     func didRequestOriginalMedia(at index: Int)
@@ -26,8 +26,8 @@ extension NewPostPresenter: INewPostPresenter {
         router?.closeNewPostViewController()
     }
     
-    func didPressContinueButton() {
-        
+    func didPressContinueButton(with: MediaFileType?) {
+        router?.showUploadPostViewController()
     }
     
     func didRequestCellMedia() {
