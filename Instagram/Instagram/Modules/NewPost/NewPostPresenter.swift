@@ -29,7 +29,7 @@ extension NewPostPresenter: INewPostPresenter {
     func didPressContinueButton(with mediaFile: MediaFileType?) {
         guard let mediaFile = mediaFile else { return }
         
-        router?.showUploadPostViewController(mediaFile: mediaFile)
+        router?.showSharePostViewController(mediaFile: mediaFile)
     }
     
     func didRequestCellMediaFile() {

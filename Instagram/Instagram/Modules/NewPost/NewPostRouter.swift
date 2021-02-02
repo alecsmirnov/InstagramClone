@@ -7,7 +7,7 @@
 
 protocol INewPostRouter: AnyObject {
     func closeNewPostViewController()
-    func showUploadPostViewController(mediaFile: MediaFileType)
+    func showSharePostViewController(mediaFile: MediaFileType)
 }
 
 final class NewPostRouter {
@@ -25,9 +25,9 @@ extension NewPostRouter: INewPostRouter {
         viewController?.dismiss(animated: true)
     }
     
-    func showUploadPostViewController(mediaFile: MediaFileType) {
-        let uploadPostViewController = UploadPostAssembly.createUploadPostViewController(mediaFile: mediaFile)
+    func showSharePostViewController(mediaFile: MediaFileType) {
+        let sharePostViewController = SharePostAssembly.createSharePostViewController(mediaFile: mediaFile)
         
-        viewController?.navigationController?.pushViewController(uploadPostViewController, animated: true)
+        viewController?.navigationController?.pushViewController(sharePostViewController, animated: true)
     }
 }

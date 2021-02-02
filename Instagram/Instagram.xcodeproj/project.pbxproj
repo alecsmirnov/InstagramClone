@@ -48,13 +48,13 @@
 		845B8CBE25B6D99200FE5ED6 /* FirebaseTables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B8CBD25B6D99200FE5ED6 /* FirebaseTables.swift */; };
 		845BB22125C94B3200B01721 /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BB22025C94B3200B01721 /* PlaceholderTextView.swift */; };
 		845BB22525C95D0C00B01721 /* SelfSizedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BB22425C95D0C00B01721 /* SelfSizedTextView.swift */; };
-		845BB22825C9759600B01721 /* UploadPostConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BB22725C9759600B01721 /* UploadPostConstants.swift */; };
-		845CC1FC25C7ECB70051372D /* UploadPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC1FB25C7ECB70051372D /* UploadPostView.swift */; };
-		845CC20025C7ECE20051372D /* UploadPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC1FF25C7ECE20051372D /* UploadPostViewController.swift */; };
-		845CC20425C7ED110051372D /* UploadPostInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20325C7ED110051372D /* UploadPostInteractor.swift */; };
-		845CC20825C7ED370051372D /* UploadPostPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20725C7ED370051372D /* UploadPostPresenter.swift */; };
-		845CC20C25C7ED470051372D /* UploadPostRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20B25C7ED470051372D /* UploadPostRouter.swift */; };
-		845CC20F25C7ED580051372D /* UploadPostAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20E25C7ED580051372D /* UploadPostAssembly.swift */; };
+		845BB22825C9759600B01721 /* SharePostConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BB22725C9759600B01721 /* SharePostConstants.swift */; };
+		845CC1FC25C7ECB70051372D /* SharePostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC1FB25C7ECB70051372D /* SharePostView.swift */; };
+		845CC20025C7ECE20051372D /* SharePostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC1FF25C7ECE20051372D /* SharePostViewController.swift */; };
+		845CC20425C7ED110051372D /* SharePostInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20325C7ED110051372D /* SharePostInteractor.swift */; };
+		845CC20825C7ED370051372D /* SharePostPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20725C7ED370051372D /* SharePostPresenter.swift */; };
+		845CC20C25C7ED470051372D /* SharePostRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20B25C7ED470051372D /* SharePostRouter.swift */; };
+		845CC20F25C7ED580051372D /* SharePostAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20E25C7ED580051372D /* SharePostAssembly.swift */; };
 		845D7D8E25BC472C001E5037 /* TwoPartsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845D7D8D25BC472C001E5037 /* TwoPartsButton.swift */; };
 		8491A81225B46073009EDFC2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8491A81125B46073009EDFC2 /* GoogleService-Info.plist */; };
 		8491A84025B47DE8009EDFC2 /* RegistrationInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8491A83F25B47DE8009EDFC2 /* RegistrationInteractor.swift */; };
@@ -130,13 +130,13 @@
 		845B8CBD25B6D99200FE5ED6 /* FirebaseTables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseTables.swift; sourceTree = "<group>"; };
 		845BB22025C94B3200B01721 /* PlaceholderTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
 		845BB22425C95D0C00B01721 /* SelfSizedTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfSizedTextView.swift; sourceTree = "<group>"; };
-		845BB22725C9759600B01721 /* UploadPostConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostConstants.swift; sourceTree = "<group>"; };
-		845CC1FB25C7ECB70051372D /* UploadPostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostView.swift; sourceTree = "<group>"; };
-		845CC1FF25C7ECE20051372D /* UploadPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostViewController.swift; sourceTree = "<group>"; };
-		845CC20325C7ED110051372D /* UploadPostInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostInteractor.swift; sourceTree = "<group>"; };
-		845CC20725C7ED370051372D /* UploadPostPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostPresenter.swift; sourceTree = "<group>"; };
-		845CC20B25C7ED470051372D /* UploadPostRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostRouter.swift; sourceTree = "<group>"; };
-		845CC20E25C7ED580051372D /* UploadPostAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostAssembly.swift; sourceTree = "<group>"; };
+		845BB22725C9759600B01721 /* SharePostConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostConstants.swift; sourceTree = "<group>"; };
+		845CC1FB25C7ECB70051372D /* SharePostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostView.swift; sourceTree = "<group>"; };
+		845CC1FF25C7ECE20051372D /* SharePostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostViewController.swift; sourceTree = "<group>"; };
+		845CC20325C7ED110051372D /* SharePostInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostInteractor.swift; sourceTree = "<group>"; };
+		845CC20725C7ED370051372D /* SharePostPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostPresenter.swift; sourceTree = "<group>"; };
+		845CC20B25C7ED470051372D /* SharePostRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostRouter.swift; sourceTree = "<group>"; };
+		845CC20E25C7ED580051372D /* SharePostAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostAssembly.swift; sourceTree = "<group>"; };
 		845D7D8D25BC472C001E5037 /* TwoPartsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoPartsButton.swift; sourceTree = "<group>"; };
 		8491A81125B46073009EDFC2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8491A83F25B47DE8009EDFC2 /* RegistrationInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationInteractor.swift; sourceTree = "<group>"; };
@@ -283,25 +283,25 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
-		845CC1FA25C7EB960051372D /* UploadPost */ = {
+		845CC1FA25C7EB960051372D /* SharePost */ = {
 			isa = PBXGroup;
 			children = (
-				845CC20225C7ECED0051372D /* UploadPostView */,
-				845CC20325C7ED110051372D /* UploadPostInteractor.swift */,
-				845CC20725C7ED370051372D /* UploadPostPresenter.swift */,
-				845CC20B25C7ED470051372D /* UploadPostRouter.swift */,
-				845CC20E25C7ED580051372D /* UploadPostAssembly.swift */,
+				845CC20225C7ECED0051372D /* SharePostView */,
+				845CC20325C7ED110051372D /* SharePostInteractor.swift */,
+				845CC20725C7ED370051372D /* SharePostPresenter.swift */,
+				845CC20B25C7ED470051372D /* SharePostRouter.swift */,
+				845CC20E25C7ED580051372D /* SharePostAssembly.swift */,
 			);
-			path = UploadPost;
+			path = SharePost;
 			sourceTree = "<group>";
 		};
-		845CC20225C7ECED0051372D /* UploadPostView */ = {
+		845CC20225C7ECED0051372D /* SharePostView */ = {
 			isa = PBXGroup;
 			children = (
-				845CC1FB25C7ECB70051372D /* UploadPostView.swift */,
-				845CC1FF25C7ECE20051372D /* UploadPostViewController.swift */,
+				845CC1FB25C7ECB70051372D /* SharePostView.swift */,
+				845CC1FF25C7ECE20051372D /* SharePostViewController.swift */,
 			);
-			path = UploadPostView;
+			path = SharePostView;
 			sourceTree = "<group>";
 		};
 		845D7D8525BC1DD2001E5037 /* Views */ = {
@@ -323,7 +323,7 @@
 				84FE47D525B81FD50048F5AA /* FirebaseStorages.swift */,
 				845455F625BDA5830007C9A2 /* LoginRegistrationConstants.swift */,
 				845800BC25C6AFA600816642 /* NewPostConstants.swift */,
-				845BB22725C9759600B01721 /* UploadPostConstants.swift */,
+				845BB22725C9759600B01721 /* SharePostConstants.swift */,
 			);
 			path = Constants;
 			sourceTree = "<group>";
@@ -426,7 +426,7 @@
 				8445928D25B41E3A0028EE6A /* Registration */,
 				845504F125B1C26300715C3B /* TabBar */,
 				84488AB025C2F54B00173A19 /* NewPost */,
-				845CC1FA25C7EB960051372D /* UploadPost */,
+				845CC1FA25C7EB960051372D /* SharePost */,
 				84B2E67225B0507200B27457 /* Home */,
 				84E6609925B954DF0036AB9F /* Profile */,
 			);
@@ -624,7 +624,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8491A84925B47E0D009EDFC2 /* RegistrationAssembly.swift in Sources */,
-				845BB22825C9759600B01721 /* UploadPostConstants.swift in Sources */,
+				845BB22825C9759600B01721 /* SharePostConstants.swift in Sources */,
 				84E660AC25B955460036AB9F /* ProfileAssembly.swift in Sources */,
 				845455EE25BD8A220007C9A2 /* LoginPresenter.swift in Sources */,
 				84B2E68925B0513C00B27457 /* HomeAssembly.swift in Sources */,
@@ -639,7 +639,7 @@
 				8445929225B41E7D0028EE6A /* RegistrationView.swift in Sources */,
 				845455D225BD44380007C9A2 /* UserPublicInfo.swift in Sources */,
 				8454924925C19805005AB7DA /* TabBarController.swift in Sources */,
-				845CC20425C7ED110051372D /* UploadPostInteractor.swift in Sources */,
+				845CC20425C7ED110051372D /* SharePostInteractor.swift in Sources */,
 				8445928F25B41E6D0028EE6A /* RegistrationViewController.swift in Sources */,
 				84488ABF25C2F6AD00173A19 /* NewPostRouter.swift in Sources */,
 				84B2E65325B0267700B27457 /* AppDelegate.swift in Sources */,
@@ -650,9 +650,9 @@
 				84E660A325B955200036AB9F /* ProfileInteractor.swift in Sources */,
 				84E6609C25B955050036AB9F /* ProfileViewController.swift in Sources */,
 				8491A84025B47DE8009EDFC2 /* RegistrationInteractor.swift in Sources */,
-				845CC1FC25C7ECB70051372D /* UploadPostView.swift in Sources */,
+				845CC1FC25C7ECB70051372D /* SharePostView.swift in Sources */,
 				845B8CB225B6D2E100FE5ED6 /* FirebaseUserService.swift in Sources */,
-				845CC20025C7ECE20051372D /* UploadPostViewController.swift in Sources */,
+				845CC20025C7ECE20051372D /* SharePostViewController.swift in Sources */,
 				84E6612825B9BC8A0036AB9F /* ProfileHeaderView.swift in Sources */,
 				84488AB925C2F69F00173A19 /* NewPostInteractor.swift in Sources */,
 				845B8C9925B6AC8000FE5ED6 /* InputValidation.swift in Sources */,
@@ -666,13 +666,13 @@
 				84FE47D625B81FD50048F5AA /* FirebaseStorages.swift in Sources */,
 				845BB22125C94B3200B01721 /* PlaceholderTextView.swift in Sources */,
 				84B2E67625B0509700B27457 /* HomeView.swift in Sources */,
-				845CC20F25C7ED580051372D /* UploadPostAssembly.swift in Sources */,
+				845CC20F25C7ED580051372D /* SharePostAssembly.swift in Sources */,
 				84488AB225C2F66E00173A19 /* NewPostView.swift in Sources */,
 				84549BAD25BEEC32007D24E2 /* LaunchAssembly.swift in Sources */,
 				8454D3F625BFFC3F00D3CC9E /* SecureTextField.swift in Sources */,
 				845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */,
 				845455D925BD467A0007C9A2 /* Profile.swift in Sources */,
-				845CC20C25C7ED470051372D /* UploadPostRouter.swift in Sources */,
+				845CC20C25C7ED470051372D /* SharePostRouter.swift in Sources */,
 				845D7D8E25BC472C001E5037 /* TwoPartsButton.swift in Sources */,
 				84E6610825B9936E0036AB9F /* User.swift in Sources */,
 				84488AC225C2F6B400173A19 /* NewPostAssembly.swift in Sources */,
@@ -687,7 +687,7 @@
 				84549BB025BEFC2F007D24E2 /* RootViewControllerSwitcher.swift in Sources */,
 				84E6610C25B9940A0036AB9F /* Registration.swift in Sources */,
 				84B2E68625B0512100B27457 /* HomeRouter.swift in Sources */,
-				845CC20825C7ED370051372D /* UploadPostPresenter.swift in Sources */,
+				845CC20825C7ED370051372D /* SharePostPresenter.swift in Sources */,
 				84B2E65525B0267700B27457 /* SceneDelegate.swift in Sources */,
 				845455DD25BD46C40007C9A2 /* ProfileEdit.swift in Sources */,
 				845455FF25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift in Sources */,

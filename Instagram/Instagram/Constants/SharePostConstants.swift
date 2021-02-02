@@ -1,5 +1,5 @@
 //
-//  UploadPostConstants.swift
+//  SharePostConstants.swift
 //  Instagram
 //
 //  Created by Admin on 02.02.2021.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum UploadPostConstants {
+enum SharePostConstants {
     enum Metrics {
         static let contentViewVerticalSpace: CGFloat = 16
         static let contentViewHorizontalSpace: CGFloat = 16
@@ -29,7 +29,7 @@ enum UploadPostConstants {
     }
     
     enum Constants {
-        static let descriptionTextViewPlaceholder = "Enter description..."
+        static let captionTextViewPlaceholder = "Write a caption..."
         
         static let layoutUpdateAnimationDuration = 0.1
     }

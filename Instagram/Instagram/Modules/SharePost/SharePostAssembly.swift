@@ -1,17 +1,17 @@
 //
-//  UploadPostAssembly.swift
+//  SharePostAssembly.swift
 //  Instagram
 //
 //  Created by Admin on 01.02.2021.
 //
 
-enum UploadPostAssembly {
-    static func createUploadPostViewController(mediaFile: MediaFileType) -> UploadPostViewController {
-        let viewController = UploadPostViewController()
+enum SharePostAssembly {
+    static func createSharePostViewController(mediaFile: MediaFileType) -> SharePostViewController {
+        let viewController = SharePostViewController()
         
-        let interactor = UploadPostInteractor()
-        let presenter = UploadPostPresenter()
-        let router = UploadPostRouter(viewController: viewController)
+        let interactor = SharePostInteractor()
+        let presenter = SharePostPresenter()
+        let router = SharePostRouter(viewController: viewController)
         
         viewController.presenter = presenter
         
