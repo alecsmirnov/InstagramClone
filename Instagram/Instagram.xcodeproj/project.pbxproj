@@ -46,6 +46,7 @@
 		845B8CB225B6D2E100FE5ED6 /* FirebaseUserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B8CB125B6D2E100FE5ED6 /* FirebaseUserService.swift */; };
 		845B8CB525B6D3C300FE5ED6 /* JSONCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B8CB425B6D3C300FE5ED6 /* JSONCoding.swift */; };
 		845B8CBE25B6D99200FE5ED6 /* FirebaseTables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B8CBD25B6D99200FE5ED6 /* FirebaseTables.swift */; };
+		845BB22125C94B3200B01721 /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BB22025C94B3200B01721 /* PlaceholderTextView.swift */; };
 		845CC1FC25C7ECB70051372D /* UploadPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC1FB25C7ECB70051372D /* UploadPostView.swift */; };
 		845CC20025C7ECE20051372D /* UploadPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC1FF25C7ECE20051372D /* UploadPostViewController.swift */; };
 		845CC20425C7ED110051372D /* UploadPostInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20325C7ED110051372D /* UploadPostInteractor.swift */; };
@@ -126,6 +127,7 @@
 		845B8CB125B6D2E100FE5ED6 /* FirebaseUserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseUserService.swift; sourceTree = "<group>"; };
 		845B8CB425B6D3C300FE5ED6 /* JSONCoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONCoding.swift; sourceTree = "<group>"; };
 		845B8CBD25B6D99200FE5ED6 /* FirebaseTables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseTables.swift; sourceTree = "<group>"; };
+		845BB22025C94B3200B01721 /* PlaceholderTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
 		845CC1FB25C7ECB70051372D /* UploadPostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostView.swift; sourceTree = "<group>"; };
 		845CC1FF25C7ECE20051372D /* UploadPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostViewController.swift; sourceTree = "<group>"; };
 		845CC20325C7ED110051372D /* UploadPostInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostInteractor.swift; sourceTree = "<group>"; };
@@ -307,6 +309,7 @@
 				845D7D8D25BC472C001E5037 /* TwoPartsButton.swift */,
 				845455FE25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift */,
 				8454D3F525BFFC3F00D3CC9E /* SecureTextField.swift */,
+				845BB22025C94B3200B01721 /* PlaceholderTextView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -656,6 +659,7 @@
 				84E660A925B955390036AB9F /* ProfileRouter.swift in Sources */,
 				845455FB25BDAC460007C9A2 /* KeyboardAppearanceListener.swift in Sources */,
 				84FE47D625B81FD50048F5AA /* FirebaseStorages.swift in Sources */,
+				845BB22125C94B3200B01721 /* PlaceholderTextView.swift in Sources */,
 				84B2E67625B0509700B27457 /* HomeView.swift in Sources */,
 				845CC20F25C7ED580051372D /* UploadPostAssembly.swift in Sources */,
 				84488AB225C2F66E00173A19 /* NewPostView.swift in Sources */,
