@@ -176,7 +176,7 @@ private extension LoginView {
     }
     
     func setupSeparatorViewAppearance() {
-        separatorView.backgroundColor = LoginRegistrationConstants.Colors.separatorView
+        separatorView.backgroundColor = LoginRegistrationConstants.Colors.separatorViewBackground
     }
     
     func setupSignUpButtonAppearance() {

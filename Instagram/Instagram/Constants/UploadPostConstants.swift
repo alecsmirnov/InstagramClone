@@ -21,7 +21,7 @@ enum UploadPostConstants {
     
     enum Colors {
         static let imageViewBorder = UIColor.systemGray5
-        static let separatorView = UIColor.systemGray5
+        static let separatorViewBackground = UIColor.systemGray5
     }
     
     enum Images {

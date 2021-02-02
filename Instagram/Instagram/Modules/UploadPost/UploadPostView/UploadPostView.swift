@@ -81,7 +81,7 @@ private extension UploadPostView {
     }
     
     func setupSeparatorViewAppearance() {
-        separatorView.backgroundColor = UploadPostConstants.Colors.separatorView
+        separatorView.backgroundColor = UploadPostConstants.Colors.separatorViewBackground
     }
 }
 

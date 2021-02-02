@@ -36,7 +36,7 @@ enum LoginRegistrationConstants {
         static let mainButtonTitle = UIColor.white
         static let mainButtonBackground = UIColor(red: 0.25, green: 0.36, blue: 0.9, alpha: 1)
         
-        static let separatorView = UIColor.systemGray5
+        static let separatorViewBackground = UIColor.systemGray5
         
         static let extendButtonFirstPart = UIColor.systemGray
         static let extendButtonSecondPart = UIColor.black
