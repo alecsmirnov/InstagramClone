@@ -24,12 +24,18 @@ final class UploadPostView: UIView {
         
         static let imageViewTrailingSpace: CGFloat = 8
         static let imageViewSize: CGFloat = 80
+        static let imageViewBorderWidth: CGFloat = 1
         
         static let separatorViewWidth: CGFloat = 1
     }
     
-    enum Colors {
+    private enum Colors {
+        static let imageViewBorder = UIColor.lightGray
         static let separatorView = UIColor.systemGray5
+    }
+    
+    private enum Constants {
+        static let layoutUpdateAnimationDuration = 0.1
     }
     
     // MARK: Subviews
@@ -76,9 +82,8 @@ private extension UploadPostView {
     func setupImageViewAppearance() {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        
-        // TODO: remove
-        imageView.backgroundColor = .red
+        imageView.layer.borderColor = Colors.imageViewBorder.cgColor
+        imageView.layer.borderWidth = Metrics.imageViewBorderWidth
     }
     
     func setupDescriptionTextViewAppearance() {
@@ -171,6 +176,10 @@ private extension UploadPostView {
             applyDescriptionTextViewScrollableLayout()
         } else {
             applyDescriptionTextViewFixedLayout()
+        }
+        
+        UIView.animate(withDuration: Constants.layoutUpdateAnimationDuration) {
+            self.layoutIfNeeded()
         }
     }
     

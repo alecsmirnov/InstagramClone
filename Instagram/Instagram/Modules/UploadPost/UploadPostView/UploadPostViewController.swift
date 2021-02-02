@@ -22,7 +22,7 @@ final class UploadPostViewController: CustomViewController<UploadPostView> {
     
     // MARK: Constants
     
-    enum Images {
+    private enum Images {
         static let uploadButton = UIImage(systemName: "checkmark")
     }
     

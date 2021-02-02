@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class SelfSizedTextView: UITextView, NSTextStorageDelegate {
+final class SelfSizedTextView: UITextView {
     // MARK: Properties
     
     override var text: String! {

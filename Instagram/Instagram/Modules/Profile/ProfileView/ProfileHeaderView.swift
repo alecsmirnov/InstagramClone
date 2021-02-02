@@ -221,17 +221,19 @@ private extension ProfileHeaderView {
     }
     
     func setupBioTextViewAppearance() {
-        bioTextView.text = "shoop da whoop\nahahaahahahaaha"
+        //bioTextView.text = "shoop da whoop\nahahaahahahaaha\naaaaaaaaaaaaaaaaaaaaaaaaaa"
         bioTextView.textContainerInset = UIEdgeInsets(top: Metrics.bioTopInset, left: 0, bottom: 0, right: 0)
         bioTextView.font = .systemFont(ofSize: Metrics.bioFontSize)
         bioTextView.dataDetectorTypes = .all
     }
     
     func setupWebsiteTextViewAppearance() {
-        websiteTextView.text = "http://google.com"
+        websiteTextView.text = "http://google.com/"
         websiteTextView.textContainerInset = UIEdgeInsets(top: Metrics.websiteTopInset, left: 0, bottom: 0, right: 0)
         websiteTextView.font = .systemFont(ofSize: Metrics.websiteFontSize)
         websiteTextView.dataDetectorTypes = .link
+        websiteTextView.isUserInteractionEnabled = true
+        websiteTextView.isSelectable = true
     }
     
     func setupSeparatorViewAppearance() {
