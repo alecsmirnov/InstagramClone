@@ -8,8 +8,8 @@
 import UIKit
 
 protocol NewPostViewDelegate: AnyObject {
-    func newPostViewDidRequestCellMedia(_ newPostView: NewPostView)
-    func newPostViewDidRequestOriginalMedia(_ newPostView: NewPostView, at index: Int)
+    func newPostViewDidRequestCellMediaFile(_ newPostView: NewPostView)
+    func newPostViewDidRequestOriginalMediaFile(_ newPostView: NewPostView, at index: Int)
 }
 
 final class NewPostView: UIView {
@@ -17,7 +17,7 @@ final class NewPostView: UIView {
     
     weak var delegate: NewPostViewDelegate? {
         didSet {
-            delegate?.newPostViewDidRequestCellMedia(self)
+            delegate?.newPostViewDidRequestCellMediaFile(self)
         }
     }
     
@@ -53,7 +53,7 @@ extension NewPostView {
         if selectedMediaFileIndex == nil {
             selectedMediaFileIndex = 0
             
-            delegate?.newPostViewDidRequestOriginalMedia(self, at: 0)
+            delegate?.newPostViewDidRequestOriginalMediaFile(self, at: 0)
         }
         
         collectionView.reloadData()
@@ -185,7 +185,7 @@ extension NewPostView: UICollectionViewDataSource {
         }
         
         if indexPath.row == mediaFiles.count - 1 {
-            delegate?.newPostViewDidRequestCellMedia(self)
+            delegate?.newPostViewDidRequestCellMediaFile(self)
         }
         
         return cell
@@ -219,7 +219,7 @@ extension NewPostView: UICollectionViewDelegate {
         if previousSelectedMediaFileIndex != selectedMediaFileIndex {
             setOriginalMediaFile(mediaFiles[indexPath.row])
             
-            delegate?.newPostViewDidRequestOriginalMedia(self, at: indexPath.row)
+            delegate?.newPostViewDidRequestOriginalMediaFile(self, at: indexPath.row)
             
             if let previousSelectedMediaFileIndex = previousSelectedMediaFileIndex {
                 let previousIndexPath = IndexPath(row: previousSelectedMediaFileIndex, section: 0)

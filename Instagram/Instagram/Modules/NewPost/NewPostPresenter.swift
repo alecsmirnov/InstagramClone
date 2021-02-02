@@ -7,10 +7,10 @@
 
 protocol INewPostPresenter: AnyObject {
     func didPressCloseButton()
-    func didPressContinueButton(with: MediaFileType?)
+    func didPressContinueButton(with mediaFile: MediaFileType?)
     
-    func didRequestCellMedia()
-    func didRequestOriginalMedia(at index: Int)
+    func didRequestCellMediaFile()
+    func didRequestOriginalMediaFile(at index: Int)
 }
 
 final class NewPostPresenter {
@@ -26,16 +26,18 @@ extension NewPostPresenter: INewPostPresenter {
         router?.closeNewPostViewController()
     }
     
-    func didPressContinueButton(with: MediaFileType?) {
-        router?.showUploadPostViewController()
+    func didPressContinueButton(with mediaFile: MediaFileType?) {
+        guard let mediaFile = mediaFile else { return }
+        
+        router?.showUploadPostViewController(mediaFile: mediaFile)
     }
     
-    func didRequestCellMedia() {
-        interactor?.fetchCellMedia()
+    func didRequestCellMediaFile() {
+        interactor?.fetchCellMediaFile()
     }
     
-    func didRequestOriginalMedia(at index: Int) {
-        interactor?.fetchOriginalMedia(at: index)
+    func didRequestOriginalMediaFile(at index: Int) {
+        interactor?.fetchOriginalMediaFile(at: index)
         
         viewController?.disableContinueButton()
     }
@@ -44,11 +46,11 @@ extension NewPostPresenter: INewPostPresenter {
 // MARK: - INewPostInteractorOutput
 
 extension NewPostPresenter: INewPostInteractorOutput {
-    func fetchCellMediaSuccess(_ mediaFile: MediaFileType) {
+    func fetchCellMediaFileSuccess(_ mediaFile: MediaFileType) {
         viewController?.appendCellMediaFile(mediaFile)
     }
     
-    func fetchOriginalMediaSuccess(_ mediaFile: MediaFileType, at index: Int) {
+    func fetchOriginalMediaFileSuccess(_ mediaFile: MediaFileType, at index: Int) {
         viewController?.setOriginalMediaFile(mediaFile)
         
         viewController?.enableContinueButton()

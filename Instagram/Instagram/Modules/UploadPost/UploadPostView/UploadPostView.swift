@@ -16,28 +16,6 @@ final class UploadPostView: UIView {
     
     private var keyboardAppearanceListener: KeyboardAppearanceListener?
     
-    // MARK: Constants
-    
-    private enum Metrics {
-        static let contentViewVerticalSpace: CGFloat = 16
-        static let contentViewHorizontalSpace: CGFloat = 16
-        
-        static let imageViewTrailingSpace: CGFloat = 8
-        static let imageViewSize: CGFloat = 80
-        static let imageViewBorderWidth: CGFloat = 1
-        
-        static let separatorViewWidth: CGFloat = 1
-    }
-    
-    private enum Colors {
-        static let imageViewBorder = UIColor.lightGray
-        static let separatorView = UIColor.systemGray5
-    }
-    
-    private enum Constants {
-        static let layoutUpdateAnimationDuration = 0.1
-    }
-    
     // MARK: Subviews
     
     private let contentView = UIView()
@@ -57,6 +35,17 @@ final class UploadPostView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// MARK: - Public Methods
+
+extension UploadPostView {
+    func setMediaFile(_ mediaFile: MediaFileType) {
+        switch mediaFile {
+        case .image(let image):
+            imageView.image = image
+        }
     }
 }
 
@@ -82,18 +71,17 @@ private extension UploadPostView {
     func setupImageViewAppearance() {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.borderColor = Colors.imageViewBorder.cgColor
-        imageView.layer.borderWidth = Metrics.imageViewBorderWidth
+        imageView.layer.borderColor = UploadPostConstants.Colors.imageViewBorder.cgColor
+        imageView.layer.borderWidth = UploadPostConstants.Metrics.imageViewBorderWidth
     }
     
     func setupDescriptionTextViewAppearance() {
-        descriptionTextView.placeholderText = "Enter description..."
-        
+        descriptionTextView.placeholderText = UploadPostConstants.Constants.descriptionTextViewPlaceholder
         descriptionTextView.delegate = self
     }
     
     func setupSeparatorViewAppearance() {
-        separatorView.backgroundColor = Colors.separatorView
+        separatorView.backgroundColor = UploadPostConstants.Colors.separatorView
     }
 }
 
@@ -123,18 +111,18 @@ private extension UploadPostView {
         NSLayoutConstraint.activate([
             contentView.topAnchor.constraint(
                 equalTo: safeAreaLayoutGuide.topAnchor,
-                constant: Metrics.contentViewVerticalSpace),
+                constant: UploadPostConstants.Metrics.contentViewVerticalSpace),
             contentView.leadingAnchor.constraint(
                 equalTo: safeAreaLayoutGuide.leadingAnchor,
-                constant: Metrics.contentViewHorizontalSpace),
+                constant: UploadPostConstants.Metrics.contentViewHorizontalSpace),
             contentView.trailingAnchor.constraint(
                 equalTo: safeAreaLayoutGuide.trailingAnchor,
-                constant: -Metrics.contentViewHorizontalSpace),
+                constant: -UploadPostConstants.Metrics.contentViewHorizontalSpace),
         ])
         
         contentViewBottomConstraint = contentView.bottomAnchor.constraint(
             equalTo: safeAreaLayoutGuide.bottomAnchor,
-            constant: -Metrics.contentViewVerticalSpace)
+            constant: -UploadPostConstants.Metrics.contentViewVerticalSpace)
         
         contentViewBottomConstraint?.isActive = true
     }
@@ -147,10 +135,10 @@ private extension UploadPostView {
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageView.trailingAnchor.constraint(
                 equalTo: descriptionTextView.leadingAnchor,
-                constant: -Metrics.imageViewTrailingSpace),
+                constant: -UploadPostConstants.Metrics.imageViewTrailingSpace),
             imageView.centerYAnchor.constraint(equalTo: descriptionTextView.centerYAnchor),
-            imageView.heightAnchor.constraint(equalToConstant: Metrics.imageViewSize),
-            imageView.widthAnchor.constraint(equalToConstant: Metrics.imageViewSize),
+            imageView.heightAnchor.constraint(equalToConstant: UploadPostConstants.Metrics.imageViewSize),
+            imageView.widthAnchor.constraint(equalToConstant: UploadPostConstants.Metrics.imageViewSize),
         ])
     }
     
@@ -178,7 +166,7 @@ private extension UploadPostView {
             applyDescriptionTextViewFixedLayout()
         }
         
-        UIView.animate(withDuration: Constants.layoutUpdateAnimationDuration) {
+        UIView.animate(withDuration: UploadPostConstants.Constants.layoutUpdateAnimationDuration) {
             self.layoutIfNeeded()
         }
     }
@@ -207,10 +195,10 @@ private extension UploadPostView {
         NSLayoutConstraint.activate([
             separatorView.topAnchor.constraint(
                 equalTo: descriptionTextView.bottomAnchor,
-                constant: Metrics.contentViewVerticalSpace),
+                constant: UploadPostConstants.Metrics.contentViewVerticalSpace),
             separatorView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             separatorView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
-            separatorView.heightAnchor.constraint(equalToConstant: Metrics.separatorViewWidth),
+            separatorView.heightAnchor.constraint(equalToConstant: UploadPostConstants.Metrics.separatorViewWidth),
         ])
     }
 }

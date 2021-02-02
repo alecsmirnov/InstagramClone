@@ -58,12 +58,12 @@ extension NewPostViewController: INewPostViewController {
 // MARK: - NewPostViewDelegate
 
 extension NewPostViewController: NewPostViewDelegate {
-    func newPostViewDidRequestCellMedia(_ newPostView: NewPostView) {
-        presenter?.didRequestCellMedia()
+    func newPostViewDidRequestCellMediaFile(_ newPostView: NewPostView) {
+        presenter?.didRequestCellMediaFile()
     }
     
-    func newPostViewDidRequestOriginalMedia(_ newPostView: NewPostView, at index: Int) {
-        presenter?.didRequestOriginalMedia(at: index)
+    func newPostViewDidRequestOriginalMediaFile(_ newPostView: NewPostView, at index: Int) {
+        presenter?.didRequestOriginalMediaFile(at: index)
     }
 }
 

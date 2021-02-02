@@ -8,7 +8,7 @@
 import UIKit
 
 protocol IUploadPostViewController: AnyObject {
-    
+    func setMediaFile(_ mediaFile: MediaFileType)
 }
 
 final class UploadPostViewController: CustomViewController<UploadPostView> {
@@ -20,16 +20,12 @@ final class UploadPostViewController: CustomViewController<UploadPostView> {
         return true
     }
     
-    // MARK: Constants
-    
-    private enum Images {
-        static let uploadButton = UIImage(systemName: "checkmark")
-    }
-    
     // MARK: Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        presenter?.viewDidLoad()
         
         setupAppearance()
     }
@@ -38,7 +34,9 @@ final class UploadPostViewController: CustomViewController<UploadPostView> {
 // MARK: - IUploadPostViewController
 
 extension UploadPostViewController: IUploadPostViewController {
-    
+    func setMediaFile(_ mediaFile: MediaFileType) {
+        customView?.setMediaFile(mediaFile)
+    }
 }
 
 // MARK: - Appearance
@@ -50,7 +48,7 @@ private extension UploadPostViewController {
     
     func setupUploadButton() {
         let uploadBarButtonItem = UIBarButtonItem(
-            image: Images.uploadButton,
+            image: UploadPostConstants.Images.uploadButton,
             style: .plain,
             target: self,
             action: #selector(didPressUploadButton))
@@ -63,6 +61,6 @@ private extension UploadPostViewController {
 
 private extension UploadPostViewController {
     @objc func didPressUploadButton() {
-        
+        presenter?.didPressUploadButton()
     }
 }

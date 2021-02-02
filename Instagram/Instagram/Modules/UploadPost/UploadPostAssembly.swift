@@ -6,7 +6,7 @@
 //
 
 enum UploadPostAssembly {
-    static func createUploadPostViewController() -> UploadPostViewController {
+    static func createUploadPostViewController(mediaFile: MediaFileType) -> UploadPostViewController {
         let viewController = UploadPostViewController()
         
         let interactor = UploadPostInteractor()
@@ -20,6 +20,8 @@ enum UploadPostAssembly {
         presenter.viewController = viewController
         presenter.interactor = interactor
         presenter.router = router
+        
+        presenter.mediaFile = mediaFile
         
         return viewController
     }

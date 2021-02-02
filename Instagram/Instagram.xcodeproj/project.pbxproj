@@ -48,6 +48,7 @@
 		845B8CBE25B6D99200FE5ED6 /* FirebaseTables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B8CBD25B6D99200FE5ED6 /* FirebaseTables.swift */; };
 		845BB22125C94B3200B01721 /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BB22025C94B3200B01721 /* PlaceholderTextView.swift */; };
 		845BB22525C95D0C00B01721 /* SelfSizedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BB22425C95D0C00B01721 /* SelfSizedTextView.swift */; };
+		845BB22825C9759600B01721 /* UploadPostConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BB22725C9759600B01721 /* UploadPostConstants.swift */; };
 		845CC1FC25C7ECB70051372D /* UploadPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC1FB25C7ECB70051372D /* UploadPostView.swift */; };
 		845CC20025C7ECE20051372D /* UploadPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC1FF25C7ECE20051372D /* UploadPostViewController.swift */; };
 		845CC20425C7ED110051372D /* UploadPostInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20325C7ED110051372D /* UploadPostInteractor.swift */; };
@@ -129,6 +130,7 @@
 		845B8CBD25B6D99200FE5ED6 /* FirebaseTables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseTables.swift; sourceTree = "<group>"; };
 		845BB22025C94B3200B01721 /* PlaceholderTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
 		845BB22425C95D0C00B01721 /* SelfSizedTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfSizedTextView.swift; sourceTree = "<group>"; };
+		845BB22725C9759600B01721 /* UploadPostConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostConstants.swift; sourceTree = "<group>"; };
 		845CC1FB25C7ECB70051372D /* UploadPostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostView.swift; sourceTree = "<group>"; };
 		845CC1FF25C7ECE20051372D /* UploadPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostViewController.swift; sourceTree = "<group>"; };
 		845CC20325C7ED110051372D /* UploadPostInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostInteractor.swift; sourceTree = "<group>"; };
@@ -321,6 +323,7 @@
 				84FE47D525B81FD50048F5AA /* FirebaseStorages.swift */,
 				845455F625BDA5830007C9A2 /* LoginRegistrationConstants.swift */,
 				845800BC25C6AFA600816642 /* NewPostConstants.swift */,
+				845BB22725C9759600B01721 /* UploadPostConstants.swift */,
 			);
 			path = Constants;
 			sourceTree = "<group>";
@@ -621,6 +624,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8491A84925B47E0D009EDFC2 /* RegistrationAssembly.swift in Sources */,
+				845BB22825C9759600B01721 /* UploadPostConstants.swift in Sources */,
 				84E660AC25B955460036AB9F /* ProfileAssembly.swift in Sources */,
 				845455EE25BD8A220007C9A2 /* LoginPresenter.swift in Sources */,
 				84B2E68925B0513C00B27457 /* HomeAssembly.swift in Sources */,
