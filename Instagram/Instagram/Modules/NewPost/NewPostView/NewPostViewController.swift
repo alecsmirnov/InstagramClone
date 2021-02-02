@@ -11,8 +11,8 @@ protocol INewPostViewController: AnyObject {
     func appendCellMediaFile(_ mediaFile: MediaFileType)
     func setOriginalMediaFile(_ mediaFile: MediaFileType)
     
-    func enableContinueButton()
-    func disableContinueButton()
+    func enableNextButton()
+    func disableNextButton()
 }
 
 final class NewPostViewController: CustomViewController<NewPostView> {
@@ -46,12 +46,12 @@ extension NewPostViewController: INewPostViewController {
         customView?.setOriginalMediaFile(mediaFile)
     }
     
-    func enableContinueButton() {
-        changeContinueButtonStatus(isEnabled: true)
+    func enableNextButton() {
+        changeNextButtonStatus(isEnabled: true)
     }
     
-    func disableContinueButton() {
-        changeContinueButtonStatus(isEnabled: false)
+    func disableNextButton() {
+        changeNextButtonStatus(isEnabled: false)
     }
 }
 
@@ -74,7 +74,7 @@ private extension NewPostViewController {
         navigationItem.title = NewPostConstants.Constants.title
         
         setupCloseButton()
-        setupContinueButton()
+        setupNextButton()
     }
     
     func setupCloseButton() {
@@ -83,29 +83,33 @@ private extension NewPostViewController {
             style: .plain,
             target: self,
             action: #selector(didPressCloseButton))
+        
+        closeBarButtonItem.tintColor = .black
 
         navigationItem.leftBarButtonItem = closeBarButtonItem
     }
     
-    func setupContinueButton() {
-        let continueButton = UIButton(type: .system)
-        let continueBarButtonItem = UIBarButtonItem(customView: continueButton)
+    func setupNextButton() {
+        let nextButton = UIButton(type: .system)
+        let nextBarButtonItem = UIBarButtonItem(customView: nextButton)
         
-        continueButton.setImage(NewPostConstants.Images.continueButton, for: .normal)
-        continueButton.addTarget(self, action: #selector(didPressContinueButton), for: .touchUpInside)
-
-        navigationItem.rightBarButtonItem = continueBarButtonItem
+        nextButton.setTitle(NewPostConstants.Constants.nextButtonTitle, for: .normal)
+        nextButton.titleLabel?.font = .systemFont(ofSize: NewPostConstants.Metrics.nextButtonFontSize)
+        
+        nextButton.addTarget(self, action: #selector(didPressNextButton), for: .touchUpInside)
+        
+        navigationItem.rightBarButtonItem = nextBarButtonItem
     }
     
-    func changeContinueButtonStatus(isEnabled: Bool) {
-        let continueButton = navigationItem.rightBarButtonItem
+    func changeNextButtonStatus(isEnabled: Bool) {
+        let nextButton = navigationItem.rightBarButtonItem
         
-        continueButton?.isEnabled = isEnabled
+        nextButton?.isEnabled = isEnabled
         
-        UIView.animate(withDuration: NewPostConstants.Constants.continueButtonAnimationDuration) {
-            continueButton?.customView?.alpha = isEnabled ?
-                NewPostConstants.Constants.continueButtonEnableAlpha :
-                NewPostConstants.Constants.continueButtonDisableAlpha
+        UIView.animate(withDuration: NewPostConstants.Constants.nextButtonAnimationDuration) {
+            nextButton?.customView?.alpha = isEnabled ?
+                NewPostConstants.Constants.nextButtonEnableAlpha :
+                NewPostConstants.Constants.nextButtonDisableAlpha
         }
     }
 }
@@ -117,7 +121,7 @@ private extension NewPostViewController {
         presenter?.didPressCloseButton()
     }
     
-    @objc func didPressContinueButton() {
-        presenter?.didPressContinueButton(with: customView?.selectedMediaFile)
+    @objc func didPressNextButton() {
+        presenter?.didPressNextButton(with: customView?.selectedMediaFile)
     }
 }

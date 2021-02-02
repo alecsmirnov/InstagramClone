@@ -43,12 +43,23 @@ extension SharePostViewController: ISharePostViewController {
 
 private extension SharePostViewController {
     func setupAppearance() {
+        navigationItem.title = SharePostConstants.Constants.title
+        
+        setupBackButton()
         setupShareButton()
+    }
+    
+    func setupBackButton() {
+        let backBarButtonItem = UIBarButtonItem(title: nil, style: .plain, target: nil, action: nil)
+        
+        backBarButtonItem.tintColor = .black
+        
+        navigationController?.navigationBar.topItem?.backBarButtonItem = backBarButtonItem
     }
     
     func setupShareButton() {
         let shareBarButtonItem = UIBarButtonItem(
-            image: SharePostConstants.Images.uploadButton,
+            title: SharePostConstants.Constants.shareButtonTitle,
             style: .plain,
             target: self,
             action: #selector(didPressShareButton))

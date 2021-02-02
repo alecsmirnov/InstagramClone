@@ -14,11 +14,12 @@ enum NewPostConstants {
         static let gridCellSize = CGSize(
             width: UIScreen.main.bounds.width / CGFloat(Constants.columnsCount),
             height: UIScreen.main.bounds.width / CGFloat(Constants.columnsCount))
+        
+        static let nextButtonFontSize: CGFloat = 17.5
     }
     
     enum Images {
         static let closeButton = UIImage(systemName: "xmark")
-        static let continueButton = UIImage(systemName: "arrow.right")
     }
     
     enum Constants {
@@ -26,9 +27,10 @@ enum NewPostConstants {
         
         static let columnsCount = 4
         
-        static let continueButtonAnimationDuration = 0.4
-        static let continueButtonEnableAlpha: CGFloat = 1
-        static let continueButtonDisableAlpha: CGFloat = 0.8
+        static let nextButtonTitle = "Next"
+        static let nextButtonAnimationDuration = 0.4
+        static let nextButtonEnableAlpha: CGFloat = 1
+        static let nextButtonDisableAlpha: CGFloat = 0.8
         
         static let selectedCellAlpha: CGFloat = 0.4
         static let unselectedCellAlpha: CGFloat = 1

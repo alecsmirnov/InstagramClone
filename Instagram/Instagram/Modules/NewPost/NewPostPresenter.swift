@@ -7,7 +7,7 @@
 
 protocol INewPostPresenter: AnyObject {
     func didPressCloseButton()
-    func didPressContinueButton(with mediaFile: MediaFileType?)
+    func didPressNextButton(with mediaFile: MediaFileType?)
     
     func didRequestCellMediaFile()
     func didRequestOriginalMediaFile(at index: Int)
@@ -26,7 +26,7 @@ extension NewPostPresenter: INewPostPresenter {
         router?.closeNewPostViewController()
     }
     
-    func didPressContinueButton(with mediaFile: MediaFileType?) {
+    func didPressNextButton(with mediaFile: MediaFileType?) {
         guard let mediaFile = mediaFile else { return }
         
         router?.showSharePostViewController(mediaFile: mediaFile)
@@ -39,7 +39,7 @@ extension NewPostPresenter: INewPostPresenter {
     func didRequestOriginalMediaFile(at index: Int) {
         interactor?.fetchOriginalMediaFile(at: index)
         
-        viewController?.disableContinueButton()
+        viewController?.disableNextButton()
     }
 }
 
@@ -53,6 +53,6 @@ extension NewPostPresenter: INewPostInteractorOutput {
     func fetchOriginalMediaFileSuccess(_ mediaFile: MediaFileType, at index: Int) {
         viewController?.setOriginalMediaFile(mediaFile)
         
-        viewController?.enableContinueButton()
+        viewController?.enableNextButton()
     }
 }

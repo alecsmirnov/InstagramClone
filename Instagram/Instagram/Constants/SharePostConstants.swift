@@ -24,13 +24,13 @@ enum SharePostConstants {
         static let separatorViewBackground = UIColor.systemGray5
     }
     
-    enum Images {
-        static let uploadButton = UIImage(systemName: "checkmark")
-    }
-    
     enum Constants {
+        static let title = "New post"
+        
+        static let shareButtonTitle = "Share"
+        
         static let captionTextViewPlaceholder = "Write a caption..."
         
-        static let layoutUpdateAnimationDuration = 0.1
+        static let layoutUpdateAnimationDuration = 0.2
     }
 }

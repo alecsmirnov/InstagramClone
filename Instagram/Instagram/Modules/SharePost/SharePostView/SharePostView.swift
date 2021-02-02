@@ -146,9 +146,14 @@ private extension SharePostView {
         captionTextView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            captionTextView.topAnchor.constraint(equalTo: contentView.topAnchor),
             captionTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            captionTextView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
         ])
+        
+        let captionTextViewTopConstraint = captionTextView.topAnchor.constraint(equalTo: contentView.topAnchor)
+        
+        captionTextViewTopConstraint.priority = .defaultLow
+        captionTextViewTopConstraint.isActive = true
         
         captionTextViewFixedBottomConstraint = captionTextView.bottomAnchor.constraint(
             lessThanOrEqualTo: contentView.bottomAnchor)
@@ -194,7 +199,10 @@ private extension SharePostView {
         
         NSLayoutConstraint.activate([
             separatorView.topAnchor.constraint(
-                equalTo: captionTextView.bottomAnchor,
+                greaterThanOrEqualTo: imageView.bottomAnchor,
+                constant: SharePostConstants.Metrics.contentViewVerticalSpace),
+            separatorView.topAnchor.constraint(
+                greaterThanOrEqualTo: captionTextView.bottomAnchor,
                 constant: SharePostConstants.Metrics.contentViewVerticalSpace),
             separatorView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             separatorView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
