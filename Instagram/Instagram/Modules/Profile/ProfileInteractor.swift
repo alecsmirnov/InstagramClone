@@ -26,20 +26,21 @@ final class ProfileInteractor {
 
 extension ProfileInteractor: IProfileInteractor {
     func fetchUser() {
-        guard let identifier = FirebaseUserService.currentUserIdentifier else { return }
+        guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebaseUserService.fetchUser(withIdentifier: identifier) { [self] user in
-            guard let user = user else {
+        FirebaseUserService.fetchUser(withIdentifier: identifier) { [self] result in
+            switch result {
+            case .success(let user):
+                presenter?.fetchUserSuccess(user)
+            case .failure(let error):
                 presenter?.fetchUserFailure()
                 
-                return
+                print("Failed to fetch user: \(error.localizedDescription)")
             }
-            
-            presenter?.fetchUserSuccess(user)
         }
     }
     
     func signOut() {
-        FirebaseUserService.signOut()
+        FirebaseAuthService.signOut()
     }
 }

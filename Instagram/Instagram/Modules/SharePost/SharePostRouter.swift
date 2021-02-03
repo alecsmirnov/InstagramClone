@@ -6,7 +6,7 @@
 //
 
 protocol ISharePostRouter: AnyObject {
-    
+    func closeSharePostViewController()
 }
 
 final class SharePostRouter {
@@ -20,5 +20,7 @@ final class SharePostRouter {
 // MARK: - ISharePostRouter
 
 extension SharePostRouter: ISharePostRouter {
-    
+    func closeSharePostViewController() {
+        viewController?.dismiss(animated: true)
+    }
 }

@@ -52,11 +52,16 @@ extension RegistrationInteractor: IRegistrationInteractor {
             return
         }
 
-        FirebaseUserService.isUserExist(withEmail: email) { [self] isExist in
-            if isExist {
-                presenter?.isUserWithEmailExist()
-            } else {
-                presenter?.isValidEmail()
+        FirebaseAuthService.isUserExist(withEmail: email) { [self] result in
+            switch result {
+            case .success(let isUserExist):
+                if isUserExist {
+                    presenter?.isUserWithEmailExist()
+                } else {
+                    presenter?.isValidEmail()
+                }
+            case .failure(let error):
+                print("Failed to fetch user email status: \(error.localizedDescription)")
             }
         }
     }
@@ -74,11 +79,16 @@ extension RegistrationInteractor: IRegistrationInteractor {
             return
         }
         
-        FirebaseUserService.isUserExist(withUsername: username) { [self] isExist in
-            if isExist {
-                presenter?.isUserWithUsernameExist()
-            } else {
-                presenter?.isValidUsername()
+        FirebaseUserService.isUsernameExist(username) { [self] result in
+            switch result {
+            case .success(let isUsernameExist):
+                if isUsernameExist {
+                    presenter?.isUserWithUsernameExist()
+                } else {
+                    presenter?.isValidUsername()
+                }
+            case .failure(let error):
+                print("Failed to fetch username status: \(error.localizedDescription)")
             }
         }
     }
@@ -112,11 +122,15 @@ extension RegistrationInteractor: IRegistrationInteractor {
             fullName: info.fullName.isEmpty ? nil : info.fullName,
             username: info.username,
             password: info.password,
-            profileImageData: profileImageData) { [self] isUserCreated in
-            if isUserCreated {
-                presenter?.signUpSuccess()
-            } else {
+            profileImageData: profileImageData) { [self] error in
+            if let error = error {
                 presenter?.signUpFailure()
+                
+                print("Failed to create user: \(error)")
+            } else {
+                presenter?.signUpSuccess()
+                
+                print("User successfully created")
             }
         }
     }

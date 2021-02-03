@@ -5,62 +5,26 @@
 //  Created by Admin on 19.01.2021.
 //
 
-import FirebaseAuth
 import FirebaseDatabase
-import FirebaseStorage
 
 enum FirebaseUserService {
-    // MARK: Properties
-    
-    static var isUserSignedIn: Bool {
-        return authReference.currentUser != nil
-    }
-    
-    static var currentUserIdentifier: String? {
-        return authReference.currentUser?.uid
-    }
-    
-    // MARK: Constants
-    
-    // MARK: Properties
-    
-    enum SignInError: Error {
-        case userNotFound
-        case wrongPassword
-        case tooManyRequests
-    }
-    
-    private static let authReference = FirebaseAuth.Auth.auth()
     private static let databaseReference = Database.database().reference()
-    private static let storageReference = Storage.storage().reference()
 }
 
 // MARK: - Public Methods
 
 extension FirebaseUserService {
-    static func isUserExist(withEmail email: String, completion: @escaping (Bool) -> Void) {
-        authReference.fetchSignInMethods(forEmail: email) { providers, error in
-            guard error == nil else {
-                print("Failed to fetch email status: \(error?.localizedDescription ?? "")")
-                
-                completion(false)
-                
-                return
-            }
-        
-            completion(providers != nil)
-        }
-    }
-    
-    static func isUserExist(withUsername username: String, completion: @escaping (Bool) -> Void) {
+    static func isUsernameExist(_ username: String, completion: @escaping (Result<Bool, Error>) -> Void) {
         databaseReference
             .child(FirebaseTables.users)
             .queryOrdered(byChild: User.CodingKeys.username.rawValue)
             .queryEqual(toValue: username)
             .observeSingleEvent(of: .value) { snapshot in
-            completion(snapshot.value as? [String: Any] != nil)
+            let isUsernameExist = snapshot.value as? [String: Any] != nil
+                
+            completion(.success(isUsernameExist))
         } withCancel: { error in
-            print("Failed to fetch username status: \(error.localizedDescription)")
+            completion(.failure(error))
         }
     }
     
@@ -70,79 +34,46 @@ extension FirebaseUserService {
         username: String,
         password: String,
         profileImageData: Data?,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     ) {
-        createUserAccount(withEmail: email, password: password) { userIdentifier in
-            guard let userIdentifier = userIdentifier else {
-                completion(false)
-                
-                return
-            }
-            
-            if let profileImageData = profileImageData {
-                uploadUserProfilePNGImageData(profileImageData, identifier: userIdentifier) { profileImageURL in
-                    guard let profileImageURL = profileImageURL else {
-                        completion(false)
-                        
-                        return
+        FirebaseAuthService.createUser(withEmail: email, password: password) { result in
+            switch result {
+            case .success(let userIdentifier):
+                if let profileImageData = profileImageData {
+                    FirebaseStorageService.storeUserProfilePNGImageData(
+                        profileImageData,
+                        identifier: userIdentifier) { result in
+                        switch result {
+                        case .success(let profileImageURL):
+                            createUserRecord(
+                                identifier: userIdentifier,
+                                email: email,
+                                fullName: fullName,
+                                username: username,
+                                profileImageURL: profileImageURL) { error in
+                                completion(error)
+                            }
+                        case .failure(let error):
+                            completion(error)
+                        }
                     }
-                    
+                } else {
                     createUserRecord(
                         identifier: userIdentifier,
                         email: email,
                         fullName: fullName,
                         username: username,
-                        profileImageURL: profileImageURL) { isUserCreated in
-                        completion(isUserCreated)
+                        profileImageURL: nil) { error in
+                        completion(error)
                     }
                 }
-            } else {
-                createUserRecord(
-                    identifier: userIdentifier,
-                    email: email,
-                    fullName: fullName,
-                    username: username,
-                    profileImageURL: nil) { isUserCreated in
-                    completion(isUserCreated)
-                }
+            case .failure(let error):
+                completion(error)
             }
-            
-            print("User successfully created")
         }
     }
     
-    static func signIn(withEmail email: String, password: String, completion: @escaping (SignInError?) -> Void) {
-        authReference.signIn(withEmail: email, password: password) { authResult, error in
-            guard let authResult = authResult else {
-                if let error = error as NSError? {
-                    print("Failed to sign in with email and password: \(error.localizedDescription)")
-                    
-                    switch error.code {
-                    case
-                        AuthErrorCode.userNotFound.rawValue: completion(.userNotFound)
-                    case
-                        AuthErrorCode.wrongPassword.rawValue: completion(.wrongPassword)
-                    case
-                        AuthErrorCode.tooManyRequests.rawValue: completion(.tooManyRequests)
-                    default:
-                        break
-                    }
-                }
-                
-                return
-            }
-            
-            print("User \(authResult.user.uid) is logged in")
-            
-            completion(nil)
-        }
-    }
-    
-    static func signOut() {
-        try? authReference.signOut()
-    }
-    
-    static func fetchUser(withIdentifier identifier: String, completion: @escaping (User?) -> Void) {
+    static func fetchUser(withIdentifier identifier: String, completion: @escaping (Result<User, Error>) -> Void) {
         databaseReference
             .child(FirebaseTables.users)
             .child(identifier)
@@ -151,46 +82,26 @@ extension FirebaseUserService {
                 let value = snapshot.value as? [String: Any],
                 let user = JSONCoding.fromDictionary(value, type: User.self)
             else {
-                completion(nil)
-                
                 return
             }
             
-            completion(user)
+            completion(.success(user))
         } withCancel: { error in
-            print("Failed to fetch user: \(error.localizedDescription)")
+            completion(.failure(error))
         }
     }
 }
 
 // MARK: - Private Methods
 
-private extension FirebaseUserService {
-    static func createUserAccount(
-        withEmail email: String,
-        password: String,
-        completion: @escaping (String?) -> Void
-    ) {
-        authReference.createUser(withEmail: email, password: password) { authDataResult, error in
-            guard let userIdentifier = authDataResult?.user.uid, error == nil else {
-                print("Failed to create user account: \(error?.localizedDescription ?? "")")
-                
-                completion(nil)
-                
-                return
-            }
-            
-            completion(userIdentifier)
-        }
-    }
-    
+private extension FirebaseUserService {    
     static func createUserRecord(
         identifier: String,
         email: String,
         fullName: String?,
         username: String,
         profileImageURL: String?,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     ) {
         let user = User(fullName: fullName, username: username, profileImageURL: profileImageURL)
         
@@ -200,9 +111,7 @@ private extension FirebaseUserService {
                 .child(identifier)
                 .setValue(userDictionary) { error, _ in
                 guard error == nil else {
-                    print("Failed to create user record: \(error?.localizedDescription ?? "")")
-                    
-                    completion(false)
+                    completion(error)
                     
                     return
                 }
@@ -215,48 +124,16 @@ private extension FirebaseUserService {
                         .child(identifier)
                         .setValue(userPrivateInfoDictionary) { error, _ in
                         guard error == nil else {
-                            print("Failed to create user private info record: \(error?.localizedDescription ?? "")")
-                            
                             databaseReference.child(FirebaseTables.users).child(identifier).removeValue()
                             
-                            completion(false)
+                            completion(error)
                             
                             return
                         }
                         
-                        completion(true)
+                        completion(nil)
                     }
                 }
-            }
-        }
-    }
-
-    static func uploadUserProfilePNGImageData(
-        _ data: Data,
-        identifier: String,
-        completion: @escaping (String?) -> Void
-    ) {
-        let imageDataReference = storageReference.child(FirebaseStorages.profileImages).child("\(identifier).png")
-        
-        imageDataReference.putData(data, metadata: nil) { metadata, error in
-            guard metadata != nil, error == nil else {
-                print("Failed to upload user profile image data: \(error?.localizedDescription ?? "")")
-                
-                completion(nil)
-                
-                return
-            }
-            
-            imageDataReference.downloadURL { url, error in
-                guard let urlString = url?.absoluteString, error == nil else {
-                    print("Failed to download user profile image data URL: \(error?.localizedDescription ?? "")")
-                    
-                    completion(nil)
-                    
-                    return
-                }
-                
-                completion(urlString)
             }
         }
     }

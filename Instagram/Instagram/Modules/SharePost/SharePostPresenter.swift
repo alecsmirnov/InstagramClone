@@ -31,7 +31,7 @@ extension SharePostPresenter: IUploadPostPresenter {
     }
     
     func didPressShareButton() {
-        
+        router?.closeSharePostViewController()
     }
 }
 

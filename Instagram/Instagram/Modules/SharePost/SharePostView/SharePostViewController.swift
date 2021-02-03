@@ -45,11 +45,11 @@ private extension SharePostViewController {
     func setupAppearance() {
         navigationItem.title = SharePostConstants.Constants.title
         
-        setupBackButton()
+        customizeBackButton()
         setupShareButton()
     }
     
-    func setupBackButton() {
+    func customizeBackButton() {
         let backBarButtonItem = UIBarButtonItem(title: nil, style: .plain, target: nil, action: nil)
         
         backBarButtonItem.tintColor = .black

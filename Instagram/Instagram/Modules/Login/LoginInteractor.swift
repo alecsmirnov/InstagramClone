@@ -66,18 +66,21 @@ extension LoginInteractor: ILoginInteractor {
     }
     
     func signIn(withEmail email: String, password: String) {
-        FirebaseUserService.signIn(withEmail: email, password: password) { [self] error in
-            if let error = error {
+        FirebaseAuthService.signIn(withEmail: email, password: password) { [self] result in
+            switch result {
+            case .success(let userIdentifier):
+                presenter?.signInSuccess()
+                
+                print("User \(userIdentifier) is logged in")
+            case .failure(let error):
                 switch error {
                 case .userNotFound:
                     presenter?.signInIncorrectUserFailure()
                 case .wrongPassword:
                     presenter?.signInIncorrectPasswordFailure()
-                case .tooManyRequests:
-                    break
+                case .undefined(let error):
+                    print("Failed to sign in: \(error.localizedDescription)")
                 }
-            } else {
-                presenter?.signInSuccess()
             }
         }
     }

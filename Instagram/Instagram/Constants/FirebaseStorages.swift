@@ -7,4 +7,5 @@
 
 enum FirebaseStorages {
     static let profileImages = "profile_images"
+    static let postImages = "post_images"
 }

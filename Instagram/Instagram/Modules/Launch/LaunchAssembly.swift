@@ -11,7 +11,7 @@ enum LaunchAssembly {
     static func createRootViewController() -> UIViewController {
         let rootViewController: UIViewController
         
-        if FirebaseUserService.isUserSignedIn {
+        if FirebaseAuthService.isUserSignedIn {
             rootViewController = TabBarAssembly.createTabBarController()
         } else {
             rootViewController = LoginAssembly.createLoginViewController()
