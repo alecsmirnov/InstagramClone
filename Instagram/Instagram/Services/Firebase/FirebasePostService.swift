@@ -17,12 +17,12 @@ extension FirebasePostService {
     static func sharePost(
         identifier: String,
         imageData: Data,
-        description: String?,
+        caption: String?,
         completion: @escaping (Error?) -> Void) {
         FirebaseStorageService.storeUserPostPNGImageData(imageData, identifier: identifier) { result in
             switch result {
             case .success(let imageURL):
-                createPostRecord(identifier: identifier, imageURL: imageURL, description: description) { error in
+                createPostRecord(identifier: identifier, imageURL: imageURL, caption: caption) { error in
                     completion(error)
                 }
             case .failure(let error):
@@ -38,15 +38,16 @@ private extension FirebasePostService {
     static func createPostRecord(
         identifier: String,
         imageURL: String,
-        description: String?,
+        caption: String?,
         completion: @escaping (Error?) -> Void
     ) {
-        let post = Post(imageURL: imageURL, description: description, timestamp: Date().timeIntervalSince1970)
+        let post = Post(imageURL: imageURL, caption: caption, timestamp: Date().timeIntervalSince1970)
         
         if let postDictionary = JSONCoding.toDictionary(post) {
             databaseReference
                 .child(FirebaseTables.posts)
                 .child(identifier)
+                .childByAutoId()
                 .setValue(postDictionary) { error, _ in
                 completion(error)
             }

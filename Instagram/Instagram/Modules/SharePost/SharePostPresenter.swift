@@ -8,7 +8,7 @@
 protocol IUploadPostPresenter: AnyObject {
     func viewDidLoad()
     
-    func didPressShareButton()
+    func didPressShareButton(withMediaFile mediaFile: MediaFileType, caption: String?)
 }
 
 final class SharePostPresenter {
@@ -30,13 +30,19 @@ extension SharePostPresenter: IUploadPostPresenter {
         viewController?.setMediaFile(mediaFile)
     }
     
-    func didPressShareButton() {
-        router?.closeSharePostViewController()
+    func didPressShareButton(withMediaFile mediaFile: MediaFileType, caption: String?) {
+        interactor?.sharePost(withMediaFile: mediaFile, caption: caption)
     }
 }
 
 // MARK: - ISharePostInteractorOutput
 
 extension SharePostPresenter: ISharePostInteractorOutput {
-
+    func sharePostSuccess() {
+        router?.closeSharePostViewController()
+    }
+    
+    func sharePostFailure() {
+        
+    }
 }

@@ -9,7 +9,7 @@ import Foundation
 
 struct Post {
     let imageURL: String
-    let description: String?
+    let caption: String?
     let timestamp: TimeInterval
 }
 
@@ -18,7 +18,7 @@ struct Post {
 extension Post: Codable {
     enum CodingKeys: String, CodingKey {
         case imageURL = "image_url"
-        case description
+        case caption
         case timestamp
     }
 }

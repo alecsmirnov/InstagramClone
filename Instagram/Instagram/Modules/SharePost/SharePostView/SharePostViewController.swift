@@ -72,6 +72,8 @@ private extension SharePostViewController {
 
 private extension SharePostViewController {
     @objc func didPressShareButton() {
-        presenter?.didPressShareButton()
+        guard let image = customView?.image else { return }
+        
+        presenter?.didPressShareButton(withMediaFile: .image(image), caption: customView?.caption)
     }
 }

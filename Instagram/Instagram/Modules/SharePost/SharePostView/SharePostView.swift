@@ -10,6 +10,14 @@ import UIKit
 final class SharePostView: UIView {
     // MARK: Properties
     
+    var image: UIImage? {
+        return imageView.image
+    }
+    
+    var caption: String? {
+        return captionTextView.text
+    }
+    
     private var contentViewBottomConstraint: NSLayoutConstraint?
     private var captionTextViewFixedBottomConstraint: NSLayoutConstraint?
     private var captionTextViewScrollableBottomConstraint: NSLayoutConstraint?

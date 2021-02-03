@@ -498,12 +498,12 @@
 			isa = PBXGroup;
 			children = (
 				84E6610B25B9940A0036AB9F /* Registration.swift */,
+				845AE89525C42ABA005A1155 /* MediaFileType.swift */,
 				845455D825BD467A0007C9A2 /* Profile.swift */,
 				845455DC25BD46C40007C9A2 /* ProfileEdit.swift */,
 				84E6610725B9936E0036AB9F /* User.swift */,
 				845455D125BD44380007C9A2 /* UserPublicInfo.swift */,
 				845455D425BD44460007C9A2 /* UserPrivateInfo.swift */,
-				845AE89525C42ABA005A1155 /* MediaFileType.swift */,
 				845C283F25CAB51A000731B3 /* Post.swift */,
 			);
 			path = Entities;
