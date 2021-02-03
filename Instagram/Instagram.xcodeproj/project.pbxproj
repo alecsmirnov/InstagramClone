@@ -51,6 +51,7 @@
 		845C284025CAB51A000731B3 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C283F25CAB51A000731B3 /* Post.swift */; };
 		845C284325CABB2D000731B3 /* FirebaseStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C284225CABB2D000731B3 /* FirebaseStorageService.swift */; };
 		845C284625CAC22A000731B3 /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C284525CAC22A000731B3 /* FirebaseAuthService.swift */; };
+		845C284D25CADE16000731B3 /* FirebasePostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C284C25CADE16000731B3 /* FirebasePostService.swift */; };
 		845CC1FC25C7ECB70051372D /* SharePostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC1FB25C7ECB70051372D /* SharePostView.swift */; };
 		845CC20025C7ECE20051372D /* SharePostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC1FF25C7ECE20051372D /* SharePostViewController.swift */; };
 		845CC20425C7ED110051372D /* SharePostInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20325C7ED110051372D /* SharePostInteractor.swift */; };
@@ -135,6 +136,7 @@
 		845C283F25CAB51A000731B3 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		845C284225CABB2D000731B3 /* FirebaseStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseStorageService.swift; sourceTree = "<group>"; };
 		845C284525CAC22A000731B3 /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
+		845C284C25CADE16000731B3 /* FirebasePostService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebasePostService.swift; sourceTree = "<group>"; };
 		845CC1FB25C7ECB70051372D /* SharePostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostView.swift; sourceTree = "<group>"; };
 		845CC1FF25C7ECE20051372D /* SharePostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostViewController.swift; sourceTree = "<group>"; };
 		845CC20325C7ED110051372D /* SharePostInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostInteractor.swift; sourceTree = "<group>"; };
@@ -347,6 +349,7 @@
 				845C284525CAC22A000731B3 /* FirebaseAuthService.swift */,
 				845C284225CABB2D000731B3 /* FirebaseStorageService.swift */,
 				845B8CB125B6D2E100FE5ED6 /* FirebaseUserService.swift */,
+				845C284C25CADE16000731B3 /* FirebasePostService.swift */,
 			);
 			path = Firebase;
 			sourceTree = "<group>";
@@ -689,6 +692,7 @@
 				845455E825BD89BD0007C9A2 /* LoginViewController.swift in Sources */,
 				845AE89625C42ABA005A1155 /* MediaFileType.swift in Sources */,
 				84549BA425BEC7AE007D24E2 /* SimpleAlert.swift in Sources */,
+				845C284D25CADE16000731B3 /* FirebasePostService.swift in Sources */,
 				845B8CBE25B6D99200FE5ED6 /* FirebaseTables.swift in Sources */,
 				845C284325CABB2D000731B3 /* FirebaseStorageService.swift in Sources */,
 				84E660A625B9552D0036AB9F /* ProfilePresenter.swift in Sources */,
