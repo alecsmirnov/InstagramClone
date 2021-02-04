@@ -5,7 +5,7 @@
 //  Created by Admin on 01.02.2021.
 //
 
-protocol IUploadPostPresenter: AnyObject {
+protocol ISharePostPresenter: AnyObject {
     func viewDidLoad()
     
     func didPressShareButton(withMediaFile mediaFile: MediaFileType, caption: String?)
@@ -23,7 +23,7 @@ final class SharePostPresenter {
 
 // MARK: - ISharePostPresenter
 
-extension SharePostPresenter: IUploadPostPresenter {
+extension SharePostPresenter: ISharePostPresenter {
     func viewDidLoad() {
         guard let mediaFile = mediaFile else { return }
         
@@ -31,6 +31,8 @@ extension SharePostPresenter: IUploadPostPresenter {
     }
     
     func didPressShareButton(withMediaFile mediaFile: MediaFileType, caption: String?) {
+        viewController?.showSpinner()
+        
         interactor?.sharePost(withMediaFile: mediaFile, caption: caption)
     }
 }
@@ -39,10 +41,12 @@ extension SharePostPresenter: IUploadPostPresenter {
 
 extension SharePostPresenter: ISharePostInteractorOutput {
     func sharePostSuccess() {
+        viewController?.hideSpinner()
+        
         router?.closeSharePostViewController()
     }
     
     func sharePostFailure() {
-        
+        viewController?.hideSpinner()
     }
 }

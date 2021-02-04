@@ -55,6 +55,10 @@ extension SharePostView {
             imageView.image = image
         }
     }
+    
+    func disableInteractions() {
+        captionTextView.isEditable = false
+    }
 }
 
 // MARK: - Private Methods

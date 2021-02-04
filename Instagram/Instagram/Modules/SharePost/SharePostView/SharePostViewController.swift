@@ -9,16 +9,23 @@ import UIKit
 
 protocol ISharePostViewController: AnyObject {
     func setMediaFile(_ mediaFile: MediaFileType)
+    
+    func showSpinner()
+    func hideSpinner()
 }
 
 final class SharePostViewController: CustomViewController<SharePostView> {
     // MARK: Properties
     
-    var presenter: IUploadPostPresenter?
+    var presenter: ISharePostPresenter?
     
     override var prefersStatusBarHidden: Bool {
         return true
     }
+    
+    // MARK: Child View Controllers
+    
+    private let spinnerViewController = SpinnerViewController(statusBarHidden: true)
     
     // MARK: Lifecycle
     
@@ -36,6 +43,17 @@ final class SharePostViewController: CustomViewController<SharePostView> {
 extension SharePostViewController: ISharePostViewController {
     func setMediaFile(_ mediaFile: MediaFileType) {
         customView?.setMediaFile(mediaFile)
+    }
+    
+    func showSpinner() {
+        navigationController?.add(spinnerViewController)
+        
+        spinnerViewController.show()
+    }
+    
+    func hideSpinner() {
+        spinnerViewController.hide()
+        spinnerViewController.remove()
     }
 }
 

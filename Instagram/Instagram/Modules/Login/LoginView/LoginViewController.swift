@@ -26,10 +26,6 @@ final class LoginViewController: CustomViewController<LoginView> {
     
     var presenter: ILoginPresenter?
     
-    override var shouldAutorotate: Bool {
-        return false
-    }
-    
     // MARK: Lifecycle
     
     override func viewDidLoad() {

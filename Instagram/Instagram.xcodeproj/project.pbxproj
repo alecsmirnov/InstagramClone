@@ -52,6 +52,9 @@
 		845C284325CABB2D000731B3 /* FirebaseStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C284225CABB2D000731B3 /* FirebaseStorageService.swift */; };
 		845C284625CAC22A000731B3 /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C284525CAC22A000731B3 /* FirebaseAuthService.swift */; };
 		845C284D25CADE16000731B3 /* FirebasePostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C284C25CADE16000731B3 /* FirebasePostService.swift */; };
+		845C5E0225CC2733002A2E16 /* SpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C5E0125CC2733002A2E16 /* SpinnerView.swift */; };
+		845C5E0525CC2C3D002A2E16 /* UIViewController+add.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C5E0425CC2C3D002A2E16 /* UIViewController+add.swift */; };
+		845C5E0925CC2D7D002A2E16 /* SpinnerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C5E0825CC2D7D002A2E16 /* SpinnerViewController.swift */; };
 		845CC1FC25C7ECB70051372D /* SharePostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC1FB25C7ECB70051372D /* SharePostView.swift */; };
 		845CC20025C7ECE20051372D /* SharePostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC1FF25C7ECE20051372D /* SharePostViewController.swift */; };
 		845CC20425C7ED110051372D /* SharePostInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20325C7ED110051372D /* SharePostInteractor.swift */; };
@@ -137,6 +140,9 @@
 		845C284225CABB2D000731B3 /* FirebaseStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseStorageService.swift; sourceTree = "<group>"; };
 		845C284525CAC22A000731B3 /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
 		845C284C25CADE16000731B3 /* FirebasePostService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebasePostService.swift; sourceTree = "<group>"; };
+		845C5E0125CC2733002A2E16 /* SpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerView.swift; sourceTree = "<group>"; };
+		845C5E0425CC2C3D002A2E16 /* UIViewController+add.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+add.swift"; sourceTree = "<group>"; };
+		845C5E0825CC2D7D002A2E16 /* SpinnerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerViewController.swift; sourceTree = "<group>"; };
 		845CC1FB25C7ECB70051372D /* SharePostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostView.swift; sourceTree = "<group>"; };
 		845CC1FF25C7ECE20051372D /* SharePostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostViewController.swift; sourceTree = "<group>"; };
 		845CC20325C7ED110051372D /* SharePostInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostInteractor.swift; sourceTree = "<group>"; };
@@ -224,6 +230,7 @@
 			isa = PBXGroup;
 			children = (
 				8445929525B425210028EE6A /* CustomViewController.swift */,
+				845C5E0825CC2D7D002A2E16 /* SpinnerViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -318,6 +325,7 @@
 				845455FE25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift */,
 				8454D3F525BFFC3F00D3CC9E /* SecureTextField.swift */,
 				845BB22025C94B3200B01721 /* PlaceholderTextView.swift */,
+				845C5E0125CC2733002A2E16 /* SpinnerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -514,6 +522,7 @@
 			children = (
 				84FE47D925B8230E0048F5AA /* UIImage+resize.swift */,
 				845A1D3D25BAB50700F4004B /* UIImageView+download.swift */,
+				845C5E0425CC2C3D002A2E16 /* UIViewController+add.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -652,6 +661,7 @@
 				845CC20425C7ED110051372D /* SharePostInteractor.swift in Sources */,
 				8445928F25B41E6D0028EE6A /* RegistrationViewController.swift in Sources */,
 				84488ABF25C2F6AD00173A19 /* NewPostRouter.swift in Sources */,
+				845C5E0225CC2733002A2E16 /* SpinnerView.swift in Sources */,
 				845C284625CAC22A000731B3 /* FirebaseAuthService.swift in Sources */,
 				84B2E65325B0267700B27457 /* AppDelegate.swift in Sources */,
 				84488AB625C2F67E00173A19 /* NewPostViewController.swift in Sources */,
@@ -660,6 +670,7 @@
 				84E660A325B955200036AB9F /* ProfileInteractor.swift in Sources */,
 				84E6609C25B955050036AB9F /* ProfileViewController.swift in Sources */,
 				8491A84025B47DE8009EDFC2 /* RegistrationInteractor.swift in Sources */,
+				845C5E0925CC2D7D002A2E16 /* SpinnerViewController.swift in Sources */,
 				845CC1FC25C7ECB70051372D /* SharePostView.swift in Sources */,
 				845B8CB225B6D2E100FE5ED6 /* FirebaseUserService.swift in Sources */,
 				845CC20025C7ECE20051372D /* SharePostViewController.swift in Sources */,
@@ -667,6 +678,7 @@
 				84488AB925C2F69F00173A19 /* NewPostInteractor.swift in Sources */,
 				845B8C9925B6AC8000FE5ED6 /* InputValidation.swift in Sources */,
 				84488ABC25C2F6A600173A19 /* NewPostPresenter.swift in Sources */,
+				845C5E0525CC2C3D002A2E16 /* UIViewController+add.swift in Sources */,
 				8491A84625B47E03009EDFC2 /* RegistrationRouter.swift in Sources */,
 				845AE88D25C41B04005A1155 /* MediaService.swift in Sources */,
 				845BB22525C95D0C00B01721 /* SelfSizedTextView.swift in Sources */,
