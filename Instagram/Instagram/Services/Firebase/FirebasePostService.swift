@@ -19,7 +19,7 @@ extension FirebasePostService {
         imageData: Data,
         caption: String?,
         completion: @escaping (Error?) -> Void) {
-        FirebaseStorageService.storeUserPostPNGImageData(imageData, identifier: identifier) { result in
+        FirebaseStorageService.storeUserPostImageData(imageData, identifier: identifier) { result in
             switch result {
             case .success(let imageURL):
                 createPostRecord(identifier: identifier, imageURL: imageURL, caption: caption) { error in

@@ -21,9 +21,7 @@ final class ProfilePresenter {
 
 extension ProfilePresenter: IProfilePresenter {
     func viewDidLoad() {
-        print("VIEW DID LOAD")
-        
-        //interactor?.fetchUser()
+        interactor?.fetchUser()
         interactor?.fetchPosts()
     }
     

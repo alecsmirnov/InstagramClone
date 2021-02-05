@@ -15,6 +15,11 @@ enum FirebaseStorageService {
         case urlDownloadFailure
     }
     
+    enum ImageType: String {
+        case jpg
+        case png
+    }
+    
     // MARK: Properties
     
     private static let storageReference = Storage.storage().reference()
@@ -23,35 +28,39 @@ enum FirebaseStorageService {
 // MARK: - Public Methods
 
 extension FirebaseStorageService {
-    static func storeUserProfilePNGImageData(
+    static func storeUserProfileImageData(
         _ data: Data,
         identifier: String,
+        imageType: ImageType = .jpg,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
-        let imageDataReference = storageReference.child(FirebaseStorages.profileImages).child("\(identifier).png")
+        let imageDataReference = storageReference
+            .child(FirebaseStorages.profileImages)
+            .child("\(identifier).\(imageType.rawValue)")
         
-        storePNGImageData(data, to: imageDataReference, completion: completion)
+        storeImageData(data, to: imageDataReference, completion: completion)
     }
     
-    static func storeUserPostPNGImageData(
+    static func storeUserPostImageData(
         _ data: Data,
         identifier: String,
+        imageType: ImageType = .jpg,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
         let imageIdentifier = UUID().description
         let imageDataReference = storageReference
             .child(FirebaseStorages.postImages)
             .child(identifier)
-            .child("\(imageIdentifier).png")
+            .child("\(imageIdentifier).\(imageType.rawValue)")
         
-        storePNGImageData(data, to: imageDataReference, completion: completion)
+        storeImageData(data, to: imageDataReference, completion: completion)
     }
 }
 
 // MARK: - Private Methods
 
 private extension FirebaseStorageService {
-    static func storePNGImageData(
+    static func storeImageData(
         _ data: Data,
         to storageReference: StorageReference,
         completion: @escaping (Result<String, Error>) -> Void

@@ -64,11 +64,13 @@ extension MediaService {
                 for: asset,
                 targetSize: targetSize,
                 contentMode: .aspectFill,
-                options: self?.imageRequestOptions) { image, _ in
+                options: self?.imageRequestOptions) { image, _ in                
                 if let image = image {
                     DispatchQueue.main.async {
                         completion(.image(image))
                     }
+                    
+                    print(image.pngData()?.count ?? 0)
                     
                     self?.cachingImageManager.startCachingImages(
                         for: [asset],

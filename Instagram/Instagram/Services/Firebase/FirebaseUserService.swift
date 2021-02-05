@@ -40,7 +40,7 @@ extension FirebaseUserService {
             switch result {
             case .success(let userIdentifier):
                 if let profileImageData = profileImageData {
-                    FirebaseStorageService.storeUserProfilePNGImageData(
+                    FirebaseStorageService.storeUserProfileImageData(
                         profileImageData,
                         identifier: userIdentifier) { result in
                         switch result {

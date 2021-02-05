@@ -115,7 +115,7 @@ extension RegistrationInteractor: IRegistrationInteractor {
         let profileImageData = info.profileImage?.resize(
             withWidth: LoginRegistrationConstants.Metrics.profileImageButtonSize,
             height: LoginRegistrationConstants.Metrics.profileImageButtonSize,
-            contentMode: .aspectFill).pngData()
+            contentMode: .aspectFill).jpegData(compressionQuality: 1)
         
         FirebaseUserService.createUser(
             withEmail: info.email,

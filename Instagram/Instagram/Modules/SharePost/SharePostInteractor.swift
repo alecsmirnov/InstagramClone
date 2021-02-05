@@ -26,7 +26,7 @@ extension SharePostInteractor: ISharePostInteractor {
         
         switch mediaFile {
         case .image(let image):
-            guard let imageData = image.pngData() else { return }
+            guard let imageData = image.jpegData(compressionQuality: 0.75) else { return }
             
             let caption = (caption?.isEmpty ?? true) ? nil : caption
             
