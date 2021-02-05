@@ -41,8 +41,6 @@ extension SharePostPresenter: ISharePostPresenter {
 
 extension SharePostPresenter: ISharePostInteractorOutput {
     func sharePostSuccess() {
-        viewController?.hideSpinner()
-        
         router?.closeSharePostViewController()
     }
     

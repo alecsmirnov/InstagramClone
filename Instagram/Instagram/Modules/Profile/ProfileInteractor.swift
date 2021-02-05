@@ -7,6 +7,7 @@
 
 protocol IProfileInteractor: AnyObject {
     func fetchUser()
+    func fetchPosts()
     
     // TODO: move to Menu module
     
@@ -16,6 +17,9 @@ protocol IProfileInteractor: AnyObject {
 protocol IProfileInteractorOutput: AnyObject {
     func fetchUserSuccess(_ user: User)
     func fetchUserFailure()
+    
+    func fetchPostsSuccess(_ posts: [Post])
+    func fetchPostsFailure()
 }
 
 final class ProfileInteractor {
@@ -36,6 +40,21 @@ extension ProfileInteractor: IProfileInteractor {
                 presenter?.fetchUserFailure()
                 
                 print("Failed to fetch user: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func fetchPosts() {
+        guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
+        
+        FirebasePostService.fetchPosts(identifier: identifier) { [self] result in
+            switch result {
+            case .success(let posts):
+                presenter?.fetchPostsSuccess(posts)
+            case .failure(let error):
+                presenter?.fetchPostsFailure()
+                
+                print("Failed to fetch posts: \(error.localizedDescription)")
             }
         }
     }

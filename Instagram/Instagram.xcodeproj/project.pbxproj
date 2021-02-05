@@ -16,6 +16,7 @@
 		84488ABC25C2F6A600173A19 /* NewPostPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84488ABB25C2F6A600173A19 /* NewPostPresenter.swift */; };
 		84488ABF25C2F6AD00173A19 /* NewPostRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84488ABE25C2F6AD00173A19 /* NewPostRouter.swift */; };
 		84488AC225C2F6B400173A19 /* NewPostAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84488AC125C2F6B400173A19 /* NewPostAssembly.swift */; };
+		84541E7525CD14E700E0DA81 /* ProfilePostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84541E7425CD14E700E0DA81 /* ProfilePostCell.swift */; };
 		845455D225BD44380007C9A2 /* UserPublicInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455D125BD44380007C9A2 /* UserPublicInfo.swift */; };
 		845455D525BD44460007C9A2 /* UserPrivateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455D425BD44460007C9A2 /* UserPrivateInfo.swift */; };
 		845455D925BD467A0007C9A2 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455D825BD467A0007C9A2 /* Profile.swift */; };
@@ -37,7 +38,6 @@
 		845504F825B1C38300715C3B /* TabBarAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845504F725B1C38300715C3B /* TabBarAssembly.swift */; };
 		845800BD25C6AFA600816642 /* NewPostConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845800BC25C6AFA600816642 /* NewPostConstants.swift */; };
 		845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A1D3D25BAB50700F4004B /* UIImageView+download.swift */; };
-		845A1D4925BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A1D4825BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift */; };
 		845AE88D25C41B04005A1155 /* MediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE88C25C41B04005A1155 /* MediaService.swift */; };
 		845AE89225C42425005A1155 /* MediaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE89125C42425005A1155 /* MediaCell.swift */; };
 		845AE89625C42ABA005A1155 /* MediaFileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE89525C42ABA005A1155 /* MediaFileType.swift */; };
@@ -104,6 +104,7 @@
 		84488ABB25C2F6A600173A19 /* NewPostPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostPresenter.swift; sourceTree = "<group>"; };
 		84488ABE25C2F6AD00173A19 /* NewPostRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostRouter.swift; sourceTree = "<group>"; };
 		84488AC125C2F6B400173A19 /* NewPostAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostAssembly.swift; sourceTree = "<group>"; };
+		84541E7425CD14E700E0DA81 /* ProfilePostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePostCell.swift; sourceTree = "<group>"; };
 		845455D125BD44380007C9A2 /* UserPublicInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPublicInfo.swift; sourceTree = "<group>"; };
 		845455D425BD44460007C9A2 /* UserPrivateInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPrivateInfo.swift; sourceTree = "<group>"; };
 		845455D825BD467A0007C9A2 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
@@ -125,7 +126,6 @@
 		845504F725B1C38300715C3B /* TabBarAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarAssembly.swift; sourceTree = "<group>"; };
 		845800BC25C6AFA600816642 /* NewPostConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostConstants.swift; sourceTree = "<group>"; };
 		845A1D3D25BAB50700F4004B /* UIImageView+download.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+download.swift"; sourceTree = "<group>"; };
-		845A1D4825BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderCollectionViewCell.swift; sourceTree = "<group>"; };
 		845AE88C25C41B04005A1155 /* MediaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaService.swift; sourceTree = "<group>"; };
 		845AE89125C42425005A1155 /* MediaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCell.swift; sourceTree = "<group>"; };
 		845AE89525C42ABA005A1155 /* MediaFileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaFileType.swift; sourceTree = "<group>"; };
@@ -494,8 +494,8 @@
 		84E6609A25B954E80036AB9F /* ProfileView */ = {
 			isa = PBXGroup;
 			children = (
-				845A1D4825BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift */,
 				84E6612725B9BC8A0036AB9F /* ProfileHeaderView.swift */,
+				84541E7425CD14E700E0DA81 /* ProfilePostCell.swift */,
 				84E6609F25B955120036AB9F /* ProfileView.swift */,
 				84E6609B25B955050036AB9F /* ProfileViewController.swift */,
 			);
@@ -698,7 +698,6 @@
 				845D7D8E25BC472C001E5037 /* TwoPartsButton.swift in Sources */,
 				84E6610825B9936E0036AB9F /* User.swift in Sources */,
 				84488AC225C2F6B400173A19 /* NewPostAssembly.swift in Sources */,
-				845A1D4925BB051F00F4004B /* ProfileHeaderCollectionViewCell.swift in Sources */,
 				84E660A025B955120036AB9F /* ProfileView.swift in Sources */,
 				845800BD25C6AFA600816642 /* NewPostConstants.swift in Sources */,
 				845455E825BD89BD0007C9A2 /* LoginViewController.swift in Sources */,
@@ -712,6 +711,7 @@
 				84E6610C25B9940A0036AB9F /* Registration.swift in Sources */,
 				84B2E68625B0512100B27457 /* HomeRouter.swift in Sources */,
 				845CC20825C7ED370051372D /* SharePostPresenter.swift in Sources */,
+				84541E7525CD14E700E0DA81 /* ProfilePostCell.swift in Sources */,
 				84B2E65525B0267700B27457 /* SceneDelegate.swift in Sources */,
 				845455DD25BD46C40007C9A2 /* ProfileEdit.swift in Sources */,
 				845455FF25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift in Sources */,

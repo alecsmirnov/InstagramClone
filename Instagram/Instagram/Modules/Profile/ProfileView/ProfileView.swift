@@ -11,6 +11,7 @@ final class ProfileView: UIView {
     // MARK: Properties
     
     private var user: User?
+    private var posts = [Post]()
     
     private lazy var collectionViewGridLayout = ProfileView.createGridLayout()
     private lazy var collectionViewListLayout = ProfileView.createListLayout()
@@ -52,6 +53,12 @@ extension ProfileView {
         
         collectionView.reloadData()
     }
+    
+    func setPosts(_ posts: [Post]) {
+        self.posts = posts
+        
+        collectionView.reloadData()
+    }
 }
 
 // MARK: - Private Methods
@@ -77,8 +84,8 @@ private extension ProfileView {
         collectionView.delegate = self
         
         collectionView.register(
-            ProfileHeaderCollectionViewCell.self,
-            forCellWithReuseIdentifier: ProfileHeaderCollectionViewCell.reuseIdentifier)
+            ProfilePostCell.self,
+            forCellWithReuseIdentifier: ProfilePostCell.reuseIdentifier)
         collectionView.register(
             ProfileHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
@@ -174,18 +181,21 @@ private extension ProfileView {
 // MARK: - UICollectionViewDataSource
 extension ProfileView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 26
+        return posts.count
     }
 
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: ProfileHeaderCollectionViewCell.reuseIdentifier,
-            for: indexPath)
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: ProfilePostCell.reuseIdentifier,
+            for: indexPath) as? ProfilePostCell
+        else {
+            return UICollectionViewCell()
+        }
         
-        cell.backgroundColor = .blue
+        cell.configure(with: posts[indexPath.row])
         
         return cell
     }

@@ -9,6 +9,7 @@ import UIKit
 
 protocol IProfileViewController: AnyObject {
     func setUser(_ user: User)
+    func setPosts(_ posts: [Post])
 }
 
 final class ProfileViewController: CustomViewController<ProfileView> {
@@ -34,6 +35,10 @@ extension ProfileViewController: IProfileViewController {
         navigationItem.title = user.username
         
         customView?.setUser(user)
+    }
+    
+    func setPosts(_ posts: [Post]) {
+        customView?.setPosts(posts)
     }
 }
 

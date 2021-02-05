@@ -21,7 +21,10 @@ final class ProfilePresenter {
 
 extension ProfilePresenter: IProfilePresenter {
     func viewDidLoad() {
-        interactor?.fetchUser()
+        print("VIEW DID LOAD")
+        
+        //interactor?.fetchUser()
+        interactor?.fetchPosts()
     }
     
     func didPressMenuButton() {
@@ -41,6 +44,14 @@ extension ProfilePresenter: IProfileInteractorOutput {
     }
     
     func fetchUserFailure() {
+        
+    }
+    
+    func fetchPostsSuccess(_ posts: [Post]) {
+        viewController?.setPosts(posts)
+    }
+    
+    func fetchPostsFailure() {
         
     }
 }

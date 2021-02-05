@@ -30,6 +30,37 @@ extension FirebasePostService {
             }
         }
     }
+    
+    static func fetchPosts(
+        identifier: String,
+        completion: @escaping (Result<[Post], Error>) -> Void) {
+        databaseReference
+            .child(FirebaseTables.posts)
+            .child(identifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            guard let value = snapshot.value as? [String: Any] else { return }
+            
+            var posts = [Post]()
+            
+            value.forEach { identifier, postValue in
+                guard
+                    let postDictionary = postValue as? [String: Any],
+                    let post = JSONCoding.fromDictionary(postDictionary, type: Post.self)
+                else {
+                    return
+                }
+                
+                posts.append(post)
+            }
+                
+            posts.sort { $0.timestamp < $1.timestamp }
+            
+            completion(.success(posts))
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+
+    }
 }
 
 // MARK: - Private Methods
