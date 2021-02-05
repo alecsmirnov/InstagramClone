@@ -15,11 +15,6 @@ enum FirebaseStorageService {
         case urlDownloadFailure
     }
     
-    enum ImageType: String {
-        case jpg
-        case png
-    }
-    
     // MARK: Properties
     
     private static let storageReference = Storage.storage().reference()
@@ -31,12 +26,9 @@ extension FirebaseStorageService {
     static func storeUserProfileImageData(
         _ data: Data,
         identifier: String,
-        imageType: ImageType = .jpg,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
-        let imageDataReference = storageReference
-            .child(FirebaseStorages.profileImages)
-            .child("\(identifier).\(imageType.rawValue)")
+        let imageDataReference = storageReference.child(FirebaseStorages.profileImages).child("\(identifier).jpg")
         
         storeImageData(data, to: imageDataReference, completion: completion)
     }
@@ -44,14 +36,13 @@ extension FirebaseStorageService {
     static func storeUserPostImageData(
         _ data: Data,
         identifier: String,
-        imageType: ImageType = .jpg,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
         let imageIdentifier = UUID().description
         let imageDataReference = storageReference
             .child(FirebaseStorages.postImages)
             .child(identifier)
-            .child("\(imageIdentifier).\(imageType.rawValue)")
+            .child("\(imageIdentifier).jpg")
         
         storeImageData(data, to: imageDataReference, completion: completion)
     }

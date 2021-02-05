@@ -70,8 +70,6 @@ extension MediaService {
                         completion(.image(image))
                     }
                     
-                    print(image.pngData()?.count ?? 0)
-                    
                     self?.cachingImageManager.startCachingImages(
                         for: [asset],
                         targetSize: targetSize,
