@@ -68,13 +68,35 @@ private extension NewPostHeaderView {
         layoutIfNeeded()
     }
     
+    func scrollViewZoomToCenter() {
+        guard let imageSize = imageView.image?.size else { return }
+        
+        if imageSize.width < imageSize.height {
+            if scrollView.contentSize.width < scrollView.bounds.width {
+                scrollViewToCenterX()
+            }
+        } else {
+            if scrollView.contentSize.height < scrollView.bounds.height {
+                scrollViewToCenterY()
+            }
+        }
+    }
+    
     func scrollViewToCenter() {
+        scrollViewToCenterX()
+        scrollViewToCenterY()
+    }
+    
+    func scrollViewToCenterX() {
         let xOffset = (scrollView.contentSize.width - scrollView.bounds.width) / 2
+        
+        scrollView.contentOffset.x = xOffset
+    }
+    
+    func scrollViewToCenterY() {
         let yOffset = (scrollView.contentSize.height - scrollView.bounds.height) / 2
         
-        let centerPoint = CGPoint(x: xOffset, y: yOffset)
-        
-        scrollView.contentOffset = centerPoint
+        scrollView.contentOffset.y = yOffset
     }
 }
 
@@ -143,6 +165,6 @@ extension NewPostHeaderView: UIScrollViewDelegate {
     }
     
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
-        scrollViewToCenter()
+        scrollViewZoomToCenter()
     }
 }
