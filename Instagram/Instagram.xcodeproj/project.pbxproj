@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8411AF1325CD917A00547628 /* NewPostHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8411AF1225CD917A00547628 /* NewPostHeaderView.swift */; };
 		8445928F25B41E6D0028EE6A /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8445928E25B41E6D0028EE6A /* RegistrationViewController.swift */; };
 		8445929225B41E7D0028EE6A /* RegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8445929125B41E7D0028EE6A /* RegistrationView.swift */; };
 		8445929625B425210028EE6A /* CustomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8445929525B425210028EE6A /* CustomViewController.swift */; };
@@ -95,6 +96,7 @@
 /* Begin PBXFileReference section */
 		248C4CE7BEA633E83D55B427 /* Pods-Instagram.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Instagram.debug.xcconfig"; path = "Target Support Files/Pods-Instagram/Pods-Instagram.debug.xcconfig"; sourceTree = "<group>"; };
 		36B5F8DC54A8206E88CDD9B6 /* Pods_Instagram.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Instagram.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8411AF1225CD917A00547628 /* NewPostHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostHeaderView.swift; sourceTree = "<group>"; tabWidth = 3; };
 		8445928E25B41E6D0028EE6A /* RegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewController.swift; sourceTree = "<group>"; };
 		8445929125B41E7D0028EE6A /* RegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationView.swift; sourceTree = "<group>"; };
 		8445929525B425210028EE6A /* CustomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViewController.swift; sourceTree = "<group>"; };
@@ -251,6 +253,7 @@
 			isa = PBXGroup;
 			children = (
 				845AE89125C42425005A1155 /* MediaCell.swift */,
+				8411AF1225CD917A00547628 /* NewPostHeaderView.swift */,
 				84488AB125C2F66E00173A19 /* NewPostView.swift */,
 				84488AB525C2F67E00173A19 /* NewPostViewController.swift */,
 			);
@@ -494,8 +497,8 @@
 		84E6609A25B954E80036AB9F /* ProfileView */ = {
 			isa = PBXGroup;
 			children = (
-				84E6612725B9BC8A0036AB9F /* ProfileHeaderView.swift */,
 				84541E7425CD14E700E0DA81 /* ProfilePostCell.swift */,
+				84E6612725B9BC8A0036AB9F /* ProfileHeaderView.swift */,
 				84E6609F25B955120036AB9F /* ProfileView.swift */,
 				84E6609B25B955050036AB9F /* ProfileViewController.swift */,
 			);
@@ -711,6 +714,7 @@
 				84E6610C25B9940A0036AB9F /* Registration.swift in Sources */,
 				84B2E68625B0512100B27457 /* HomeRouter.swift in Sources */,
 				845CC20825C7ED370051372D /* SharePostPresenter.swift in Sources */,
+				8411AF1325CD917A00547628 /* NewPostHeaderView.swift in Sources */,
 				84541E7525CD14E700E0DA81 /* ProfilePostCell.swift in Sources */,
 				84B2E65525B0267700B27457 /* SceneDelegate.swift in Sources */,
 				845455DD25BD46C40007C9A2 /* ProfileEdit.swift in Sources */,
