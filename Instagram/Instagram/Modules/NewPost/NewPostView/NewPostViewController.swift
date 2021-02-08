@@ -122,6 +122,8 @@ private extension NewPostViewController {
     }
     
     @objc func didPressNextButton() {
-        presenter?.didPressNextButton(with: customView?.selectedMediaFile)
+        let selectedMediaFile = customView?.getSelectedMediaFile()
+        
+        presenter?.didPressNextButton(with: selectedMediaFile)
     }
 }

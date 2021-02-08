@@ -21,8 +21,6 @@ final class NewPostView: UIView {
         }
     }
     
-    var selectedMediaFile: MediaFileType?
-    
     private var mediaFiles = [MediaFileType]()
     private var selectedMediaFileIndex: Int?
     
@@ -61,11 +59,21 @@ extension NewPostView {
     
     func setOriginalMediaFile(_ mediaFile: MediaFileType) {
         if let headerView = collectionView.visibleSupplementaryViews(
-            ofKind: UICollectionView.elementKindSectionHeader).first as? MediaCell {
+            ofKind: UICollectionView.elementKindSectionHeader).first as? NewPostHeaderView {
             headerView.configure(with: mediaFile)
         }
+    }
+    
+    func getSelectedMediaFile() -> MediaFileType? {
+        guard
+            let headerView = collectionView.visibleSupplementaryViews(
+                ofKind: UICollectionView.elementKindSectionHeader).first as? NewPostHeaderView,
+            let croppedImage = headerView.getCroppedImage()
+        else {
+            return nil
+        }
         
-        selectedMediaFile = mediaFile
+        return .image(croppedImage)
     }
 }
 
@@ -87,9 +95,9 @@ private extension NewPostView {
         
         collectionView.register(MediaCell.self, forCellWithReuseIdentifier: MediaCell.reuseIdentifier)
         collectionView.register(
-            MediaCell.self,
+            NewPostHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: MediaCell.reuseIdentifier)
+            withReuseIdentifier: NewPostHeaderView.reuseIdentifier)
     }
 }
 
@@ -198,8 +206,8 @@ extension NewPostView: UICollectionViewDataSource {
     ) -> UICollectionReusableView {
         guard let header = collectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
-            withReuseIdentifier: MediaCell.reuseIdentifier,
-            for: indexPath) as? MediaCell
+            withReuseIdentifier: NewPostHeaderView.reuseIdentifier,
+            for: indexPath) as? NewPostHeaderView
         else {
             return UICollectionReusableView()
         }
