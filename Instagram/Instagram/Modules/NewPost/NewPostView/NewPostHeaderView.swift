@@ -67,11 +67,9 @@ private extension NewPostHeaderView {
             max(horizontalRatio, verticalRatio)
 
         scrollView.minimumZoomScale = aspectRatioScale
-        scrollView.maximumZoomScale = scrollView.minimumZoomScale * 10
+        scrollView.maximumZoomScale = scrollView.minimumZoomScale * NewPostConstants.Constants.scrollViewMaxZoomScale
 
         scrollView.zoomScale = scrollView.minimumZoomScale
-        
-        layoutIfNeeded()
     }
     
     func scrollViewContentToCenter() {
@@ -137,6 +135,7 @@ private extension NewPostHeaderView {
         scrollView.alwaysBounceVertical = true
         scrollView.alwaysBounceHorizontal = true
         scrollView.isMultipleTouchEnabled = false
+        scrollView.backgroundColor = NewPostConstants.Colors.scrollViewBackground
         
         scrollView.delegate = self
     }

@@ -21,6 +21,10 @@ enum NewPostConstants {
         static let nextButtonFontSize: CGFloat = 17.5
     }
     
+    enum Colors {
+        static let scrollViewBackground = UIColor(white: 0.98, alpha: 1)
+    }
+    
     enum Images {
         static let closeButton = UIImage(systemName: "xmark")
         static let adjustButton = UIImage(named: "adjust_fill")
@@ -40,5 +44,7 @@ enum NewPostConstants {
         
         static let selectedCellAlpha: CGFloat = 0.4
         static let unselectedCellAlpha: CGFloat = 1
+        
+        static let scrollViewMaxZoomScale: CGFloat = 10
     }
 }
