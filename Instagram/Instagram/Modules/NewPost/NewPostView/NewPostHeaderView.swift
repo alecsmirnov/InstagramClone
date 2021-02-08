@@ -14,8 +14,11 @@ final class NewPostHeaderView: UICollectionReusableView {
         return String(describing: self)
     }
     
+    private var isSizeToFit = true
+    
     // MARK: Subviews
     
+    private let adjustButton = UIButton(type: .system)
     private let scrollView = UIScrollView()
     private let imageView = UIImageView()
     
@@ -26,6 +29,7 @@ final class NewPostHeaderView: UICollectionReusableView {
         
         setupAppearance()
         setupLayout()
+        setupActions()
     }
     
     required init?(coder: NSCoder) {
@@ -51,16 +55,18 @@ private extension NewPostHeaderView {
         imageView.image = image
         
         setScrollViewContentScale(size: image.size)
-        scrollViewToCenter()
+        scrollViewContentToCenter()
     }
-    
+
     func setScrollViewContentScale(size: CGSize) {
         let horizontalRatio = scrollView.bounds.width / size.width
         let verticalRatio = scrollView.bounds.height / size.height
 
-        let aspectFillRatioScale = max(horizontalRatio, verticalRatio)
+        let aspectRatioScale = isSizeToFit ?
+            min(horizontalRatio, verticalRatio) :
+            max(horizontalRatio, verticalRatio)
 
-        scrollView.minimumZoomScale = aspectFillRatioScale
+        scrollView.minimumZoomScale = aspectRatioScale
         scrollView.maximumZoomScale = scrollView.minimumZoomScale * 10
 
         scrollView.zoomScale = scrollView.minimumZoomScale
@@ -68,9 +74,17 @@ private extension NewPostHeaderView {
         layoutIfNeeded()
     }
     
+    func scrollViewContentToCenter() {
+        if isSizeToFit {
+            scrollViewZoomToCenter()
+        } else {
+            scrollViewToCenter()
+        }
+    }
+    
     func scrollViewZoomToCenter() {
         guard let imageSize = imageView.image?.size else { return }
-        
+
         if imageSize.width < imageSize.height {
             if scrollView.contentSize.width < scrollView.bounds.width {
                 scrollViewToCenterX()
@@ -104,7 +118,17 @@ private extension NewPostHeaderView {
 
 private extension NewPostHeaderView {
     func setupAppearance() {
+        setupAdjustButtonAppearance()
         setupScrollViewAppearance()
+    }
+    
+    func setupAdjustButtonAppearance() {
+        adjustButton.setImage(
+            NewPostConstants.Images.adjustButton?.withRenderingMode(.alwaysOriginal),
+            for: .normal)
+        adjustButton.alpha = NewPostConstants.Constants.adjustButtonAlpha
+        adjustButton.contentVerticalAlignment = .fill
+        adjustButton.contentHorizontalAlignment = .fill
     }
     
     func setupScrollViewAppearance() {
@@ -124,14 +148,31 @@ private extension NewPostHeaderView {
     func setupLayout() {
         setupSubviews()
         
+        setupAdjustButtonLayout()
         setupScrollViewLayout()
         setupImageViewLayout()
     }
     
     func setupSubviews() {
         addSubview(scrollView)
+        addSubview(adjustButton)
         
         scrollView.addSubview(imageView)
+    }
+    
+    func setupAdjustButtonLayout() {
+        adjustButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            adjustButton.bottomAnchor.constraint(
+                equalTo: safeAreaLayoutGuide.bottomAnchor,
+                constant: -NewPostConstants.Metrics.adjustButtonSpace),
+            adjustButton.leadingAnchor.constraint(
+                equalTo: safeAreaLayoutGuide.leadingAnchor,
+                constant: NewPostConstants.Metrics.adjustButtonSpace),
+            adjustButton.heightAnchor.constraint(equalToConstant: NewPostConstants.Metrics.adjustButtonSize),
+            adjustButton.widthAnchor.constraint(equalToConstant: NewPostConstants.Metrics.adjustButtonSize),
+        ])
     }
     
     func setupScrollViewLayout() {
@@ -157,6 +198,23 @@ private extension NewPostHeaderView {
     }
 }
 
+// MARK: - Actions
+
+private extension NewPostHeaderView {
+    func setupActions() {
+        adjustButton.addTarget(self, action: #selector(didPressAdjustButton), for: .touchUpInside)
+    }
+    
+    @objc func didPressAdjustButton() {
+        guard let imageSize = imageView.image?.size else { return }
+        
+        isSizeToFit.toggle()
+        
+        setScrollViewContentScale(size: imageSize)
+        scrollViewContentToCenter()
+    }
+}
+
 // MARK: - UIScrollViewDelegate
 
 extension NewPostHeaderView: UIScrollViewDelegate {
@@ -165,6 +223,10 @@ extension NewPostHeaderView: UIScrollViewDelegate {
     }
     
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
+        scrollViewZoomToCenter()
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         scrollViewZoomToCenter()
     }
 }
