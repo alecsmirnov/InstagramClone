@@ -21,7 +21,7 @@ final class NewPostView: UIView {
         }
     }
     
-    var selectedMediaFile: MediaFileType?
+    private var selectedMediaFile: MediaFileType?
     
     private var mediaFiles = [MediaFileType]()
     private var selectedMediaFileIndex: Int?
@@ -66,6 +66,18 @@ extension NewPostView {
         }
         
         selectedMediaFile = mediaFile
+    }
+    
+    func getSelectedMediaFile() -> MediaFileType? {
+        guard
+            let headerView = collectionView.visibleSupplementaryViews(
+                ofKind: UICollectionView.elementKindSectionHeader).first as? NewPostHeaderView,
+            let croppedImage = headerView.getCroppedImage()
+        else {
+            return nil
+        }
+        
+        return .image(croppedImage)
     }
 }
 

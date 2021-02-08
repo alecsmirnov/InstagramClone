@@ -46,6 +46,30 @@ extension NewPostHeaderView {
             setImage(image)
         }
     }
+    
+    func getCroppedImage() -> UIImage? {
+        guard
+            let image = imageView.image,
+            let imageViewRect = imageView.realImageRect()
+        else {
+            return nil
+        }
+        
+        let cropFrame = scrollView.bounds
+        
+        let cropRect = CGRect(
+            x: cropFrame.origin.x - imageViewRect.origin.x,
+            y: cropFrame.origin.y - imageViewRect.origin.y,
+            width: cropFrame.width,
+            height: cropFrame.height)
+        
+        let croppedImage = image.crop(
+            toRect: cropRect,
+            viewWidth: imageView.frame.width,
+            viewHeight: imageView.frame.height)
+        
+        return croppedImage
+    }
 }
 
 // MARK: - Private Methods
