@@ -21,8 +21,6 @@ final class NewPostView: UIView {
         }
     }
     
-    private var selectedMediaFile: MediaFileType?
-    
     private var mediaFiles = [MediaFileType]()
     private var selectedMediaFileIndex: Int?
     
@@ -64,8 +62,6 @@ extension NewPostView {
             ofKind: UICollectionView.elementKindSectionHeader).first as? NewPostHeaderView {
             headerView.configure(with: mediaFile)
         }
-        
-        selectedMediaFile = mediaFile
     }
     
     func getSelectedMediaFile() -> MediaFileType? {
