@@ -70,6 +70,8 @@ private extension NewPostHeaderView {
         scrollView.maximumZoomScale = scrollView.minimumZoomScale * NewPostConstants.Constants.scrollViewMaxZoomScale
 
         scrollView.zoomScale = scrollView.minimumZoomScale
+        
+        scrollView.layoutIfNeeded()
     }
     
     func scrollViewContentToCenter() {
