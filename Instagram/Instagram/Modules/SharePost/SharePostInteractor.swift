@@ -28,7 +28,8 @@ extension SharePostInteractor: ISharePostInteractor {
         case .image(let image):
             let croppedImage = image.instagramCrop() ?? image
             
-            guard let imageData = croppedImage.jpegData(compressionQuality: 0.75) else { return }
+            guard let imageData = croppedImage.jpegData(
+                compressionQuality: SharePostConstants.Constants.imageCompressionQuality) else { return }
             
             let caption = (caption?.isEmpty ?? true) ? nil : caption
             

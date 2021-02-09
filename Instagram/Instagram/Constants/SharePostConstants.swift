@@ -32,5 +32,7 @@ enum SharePostConstants {
         static let captionTextViewPlaceholder = "Write a caption..."
         
         static let layoutUpdateAnimationDuration = 0.2
+        
+        static let imageCompressionQuality: CGFloat = 0.75
     }
 }
