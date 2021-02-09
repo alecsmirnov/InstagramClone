@@ -6,7 +6,7 @@
 //
 
 protocol IHomePresenter: AnyObject {
-    
+    func viewDidLoad()
 }
 
 final class HomePresenter {
@@ -18,11 +18,19 @@ final class HomePresenter {
 // MARK: - IHomePresenter
 
 extension HomePresenter: IHomePresenter {
-    
+    func viewDidLoad() {
+        interactor?.fetchPosts()
+    }
 }
 
 // MARK: - IHomeInteractorOutput
 
 extension HomePresenter: IHomeInteractorOutput {
+    func fetchPostsSuccess(_ posts: [Post]) {
+        viewController?.setPosts(posts)
+    }
     
+    func fetchPostsFailure() {
+        
+    }
 }
