@@ -20,6 +20,8 @@ final class HomeViewController: CustomViewController<HomeView> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupNavigationItemTitle()
     }
 }
 
@@ -27,4 +29,12 @@ final class HomeViewController: CustomViewController<HomeView> {
 
 extension HomeViewController: IHomeViewController {
     
+}
+
+// MARK: - Appearance
+
+private extension HomeViewController {
+    func setupNavigationItemTitle() {
+        navigationItem.titleView = UIImageView(image: UIImage(named: "instagram_logo_black_mini"))
+    }
 }
