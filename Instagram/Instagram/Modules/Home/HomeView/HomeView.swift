@@ -8,6 +8,10 @@
 import UIKit
 
 final class HomeView: UIView {
+    // MARK: Properties
+    
+    private var posts = [Post]()
+    
     // MARK: Subviews
     
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
@@ -26,6 +30,16 @@ final class HomeView: UIView {
     }
 }
 
+// MARK: - Public Methods
+
+extension HomeView {    
+    func setPosts(_ posts: [Post]) {
+        self.posts = posts
+        
+        collectionView.reloadData()
+    }
+}
+
 // MARK: - Appearance
 
 private extension HomeView {
@@ -40,11 +54,8 @@ private extension HomeView {
         collectionView.delaysContentTouches = false
         
         collectionView.dataSource = self
-//        collectionView.delegate = self
         
-        collectionView.register(
-            MediaCell.self,
-            forCellWithReuseIdentifier: MediaCell.reuseIdentifier)
+        collectionView.register(PostCell.self, forCellWithReuseIdentifier: PostCell.reuseIdentifier)
     }
 }
 
@@ -77,7 +88,7 @@ private extension HomeView {
     func setupCollectionViewListLayout() {
         let listConfiguration = UICollectionLayoutListConfiguration(appearance: .plain)
         let collectionViewLayout = UICollectionViewCompositionalLayout.list(using: listConfiguration)
-        
+
         collectionView.collectionViewLayout = collectionViewLayout
     }
 }
@@ -86,7 +97,7 @@ private extension HomeView {
 
 extension HomeView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return posts.count
     }
 
     func collectionView(
@@ -94,11 +105,13 @@ extension HomeView: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MediaCell.reuseIdentifier,
-            for: indexPath) as? MediaCell
+            withReuseIdentifier: PostCell.reuseIdentifier,
+            for: indexPath) as? PostCell
         else {
             return UICollectionViewCell()
         }
+        
+        cell.configure(with: posts[indexPath.row])
         
         return cell
     }

@@ -6,11 +6,12 @@
 //
 
 protocol IHomeInteractor: AnyObject {
-    
+    func fetchPosts()
 }
 
 protocol IHomeInteractorOutput: AnyObject {
-
+    func fetchPostsSuccess(_ posts: [Post])
+    func fetchPostsFailure()
 }
 
 final class HomeInteractor {
@@ -20,6 +21,19 @@ final class HomeInteractor {
 // MARK: - IHomeInteractor
 
 extension HomeInteractor: IHomeInteractor {
-    
+    func fetchPosts() {
+        guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
+        
+        FirebasePostService.fetchPosts(identifier: identifier) { [self] result in
+            switch result {
+            case .success(let posts):
+                presenter?.fetchPostsSuccess(posts)
+            case .failure(let error):
+                presenter?.fetchPostsFailure()
+                
+                print("Failed to fetch posts: \(error.localizedDescription)")
+            }
+        }
+    }
 }
 

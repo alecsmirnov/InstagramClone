@@ -8,7 +8,7 @@
 import UIKit
 
 protocol IHomeViewController: AnyObject {
-    
+    func setPosts(_ posts: [Post])
 }
 
 final class HomeViewController: CustomViewController<HomeView> {
@@ -21,6 +21,8 @@ final class HomeViewController: CustomViewController<HomeView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        presenter?.viewDidLoad()
+        
         setupNavigationItemTitle()
     }
 }
@@ -28,7 +30,9 @@ final class HomeViewController: CustomViewController<HomeView> {
 // MARK: - IHomeViewController
 
 extension HomeViewController: IHomeViewController {
-    
+    func setPosts(_ posts: [Post]) {
+        customView?.setPosts(posts)
+    }
 }
 
 // MARK: - Appearance
