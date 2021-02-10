@@ -36,6 +36,7 @@
 		84549BAD25BEEC32007D24E2 /* LaunchAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BAC25BEEC32007D24E2 /* LaunchAssembly.swift */; };
 		84549BB025BEFC2F007D24E2 /* RootViewControllerSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BAF25BEFC2F007D24E2 /* RootViewControllerSwitcher.swift */; };
 		8454D3F625BFFC3F00D3CC9E /* SecureTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D3F525BFFC3F00D3CC9E /* SecureTextField.swift */; };
+		8454E52E25D3E765003A89E7 /* UIImage+instagramCrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454E52D25D3E765003A89E7 /* UIImage+instagramCrop.swift */; };
 		845504F825B1C38300715C3B /* TabBarAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845504F725B1C38300715C3B /* TabBarAssembly.swift */; };
 		845800BD25C6AFA600816642 /* NewPostConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845800BC25C6AFA600816642 /* NewPostConstants.swift */; };
 		845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A1D3D25BAB50700F4004B /* UIImageView+download.swift */; };
@@ -127,6 +128,7 @@
 		84549BAC25BEEC32007D24E2 /* LaunchAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAssembly.swift; sourceTree = "<group>"; };
 		84549BAF25BEFC2F007D24E2 /* RootViewControllerSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewControllerSwitcher.swift; sourceTree = "<group>"; };
 		8454D3F525BFFC3F00D3CC9E /* SecureTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureTextField.swift; sourceTree = "<group>"; };
+		8454E52D25D3E765003A89E7 /* UIImage+instagramCrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+instagramCrop.swift"; sourceTree = "<group>"; };
 		845504F725B1C38300715C3B /* TabBarAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarAssembly.swift; sourceTree = "<group>"; };
 		845800BC25C6AFA600816642 /* NewPostConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostConstants.swift; sourceTree = "<group>"; };
 		845A1D3D25BAB50700F4004B /* UIImageView+download.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+download.swift"; sourceTree = "<group>"; };
@@ -529,6 +531,7 @@
 			children = (
 				84FE47D925B8230E0048F5AA /* UIImage+resize.swift */,
 				84F9694425D14FA10004D838 /* UIImage+crop.swift */,
+				8454E52D25D3E765003A89E7 /* UIImage+instagramCrop.swift */,
 				845A1D3D25BAB50700F4004B /* UIImageView+download.swift */,
 				84F9694025D14E9D0004D838 /* UIImageView+realImageRect.swift */,
 				845C5E0425CC2C3D002A2E16 /* UIViewController+add.swift */,
@@ -692,6 +695,7 @@
 				8491A84625B47E03009EDFC2 /* RegistrationRouter.swift in Sources */,
 				845AE88D25C41B04005A1155 /* MediaService.swift in Sources */,
 				845BB22525C95D0C00B01721 /* SelfSizedTextView.swift in Sources */,
+				8454E52E25D3E765003A89E7 /* UIImage+instagramCrop.swift in Sources */,
 				84B2E67B25B050CE00B27457 /* HomePresenter.swift in Sources */,
 				84E660A925B955390036AB9F /* ProfileRouter.swift in Sources */,
 				845455FB25BDAC460007C9A2 /* KeyboardAppearanceListener.swift in Sources */,
