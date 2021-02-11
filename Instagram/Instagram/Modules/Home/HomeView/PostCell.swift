@@ -16,6 +16,8 @@ final class PostCell: UICollectionViewCell {
     
     private var imageDataTask: URLSessionDataTask?
     
+    private var imageViewHeightConstraint: NSLayoutConstraint?
+    
     // MARK: Subviews
     
     private let imageView = UIImageView()
@@ -48,6 +50,11 @@ final class PostCell: UICollectionViewCell {
 extension PostCell {
     func configure(with post: Post) {
         imageDataTask = imageView.download(urlString: post.imageURL)
+        
+        // TODO: Get aspect ratio from image download completion
+        // TODO: Hide cell until image is loaded
+        
+        configureImageViewHeight(aspectRatio: post.imageAspectRatio)
     }
 }
 
@@ -82,11 +89,26 @@ private extension PostCell {
         
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            
-            // TODO: Add aspect ratio width and height multiplier
+            imageView.widthAnchor.constraint(equalToConstant: bounds.width),
         ])
+        
+        let imageViewBottomConstraint = imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        
+        imageViewBottomConstraint.priority = .defaultLow
+        imageViewBottomConstraint.isActive = true
+    }
+    
+    func configureImageViewHeight(aspectRatio: CGFloat) {
+        imageViewHeightConstraint?.isActive = false
+        
+        imageViewHeightConstraint = imageView.heightAnchor.constraint(
+            equalTo: imageView.widthAnchor,
+            multiplier: 1 / aspectRatio)
+        
+        imageViewHeightConstraint?.isActive = true
+        
+        contentView.layoutIfNeeded()
     }
 }

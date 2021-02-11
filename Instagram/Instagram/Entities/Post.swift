@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import CoreGraphics
 
 struct Post {
     let imageURL: String
+    let imageAspectRatio: CGFloat
     let caption: String?
     let timestamp: TimeInterval
 }
@@ -18,6 +20,7 @@ struct Post {
 extension Post: Codable {
     enum CodingKeys: String, CodingKey {
         case imageURL = "image_url"
+        case imageAspectRatio = "image_aspect_ratio"
         case caption
         case timestamp
     }

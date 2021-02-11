@@ -31,11 +31,13 @@ extension SharePostInteractor: ISharePostInteractor {
             guard let imageData = croppedImage.jpegData(
                 compressionQuality: SharePostConstants.Constants.imageCompressionQuality) else { return }
             
+            let imageAspectRatio = croppedImage.size.width / croppedImage.size.height
             let caption = (caption?.isEmpty ?? true) ? nil : caption
             
             FirebasePostService.sharePost(
                 identifier: userIdentifier,
                 imageData: imageData,
+                imageAspectRatio: imageAspectRatio,
                 caption: caption) { [self] error in
                 if let error = error {
                     presenter?.sharePostFailure()

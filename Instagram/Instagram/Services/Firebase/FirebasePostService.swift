@@ -6,6 +6,7 @@
 //
 
 import FirebaseDatabase
+import CoreGraphics
 
 enum FirebasePostService {
     private static let databaseReference = Database.database().reference()
@@ -17,12 +18,17 @@ extension FirebasePostService {
     static func sharePost(
         identifier: String,
         imageData: Data,
+        imageAspectRatio: CGFloat,
         caption: String?,
         completion: @escaping (Error?) -> Void) {
         FirebaseStorageService.storeUserPostImageData(imageData, identifier: identifier) { result in
             switch result {
             case .success(let imageURL):
-                createPostRecord(identifier: identifier, imageURL: imageURL, caption: caption) { error in
+                createPostRecord(
+                    identifier: identifier,
+                    imageURL: imageURL,
+                    imageAspectRatio: imageAspectRatio,
+                    caption: caption) { error in
                     completion(error)
                 }
             case .failure(let error):
@@ -69,10 +75,15 @@ private extension FirebasePostService {
     static func createPostRecord(
         identifier: String,
         imageURL: String,
+        imageAspectRatio: CGFloat,
         caption: String?,
         completion: @escaping (Error?) -> Void
     ) {
-        let post = Post(imageURL: imageURL, caption: caption, timestamp: Date().timeIntervalSince1970)
+        let post = Post(
+            imageURL: imageURL,
+            imageAspectRatio: imageAspectRatio,
+            caption: caption,
+            timestamp: Date().timeIntervalSince1970)
         
         if let postDictionary = JSONCoding.toDictionary(post) {
             databaseReference
