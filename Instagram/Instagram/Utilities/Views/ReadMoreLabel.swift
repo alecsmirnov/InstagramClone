@@ -7,8 +7,14 @@
 
 import UIKit
 
+protocol ReadMoreLabelDelegate: AnyObject {
+    func readMoreLabelDidTapMore(_ readMoreLabel: ReadMoreLabel)
+}
+
 final class ReadMoreLabel: UILabel {
     // MARK: Properties
+    
+    weak var delegate: ReadMoreLabelDelegate?
     
     var moreText = "more"
     var moreTextFont = UIFont.systemFont(ofSize: UIFont.labelFontSize)
@@ -50,8 +56,6 @@ final class ReadMoreLabel: UILabel {
 
 extension ReadMoreLabel {
     func truncateIfNeeded() {
-        layoutIfNeeded()
-        
         if isTruncatedText {
             if let text = text, text.isEmpty {
                 isAttributedText = false
@@ -65,6 +69,14 @@ extension ReadMoreLabel {
                 addReadMoreAttributedText()
             }
         }
+    }
+    
+    func reset(with numberOfLines: Int = 1) {
+        self.numberOfLines = numberOfLines
+        
+        isAttributedText = false
+        fullAttributedText = nil
+        visibleTextRange = nil
     }
 }
 
@@ -92,9 +104,7 @@ private extension ReadMoreLabel {
         return boundingRect.height
     }
     
-    var visibleTextLength: Int {
-        guard let text = text as NSString? else { return 0 }
-        
+    func visibleTextLength(_ text: NSString) -> Int {
         let labelWidth = frame.width
         let labelHeight = frame.height
         
@@ -155,7 +165,7 @@ private extension ReadMoreLabel {
     func addReadMoreText() {
         guard let text = text as NSString? else { return }
         
-        let visibleStringLength = visibleTextLength
+        let visibleStringLength = visibleTextLength(text)
         
         let trimmedTextRange = NSRange(location: visibleStringLength, length: text.length - visibleStringLength)
         let trimmedText = text.replacingCharacters(in: trimmedTextRange, with: "") as NSString
@@ -192,9 +202,14 @@ private extension ReadMoreLabel {
     }
     
     func addReadMoreAttributedText() {
-        guard let text = attributedText else { return }
+        guard
+            let text = attributedText,
+            let textString = (attributedText?.string ?? nil) as NSString?
+        else {
+            return
+        }
         
-        let visibleStringLength = visibleTextLength
+        let visibleStringLength = visibleTextLength(textString)
         
         let trimmedTextRange = NSRange(location: 0, length: visibleStringLength)
         let trimmedText = text.attributedSubstring(from: trimmedTextRange)
@@ -284,6 +299,8 @@ private extension ReadMoreLabel {
             } else {
                 text = fullAttributedText?.string
             }
+            
+            delegate?.readMoreLabelDidTapMore(self)
         }
     }
 }

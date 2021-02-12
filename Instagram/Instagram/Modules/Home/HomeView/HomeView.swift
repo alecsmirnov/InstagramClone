@@ -86,7 +86,10 @@ private extension HomeView {
     }
     
     func setupCollectionViewListLayout() {
-        let listConfiguration = UICollectionLayoutListConfiguration(appearance: .plain)
+        var listConfiguration = UICollectionLayoutListConfiguration(appearance: .plain)
+        
+        listConfiguration.showsSeparators = false
+        
         let collectionViewLayout = UICollectionViewCompositionalLayout.list(using: listConfiguration)
 
         collectionView.collectionViewLayout = collectionViewLayout
@@ -111,8 +114,22 @@ extension HomeView: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
+        cell.delegate = self
+        
         cell.configure(with: posts[indexPath.row])
         
         return cell
+    }
+}
+
+// MARK: - PostCellDelegate
+
+extension HomeView: PostCellDelegate {
+    func postCellRequestUpdate(_ postCell: PostCell) {
+        let contentOffset = collectionView.contentOffset
+        
+        collectionView.reloadData()
+        collectionView.layoutIfNeeded()
+        collectionView.setContentOffset(contentOffset, animated: false)
     }
 }

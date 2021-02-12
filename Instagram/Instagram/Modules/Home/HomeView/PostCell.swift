@@ -7,8 +7,14 @@
 
 import UIKit
 
+protocol PostCellDelegate: AnyObject {
+    func postCellRequestUpdate(_ postCell: PostCell)
+}
+
 final class PostCell: UICollectionViewCell {
     // MARK: Properties
+    
+    weak var delegate: PostCellDelegate?
     
     static var reuseIdentifier: String {
         return String(describing: self)
@@ -17,6 +23,7 @@ final class PostCell: UICollectionViewCell {
     private var imageDataTask: URLSessionDataTask?
     
     private var imageViewHeightConstraint: NSLayoutConstraint?
+    private var timestampLabelTopConstraint: NSLayoutConstraint?
     
     // MARK: Constants
     
@@ -30,6 +37,9 @@ final class PostCell: UICollectionViewCell {
         static let buttonsViewTopSpace: CGFloat = 14
         static let buttonsViewBottomSpace: CGFloat = 10
         static let buttonsViewItemsSpace: CGFloat = 12
+        
+        static let timestampLabelTopSpace: CGFloat = 14
+        static let timestampLabelBottomSpace: CGFloat = 22
     }
     
     private enum Images {
@@ -56,7 +66,6 @@ final class PostCell: UICollectionViewCell {
     private let bookmarkButton = UIButton(type: .system)
     
     private let captionLabel = ReadMoreLabel()
-    
     private let timestampLabel = UILabel()
     
     // MARK: Lifecycle
@@ -86,19 +95,45 @@ final class PostCell: UICollectionViewCell {
 
 extension PostCell {
     func configure(with post: Post) {
-        imageDataTask = imageView.download(urlString: post.imageURL)
-        
-        captionLabel.text = post.caption
-        timestampLabel.text = Date(timeIntervalSince1970: post.timestamp).description
-        
         // TODO: Get aspect ratio from image download completion
         // TODO: Hide cell until image is loaded
         
+        imageDataTask = imageView.download(urlString: post.imageURL)
+        
         configureImageViewHeight(aspectRatio: post.imageAspectRatio)
+        
+        if let caption = post.caption {
+            captionLabel.attributedText = PostCell.caption(caption, withUsername: "username")
+        }
+        
+        timestampLabelTopConstraint?.constant = (post.caption != nil) ? Metrics.timestampLabelTopSpace : 0
+        timestampLabel.text = Date(timeIntervalSince1970: post.timestamp).description
     }
     
     func configure(with user: User) {
         
+    }
+}
+
+// MARK: - Private Methods
+
+private extension PostCell {
+    static func caption(_ caption: String, withUsername username: String) -> NSAttributedString {
+        let usernameAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.boldSystemFont(ofSize: UIFont.labelFontSize),
+            .foregroundColor: UIColor.black
+        ]
+        let captionAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: UIFont.labelFontSize)
+        ]
+        
+        let attributedText = NSMutableAttributedString(string: username, attributes: usernameAttributes)
+        let captionAttributedText = NSAttributedString(string: caption, attributes: captionAttributes)
+
+        attributedText.append(NSAttributedString(string: " "))
+        attributedText.append(captionAttributedText)
+        
+        return attributedText
     }
 }
 
@@ -113,7 +148,7 @@ private extension PostCell {
         setupImageViewAppearance()
         
         setupButtonsViewItemsAppearance()
-        
+        setupCaptionLabelAppearance()
         setupTimestampLabelAppearance()
 //        setupLikeButtonAppearance()
 //        setupCommentButtonAppearance()
@@ -132,7 +167,7 @@ private extension PostCell {
     func setupUsernameButtonAppearance() {
         usernameButton.setTitle("username", for: .normal)
         usernameButton.setTitleColor(.black, for: .normal)
-        usernameButton.titleLabel?.font = .boldSystemFont(ofSize: usernameButton.titleLabel?.font.pointSize ?? 0)
+        usernameButton.titleLabel?.font = .boldSystemFont(ofSize: UIFont.labelFontSize)
     }
     
     func setupOptionsButtonAppearance() {
@@ -149,6 +184,10 @@ private extension PostCell {
         commentButton.setImage(Images.comment?.withRenderingMode(.alwaysOriginal), for: .normal)
         sendButton.setImage(Images.send?.withRenderingMode(.alwaysOriginal), for: .normal)
         bookmarkButton.setImage(Images.bookmark?.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
+    
+    func setupCaptionLabelAppearance() {
+        captionLabel.delegate = self
     }
     
     func setupTimestampLabelAppearance() {
@@ -192,7 +231,6 @@ private extension PostCell {
         setupBookmarkButtonLayout()
         
         setupCaptionLabelLayout()
-        
         setupTimestampLabelLayout()
     }
     
@@ -270,15 +308,8 @@ private extension PostCell {
     func setupImageViewLayout() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
-        let imageViewTopConstraint = imageView.topAnchor.constraint(equalTo: headerView.bottomAnchor)
-        let imageViewBottomConstraint = imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-        
-        imageViewTopConstraint.priority = .defaultLow
-        imageViewBottomConstraint.priority = .defaultLow
-        
         NSLayoutConstraint.activate([
-            imageViewTopConstraint,
-            imageViewBottomConstraint,
+            imageView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             imageView.widthAnchor.constraint(equalToConstant: bounds.width),
@@ -354,7 +385,7 @@ private extension PostCell {
         captionLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            captionLabel.topAnchor.constraint(equalTo: buttonsView.bottomAnchor, constant: 0),
+            captionLabel.topAnchor.constraint(equalTo: buttonsView.bottomAnchor),
             captionLabel.leadingAnchor.constraint(equalTo: profileImageButton.leadingAnchor),
             captionLabel.trailingAnchor.constraint(equalTo: optionsButton.leadingAnchor),
         ])
@@ -363,11 +394,27 @@ private extension PostCell {
     func setupTimestampLabelLayout() {
         timestampLabel.translatesAutoresizingMaskIntoConstraints = false
         
+        timestampLabelTopConstraint = timestampLabel.topAnchor.constraint(equalTo: captionLabel.bottomAnchor)
+        timestampLabelTopConstraint?.isActive = true
+        
+        let timestampLabelBottomConstraint = timestampLabel.bottomAnchor.constraint(
+            equalTo: contentView.bottomAnchor,
+            constant: -Metrics.timestampLabelBottomSpace)
+        
+        timestampLabelBottomConstraint.priority = .defaultLow
+        timestampLabelBottomConstraint.isActive = true
+        
         NSLayoutConstraint.activate([
-            timestampLabel.topAnchor.constraint(equalTo: captionLabel.bottomAnchor, constant: 14),
-            timestampLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -22),
             timestampLabel.leadingAnchor.constraint(equalTo: profileImageButton.leadingAnchor),
             timestampLabel.trailingAnchor.constraint(equalTo: optionsButton.trailingAnchor),
         ])
+    }
+}
+
+// MARK: - ReadMoreLabelDelegate
+
+extension PostCell: ReadMoreLabelDelegate {
+    func readMoreLabelDidTapMore(_ readMoreLabel: ReadMoreLabel) {
+        delegate?.postCellRequestUpdate(self)
     }
 }
