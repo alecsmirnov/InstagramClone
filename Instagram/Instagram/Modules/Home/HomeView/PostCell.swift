@@ -28,7 +28,7 @@ final class PostCell: UICollectionViewCell {
         static let profileImageButtonTrailingSpace: CGFloat = 14
         
         static let buttonsViewTopSpace: CGFloat = 14
-        static let buttonsViewBottomSpace: CGFloat = 12
+        static let buttonsViewBottomSpace: CGFloat = 10
         static let buttonsViewItemsSpace: CGFloat = 12
     }
     
@@ -54,6 +54,8 @@ final class PostCell: UICollectionViewCell {
     private let commentButton = UIButton(type: .system)
     private let sendButton = UIButton(type: .system)
     private let bookmarkButton = UIButton(type: .system)
+    
+    private let captionLabel = ReadMoreLabel()
     
     private let timestampLabel = UILabel()
     
@@ -86,6 +88,7 @@ extension PostCell {
     func configure(with post: Post) {
         imageDataTask = imageView.download(urlString: post.imageURL)
         
+        captionLabel.text = post.caption
         timestampLabel.text = Date(timeIntervalSince1970: post.timestamp).description
         
         // TODO: Get aspect ratio from image download completion
@@ -188,6 +191,8 @@ private extension PostCell {
         setupSendButtonLayout()
         setupBookmarkButtonLayout()
         
+        setupCaptionLabelLayout()
+        
         setupTimestampLabelLayout()
     }
     
@@ -195,6 +200,7 @@ private extension PostCell {
         contentView.addSubview(headerView)
         contentView.addSubview(imageView)
         contentView.addSubview(buttonsView)
+        contentView.addSubview(captionLabel)
         contentView.addSubview(timestampLabel)
         
         headerView.addSubview(profileImageButton)
@@ -248,6 +254,7 @@ private extension PostCell {
     
     func setupOptionsButtonLayout() {
         optionsButton.translatesAutoresizingMaskIntoConstraints = false
+        optionsButton.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         
         NSLayoutConstraint.activate([
             optionsButton.centerYAnchor.constraint(equalTo: usernameButton.centerYAnchor),
@@ -295,7 +302,6 @@ private extension PostCell {
         
         NSLayoutConstraint.activate([
             buttonsView.topAnchor.constraint(equalTo: imageView.bottomAnchor),
-            //buttonsView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             buttonsView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             buttonsView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
         ])
@@ -308,7 +314,7 @@ private extension PostCell {
             likeButton.topAnchor.constraint(equalTo: buttonsView.topAnchor, constant: Metrics.buttonsViewTopSpace),
             likeButton.bottomAnchor.constraint(
                 equalTo: buttonsView.bottomAnchor,
-                constant: -Metrics.profileImageButtonBottomSpace),
+                constant: -Metrics.buttonsViewBottomSpace),
             likeButton.leadingAnchor.constraint(equalTo: profileImageButton.leadingAnchor),
         ])
     }
@@ -344,12 +350,22 @@ private extension PostCell {
         ])
     }
     
+    func setupCaptionLabelLayout() {
+        captionLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            captionLabel.topAnchor.constraint(equalTo: buttonsView.bottomAnchor, constant: 0),
+            captionLabel.leadingAnchor.constraint(equalTo: profileImageButton.leadingAnchor),
+            captionLabel.trailingAnchor.constraint(equalTo: optionsButton.leadingAnchor),
+        ])
+    }
+    
     func setupTimestampLabelLayout() {
         timestampLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            timestampLabel.topAnchor.constraint(equalTo: buttonsView.bottomAnchor, constant: 0),
-            timestampLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
+            timestampLabel.topAnchor.constraint(equalTo: captionLabel.bottomAnchor, constant: 14),
+            timestampLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -22),
             timestampLabel.leadingAnchor.constraint(equalTo: profileImageButton.leadingAnchor),
             timestampLabel.trailingAnchor.constraint(equalTo: optionsButton.trailingAnchor),
         ])
