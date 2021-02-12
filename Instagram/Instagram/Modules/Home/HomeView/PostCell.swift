@@ -20,6 +20,7 @@ final class PostCell: UICollectionViewCell {
         return String(describing: self)
     }
     
+    private var profileImageDataTask: URLSessionDataTask?
     private var imageDataTask: URLSessionDataTask?
     
     private var imageViewHeightConstraint: NSLayoutConstraint?
@@ -29,6 +30,8 @@ final class PostCell: UICollectionViewCell {
     
     private enum Metrics {
         static let profileImageButtonSize: CGFloat = 36
+        static let profileImageButtonBorderWidth: CGFloat = 1
+        
         static let profileImageButtonTopSpace: CGFloat = 16
         static let profileImageButtonBottomSpace: CGFloat = 14
         static let profileImageButtonLeadingSpace: CGFloat = 16
@@ -42,6 +45,10 @@ final class PostCell: UICollectionViewCell {
         static let timestampLabelBottomSpace: CGFloat = 22
     }
     
+    private enum Colors {
+        static let profileImageButtonBorder = UIColor.systemGray5
+    }
+    
     private enum Images {
         static let options = UIImage(systemName: "ellipsis")
         static let like = UIImage(systemName: "heart")
@@ -53,8 +60,8 @@ final class PostCell: UICollectionViewCell {
     // MARK: Subviews
     
     private let headerView = UIView()
-    private let profileImageButton = UIButton(type: .system)
-    private let usernameButton = UIButton(type: .system)
+    private let profileImageButton = UIButton(type: .custom)
+    private let usernameButton = UIButton(type: .custom)
     private let optionsButton = UIButton(type: .system)
     
     private let imageView = UIImageView()
@@ -73,7 +80,10 @@ final class PostCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         
+        profileImageDataTask?.cancel()
         imageDataTask?.cancel()
+        
+        profileImageButton.setImage(nil, for: .normal)
         imageView.image = nil
     }
     
@@ -94,24 +104,23 @@ final class PostCell: UICollectionViewCell {
 // MARK: - Public Methods
 
 extension PostCell {
-    func configure(with post: Post) {
-        // TODO: Get aspect ratio from image download completion
-        // TODO: Hide cell until image is loaded
-        
-        imageDataTask = imageView.download(urlString: post.imageURL)
-        
-        configureImageViewHeight(aspectRatio: post.imageAspectRatio)
-        
-        if let caption = post.caption {
-            captionLabel.attributedText = PostCell.caption(caption, withUsername: "username")
+    func configure(with userPost: UserPost) {
+        if let profileImageURL = userPost.user.profileImageURL {
+            profileImageDataTask = profileImageButton.imageDownload(urlString: profileImageURL)
         }
         
-        timestampLabelTopConstraint?.constant = (post.caption != nil) ? Metrics.timestampLabelTopSpace : 0
-        timestampLabel.text = Date(timeIntervalSince1970: post.timestamp).description
-    }
-    
-    func configure(with user: User) {
+        imageDataTask = imageView.download(urlString: userPost.post.imageURL)
         
+        configureImageViewHeight(aspectRatio: userPost.post.imageAspectRatio)
+        
+        usernameButton.setTitle(userPost.user.username, for: .normal)
+        
+        if let caption = userPost.post.caption {
+            captionLabel.attributedText = PostCell.caption(caption, withUsername: userPost.user.username)
+        }
+        
+        timestampLabelTopConstraint?.constant = (userPost.post.caption != nil) ? Metrics.timestampLabelTopSpace : 0
+        timestampLabel.text = Date(timeIntervalSince1970: userPost.post.timestamp).description
     }
 }
 
@@ -160,12 +169,11 @@ private extension PostCell {
         profileImageButton.layer.cornerRadius = Metrics.profileImageButtonSize / 2
         profileImageButton.layer.masksToBounds = true
         
-        profileImageButton.layer.borderWidth = 1
-        profileImageButton.layer.borderColor = UIColor.systemGray4.cgColor
+        profileImageButton.layer.borderWidth = Metrics.profileImageButtonBorderWidth
+        profileImageButton.layer.borderColor = Colors.profileImageButtonBorder.cgColor
     }
     
     func setupUsernameButtonAppearance() {
-        usernameButton.setTitle("username", for: .normal)
         usernameButton.setTitleColor(.black, for: .normal)
         usernameButton.titleLabel?.font = .boldSystemFont(ofSize: UIFont.labelFontSize)
     }

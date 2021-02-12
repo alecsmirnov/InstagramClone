@@ -19,18 +19,18 @@ final class HomePresenter {
 
 extension HomePresenter: IHomePresenter {
     func viewDidLoad() {
-        interactor?.fetchPosts()
+        interactor?.fetchUserPosts()
     }
 }
 
 // MARK: - IHomeInteractorOutput
 
 extension HomePresenter: IHomeInteractorOutput {
-    func fetchPostsSuccess(_ posts: [Post]) {
-        viewController?.setPosts(posts)
+    func fetchUserPostSuccess(_ userPost: UserPost) {
+        viewController?.appendUserPost(userPost)
     }
     
-    func fetchPostsFailure() {
+    func fetchUserPostFailure() {
         
     }
 }

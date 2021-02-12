@@ -10,7 +10,7 @@ import UIKit
 final class HomeView: UIView {
     // MARK: Properties
     
-    private var posts = [Post]()
+    private var userPosts = [UserPost]()
     
     // MARK: Subviews
     
@@ -33,8 +33,8 @@ final class HomeView: UIView {
 // MARK: - Public Methods
 
 extension HomeView {    
-    func setPosts(_ posts: [Post]) {
-        self.posts = posts
+    func appendUserPost(_ userPost: UserPost) {
+        userPosts.append(userPost)
         
         collectionView.reloadData()
     }
@@ -100,7 +100,7 @@ private extension HomeView {
 
 extension HomeView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return posts.count
+        return userPosts.count
     }
 
     func collectionView(
@@ -116,7 +116,7 @@ extension HomeView: UICollectionViewDataSource {
         
         cell.delegate = self
         
-        cell.configure(with: posts[indexPath.row])
+        cell.configure(with: userPosts[indexPath.row])
         
         return cell
     }

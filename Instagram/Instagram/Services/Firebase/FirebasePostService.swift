@@ -37,7 +37,7 @@ extension FirebasePostService {
         }
     }
     
-    static func fetchPosts(
+    static func fetchAllPosts(
         identifier: String,
         completion: @escaping (Result<[Post], Error>) -> Void) {
         databaseReference
@@ -65,7 +65,40 @@ extension FirebasePostService {
         } withCancel: { error in
             completion(.failure(error))
         }
-
+    }
+    
+    static func fetchUserPosts(
+        identifier: String,
+        completion: @escaping (Result<UserPost, Error>) -> Void) {
+        databaseReference
+            .child(FirebaseTables.users)
+            .child(identifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            guard
+                let value = snapshot.value as? [String: Any],
+                let user = JSONCoding.fromDictionary(value, type: User.self)
+            else {
+                return
+            }
+                
+            databaseReference
+                .child(FirebaseTables.posts)
+                .child(identifier)
+                .observe(.childAdded) { snapshot in
+                guard
+                    let value = snapshot.value as? [String: Any],
+                    let post = JSONCoding.fromDictionary(value, type: Post.self)
+                else {
+                    return
+                }
+                    
+                let userPost = UserPost(user: user, post: post)
+                    
+                completion(.success(userPost))
+            }
+        } withCancel: { error in
+            completion(.failure(error))
+        }
     }
 }
 

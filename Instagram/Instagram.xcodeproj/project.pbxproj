@@ -64,6 +64,8 @@
 		845CC20825C7ED370051372D /* SharePostPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20725C7ED370051372D /* SharePostPresenter.swift */; };
 		845CC20C25C7ED470051372D /* SharePostRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20B25C7ED470051372D /* SharePostRouter.swift */; };
 		845CC20F25C7ED580051372D /* SharePostAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20E25C7ED580051372D /* SharePostAssembly.swift */; };
+		845D0B9925D6AA9000AD3122 /* UserPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845D0B9825D6AA9000AD3122 /* UserPost.swift */; };
+		845D0B9C25D6BB9000AD3122 /* UIButton+imageDownload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845D0B9B25D6BB9000AD3122 /* UIButton+imageDownload.swift */; };
 		845D7D8E25BC472C001E5037 /* TwoPartsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845D7D8D25BC472C001E5037 /* TwoPartsButton.swift */; };
 		845F68D125D2646B0073FAC8 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F68D025D2646B0073FAC8 /* PostCell.swift */; };
 		8491A81225B46073009EDFC2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8491A81125B46073009EDFC2 /* GoogleService-Info.plist */; };
@@ -158,6 +160,8 @@
 		845CC20725C7ED370051372D /* SharePostPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostPresenter.swift; sourceTree = "<group>"; };
 		845CC20B25C7ED470051372D /* SharePostRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostRouter.swift; sourceTree = "<group>"; };
 		845CC20E25C7ED580051372D /* SharePostAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostAssembly.swift; sourceTree = "<group>"; };
+		845D0B9825D6AA9000AD3122 /* UserPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPost.swift; sourceTree = "<group>"; };
+		845D0B9B25D6BB9000AD3122 /* UIButton+imageDownload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+imageDownload.swift"; sourceTree = "<group>"; };
 		845D7D8D25BC472C001E5037 /* TwoPartsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoPartsButton.swift; sourceTree = "<group>"; };
 		845F68D025D2646B0073FAC8 /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
 		8491A81125B46073009EDFC2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -528,6 +532,7 @@
 				845455D125BD44380007C9A2 /* UserPublicInfo.swift */,
 				845455D425BD44460007C9A2 /* UserPrivateInfo.swift */,
 				845C283F25CAB51A000731B3 /* Post.swift */,
+				845D0B9825D6AA9000AD3122 /* UserPost.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -540,6 +545,7 @@
 				8454E52D25D3E765003A89E7 /* UIImage+instagramCrop.swift */,
 				845A1D3D25BAB50700F4004B /* UIImageView+download.swift */,
 				84F9694025D14E9D0004D838 /* UIImageView+realImageRect.swift */,
+				845D0B9B25D6BB9000AD3122 /* UIButton+imageDownload.swift */,
 				845C5E0425CC2C3D002A2E16 /* UIViewController+add.swift */,
 			);
 			path = Extensions;
@@ -661,6 +667,7 @@
 			files = (
 				8491A84925B47E0D009EDFC2 /* RegistrationAssembly.swift in Sources */,
 				845BB22825C9759600B01721 /* SharePostConstants.swift in Sources */,
+				845D0B9925D6AA9000AD3122 /* UserPost.swift in Sources */,
 				84E660AC25B955460036AB9F /* ProfileAssembly.swift in Sources */,
 				845455EE25BD8A220007C9A2 /* LoginPresenter.swift in Sources */,
 				84B2E68925B0513C00B27457 /* HomeAssembly.swift in Sources */,
@@ -687,6 +694,7 @@
 				845455F125BD8A300007C9A2 /* LoginRouter.swift in Sources */,
 				8445929625B425210028EE6A /* CustomViewController.swift in Sources */,
 				84E660A325B955200036AB9F /* ProfileInteractor.swift in Sources */,
+				845D0B9C25D6BB9000AD3122 /* UIButton+imageDownload.swift in Sources */,
 				84E6609C25B955050036AB9F /* ProfileViewController.swift in Sources */,
 				8491A84025B47DE8009EDFC2 /* RegistrationInteractor.swift in Sources */,
 				845C5E0925CC2D7D002A2E16 /* SpinnerViewController.swift in Sources */,

@@ -47,7 +47,7 @@ extension ProfileInteractor: IProfileInteractor {
     func fetchPosts() {
         guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebasePostService.fetchPosts(identifier: identifier) { [self] result in
+        FirebasePostService.fetchAllPosts(identifier: identifier) { [self] result in
             switch result {
             case .success(let posts):
                 presenter?.fetchPostsSuccess(posts)

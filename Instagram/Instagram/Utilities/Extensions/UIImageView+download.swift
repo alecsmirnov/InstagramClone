@@ -10,13 +10,15 @@ import UIKit
 private let imageCache = NSCache<NSString, AnyObject>()
 
 extension UIImageView {
-    @discardableResult func download(urlString: String) -> URLSessionDataTask? {
+    @discardableResult func download(urlString: String, completion: (() -> Void)? = nil) -> URLSessionDataTask? {
         guard let url = URL(string: urlString) else { return nil }
         
         var dataTask: URLSessionDataTask?
         
         if let image = imageCache.object(forKey: urlString as NSString) as? UIImage {
             self.image = image
+            
+            completion?()
         } else {
             let urlRequest = URLRequest(url: url)
             
@@ -44,6 +46,8 @@ extension UIImageView {
                 
                 DispatchQueue.main.async() {
                     self.image = image
+                    
+                    completion?()
                 }
             }
             

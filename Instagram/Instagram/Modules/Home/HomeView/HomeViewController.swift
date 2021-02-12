@@ -8,7 +8,7 @@
 import UIKit
 
 protocol IHomeViewController: AnyObject {
-    func setPosts(_ posts: [Post])
+    func appendUserPost(_ userPost: UserPost)
 }
 
 final class HomeViewController: CustomViewController<HomeView> {
@@ -29,9 +29,9 @@ final class HomeViewController: CustomViewController<HomeView> {
 
 // MARK: - IHomeViewController
 
-extension HomeViewController: IHomeViewController {
-    func setPosts(_ posts: [Post]) {
-        customView?.setPosts(posts)
+extension HomeViewController: IHomeViewController {    
+    func appendUserPost(_ userPost: UserPost) {
+        customView?.appendUserPost(userPost)
     }
 }
 
