@@ -7,8 +7,6 @@
 
 import UIKit
 
-private let imageCache = NSCache<NSString, AnyObject>()
-
 extension UIButton {
     @discardableResult func imageDownload(urlString: String) -> URLSessionDataTask? {
         let dataTask = imageView?.download(urlString: urlString) { [weak self] in
