@@ -65,7 +65,8 @@ extension TabBarAssembly {
         let homeViewController = HomeAssembly.createHomeViewController()
         let homeTab = createNavigationController(viewController: homeViewController, tabBarItem: TabBarItems.home)
         
-        let searchTab = createNavigationController(viewController: UIViewController(), tabBarItem: TabBarItems.search)
+        let searchViewController = SearchAssembly.createSearchViewController()
+        let searchTab = createNavigationController(viewController: searchViewController, tabBarItem: TabBarItems.search)
         
         let plusTab = createNavigationController(viewController: UIViewController(), tabBarItem: TabBarItems.plus)
         
