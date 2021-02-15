@@ -8,6 +8,14 @@
 import FirebaseDatabase
 
 enum FirebaseUserService {
+    // MARK: Constants
+    
+    private enum Values {
+        static let anyCharacter = "\u{f8ff}"
+    }
+    
+    // MARK: Properties
+    
     private static let databaseReference = Database.database().reference()
 }
 
@@ -15,14 +23,29 @@ enum FirebaseUserService {
 
 extension FirebaseUserService {
     static func isUsernameExist(_ username: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+        let lowercasedUsername = username.lowercased()
+        
         databaseReference
             .child(FirebaseTables.users)
             .queryOrdered(byChild: User.CodingKeys.username.rawValue)
-            .queryEqual(toValue: username)
+            .queryEqual(toValue: lowercasedUsername)
             .observeSingleEvent(of: .value) { snapshot in
-            let isUsernameExist = snapshot.value as? [String: Any] != nil
-                
-            completion(.success(isUsernameExist))
+            completion(.success(snapshot.exists()))
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+    }
+    
+    static func isUsernamePrefixExist(_ usernamePrefix: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+        let lowercasedUsername = usernamePrefix.lowercased()
+        
+        databaseReference
+            .child(FirebaseTables.users)
+            .queryOrdered(byChild: User.CodingKeys.username.rawValue)
+            .queryStarting(atValue: lowercasedUsername)
+            .queryEnding(atValue: lowercasedUsername + Values.anyCharacter)
+            .observeSingleEvent(of: .value) { snapshot in
+            completion(.success(snapshot.exists()))
         } withCancel: { error in
             completion(.failure(error))
         }
@@ -39,6 +62,8 @@ extension FirebaseUserService {
         FirebaseAuthService.createUser(withEmail: email, password: password) { result in
             switch result {
             case .success(let userIdentifier):
+                let lowercasedUsername = username.lowercased()
+                
                 if let profileImageData = profileImageData {
                     FirebaseStorageService.storeUserProfileImageData(
                         profileImageData,
@@ -49,7 +74,7 @@ extension FirebaseUserService {
                                 identifier: userIdentifier,
                                 email: email,
                                 fullName: fullName,
-                                username: username,
+                                username: lowercasedUsername,
                                 profileImageURL: profileImageURL) { error in
                                 completion(error)
                             }
@@ -62,7 +87,7 @@ extension FirebaseUserService {
                         identifier: userIdentifier,
                         email: email,
                         fullName: fullName,
-                        username: username,
+                        username: lowercasedUsername,
                         profileImageURL: nil) { error in
                         completion(error)
                     }
@@ -89,6 +114,36 @@ extension FirebaseUserService {
         } withCancel: { error in
             completion(.failure(error))
         }
+    }
+    
+    static func fetchUsers(
+        by username: String,
+        completion: @escaping (Result<User, Error>) -> Void
+    ) -> FirebaseObserver {
+        let lowercasedUsername = username.lowercased()
+        
+        let usersReference = databaseReference.child(FirebaseTables.users)
+        
+        let userAddedHandle = usersReference
+            .queryOrdered(byChild: User.CodingKeys.username.rawValue)
+            .queryStarting(atValue: lowercasedUsername)
+            .queryEnding(atValue: lowercasedUsername + Values.anyCharacter)
+            .observe(.childAdded) { snapshot in
+            guard
+                let value = snapshot.value as? [String: Any],
+                let user = JSONCoding.fromDictionary(value, type: User.self)
+            else {
+                return
+            }
+            
+            completion(.success(user))
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+        
+        let userAddedObserver = FirebaseObserver(reference: usersReference, handle: userAddedHandle)
+        
+        return userAddedObserver
     }
 }
 

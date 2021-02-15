@@ -7,11 +7,6 @@
 
 import UIKit
 
-struct UserTest {
-    let userName: String
-    let fullName: String?
-}
-
 final class SearchView: UIView {
     // MARK: Properties
     
@@ -32,6 +27,35 @@ final class SearchView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// MARK: - Public Methods
+
+extension SearchView {
+    func appendUser(_ user: User) {
+        users.append(user)
+        
+        reloadCollectionView()
+    }
+    
+    func removeAllUsers() {
+        users.removeAll()
+        
+        reloadCollectionView()
+    }
+}
+
+// MARK: - Private Methods
+
+private extension SearchView {
+    func reloadCollectionView() {
+        UIView.transition(
+            with: collectionView,
+            duration: 0.1,
+            options: [.transitionCrossDissolve]) {
+            self.collectionView.reloadData()
+        }
     }
 }
 

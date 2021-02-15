@@ -39,6 +39,7 @@
 		845464F325DA5CD900DCD136 /* SearchRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464F225DA5CD900DCD136 /* SearchRouter.swift */; };
 		845464F625DA5CE500DCD136 /* SearchAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464F525DA5CE500DCD136 /* SearchAssembly.swift */; };
 		845464F925DA660A00DCD136 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464F825DA660A00DCD136 /* UserCell.swift */; };
+		8454650E25DA85B100DCD136 /* FirebaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454650D25DA85B100DCD136 /* FirebaseObserver.swift */; };
 		8454924925C19805005AB7DA /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454924825C19805005AB7DA /* TabBarController.swift */; };
 		84549BA425BEC7AE007D24E2 /* SimpleAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BA325BEC7AE007D24E2 /* SimpleAlert.swift */; };
 		84549BAD25BEEC32007D24E2 /* LaunchAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BAC25BEEC32007D24E2 /* LaunchAssembly.swift */; };
@@ -142,6 +143,7 @@
 		845464F225DA5CD900DCD136 /* SearchRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchRouter.swift; sourceTree = "<group>"; };
 		845464F525DA5CE500DCD136 /* SearchAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchAssembly.swift; sourceTree = "<group>"; };
 		845464F825DA660A00DCD136 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
+		8454650D25DA85B100DCD136 /* FirebaseObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseObserver.swift; sourceTree = "<group>"; };
 		8454924825C19805005AB7DA /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		84549BA325BEC7AE007D24E2 /* SimpleAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleAlert.swift; sourceTree = "<group>"; };
 		84549BAC25BEEC32007D24E2 /* LaunchAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAssembly.swift; sourceTree = "<group>"; };
@@ -408,6 +410,7 @@
 		8491A83625B46BBD009EDFC2 /* Firebase */ = {
 			isa = PBXGroup;
 			children = (
+				8454650D25DA85B100DCD136 /* FirebaseObserver.swift */,
 				845C284525CAC22A000731B3 /* FirebaseAuthService.swift */,
 				845C284225CABB2D000731B3 /* FirebaseStorageService.swift */,
 				845B8CB125B6D2E100FE5ED6 /* FirebaseUserService.swift */,
@@ -780,6 +783,7 @@
 				845C284325CABB2D000731B3 /* FirebaseStorageService.swift in Sources */,
 				84E660A625B9552D0036AB9F /* ProfilePresenter.swift in Sources */,
 				84549BB025BEFC2F007D24E2 /* RootViewControllerSwitcher.swift in Sources */,
+				8454650E25DA85B100DCD136 /* FirebaseObserver.swift in Sources */,
 				84E6610C25B9940A0036AB9F /* Registration.swift in Sources */,
 				84B2E68625B0512100B27457 /* HomeRouter.swift in Sources */,
 				845CC20825C7ED370051372D /* SharePostPresenter.swift in Sources */,

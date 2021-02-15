@@ -8,7 +8,8 @@
 import UIKit
 
 protocol ISearchViewController: AnyObject {
-    
+    func appendUser(_ user: User)
+    func removeAllUsers()
 }
 
 final class SearchViewController: CustomViewController<SearchView>  {
@@ -32,6 +33,8 @@ final class SearchViewController: CustomViewController<SearchView>  {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        searchBar.delegate = self
+        
         setupSearchBarAppearance()
         setupSearchBarLayout()
     }
@@ -42,6 +45,8 @@ final class SearchViewController: CustomViewController<SearchView>  {
 private extension SearchViewController {
     func setupSearchBarAppearance() {
         searchBar.placeholder = "Enter username"
+        searchBar.searchTextField.autocapitalizationType = .none
+        searchBar.searchTextField.autocorrectionType = .no
         searchBar.searchTextField.clearButtonMode = .whileEditing
     }
 }
@@ -76,5 +81,30 @@ private extension SearchViewController {
 // MARK: - ISearchViewController
 
 extension SearchViewController: ISearchViewController {
+    func appendUser(_ user: User) {
+        customView?.appendUser(user)
+    }
     
+    func removeAllUsers() {
+        customView?.removeAllUsers()
+    }
+}
+
+// MARK: - UISearchBarDelegate
+
+extension SearchViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        NSObject.cancelPreviousPerformRequests(
+            withTarget: self,
+            selector: #selector(didStartTyping(_:)),
+            object: searchBar)
+        
+        perform(#selector(didStartTyping(_:)), with: searchBar, afterDelay: 0.6)
+    }
+    
+    @objc func didStartTyping(_ searchBar: UISearchBar) {
+        if let username = searchBar.text {
+            presenter?.didSearchUser(with: username)
+        }
+    }
 }

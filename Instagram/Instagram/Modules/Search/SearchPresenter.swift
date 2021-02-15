@@ -6,7 +6,7 @@
 //
 
 protocol ISearchPresenter: AnyObject {
-    
+    func didSearchUser(with username: String)
 }
 
 final class SearchPresenter {
@@ -18,11 +18,27 @@ final class SearchPresenter {
 // MARK: - ISearchPresenter
 
 extension SearchPresenter: ISearchPresenter {
-    
+    func didSearchUser(with username: String) {
+        viewController?.removeAllUsers()
+        
+        if !username.isEmpty {
+            interactor?.fetchUsers(by: username)
+        }
+    }
 }
 
 // MARK: - ISearchInteractorOutput
 
 extension SearchPresenter: ISearchInteractorOutput {
+    func fetchUserSuccess(_ user: User) {
+        viewController?.appendUser(user)
+    }
     
+    func fetchUsersNoResult() {
+        
+    }
+    
+    func fetchUsersFailure() {
+        
+    }
 }
