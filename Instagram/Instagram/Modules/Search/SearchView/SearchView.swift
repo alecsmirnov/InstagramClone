@@ -10,7 +10,21 @@ import UIKit
 final class SearchView: UIView {
     // MARK: Properties
     
+    var state = SearchState.result
+    
     private var users = [User]()
+    
+    // MARK: Constants
+    
+    enum SearchState {
+        case search
+        case noResult
+        case result
+    }
+    
+    private enum Constants {
+        static let collectionViewAnimationDuration: TimeInterval = 0.1
+    }
     
     // MARK: Subviews
     
@@ -35,24 +49,16 @@ final class SearchView: UIView {
 extension SearchView {
     func appendUser(_ user: User) {
         users.append(user)
-        
-        reloadCollectionView()
     }
     
     func removeAllUsers() {
         users.removeAll()
-        
-        reloadCollectionView()
     }
-}
-
-// MARK: - Private Methods
-
-private extension SearchView {
-    func reloadCollectionView() {
+    
+    func reloadData() {
         UIView.transition(
             with: collectionView,
-            duration: 0.1,
+            duration: Constants.collectionViewAnimationDuration,
             options: [.transitionCrossDissolve]) {
             self.collectionView.reloadData()
         }
@@ -74,6 +80,7 @@ private extension SearchView {
         
         collectionView.dataSource = self
         
+        collectionView.register(SearchCell.self, forCellWithReuseIdentifier: SearchCell.reuseIdentifier)
         collectionView.register(UserCell.self, forCellWithReuseIdentifier: UserCell.reuseIdentifier)
     }
 }
@@ -119,22 +126,45 @@ private extension SearchView {
 
 extension SearchView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return users.count
+        switch state {
+        case .search, .noResult:
+            return 1
+        case .result:
+            return users.count
+        }
     }
 
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: UserCell.reuseIdentifier,
-            for: indexPath) as? UserCell
-        else {
-            return UICollectionViewCell()
+        switch state {
+        case .search, .noResult:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: SearchCell.reuseIdentifier,
+                for: indexPath) as? SearchCell
+            else {
+                return UICollectionViewCell()
+            }
+            
+            if state == .search {
+                cell.showSearchMessage()
+            } else {
+                cell.showNoResultMessage()
+            }
+            
+            return cell
+        case .result:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: UserCell.reuseIdentifier,
+                for: indexPath) as? UserCell
+            else {
+                return UICollectionViewCell()
+            }
+            
+            cell.configure(with: users[indexPath.row])
+            
+            return cell
         }
-        
-        cell.configure(with: users[indexPath.row])
-        
-        return cell
     }
 }

@@ -20,8 +20,15 @@ final class SearchPresenter {
 extension SearchPresenter: ISearchPresenter {
     func didSearchUser(with username: String) {
         viewController?.removeAllUsers()
+        viewController?.setupResultAppearance()
+        
+        defer {
+            viewController?.reloadData()
+        }
         
         if !username.isEmpty {
+            viewController?.setupSearchAppearance()
+            
             interactor?.fetchUsers(by: username)
         }
     }
@@ -32,10 +39,14 @@ extension SearchPresenter: ISearchPresenter {
 extension SearchPresenter: ISearchInteractorOutput {
     func fetchUserSuccess(_ user: User) {
         viewController?.appendUser(user)
+        
+        viewController?.setupResultAppearance()
+        viewController?.reloadData()
     }
     
     func fetchUsersNoResult() {
-        
+        viewController?.setupNoResultAppearance()
+        viewController?.reloadData()
     }
     
     func fetchUsersFailure() {

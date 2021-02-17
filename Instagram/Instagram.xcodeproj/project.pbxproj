@@ -49,6 +49,7 @@
 		845504F825B1C38300715C3B /* TabBarAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845504F725B1C38300715C3B /* TabBarAssembly.swift */; };
 		845800BD25C6AFA600816642 /* NewPostConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845800BC25C6AFA600816642 /* NewPostConstants.swift */; };
 		845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A1D3D25BAB50700F4004B /* UIImageView+download.swift */; };
+		845AD41A25DD3716007A84AC /* SearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AD41925DD3716007A84AC /* SearchCell.swift */; };
 		845AE88D25C41B04005A1155 /* MediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE88C25C41B04005A1155 /* MediaService.swift */; };
 		845AE89225C42425005A1155 /* MediaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE89125C42425005A1155 /* MediaCell.swift */; };
 		845AE89625C42ABA005A1155 /* MediaFileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE89525C42ABA005A1155 /* MediaFileType.swift */; };
@@ -153,6 +154,7 @@
 		845504F725B1C38300715C3B /* TabBarAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarAssembly.swift; sourceTree = "<group>"; };
 		845800BC25C6AFA600816642 /* NewPostConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostConstants.swift; sourceTree = "<group>"; };
 		845A1D3D25BAB50700F4004B /* UIImageView+download.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+download.swift"; sourceTree = "<group>"; };
+		845AD41925DD3716007A84AC /* SearchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCell.swift; sourceTree = "<group>"; };
 		845AE88C25C41B04005A1155 /* MediaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaService.swift; sourceTree = "<group>"; };
 		845AE89125C42425005A1155 /* MediaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCell.swift; sourceTree = "<group>"; };
 		845AE89525C42ABA005A1155 /* MediaFileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaFileType.swift; sourceTree = "<group>"; };
@@ -315,6 +317,7 @@
 			isa = PBXGroup;
 			children = (
 				845464F825DA660A00DCD136 /* UserCell.swift */,
+				845AD41925DD3716007A84AC /* SearchCell.swift */,
 				845464E625DA5C6D00DCD136 /* SearchView.swift */,
 				845464E925DA5C7E00DCD136 /* SearchViewController.swift */,
 			);
@@ -706,6 +709,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8491A84925B47E0D009EDFC2 /* RegistrationAssembly.swift in Sources */,
+				845AD41A25DD3716007A84AC /* SearchCell.swift in Sources */,
 				845BB22825C9759600B01721 /* SharePostConstants.swift in Sources */,
 				845D0B9925D6AA9000AD3122 /* UserPost.swift in Sources */,
 				84E660AC25B955460036AB9F /* ProfileAssembly.swift in Sources */,

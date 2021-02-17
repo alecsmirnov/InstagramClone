@@ -9,6 +9,8 @@ struct User {
     let fullName: String?
     let username: String
     let profileImageURL: String?
+    
+    var identifier: String?
 }
 
 // MARK: - Codable

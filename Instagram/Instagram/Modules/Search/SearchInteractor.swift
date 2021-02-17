@@ -36,8 +36,6 @@ extension SearchInteractor: ISearchInteractor {
                     self?.observeUsers(by: username)
                 } else {
                     self?.presenter?.fetchUsersNoResult()
-                    
-                    print("No search results")
                 }
             case .failure(let error):
                 self?.presenter?.fetchUsersFailure()

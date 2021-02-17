@@ -105,10 +105,12 @@ extension FirebaseUserService {
             .observeSingleEvent(of: .value) { snapshot in
             guard
                 let value = snapshot.value as? [String: Any],
-                let user = JSONCoding.fromDictionary(value, type: User.self)
+                var user = JSONCoding.fromDictionary(value, type: User.self)
             else {
                 return
             }
+            
+            user.identifier = identifier
             
             completion(.success(user))
         } withCancel: { error in
@@ -131,10 +133,13 @@ extension FirebaseUserService {
             .observe(.childAdded) { snapshot in
             guard
                 let value = snapshot.value as? [String: Any],
-                let user = JSONCoding.fromDictionary(value, type: User.self)
+                var user = JSONCoding.fromDictionary(value, type: User.self)
             else {
                 return
             }
+            
+            let userIdentifier = snapshot.key
+            user.identifier = userIdentifier
             
             completion(.success(user))
         } withCancel: { error in

@@ -10,6 +10,12 @@ import UIKit
 protocol ISearchViewController: AnyObject {
     func appendUser(_ user: User)
     func removeAllUsers()
+    
+    func reloadData()
+    
+    func setupSearchAppearance()
+    func setupNoResultAppearance()
+    func setupResultAppearance()
 }
 
 final class SearchViewController: CustomViewController<SearchView>  {
@@ -87,6 +93,22 @@ extension SearchViewController: ISearchViewController {
     
     func removeAllUsers() {
         customView?.removeAllUsers()
+    }
+    
+    func reloadData() {
+        customView?.reloadData()
+    }
+    
+    func setupSearchAppearance() {
+        customView?.state = .search
+    }
+    
+    func setupNoResultAppearance() {
+        customView?.state = .noResult
+    }
+    
+    func setupResultAppearance() {
+        customView?.state = .result
     }
 }
 

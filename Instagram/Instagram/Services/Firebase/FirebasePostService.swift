@@ -76,10 +76,12 @@ extension FirebasePostService {
             .observeSingleEvent(of: .value) { snapshot in
             guard
                 let value = snapshot.value as? [String: Any],
-                let user = JSONCoding.fromDictionary(value, type: User.self)
+                var user = JSONCoding.fromDictionary(value, type: User.self)
             else {
                 return
             }
+            
+            user.identifier = identifier
                 
             databaseReference
                 .child(FirebaseTables.posts)
