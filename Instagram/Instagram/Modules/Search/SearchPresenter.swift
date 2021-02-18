@@ -6,7 +6,10 @@
 //
 
 protocol ISearchPresenter: AnyObject {
+    func viewWillDisappear()
+    
     func didSearchUser(with username: String)
+    func didSelectUser(_ user: User)
 }
 
 final class SearchPresenter {
@@ -18,6 +21,10 @@ final class SearchPresenter {
 // MARK: - ISearchPresenter
 
 extension SearchPresenter: ISearchPresenter {
+    func viewWillDisappear() {
+        interactor?.removeObservation()
+    }
+    
     func didSearchUser(with username: String) {
         viewController?.removeAllUsers()
         viewController?.setupResultAppearance()
@@ -31,6 +38,10 @@ extension SearchPresenter: ISearchPresenter {
             
             interactor?.fetchUsers(by: username)
         }
+    }
+    
+    func didSelectUser(_ user: User) {
+        router?.showProfileViewController(user: user)
     }
 }
 

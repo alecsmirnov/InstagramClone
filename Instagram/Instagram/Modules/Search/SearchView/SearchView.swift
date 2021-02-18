@@ -7,8 +7,14 @@
 
 import UIKit
 
+protocol SearchViewDelegate: AnyObject {
+    func searchView(_ searchView: SearchView, didSelectUser user: User)
+}
+
 final class SearchView: UIView {
     // MARK: Properties
+    
+    weak var delegate: SearchViewDelegate?
     
     var state = SearchState.result
     
@@ -77,8 +83,10 @@ private extension SearchView {
     func setupCollectionViewAppearance() {
         collectionView.backgroundColor = .clear
         collectionView.delaysContentTouches = false
+        collectionView.keyboardDismissMode = .onDrag
         
         collectionView.dataSource = self
+        collectionView.delegate = self
         
         collectionView.register(SearchCell.self, forCellWithReuseIdentifier: SearchCell.reuseIdentifier)
         collectionView.register(UserCell.self, forCellWithReuseIdentifier: UserCell.reuseIdentifier)
@@ -166,5 +174,17 @@ extension SearchView: UICollectionViewDataSource {
             
             return cell
         }
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension SearchView: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard state == .result else { return }
+        
+        let user = users[indexPath.row]
+        
+        delegate?.searchView(self, didSelectUser: user)
     }
 }

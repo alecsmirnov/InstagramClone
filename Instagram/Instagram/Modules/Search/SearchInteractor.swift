@@ -9,6 +9,8 @@ import Foundation
 
 protocol ISearchInteractor: AnyObject {
     func fetchUsers(by username: String)
+    
+    func removeObservation()
 }
 
 protocol ISearchInteractorOutput: AnyObject {
@@ -27,7 +29,7 @@ final class SearchInteractor {
 
 extension SearchInteractor: ISearchInteractor {
     func fetchUsers(by username: String) {
-        usersObserver?.remove()
+        removeObservation()
         
         FirebaseUserService.isUsernamePrefixExist(username) { [weak self] result in
             switch result {
@@ -43,6 +45,10 @@ extension SearchInteractor: ISearchInteractor {
                 print("Failed to fetch users: \(error.localizedDescription)")
             }
         }
+    }
+    
+    func removeObservation() {
+        usersObserver?.remove()
     }
 }
 

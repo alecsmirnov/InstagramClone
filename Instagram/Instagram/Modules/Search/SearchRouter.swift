@@ -6,7 +6,7 @@
 //
 
 protocol ISearchRouter: AnyObject {
-    
+    func showProfileViewController(user: User)
 }
 
 final class SearchRouter {
@@ -20,5 +20,9 @@ final class SearchRouter {
 // MARK: - ISearchRouter
 
 extension SearchRouter: ISearchRouter {
-    
+    func showProfileViewController(user: User) {
+        let profileViewController = ProfileAssembly.createProfileViewController(user: user)
+        
+        viewController?.navigationController?.pushViewController(profileViewController, animated: true)
+    }
 }

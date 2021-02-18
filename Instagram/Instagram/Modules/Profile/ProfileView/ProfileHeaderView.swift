@@ -129,9 +129,9 @@ final class ProfileHeaderView: UICollectionReusableView {
 // MARK: - Public Methods
 
 extension ProfileHeaderView {
-    
-    
     func setUser(_ user: User) {
+        fullNameLabel.text = user.fullName
+        
         if let profileImageURL = user.profileImageURL {
             profileImageView.download(urlString: profileImageURL)
         }

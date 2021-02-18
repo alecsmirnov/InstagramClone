@@ -26,8 +26,11 @@ final class SearchViewController: CustomViewController<SearchView>  {
     // MARK: Constants
     
     private enum Metrics {
-        static let searchBarVerticalSpace: CGFloat = 8
         static let searchBarHorizontalSpace: CGFloat = 8
+    }
+    
+    private enum Constants {
+        static let searchBarInputDelay = 0.6
     }
     
     // MARK: Subviews
@@ -39,10 +42,26 @@ final class SearchViewController: CustomViewController<SearchView>  {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        customView?.delegate = self
         searchBar.delegate = self
         
         setupSearchBarAppearance()
         setupSearchBarLayout()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        searchBar.isHidden = false
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        searchBar.isHidden = true
+        searchBar.resignFirstResponder()
+        
+        presenter?.viewWillDisappear()
     }
 }
 
@@ -68,12 +87,8 @@ private extension SearchViewController {
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            searchBar.topAnchor.constraint(
-                equalTo: navigationBar.topAnchor,
-                constant: Metrics.searchBarVerticalSpace),
-            searchBar.bottomAnchor.constraint(
-                equalTo: navigationBar.bottomAnchor,
-                constant: -Metrics.searchBarVerticalSpace),
+            searchBar.topAnchor.constraint(equalTo: navigationBar.topAnchor),
+            searchBar.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor),
             searchBar.leadingAnchor.constraint(
                 equalTo: navigationBar.leadingAnchor,
                 constant: Metrics.searchBarHorizontalSpace),
@@ -112,6 +127,14 @@ extension SearchViewController: ISearchViewController {
     }
 }
 
+// MARK: - SearchViewDelegate
+
+extension SearchViewController: SearchViewDelegate {
+    func searchView(_ searchView: SearchView, didSelectUser user: User) {
+        presenter?.didSelectUser(user)
+    }
+}
+
 // MARK: - UISearchBarDelegate
 
 extension SearchViewController: UISearchBarDelegate {
@@ -121,7 +144,7 @@ extension SearchViewController: UISearchBarDelegate {
             selector: #selector(didStartTyping(_:)),
             object: searchBar)
         
-        perform(#selector(didStartTyping(_:)), with: searchBar, afterDelay: 0.6)
+        perform(#selector(didStartTyping(_:)), with: searchBar, afterDelay: Constants.searchBarInputDelay)
     }
     
     @objc func didStartTyping(_ searchBar: UISearchBar) {
