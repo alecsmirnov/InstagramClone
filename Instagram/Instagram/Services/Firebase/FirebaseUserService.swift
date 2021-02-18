@@ -22,6 +22,31 @@ enum FirebaseUserService {
 // MARK: - Public Methods
 
 extension FirebaseUserService {
+    static func follow(userIdentifier: String, followingUserIdentifier: String) {
+        databaseReference
+            .child(FirebaseTables.following)
+            .child(userIdentifier)
+            .child(followingUserIdentifier)
+            .setValue(0)
+        
+        databaseReference
+            .child(FirebaseTables.followers)
+            .child(followingUserIdentifier)
+            .child(userIdentifier)
+            .setValue(0)
+    }
+    
+    static func followingCount(identifier: String) {
+        databaseReference
+            .child(FirebaseTables.following)
+            .child(identifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            print(snapshot.childrenCount)
+        }
+    }
+}
+
+extension FirebaseUserService {
     static func isUsernameExist(_ username: String, completion: @escaping (Result<Bool, Error>) -> Void) {
         let lowercasedUsername = username.lowercased()
         

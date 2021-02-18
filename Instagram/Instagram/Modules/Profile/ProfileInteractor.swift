@@ -9,6 +9,11 @@ protocol IProfileInteractor: AnyObject {
     func fetchCurrentUser()
     func fetchPosts(identifier: String)
     
+    func isCurrentUserIdentifier(_ identifier: String) -> Bool
+    
+    func followUser(identifier: String)
+    func followersCount()
+    
     // TODO: move to Menu module
     
     func signOut()
@@ -55,6 +60,24 @@ extension ProfileInteractor: IProfileInteractor {
                 print("Failed to fetch posts: \(error.localizedDescription)")
             }
         }
+    }
+    
+    func isCurrentUserIdentifier(_ identifier: String) -> Bool {
+        guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return false }
+        
+        return identifier == currentUserIdentifier
+    }
+    
+    func followUser(identifier: String) {
+        guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
+        
+        FirebaseUserService.follow(userIdentifier: currentUserIdentifier, followingUserIdentifier: identifier)
+    }
+    
+    func followersCount() {
+        guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
+        
+        FirebaseUserService.followingCount(identifier: currentUserIdentifier)
     }
     
     func signOut() {

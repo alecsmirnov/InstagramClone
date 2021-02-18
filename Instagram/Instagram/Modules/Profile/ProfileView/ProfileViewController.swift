@@ -10,6 +10,12 @@ import UIKit
 protocol IProfileViewController: AnyObject {
     func setUser(_ user: User)
     func setPosts(_ posts: [Post])
+    
+    func reloadData()
+    
+    func showEditButton()
+    func showFollowButton()
+    func showUnfollowButton()
 }
 
 final class ProfileViewController: CustomViewController<ProfileView> {
@@ -22,9 +28,11 @@ final class ProfileViewController: CustomViewController<ProfileView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        customView?.delegate = self
+        
         presenter?.viewDidLoad()
         
-        setupMenuButton()
+        setupAppearance()
     }
 }
 
@@ -40,11 +48,40 @@ extension ProfileViewController: IProfileViewController {
     func setPosts(_ posts: [Post]) {
         customView?.setPosts(posts)
     }
+    
+    func reloadData() {
+        customView?.reloadData()
+    }
+    
+    func showEditButton() {
+        customView?.editFollowButtonState = .edit
+    }
+    
+    func showFollowButton() {
+        customView?.editFollowButtonState = .follow
+    }
+    
+    func showUnfollowButton() {
+        customView?.editFollowButtonState = .unfollow
+    }
 }
 
 // MARK: - Appearance
 
 private extension ProfileViewController {
+    func setupAppearance() {
+        customizeBackButton()
+        setupMenuButton()
+    }
+    
+    func customizeBackButton() {
+        let backBarButtonItem = UIBarButtonItem(title: nil, style: .plain, target: nil, action: nil)
+        
+        backBarButtonItem.tintColor = .black
+        
+        navigationController?.navigationBar.topItem?.backBarButtonItem = backBarButtonItem
+    }
+    
     func setupMenuButton() {
         let menuBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "xmark.square"),
@@ -61,5 +98,35 @@ private extension ProfileViewController {
 private extension ProfileViewController {
     @objc func didPressCloseButton() {
         presenter?.didPressMenuButton()
+    }
+}
+
+// MARK: - ProfileViewDelegate
+
+extension ProfileViewController: ProfileViewDelegate {
+    func profileViewDidPressFollowersButton(_ view: ProfileView) {
+        
+    }
+    
+    func profileViewDidPressFollowingButton(_ view: ProfileView) {
+        
+    }
+    
+    func profileViewDidPressEditButton(_ view: ProfileView) {
+        presenter?.didPressEditButton()
+    }
+    
+    func profileViewDidPressFollowButton(_ view: ProfileView) {
+        customView?.editFollowButtonState = .unfollow
+        customView?.reloadData()
+        
+        presenter?.didPressFollowButton()
+    }
+    
+    func profileViewDidPressUnfollowButton(_ view: ProfileView) {
+        customView?.editFollowButtonState = .follow
+        customView?.reloadData()
+        
+        presenter?.didPressUnfollowButton()
     }
 }

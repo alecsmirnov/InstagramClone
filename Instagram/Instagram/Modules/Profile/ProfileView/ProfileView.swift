@@ -7,8 +7,21 @@
 
 import UIKit
 
+protocol ProfileViewDelegate: AnyObject {
+    func profileViewDidPressFollowersButton(_ view: ProfileView)
+    func profileViewDidPressFollowingButton(_ view: ProfileView)
+    
+    func profileViewDidPressEditButton( _ view: ProfileView)
+    func profileViewDidPressFollowButton( _ view: ProfileView)
+    func profileViewDidPressUnfollowButton( _ view: ProfileView)
+}
+
 final class ProfileView: UIView {
     // MARK: Properties
+    
+    weak var delegate: ProfileViewDelegate?
+    
+    var editFollowButtonState = EditFollowButtonState.edit
     
     private var user: User?
     private var posts = [Post]()
@@ -17,6 +30,12 @@ final class ProfileView: UIView {
     private lazy var collectionViewListLayout = ProfileView.createListLayout()
     
     // MARK: Constants
+    
+    enum EditFollowButtonState {
+        case edit
+        case follow
+        case unfollow
+    }
     
     private enum Metrics {
         static let estimatedHeight: CGFloat = 44
@@ -50,13 +69,13 @@ final class ProfileView: UIView {
 extension ProfileView {
     func setUser(_ user: User) {
         self.user = user
-        
-        collectionView.reloadData()
     }
     
     func setPosts(_ posts: [Post]) {
         self.posts = posts
-        
+    }
+    
+    func reloadData() {
         collectionView.reloadData()
     }
 }
@@ -217,6 +236,17 @@ extension ProfileView: UICollectionViewDataSource {
             header.setUser(user)
         }
         
+        switch editFollowButtonState {
+        case .edit:
+            header.setupEditFollowButtonEditStyle()
+        case .follow:
+            header.setupEditFollowButtonFollowStyle()
+        case .unfollow:
+            header.setupEditFollowButtonUnfollowStyle()
+        }
+        
+        header.delegate = self
+        
         return header
     }
 }
@@ -231,4 +261,27 @@ extension ProfileView: UICollectionViewDelegate {
 
 extension ProfileView: UICollectionViewDelegateFlowLayout {
 
+}
+
+// MARK: - ProfileHeaderViewDelegate
+
+extension ProfileView: ProfileHeaderViewDelegate {
+    func profileHeaderViewDidPressFollowersButton(_ view: ProfileHeaderView) {
+        delegate?.profileViewDidPressFollowersButton(self)
+    }
+    
+    func profileHeaderViewDidPressFollowingButton(_ view: ProfileHeaderView) {
+        delegate?.profileViewDidPressFollowingButton(self)
+    }
+    
+    func profileHeaderViewDidPressEditFollowButton(_ view: ProfileHeaderView) {
+        switch editFollowButtonState {
+        case .edit:
+            delegate?.profileViewDidPressEditButton(self)
+        case .follow:
+            delegate?.profileViewDidPressFollowButton(self)
+        case .unfollow:
+            delegate?.profileViewDidPressUnfollowButton(self)
+        }
+    }
 }
