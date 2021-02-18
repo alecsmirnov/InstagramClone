@@ -22,26 +22,86 @@ enum FirebaseUserService {
 // MARK: - Public Methods
 
 extension FirebaseUserService {
-    static func follow(userIdentifier: String, followingUserIdentifier: String) {
+    static func isFollowingUser(
+        currentUserIdentifier: String,
+        followingUserIdentifier: String,
+        completion: @escaping (Result<Bool, Error>) -> Void
+    ) {
         databaseReference
             .child(FirebaseTables.following)
-            .child(userIdentifier)
+            .child(currentUserIdentifier)
             .child(followingUserIdentifier)
-            .setValue(0)
-        
-        databaseReference
-            .child(FirebaseTables.followers)
-            .child(followingUserIdentifier)
-            .child(userIdentifier)
-            .setValue(0)
+            .observeSingleEvent(of: .value) { snapshot in
+            completion(.success(snapshot.exists()))
+        } withCancel: { error in
+            completion(.failure(error))
+        }
     }
     
-    static func followingCount(identifier: String) {
+    static func followUser(
+        currentUserIdentifier: String,
+        followingUserIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        let followingUserReference = databaseReference
+            .child(FirebaseTables.following)
+            .child(currentUserIdentifier)
+            .child(followingUserIdentifier)
+        
+        followingUserReference.setValue(0) { error, _ in
+            guard error == nil else {
+                completion(error)
+                
+                return
+            }
+            
+            databaseReference
+                .child(FirebaseTables.followers)
+                .child(followingUserIdentifier)
+                .child(currentUserIdentifier)
+                .setValue(0) { error, _ in
+                guard error == nil else {
+                    followingUserReference.removeValue()
+                    
+                    completion(error)
+                    
+                    return
+                }
+                
+                completion(nil)
+            }
+        }
+    }
+    
+    static func unfollowUser(
+        currentUserIdentifier: String,
+        followingUserIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {        
         databaseReference
             .child(FirebaseTables.following)
-            .child(identifier)
-            .observeSingleEvent(of: .value) { snapshot in
-            print(snapshot.childrenCount)
+            .child(currentUserIdentifier)
+            .child(followingUserIdentifier)
+            .removeValue() { error, _ in
+            guard error == nil else {
+                completion(error)
+                
+                return
+            }
+            
+            databaseReference
+                .child(FirebaseTables.followers)
+                .child(followingUserIdentifier)
+                .child(currentUserIdentifier)
+                .removeValue() { error, _ in
+                guard error == nil else {
+                    completion(error)
+                    
+                    return
+                }
+                
+                completion(nil)
+            }
         }
     }
 }
@@ -191,10 +251,9 @@ private extension FirebaseUserService {
         let user = User(fullName: fullName, username: username, profileImageURL: profileImageURL)
         
         if let userDictionary = JSONCoding.toDictionary(user) {
-            databaseReference
-                .child(FirebaseTables.users)
-                .child(identifier)
-                .setValue(userDictionary) { error, _ in
+            let userReference = databaseReference.child(FirebaseTables.users).child(identifier)
+            
+            userReference.setValue(userDictionary) { error, _ in
                 guard error == nil else {
                     completion(error)
                     
@@ -209,7 +268,7 @@ private extension FirebaseUserService {
                         .child(identifier)
                         .setValue(userPrivateInfoDictionary) { error, _ in
                         guard error == nil else {
-                            databaseReference.child(FirebaseTables.users).child(identifier).removeValue()
+                            userReference.removeValue()
                             
                             completion(error)
                             

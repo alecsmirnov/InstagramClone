@@ -11,8 +11,10 @@ protocol IProfileInteractor: AnyObject {
     
     func isCurrentUserIdentifier(_ identifier: String) -> Bool
     
+    func isFollowingUser(identifier: String)
+    
     func followUser(identifier: String)
-    func followersCount()
+    func unfollowUser(identifier: String)
     
     // TODO: move to Menu module
     
@@ -25,6 +27,15 @@ protocol IProfileInteractorOutput: AnyObject {
     
     func fetchPostsSuccess(_ posts: [Post])
     func fetchPostsFailure()
+    
+    func isFollowingUserSuccess(_ isFollowing: Bool)
+    func isFollowingUserFailure()
+    
+    func followUserSuccess()
+    func followUserFailure()
+    
+    func unfollowUserSuccess()
+    func unfollowUserFailure()
 }
 
 final class ProfileInteractor {
@@ -68,16 +79,53 @@ extension ProfileInteractor: IProfileInteractor {
         return identifier == currentUserIdentifier
     }
     
+    func isFollowingUser(identifier: String) {
+        guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
+        
+        FirebaseUserService.isFollowingUser(
+            currentUserIdentifier: currentUserIdentifier,
+            followingUserIdentifier: identifier) { [self] result in
+            switch result {
+            case .success(let isFollowing):
+                presenter?.isFollowingUserSuccess(isFollowing)
+            case .failure(let error):
+                presenter?.isFollowingUserFailure()
+                
+                print("Failed to check following user: \(error.localizedDescription)")
+            }
+        }
+    }
+    
     func followUser(identifier: String) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebaseUserService.follow(userIdentifier: currentUserIdentifier, followingUserIdentifier: identifier)
+        FirebaseUserService.followUser(
+            currentUserIdentifier: currentUserIdentifier,
+            followingUserIdentifier: identifier) { [self] error in
+            if let error = error {
+                presenter?.followUserFailure()
+                
+                print("Failed to follow user: \(error.localizedDescription)")
+            } else {
+                presenter?.followUserSuccess()
+            }
+        }
     }
     
-    func followersCount() {
+    func unfollowUser(identifier: String) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebaseUserService.followingCount(identifier: currentUserIdentifier)
+        FirebaseUserService.unfollowUser(
+            currentUserIdentifier: currentUserIdentifier,
+            followingUserIdentifier: identifier) { [self] error in
+            if let error = error {
+                presenter?.unfollowUserFailure()
+                
+                print("Failed to unfollow user: \(error.localizedDescription)")
+            } else {
+                presenter?.unfollowUserSuccess()
+            }
+        }
     }
     
     func signOut() {

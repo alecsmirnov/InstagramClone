@@ -31,16 +31,13 @@ extension ProfilePresenter: IProfilePresenter {
             if interactor?.isCurrentUserIdentifier(identifier) ?? true {
                 viewController?.showEditButton()
             } else {
-                viewController?.showFollowButton()
-                //interactor?.isFollowingUser(identifier: identifier)
+                interactor?.isFollowingUser(identifier: identifier)
             }
             
             viewController?.setUser(user)
             viewController?.reloadData()
             
             interactor?.fetchPosts(identifier: identifier)
-            
-            
         } else {
             interactor?.fetchCurrentUser()
         }
@@ -57,7 +54,9 @@ extension ProfilePresenter: IProfilePresenter {
     }
     
     func didPressUnfollowButton() {
+        guard let identifier = user?.identifier else { return }
         
+        interactor?.unfollowUser(identifier: identifier)
     }
     
     func didPressMenuButton() {
@@ -91,6 +90,38 @@ extension ProfilePresenter: IProfileInteractorOutput {
     }
     
     func fetchPostsFailure() {
+        
+    }
+    
+    func isFollowingUserSuccess(_ isFollowing: Bool) {
+        if isFollowing {
+            viewController?.showUnfollowButton()
+        } else {
+            viewController?.showFollowButton()
+        }
+        
+        viewController?.reloadData()
+    }
+    
+    func isFollowingUserFailure() {
+        
+    }
+    
+    func followUserSuccess() {
+        viewController?.showUnfollowButton()
+        viewController?.reloadData()
+    }
+    
+    func followUserFailure() {
+        
+    }
+    
+    func unfollowUserSuccess() {
+        viewController?.showFollowButton()
+        viewController?.reloadData()
+    }
+    
+    func unfollowUserFailure() {
         
     }
 }

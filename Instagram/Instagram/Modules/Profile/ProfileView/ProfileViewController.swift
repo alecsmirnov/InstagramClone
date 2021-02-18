@@ -117,16 +117,10 @@ extension ProfileViewController: ProfileViewDelegate {
     }
     
     func profileViewDidPressFollowButton(_ view: ProfileView) {
-        customView?.editFollowButtonState = .unfollow
-        customView?.reloadData()
-        
         presenter?.didPressFollowButton()
     }
     
-    func profileViewDidPressUnfollowButton(_ view: ProfileView) {
-        customView?.editFollowButtonState = .follow
-        customView?.reloadData()
-        
+    func profileViewDidPressUnfollowButton(_ view: ProfileView) {        
         presenter?.didPressUnfollowButton()
     }
 }
