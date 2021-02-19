@@ -56,7 +56,7 @@ extension SearchInteractor: ISearchInteractor {
 
 private extension SearchInteractor {
     func observeUsers(by username: String) {
-        usersObserver = FirebaseUserService.fetchUsers(by: username) { [self] result in
+        usersObserver = FirebaseUserService.observeUsers(by: username) { [self] result in
             switch result {
             case .success(let user):
                 presenter?.fetchUserSuccess(user)

@@ -118,7 +118,7 @@ extension FirebaseUserService {
         }
     }
     
-    static func fetchUsers(
+    static func observeUsers(
         by username: String,
         completion: @escaping (Result<User, Error>) -> Void
     ) -> FirebaseObserver {

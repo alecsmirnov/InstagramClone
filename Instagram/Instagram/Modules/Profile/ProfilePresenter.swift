@@ -39,6 +39,8 @@ extension ProfilePresenter: IProfilePresenter {
             
             interactor?.fetchPosts(identifier: identifier)
         } else {
+            viewController?.showEditButton()
+            
             interactor?.fetchCurrentUser()
         }
     }

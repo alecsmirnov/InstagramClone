@@ -20,7 +20,8 @@ extension FirebasePostService {
         imageData: Data,
         imageAspectRatio: CGFloat,
         caption: String?,
-        completion: @escaping (Error?) -> Void) {
+        completion: @escaping (Error?) -> Void
+    ) {
         FirebaseStorageService.storeUserPostImageData(imageData, identifier: identifier) { result in
             switch result {
             case .success(let imageURL):
@@ -37,9 +38,34 @@ extension FirebasePostService {
         }
     }
     
+    static func observePosts(
+        identifier: String,
+        completion: @escaping (Result<Post, Error>) -> Void
+    ) -> FirebaseObserver {
+        let userPostsReference = databaseReference.child(FirebaseTables.posts).child(identifier)
+        
+        let postAddedHandle = userPostsReference.observe(.childAdded) { snapshot in
+            guard
+                let value = snapshot.value as? [String: Any],
+                let post = JSONCoding.fromDictionary(value, type: Post.self)
+            else {
+                return
+            }
+                
+            completion(.success(post))
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+        
+        let postAddedObserver = FirebaseObserver(reference: userPostsReference, handle: postAddedHandle)
+        
+        return postAddedObserver
+    }
+    
     static func fetchAllPosts(
         identifier: String,
-        completion: @escaping (Result<[Post], Error>) -> Void) {
+        completion: @escaping (Result<[Post], Error>) -> Void
+    ) {
         databaseReference
             .child(FirebaseTables.posts)
             .child(identifier)
@@ -69,7 +95,8 @@ extension FirebasePostService {
     
     static func fetchUserPosts(
         identifier: String,
-        completion: @escaping (Result<UserPost, Error>) -> Void) {
+        completion: @escaping (Result<UserPost, Error>) -> Void
+    ) {
         databaseReference
             .child(FirebaseTables.users)
             .child(identifier)
