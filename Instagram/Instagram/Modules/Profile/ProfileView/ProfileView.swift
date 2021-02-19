@@ -21,7 +21,7 @@ final class ProfileView: UIView {
     
     weak var delegate: ProfileViewDelegate?
     
-    var editFollowButtonState = EditFollowButtonState.edit
+    var editFollowButtonState = EditFollowButtonState.none
     
     private var user: User?
     private var posts = [Post]()
@@ -35,6 +35,7 @@ final class ProfileView: UIView {
         case edit
         case follow
         case unfollow
+        case none
     }
     
     private enum Metrics {
@@ -243,6 +244,8 @@ extension ProfileView: UICollectionViewDataSource {
             header.setupEditFollowButtonFollowStyle()
         case .unfollow:
             header.setupEditFollowButtonUnfollowStyle()
+        case .none:
+            break
         }
         
         header.delegate = self
@@ -282,6 +285,8 @@ extension ProfileView: ProfileHeaderViewDelegate {
             delegate?.profileViewDidPressFollowButton(self)
         case .unfollow:
             delegate?.profileViewDidPressUnfollowButton(self)
+        case .none:
+            break
         }
     }
 }

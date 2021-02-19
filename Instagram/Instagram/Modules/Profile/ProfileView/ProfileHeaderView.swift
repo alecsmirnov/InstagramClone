@@ -81,7 +81,7 @@ final class ProfileHeaderView: UICollectionReusableView {
     }
     
     private enum Constants {
-        static let editFollowButtonAnimationDuration: TimeInterval = 0 //0.4
+        static let editFollowButtonAnimationDuration: TimeInterval = 0.4
     }
     
     // MARK: Subviews

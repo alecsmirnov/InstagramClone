@@ -21,6 +21,10 @@ final class SearchCell: UICollectionViewCell {
         static let labelHorizontalSpace: CGFloat = 16
     }
     
+    private enum Colors {
+        static let text = UIColor.systemGray2
+    }
+    
     // MARK: Subviews
     
     private let label = UILabel()
@@ -60,6 +64,8 @@ private extension SearchCell {
 
     func setupLabelAppearance() {
         label.textAlignment = .center
+        label.textColor = Colors.text
+        label.font = .boldSystemFont(ofSize: label.font.pointSize)
     }
 }
 
