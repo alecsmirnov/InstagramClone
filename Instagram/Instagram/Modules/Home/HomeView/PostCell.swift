@@ -41,8 +41,9 @@ final class PostCell: UICollectionViewCell {
         static let buttonsViewBottomSpace: CGFloat = 10
         static let buttonsViewItemsSpace: CGFloat = 12
         
-        static let timestampLabelTopSpace: CGFloat = 14
+        static let timestampLabelTopSpace: CGFloat = 6
         static let timestampLabelBottomSpace: CGFloat = 22
+        static let timestampLabelFontSize: CGFloat = 14
     }
     
     private enum Colors {
@@ -120,7 +121,10 @@ extension PostCell {
         }
         
         timestampLabelTopConstraint?.constant = (userPost.post.caption != nil) ? Metrics.timestampLabelTopSpace : 0
-        timestampLabel.text = Date(timeIntervalSince1970: userPost.post.timestamp).description
+        
+        if let timeAgo = Date(timeIntervalSince1970: userPost.post.timestamp).timeAgo() {
+            timestampLabel.text = timeAgo + " ago"
+        }
     }
 }
 
@@ -200,6 +204,7 @@ private extension PostCell {
     
     func setupTimestampLabelAppearance() {
         timestampLabel.textColor = .systemGray
+        timestampLabel.font = .systemFont(ofSize: Metrics.timestampLabelFontSize)
     }
     
 //    func setupLikeButtonAppearance() {

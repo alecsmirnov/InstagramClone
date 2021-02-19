@@ -34,6 +34,26 @@ extension HomeInteractor: IHomeInteractor {
                 print("Failed to fetch user post: \(error.localizedDescription)")
             }
         }
+        
+        FirebaseUserService.fetchFollowingUsersIdentifiers(identifier: identifier) { result in
+            switch result {
+            case .success(let identifiers):
+                identifiers.forEach { followingUserIdentifier in
+                    FirebasePostService.fetchUserPosts(identifier: followingUserIdentifier) { [self] result in
+                        switch result {
+                        case .success(let userPost):
+                            presenter?.fetchUserPostSuccess(userPost)
+                        case .failure(let error):
+                            presenter?.fetchUserPostFailure()
+                            
+                            print("Failed to fetch following user post: \(error.localizedDescription)")
+                        }
+                    }
+                }
+            case .failure(let error):
+                print("Failed to fetch following users identifiers: \(error.localizedDescription)")
+            }
+        }
     }
 }
 

@@ -82,7 +82,8 @@ extension FirebasePostService {
             }
             
             user.identifier = identifier
-                
+            
+            // TODO: Remove observation
             databaseReference
                 .child(FirebaseTables.posts)
                 .child(identifier)

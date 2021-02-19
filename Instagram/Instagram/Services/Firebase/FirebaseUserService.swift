@@ -22,91 +22,6 @@ enum FirebaseUserService {
 // MARK: - Public Methods
 
 extension FirebaseUserService {
-    static func isFollowingUser(
-        currentUserIdentifier: String,
-        followingUserIdentifier: String,
-        completion: @escaping (Result<Bool, Error>) -> Void
-    ) {
-        databaseReference
-            .child(FirebaseTables.following)
-            .child(currentUserIdentifier)
-            .child(followingUserIdentifier)
-            .observeSingleEvent(of: .value) { snapshot in
-            completion(.success(snapshot.exists()))
-        } withCancel: { error in
-            completion(.failure(error))
-        }
-    }
-    
-    static func followUser(
-        currentUserIdentifier: String,
-        followingUserIdentifier: String,
-        completion: @escaping (Error?) -> Void
-    ) {
-        let followingUserReference = databaseReference
-            .child(FirebaseTables.following)
-            .child(currentUserIdentifier)
-            .child(followingUserIdentifier)
-        
-        followingUserReference.setValue(0) { error, _ in
-            guard error == nil else {
-                completion(error)
-                
-                return
-            }
-            
-            databaseReference
-                .child(FirebaseTables.followers)
-                .child(followingUserIdentifier)
-                .child(currentUserIdentifier)
-                .setValue(0) { error, _ in
-                guard error == nil else {
-                    followingUserReference.removeValue()
-                    
-                    completion(error)
-                    
-                    return
-                }
-                
-                completion(nil)
-            }
-        }
-    }
-    
-    static func unfollowUser(
-        currentUserIdentifier: String,
-        followingUserIdentifier: String,
-        completion: @escaping (Error?) -> Void
-    ) {        
-        databaseReference
-            .child(FirebaseTables.following)
-            .child(currentUserIdentifier)
-            .child(followingUserIdentifier)
-            .removeValue() { error, _ in
-            guard error == nil else {
-                completion(error)
-                
-                return
-            }
-            
-            databaseReference
-                .child(FirebaseTables.followers)
-                .child(followingUserIdentifier)
-                .child(currentUserIdentifier)
-                .removeValue() { error, _ in
-                guard error == nil else {
-                    completion(error)
-                    
-                    return
-                }
-                
-                completion(nil)
-            }
-        }
-    }
-}
-
-extension FirebaseUserService {
     static func isUsernameExist(_ username: String, completion: @escaping (Result<Bool, Error>) -> Void) {
         let lowercasedUsername = username.lowercased()
         
@@ -234,6 +149,107 @@ extension FirebaseUserService {
         let userAddedObserver = FirebaseObserver(reference: usersReference, handle: userAddedHandle)
         
         return userAddedObserver
+    }
+    
+    static func isFollowingUser(
+        currentUserIdentifier: String,
+        followingUserIdentifier: String,
+        completion: @escaping (Result<Bool, Error>) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.following)
+            .child(currentUserIdentifier)
+            .child(followingUserIdentifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            completion(.success(snapshot.exists()))
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+    }
+    
+    static func followUser(
+        currentUserIdentifier: String,
+        followingUserIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        let followingUserReference = databaseReference
+            .child(FirebaseTables.following)
+            .child(currentUserIdentifier)
+            .child(followingUserIdentifier)
+        
+        followingUserReference.setValue(0) { error, _ in
+            guard error == nil else {
+                completion(error)
+                
+                return
+            }
+            
+            databaseReference
+                .child(FirebaseTables.followers)
+                .child(followingUserIdentifier)
+                .child(currentUserIdentifier)
+                .setValue(0) { error, _ in
+                guard error == nil else {
+                    followingUserReference.removeValue()
+                    
+                    completion(error)
+                    
+                    return
+                }
+                
+                completion(nil)
+            }
+        }
+    }
+    
+    static func unfollowUser(
+        currentUserIdentifier: String,
+        followingUserIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.following)
+            .child(currentUserIdentifier)
+            .child(followingUserIdentifier)
+            .removeValue() { error, _ in
+            guard error == nil else {
+                completion(error)
+                
+                return
+            }
+            
+            databaseReference
+                .child(FirebaseTables.followers)
+                .child(followingUserIdentifier)
+                .child(currentUserIdentifier)
+                .removeValue() { error, _ in
+                guard error == nil else {
+                    completion(error)
+                    
+                    return
+                }
+                
+                completion(nil)
+            }
+        }
+    }
+    
+    static func fetchFollowingUsersIdentifiers(
+        identifier: String,
+        completion: @escaping (Result<[String], Error>) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.following)
+            .child(identifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            guard let value = snapshot.value as? [String: Any] else { return }
+            
+            let identifiers = value.keys.map { $0.description }
+            
+            completion(.success(identifiers))
+        } withCancel: { error in
+            completion(.failure(error))
+        }
     }
 }
 
