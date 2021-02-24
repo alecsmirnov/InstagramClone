@@ -7,8 +7,14 @@
 
 import UIKit
 
+protocol HomeViewDelegate: AnyObject {
+    func homeViewDidPullToRefresh(_ homeView: HomeView)
+}
+
 final class HomeView: UIView {
     // MARK: Properties
+    
+    weak var delegate: HomeViewDelegate?
     
     private var userPosts = [UserPost]()
     
@@ -23,6 +29,7 @@ final class HomeView: UIView {
         
         setupAppearance()
         setupLayout()
+        setupActions()
     }
     
     required init?(coder: NSCoder) {
@@ -36,8 +43,18 @@ extension HomeView {
     func appendUserPost(_ userPost: UserPost) {
         userPosts.insert(userPost, at: 0)
         userPosts.sort { $0.post.timestamp > $1.post.timestamp }
-        
+    }
+    
+    func removeAllUserPosts() {
+        userPosts.removeAll()
+    }
+    
+    func reloadData() {
         collectionView.reloadData()
+    }
+    
+    func endRefreshing() {
+        collectionView.refreshControl?.endRefreshing()
     }
 }
 
@@ -94,6 +111,19 @@ private extension HomeView {
         let collectionViewLayout = UICollectionViewCompositionalLayout.list(using: listConfiguration)
 
         collectionView.collectionViewLayout = collectionViewLayout
+    }
+}
+
+// MARK: - Actions
+
+private extension HomeView {
+    func setupActions() {
+        collectionView.refreshControl = UIRefreshControl()
+        collectionView.refreshControl?.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+    }
+    
+    @objc func didPullToRefresh() {
+        delegate?.homeViewDidPullToRefresh(self)
     }
 }
 

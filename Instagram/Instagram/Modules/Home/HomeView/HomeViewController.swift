@@ -9,6 +9,11 @@ import UIKit
 
 protocol IHomeViewController: AnyObject {
     func appendUserPost(_ userPost: UserPost)
+    func removeAllUserPosts()
+    
+    func reloadData()
+    
+    func endRefreshing()
 }
 
 final class HomeViewController: CustomViewController<HomeView> {
@@ -20,6 +25,8 @@ final class HomeViewController: CustomViewController<HomeView> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        customView?.delegate = self
         
         presenter?.viewDidLoad()
         
@@ -33,6 +40,18 @@ extension HomeViewController: IHomeViewController {
     func appendUserPost(_ userPost: UserPost) {
         customView?.appendUserPost(userPost)
     }
+    
+    func removeAllUserPosts() {
+        customView?.removeAllUserPosts()
+    }
+    
+    func reloadData() {
+        customView?.reloadData()
+    }
+    
+    func endRefreshing() {
+        customView?.endRefreshing()
+    }
 }
 
 // MARK: - Appearance
@@ -40,5 +59,13 @@ extension HomeViewController: IHomeViewController {
 private extension HomeViewController {
     func setupNavigationItemTitle() {
         navigationItem.titleView = UIImageView(image: UIImage(named: "instagram_logo_black_mini"))
+    }
+}
+
+// MARK: - HomeViewDelegate
+
+extension HomeViewController: HomeViewDelegate {
+    func homeViewDidPullToRefresh(_ homeView: HomeView) {
+        presenter?.didPullToRefresh()
     }
 }

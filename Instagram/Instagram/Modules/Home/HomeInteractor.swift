@@ -5,12 +5,18 @@
 //  Created by Admin on 14.01.2021.
 //
 
+import Dispatch
+
 protocol IHomeInteractor: AnyObject {
-    func fetchUserPosts()
+    func reloadAllObservers()
+    func removeAllObservers()
+    
+    func observeUserPosts()
 }
 
 protocol IHomeInteractorOutput: AnyObject {
     func fetchUserPostSuccess(_ userPost: UserPost)
+    func fetchUserPostNoResult()
     func fetchUserPostFailure()
 }
 
@@ -22,8 +28,36 @@ final class HomeInteractor {
 
 // MARK: - IHomeInteractor
 
-extension HomeInteractor: IHomeInteractor {    
-    func fetchUserPosts() {
+extension HomeInteractor: IHomeInteractor {
+    func reloadAllObservers() {
+        guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
+        
+        FirebasePostService.isAllPostsExists(identifier: identifier) { [self] result in
+            switch result {
+            case .success(let isPostsExists):
+                guard isPostsExists else {
+                    presenter?.fetchUserPostNoResult()
+                    
+                    return
+                }
+                
+                removeAllObservers()
+                observeUserPosts()
+            case .failure(let error):
+                presenter?.fetchUserPostFailure()
+                
+                print("Failed to check existed posts: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func removeAllObservers() {
+        userPostsObserver.forEach { identifier, _ in
+            removeUserObserver(identifier: identifier)
+        }
+    }
+    
+    func observeUserPosts() {
         guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
         
         observeUserPosts(identifier: identifier) { [self] result in
@@ -85,6 +119,8 @@ private extension HomeInteractor {
     }
     
     func observePosts(identifier: String, completion: @escaping (Result<Post, Error>) -> Void) {
+        removeUserObserver(identifier: identifier)
+        
         userPostsObserver[identifier] = FirebasePostService.observePosts(identifier: identifier) { result in
             switch result {
             case .success(let post):
@@ -96,6 +132,7 @@ private extension HomeInteractor {
     }
     
     func removeUserObserver(identifier: String) {
+        userPostsObserver[identifier]?.remove()
         userPostsObserver[identifier] = nil
     }
 }

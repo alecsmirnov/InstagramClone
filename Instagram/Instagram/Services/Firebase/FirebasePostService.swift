@@ -15,6 +15,80 @@ enum FirebasePostService {
 // MARK: - Public Methods
 
 extension FirebasePostService {
+    static func isAllPostsExists(identifier: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+        isPostsExists(identifier: identifier) { result in
+            switch result {
+            case .success(let isCurrentUserPostsExists):
+                guard isCurrentUserPostsExists else {
+                    isFollowingPostsExists(identifier: identifier) { result in
+                        switch result {
+                        case .success(let isFollowingUserPostsExists):
+                            completion(.success(isFollowingUserPostsExists))
+                        case .failure(let error):
+                            completion(.failure(error))
+                        }
+                    }
+                    
+                    return
+                }
+                
+                completion(.success(true))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    static func isPostsExists(identifier: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+        databaseReference
+            .child(FirebaseTables.posts)
+            .child(identifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            completion(.success(snapshot.exists()))
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+    }
+    
+    static func isFollowingPostsExists(identifier: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+        FirebaseUserService.fetchFollowingUsersIdentifiers(identifier: identifier) { result in
+            switch result {
+            case .success(let identifiers):
+                let dispatchGroup = DispatchGroup()
+                var followingPosts = [Bool]()
+                
+                for followingUserIdentifier in identifiers {
+                    dispatchGroup.enter()
+                    
+                    isPostsExists(identifier: followingUserIdentifier) { result in
+                        switch result {
+                        case .success(let isCurrentUserPostsExist):
+                            followingPosts.append(isCurrentUserPostsExist)
+                            
+                            dispatchGroup.leave()
+                        case .failure(let error):
+                            completion(.failure(error))
+                            
+                            break
+                        }
+                    }
+                }
+                
+                dispatchGroup.notify(queue: .main) {
+                    for followingPost in followingPosts where followingPost {
+                        completion(.success(true))
+                        
+                        break
+                    }
+                    
+                    completion(.success(false))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
     static func sharePost(
         identifier: String,
         imageData: Data,
@@ -88,44 +162,6 @@ extension FirebasePostService {
             posts.sort { $0.timestamp < $1.timestamp }
             
             completion(.success(posts))
-        } withCancel: { error in
-            completion(.failure(error))
-        }
-    }
-    
-    static func fetchUserPosts(
-        identifier: String,
-        completion: @escaping (Result<UserPost, Error>) -> Void
-    ) {
-        databaseReference
-            .child(FirebaseTables.users)
-            .child(identifier)
-            .observeSingleEvent(of: .value) { snapshot in
-            guard
-                let value = snapshot.value as? [String: Any],
-                var user = JSONCoding.fromDictionary(value, type: User.self)
-            else {
-                return
-            }
-            
-            user.identifier = identifier
-            
-            // TODO: Remove observation
-            databaseReference
-                .child(FirebaseTables.posts)
-                .child(identifier)
-                .observe(.childAdded) { snapshot in
-                guard
-                    let value = snapshot.value as? [String: Any],
-                    let post = JSONCoding.fromDictionary(value, type: Post.self)
-                else {
-                    return
-                }
-                    
-                let userPost = UserPost(user: user, post: post)
-                    
-                completion(.success(userPost))
-            }
         } withCancel: { error in
             completion(.failure(error))
         }
