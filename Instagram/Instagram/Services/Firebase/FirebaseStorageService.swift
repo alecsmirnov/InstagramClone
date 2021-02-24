@@ -8,15 +8,6 @@
 import FirebaseStorage
 
 enum FirebaseStorageService {
-    // MARK: Constants
-    
-    enum StorageError: Error {
-        case dataUploadFailure
-        case urlDownloadFailure
-    }
-    
-    // MARK: Properties
-    
     private static let storageReference = Storage.storage().reference()
 }
 

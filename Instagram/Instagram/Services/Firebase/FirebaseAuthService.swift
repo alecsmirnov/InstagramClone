@@ -8,16 +8,6 @@
 import FirebaseAuth
 
 enum FirebaseAuthService {
-    // MARK: Properties
-    
-    static var isUserSignedIn: Bool {
-        return authReference.currentUser != nil
-    }
-    
-    static var currentUserIdentifier: String? {
-        return authReference.currentUser?.uid
-    }
-    
     // MARK: Constants
     
     enum SignInError: Error {
@@ -27,6 +17,14 @@ enum FirebaseAuthService {
     }
     
     // MARK: Properties
+    
+    static var isUserSignedIn: Bool {
+        return authReference.currentUser != nil
+    }
+    
+    static var currentUserIdentifier: String? {
+        return authReference.currentUser?.uid
+    }
     
     private static let authReference = FirebaseAuth.Auth.auth()
 }
