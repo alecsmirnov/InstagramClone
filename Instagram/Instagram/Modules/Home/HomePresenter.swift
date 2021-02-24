@@ -9,6 +9,7 @@ protocol IHomePresenter: AnyObject {
     func viewDidLoad()
     
     func didPullToRefresh()
+    func didSelectUser(_ user: User)
 }
 
 final class HomePresenter {
@@ -38,6 +39,10 @@ extension HomePresenter: IHomePresenter {
         interactor?.reloadAllObservers()
         
         isRefreshed = true
+    }
+    
+    func didSelectUser(_ user: User) {
+        router?.showProfileViewController(user: user)
     }
 }
 

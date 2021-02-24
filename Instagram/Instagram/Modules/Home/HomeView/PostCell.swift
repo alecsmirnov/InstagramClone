@@ -8,7 +8,13 @@
 import UIKit
 
 protocol PostCellDelegate: AnyObject {
-    func postCellRequestUpdate(_ postCell: PostCell)
+    func postCellDidPressProfileImageButton(_ postCell: PostCell)
+    func postCellDidPressOptionsButton(_ postCell: PostCell)
+    
+    func postCellDidPressLikeButton(_ postCell: PostCell)
+    func postCellDidPressCommentButton(_ postCell: PostCell)
+    func postCellDidPressSendButton(_ postCell: PostCell)
+    func postCellDidPressBookmarkButton(_ postCell: PostCell)
 }
 
 final class PostCell: UICollectionViewCell {
@@ -73,7 +79,7 @@ final class PostCell: UICollectionViewCell {
     private let sendButton = UIButton(type: .system)
     private let bookmarkButton = UIButton(type: .system)
     
-    private let captionLabel = ReadMoreLabel()
+    private let captionLabel = UILabel()
     private let timestampLabel = UILabel()
     
     // MARK: Lifecycle
@@ -95,6 +101,7 @@ final class PostCell: UICollectionViewCell {
         
         setupAppearance()
         setupLayout()
+        setupActions()
     }
     
     required init?(coder: NSCoder) {
@@ -117,7 +124,7 @@ extension PostCell {
         usernameButton.setTitle(userPost.user.username, for: .normal)
         
         if let caption = userPost.post.caption {
-            captionLabel.attributedText = PostCell.caption(caption, withUsername: userPost.user.username)
+            captionLabel.attributedText = makeAttributedCaption(caption, withUsername: userPost.user.username)
         }
         
         timestampLabelTopConstraint?.constant = (userPost.post.caption != nil) ? Metrics.timestampLabelTopSpace : 0
@@ -131,13 +138,13 @@ extension PostCell {
 // MARK: - Private Methods
 
 private extension PostCell {
-    static func caption(_ caption: String, withUsername username: String) -> NSAttributedString {
+    func makeAttributedCaption(_ caption: String, withUsername username: String) -> NSAttributedString {
         let usernameAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.boldSystemFont(ofSize: UIFont.labelFontSize),
+            .font: UIFont.boldSystemFont(ofSize: captionLabel.font.pointSize),
             .foregroundColor: UIColor.black
         ]
         let captionAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: UIFont.labelFontSize)
+            .font: UIFont.systemFont(ofSize: captionLabel.font.pointSize)
         ]
         
         let attributedText = NSMutableAttributedString(string: username, attributes: usernameAttributes)
@@ -161,12 +168,7 @@ private extension PostCell {
         setupImageViewAppearance()
         
         setupButtonsViewItemsAppearance()
-        setupCaptionLabelAppearance()
         setupTimestampLabelAppearance()
-//        setupLikeButtonAppearance()
-//        setupCommentButtonAppearance()
-//        setupSendButtonAppearance()
-//        setupBookmarkButtonAppearance()
     }
     
     func setupProfileImageButtonAppearance() {
@@ -198,30 +200,10 @@ private extension PostCell {
         bookmarkButton.setImage(Images.bookmark?.withRenderingMode(.alwaysOriginal), for: .normal)
     }
     
-    func setupCaptionLabelAppearance() {
-        captionLabel.delegate = self
-    }
-    
     func setupTimestampLabelAppearance() {
         timestampLabel.textColor = .systemGray
         timestampLabel.font = .systemFont(ofSize: Metrics.timestampLabelFontSize)
     }
-    
-//    func setupLikeButtonAppearance() {
-//        likeButton.setImage(Images.like?.withRenderingMode(.alwaysOriginal), for: .normal)
-//    }
-//
-//    func setupCommentButtonAppearance() {
-//        commentButton.setImage(Images.comment?.withRenderingMode(.alwaysOriginal), for: .normal)
-//    }
-//
-//    func setupSendButtonAppearance() {
-//        sendButton.setImage(Images.send?.withRenderingMode(.alwaysOriginal), for: .normal)
-//    }
-//
-//    func setupBookmarkButtonAppearance() {
-//        bookmarkButton.setImage(Images.bookmark?.withRenderingMode(.alwaysOriginal), for: .normal)
-//    }
 }
 
 // MARK: - Layout
@@ -424,10 +406,41 @@ private extension PostCell {
     }
 }
 
-// MARK: - ReadMoreLabelDelegate
+// MARK: - Actions
 
-extension PostCell: ReadMoreLabelDelegate {
-    func readMoreLabelDidTapMore(_ readMoreLabel: ReadMoreLabel) {
-        delegate?.postCellRequestUpdate(self)
+private extension PostCell {
+    func setupActions() {
+        profileImageButton.addTarget(self, action: #selector(didPressProfileImageButton), for: .touchUpInside)
+        usernameButton.addTarget(self, action: #selector(didPressProfileImageButton), for: .touchUpInside)
+        optionsButton.addTarget(self, action: #selector(didPressOptionsButton), for: .touchUpInside)
+        
+        likeButton.addTarget(self, action: #selector(didPressLikeButton), for: .touchUpInside)
+        commentButton.addTarget(self, action: #selector(didPressCommentButton), for: .touchUpInside)
+        sendButton.addTarget(self, action: #selector(didPressSendButton), for: .touchUpInside)
+        bookmarkButton.addTarget(self, action: #selector(didPressBookmarkButton), for: .touchUpInside)
+    }
+    
+    @objc func didPressProfileImageButton() {
+        delegate?.postCellDidPressProfileImageButton(self)
+    }
+    
+    @objc func didPressOptionsButton() {
+        delegate?.postCellDidPressOptionsButton(self)
+    }
+    
+    @objc func didPressLikeButton() {
+        delegate?.postCellDidPressLikeButton(self)
+    }
+    
+    @objc func didPressCommentButton() {
+        delegate?.postCellDidPressCommentButton(self)
+    }
+    
+    @objc func didPressSendButton() {
+        delegate?.postCellDidPressSendButton(self)
+    }
+    
+    @objc func didPressBookmarkButton() {
+        delegate?.postCellDidPressBookmarkButton(self)
     }
 }

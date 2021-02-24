@@ -32,6 +32,18 @@ final class HomeViewController: CustomViewController<HomeView> {
         
         setupNavigationItemTitle()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationItem.titleView?.isHidden = false
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        navigationItem.titleView?.isHidden = true
+    }
 }
 
 // MARK: - IHomeViewController
@@ -67,5 +79,9 @@ private extension HomeViewController {
 extension HomeViewController: HomeViewDelegate {
     func homeViewDidPullToRefresh(_ homeView: HomeView) {
         presenter?.didPullToRefresh()
+    }
+    
+    func homeView(_ homeView: HomeView, didSelectUser user: User) {
+        presenter?.didSelectUser(user)
     }
 }

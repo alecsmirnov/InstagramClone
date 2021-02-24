@@ -6,7 +6,7 @@
 //
 
 protocol IHomeRouter: AnyObject {
-    
+    func showProfileViewController(user: User)
 }
 
 final class HomeRouter {
@@ -20,5 +20,9 @@ final class HomeRouter {
 // MARK: - IHomeRouter
 
 extension HomeRouter: IHomeRouter {
-    
+    func showProfileViewController(user: User) {
+        let profileViewController = ProfileAssembly.createProfileViewController(user: user)
+        
+        viewController?.navigationController?.pushViewController(profileViewController, animated: true)
+    }
 }

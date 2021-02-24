@@ -9,6 +9,8 @@ import UIKit
 
 protocol HomeViewDelegate: AnyObject {
     func homeViewDidPullToRefresh(_ homeView: HomeView)
+    
+    func homeView(_ homeView: HomeView, didSelectUser user: User)
 }
 
 final class HomeView: UIView {
@@ -156,11 +158,31 @@ extension HomeView: UICollectionViewDataSource {
 // MARK: - PostCellDelegate
 
 extension HomeView: PostCellDelegate {
-    func postCellRequestUpdate(_ postCell: PostCell) {
-        let contentOffset = collectionView.contentOffset
+    func postCellDidPressProfileImageButton(_ postCell: PostCell) {
+        guard let indexPath = collectionView.indexPath(for: postCell) else { return }
         
-        collectionView.reloadData()
-        collectionView.layoutIfNeeded()
-        collectionView.setContentOffset(contentOffset, animated: false)
+        let user = userPosts[indexPath.row].user
+        
+        delegate?.homeView(self, didSelectUser: user)
+    }
+    
+    func postCellDidPressOptionsButton(_ postCell: PostCell) {
+        
+    }
+    
+    func postCellDidPressLikeButton(_ postCell: PostCell) {
+        
+    }
+    
+    func postCellDidPressCommentButton(_ postCell: PostCell) {
+        
+    }
+    
+    func postCellDidPressSendButton(_ postCell: PostCell) {
+        
+    }
+    
+    func postCellDidPressBookmarkButton(_ postCell: PostCell) {
+        
     }
 }
