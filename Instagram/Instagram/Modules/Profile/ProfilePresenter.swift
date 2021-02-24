@@ -5,6 +5,8 @@
 //  Created by Admin on 21.01.2021.
 //
 
+import NotificationCenter
+
 protocol IProfilePresenter: AnyObject {
     func viewDidLoad()
     
@@ -16,11 +18,19 @@ protocol IProfilePresenter: AnyObject {
 }
 
 final class ProfilePresenter {
+    // MARK: Properties
+    
     weak var viewController: IProfileViewController?
     var interactor: IProfileInteractor?
     var router: IProfileRouter?
     
     var user: User?
+    
+    // MARK: Initialization
+    
+    deinit {
+        removeFollowUnfollowNotifications()
+    }
 }
 
 // MARK: - IProfilePresenter
@@ -32,6 +42,8 @@ extension ProfilePresenter: IProfilePresenter {
                 viewController?.showEditButton()
             } else {
                 interactor?.isFollowingUser(identifier: identifier)
+                
+                setupFollowUnfollowNotifications()
             }
             
             viewController?.setUser(user)
@@ -112,6 +124,8 @@ extension ProfilePresenter: IProfileInteractorOutput {
     func followUserSuccess() {
         viewController?.showUnfollowButton()
         viewController?.reloadData()
+        
+        sendFollowUserNotification()
     }
     
     func followUserFailure() {
@@ -121,9 +135,50 @@ extension ProfilePresenter: IProfileInteractorOutput {
     func unfollowUserSuccess() {
         viewController?.showFollowButton()
         viewController?.reloadData()
+        
+        sendUnfollowUserNotification()
     }
     
     func unfollowUserFailure() {
         
+    }
+}
+
+// MARK: - Notifications
+
+private extension ProfilePresenter {
+    func setupFollowUnfollowNotifications() {
+        NotificationCenter.default.addObserver(
+            forName: .followUser,
+            object: nil,
+            queue: nil) { [weak self] notification in
+            guard let object = notification.object as? Self, object !== self else { return }
+            
+            self?.viewController?.showUnfollowButton()
+            self?.viewController?.reloadData()
+        }
+        
+        NotificationCenter.default.addObserver(
+            forName: .unfollowUser,
+            object: nil,
+            queue: nil) { [weak self] notification in
+            guard let object = notification.object as? Self, object !== self else { return }
+            
+            self?.viewController?.showFollowButton()
+            self?.viewController?.reloadData()
+        }
+    }
+    
+    func removeFollowUnfollowNotifications() {
+        NotificationCenter.default.removeObserver(self, name: .followUser, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .unfollowUser, object: nil)
+    }
+    
+    func sendFollowUserNotification() {
+        NotificationCenter.default.post(name: .followUser, object: self)
+    }
+    
+    func sendUnfollowUserNotification() {
+        NotificationCenter.default.post(name: .unfollowUser, object: self)
     }
 }

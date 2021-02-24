@@ -11,6 +11,7 @@
 		8445928F25B41E6D0028EE6A /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8445928E25B41E6D0028EE6A /* RegistrationViewController.swift */; };
 		8445929225B41E7D0028EE6A /* RegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8445929125B41E7D0028EE6A /* RegistrationView.swift */; };
 		8445929625B425210028EE6A /* CustomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8445929525B425210028EE6A /* CustomViewController.swift */; };
+		8447DE2625E65CC700B3CE66 /* Notification.Name+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8447DE2525E65CC700B3CE66 /* Notification.Name+.swift */; };
 		84488AB225C2F66E00173A19 /* NewPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84488AB125C2F66E00173A19 /* NewPostView.swift */; };
 		84488AB625C2F67E00173A19 /* NewPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84488AB525C2F67E00173A19 /* NewPostViewController.swift */; };
 		84488AB925C2F69F00173A19 /* NewPostInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84488AB825C2F69F00173A19 /* NewPostInteractor.swift */; };
@@ -116,6 +117,7 @@
 		8445928E25B41E6D0028EE6A /* RegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewController.swift; sourceTree = "<group>"; };
 		8445929125B41E7D0028EE6A /* RegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationView.swift; sourceTree = "<group>"; };
 		8445929525B425210028EE6A /* CustomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViewController.swift; sourceTree = "<group>"; };
+		8447DE2525E65CC700B3CE66 /* Notification.Name+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification.Name+.swift"; sourceTree = "<group>"; };
 		84488AB125C2F66E00173A19 /* NewPostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostView.swift; sourceTree = "<group>"; };
 		84488AB525C2F67E00173A19 /* NewPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostViewController.swift; sourceTree = "<group>"; };
 		84488AB825C2F69F00173A19 /* NewPostInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostInteractor.swift; sourceTree = "<group>"; };
@@ -589,6 +591,7 @@
 				84F9694025D14E9D0004D838 /* UIImageView+realImageRect.swift */,
 				845D0B9B25D6BB9000AD3122 /* UIButton+imageDownload.swift */,
 				8451111E25DFBD9F008A13E5 /* Date+timeAgo.swift */,
+				8447DE2525E65CC700B3CE66 /* Notification.Name+.swift */,
 				845C5E0425CC2C3D002A2E16 /* UIViewController+add.swift */,
 			);
 			path = Extensions;
@@ -729,6 +732,7 @@
 				8454924925C19805005AB7DA /* TabBarController.swift in Sources */,
 				845CC20425C7ED110051372D /* SharePostInteractor.swift in Sources */,
 				8445928F25B41E6D0028EE6A /* RegistrationViewController.swift in Sources */,
+				8447DE2625E65CC700B3CE66 /* Notification.Name+.swift in Sources */,
 				84488ABF25C2F6AD00173A19 /* NewPostRouter.swift in Sources */,
 				845C5E0225CC2733002A2E16 /* SpinnerView.swift in Sources */,
 				845C284625CAC22A000731B3 /* FirebaseAuthService.swift in Sources */,
