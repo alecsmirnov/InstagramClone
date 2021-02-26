@@ -236,7 +236,7 @@ extension SharePostView: UITextViewDelegate {
 extension SharePostView: KeyboardAppearanceListenerDelegate {
     func keyboardAppearanceListener(
         _ listener: KeyboardAppearanceListener,
-        keyboardWillShowWith notification: NSNotification
+        keyboardWillShowWith notification: Notification
     ) {
         guard
             let userInfo = notification.userInfo,
@@ -250,7 +250,7 @@ extension SharePostView: KeyboardAppearanceListenerDelegate {
     
     func keyboardAppearanceListener(
         _ listener: KeyboardAppearanceListener,
-        keyboardWillHideWith notification: NSNotification
+        keyboardWillHideWith notification: Notification
     ) {
         guard
             let userInfo = notification.userInfo,

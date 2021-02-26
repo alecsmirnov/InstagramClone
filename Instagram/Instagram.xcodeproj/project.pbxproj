@@ -42,6 +42,13 @@
 		845464F925DA660A00DCD136 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464F825DA660A00DCD136 /* UserCell.swift */; };
 		8454650E25DA85B100DCD136 /* FirebaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454650D25DA85B100DCD136 /* FirebaseObserver.swift */; };
 		8454924925C19805005AB7DA /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454924825C19805005AB7DA /* TabBarController.swift */; };
+		84549B7B25E8CED9006CC21D /* CommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549B7A25E8CED9006CC21D /* CommentsView.swift */; };
+		84549B7F25E8CEE7006CC21D /* CommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549B7E25E8CEE7006CC21D /* CommentsViewController.swift */; };
+		84549B8225E8CEF7006CC21D /* CommentsInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549B8125E8CEF7006CC21D /* CommentsInteractor.swift */; };
+		84549B8525E8CF0B006CC21D /* CommentsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549B8425E8CF0B006CC21D /* CommentsPresenter.swift */; };
+		84549B8825E8CF14006CC21D /* CommentsRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549B8725E8CF14006CC21D /* CommentsRouter.swift */; };
+		84549B8B25E8CF1B006CC21D /* CommentsAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549B8A25E8CF1B006CC21D /* CommentsAssembly.swift */; };
+		84549B8E25E8DB6E006CC21D /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549B8D25E8DB6E006CC21D /* CommentCell.swift */; };
 		84549BA425BEC7AE007D24E2 /* SimpleAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BA325BEC7AE007D24E2 /* SimpleAlert.swift */; };
 		84549BAD25BEEC32007D24E2 /* LaunchAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BAC25BEEC32007D24E2 /* LaunchAssembly.swift */; };
 		84549BB025BEFC2F007D24E2 /* RootViewControllerSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BAF25BEFC2F007D24E2 /* RootViewControllerSwitcher.swift */; };
@@ -148,6 +155,13 @@
 		845464F825DA660A00DCD136 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		8454650D25DA85B100DCD136 /* FirebaseObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseObserver.swift; sourceTree = "<group>"; };
 		8454924825C19805005AB7DA /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		84549B7A25E8CED9006CC21D /* CommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsView.swift; sourceTree = "<group>"; };
+		84549B7E25E8CEE7006CC21D /* CommentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewController.swift; sourceTree = "<group>"; };
+		84549B8125E8CEF7006CC21D /* CommentsInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsInteractor.swift; sourceTree = "<group>"; };
+		84549B8425E8CF0B006CC21D /* CommentsPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsPresenter.swift; sourceTree = "<group>"; };
+		84549B8725E8CF14006CC21D /* CommentsRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsRouter.swift; sourceTree = "<group>"; };
+		84549B8A25E8CF1B006CC21D /* CommentsAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsAssembly.swift; sourceTree = "<group>"; };
+		84549B8D25E8DB6E006CC21D /* CommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
 		84549BA325BEC7AE007D24E2 /* SimpleAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleAlert.swift; sourceTree = "<group>"; };
 		84549BAC25BEEC32007D24E2 /* LaunchAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAssembly.swift; sourceTree = "<group>"; };
 		84549BAF25BEFC2F007D24E2 /* RootViewControllerSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewControllerSwitcher.swift; sourceTree = "<group>"; };
@@ -324,6 +338,28 @@
 				845464E925DA5C7E00DCD136 /* SearchViewController.swift */,
 			);
 			path = SearchView;
+			sourceTree = "<group>";
+		};
+		84549B7825E8CEA2006CC21D /* Comments */ = {
+			isa = PBXGroup;
+			children = (
+				84549B7925E8CEB5006CC21D /* CommentsView */,
+				84549B8125E8CEF7006CC21D /* CommentsInteractor.swift */,
+				84549B8425E8CF0B006CC21D /* CommentsPresenter.swift */,
+				84549B8725E8CF14006CC21D /* CommentsRouter.swift */,
+				84549B8A25E8CF1B006CC21D /* CommentsAssembly.swift */,
+			);
+			path = Comments;
+			sourceTree = "<group>";
+		};
+		84549B7925E8CEB5006CC21D /* CommentsView */ = {
+			isa = PBXGroup;
+			children = (
+				84549B8D25E8DB6E006CC21D /* CommentCell.swift */,
+				84549B7A25E8CED9006CC21D /* CommentsView.swift */,
+				84549B7E25E8CEE7006CC21D /* CommentsViewController.swift */,
+			);
+			path = CommentsView;
 			sourceTree = "<group>";
 		};
 		84549BAB25BEEC21007D24E2 /* Launch */ = {
@@ -503,6 +539,7 @@
 				8445928D25B41E3A0028EE6A /* Registration */,
 				845504F125B1C26300715C3B /* TabBar */,
 				84B2E67225B0507200B27457 /* Home */,
+				84549B7825E8CEA2006CC21D /* Comments */,
 				845464E425DA5C0A00DCD136 /* Search */,
 				84488AB025C2F54B00173A19 /* NewPost */,
 				845CC1FA25C7EB960051372D /* SharePost */,
@@ -716,6 +753,7 @@
 				845BB22825C9759600B01721 /* SharePostConstants.swift in Sources */,
 				845D0B9925D6AA9000AD3122 /* UserPost.swift in Sources */,
 				84E660AC25B955460036AB9F /* ProfileAssembly.swift in Sources */,
+				84549B8525E8CF0B006CC21D /* CommentsPresenter.swift in Sources */,
 				845455EE25BD8A220007C9A2 /* LoginPresenter.swift in Sources */,
 				84B2E68925B0513C00B27457 /* HomeAssembly.swift in Sources */,
 				84FE47C125B814AF0048F5AA /* ImagePicker.swift in Sources */,
@@ -746,14 +784,18 @@
 				8491A84025B47DE8009EDFC2 /* RegistrationInteractor.swift in Sources */,
 				845C5E0925CC2D7D002A2E16 /* SpinnerViewController.swift in Sources */,
 				845CC1FC25C7ECB70051372D /* SharePostView.swift in Sources */,
+				84549B7F25E8CEE7006CC21D /* CommentsViewController.swift in Sources */,
 				84F9694125D14E9D0004D838 /* UIImageView+realImageRect.swift in Sources */,
 				845B8CB225B6D2E100FE5ED6 /* FirebaseUserService.swift in Sources */,
+				84549B8E25E8DB6E006CC21D /* CommentCell.swift in Sources */,
 				845464F325DA5CD900DCD136 /* SearchRouter.swift in Sources */,
 				845CC20025C7ECE20051372D /* SharePostViewController.swift in Sources */,
 				84E6612825B9BC8A0036AB9F /* ProfileHeaderView.swift in Sources */,
 				84488AB925C2F69F00173A19 /* NewPostInteractor.swift in Sources */,
 				845B8C9925B6AC8000FE5ED6 /* InputValidation.swift in Sources */,
 				84488ABC25C2F6A600173A19 /* NewPostPresenter.swift in Sources */,
+				84549B8225E8CEF7006CC21D /* CommentsInteractor.swift in Sources */,
+				84549B8825E8CF14006CC21D /* CommentsRouter.swift in Sources */,
 				845C5E0525CC2C3D002A2E16 /* UIViewController+add.swift in Sources */,
 				845464F625DA5CE500DCD136 /* SearchAssembly.swift in Sources */,
 				8491A84625B47E03009EDFC2 /* RegistrationRouter.swift in Sources */,
@@ -773,6 +815,7 @@
 				84549BAD25BEEC32007D24E2 /* LaunchAssembly.swift in Sources */,
 				8454D3F625BFFC3F00D3CC9E /* SecureTextField.swift in Sources */,
 				845464F925DA660A00DCD136 /* UserCell.swift in Sources */,
+				84549B7B25E8CED9006CC21D /* CommentsView.swift in Sources */,
 				845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */,
 				845455D925BD467A0007C9A2 /* Profile.swift in Sources */,
 				845CC20C25C7ED470051372D /* SharePostRouter.swift in Sources */,
@@ -793,6 +836,7 @@
 				84549BB025BEFC2F007D24E2 /* RootViewControllerSwitcher.swift in Sources */,
 				8454650E25DA85B100DCD136 /* FirebaseObserver.swift in Sources */,
 				84E6610C25B9940A0036AB9F /* Registration.swift in Sources */,
+				84549B8B25E8CF1B006CC21D /* CommentsAssembly.swift in Sources */,
 				84B2E68625B0512100B27457 /* HomeRouter.swift in Sources */,
 				845CC20825C7ED370051372D /* SharePostPresenter.swift in Sources */,
 				845464E725DA5C6D00DCD136 /* SearchView.swift in Sources */,

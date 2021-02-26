@@ -84,4 +84,8 @@ extension HomeViewController: HomeViewDelegate {
     func homeView(_ homeView: HomeView, didSelectUser user: User) {
         presenter?.didSelectUser(user)
     }
+    
+    func homeView(_ homeView: HomeView, didSelectUserPostComment userPost: UserPost) {
+        presenter?.didSelectUserPostComment(userPost)
+    }
 }

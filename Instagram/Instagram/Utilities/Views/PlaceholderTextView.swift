@@ -129,21 +129,20 @@ private extension PlaceholderTextView {
 private extension PlaceholderTextView {
     func setupObservers() {
         NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(textDidChange),
-            name: UITextView.textDidChangeNotification,
-            object: nil)
+            forName: UITextView.textDidChangeNotification,
+            object: nil,
+            queue: nil) { [weak self] notification in
+            guard let object = notification.object as? UITextView, object == self else { return }
+            
+            UIView.animate(withDuration: Constants.placeholderLabelAnimationDuration) {
+                guard let self = self else { return }
+                
+                self.placeholderLabel.alpha = self.text.isEmpty ? 1 : 0
+            }
+        }
     }
     
     func removeObservers() {
         NotificationCenter.default.removeObserver(self, name: UITextView.textDidChangeNotification, object: nil)
-    }
-    
-    @objc func textDidChange(notification: NSNotification) {
-        guard self == notification.object as? UITextView else { return }
-        
-        UIView.animate(withDuration: Constants.placeholderLabelAnimationDuration) { [self] in
-            placeholderLabel.alpha = text.isEmpty ? 1 : 0
-        }
     }
 }

@@ -467,7 +467,7 @@ extension RegistrationView: ImagePickerDelegate {
 extension RegistrationView: KeyboardAppearanceListenerDelegate {
     func keyboardAppearanceListener(
         _ listener: KeyboardAppearanceListener,
-        keyboardWillShowWith notification: NSNotification
+        keyboardWillShowWith notification: Notification
     ) {        
         guard
             let userInfo = notification.userInfo,
@@ -482,7 +482,7 @@ extension RegistrationView: KeyboardAppearanceListenerDelegate {
     
     func keyboardAppearanceListener(
         _ listener: KeyboardAppearanceListener,
-        keyboardWillHideWith notification: NSNotification
+        keyboardWillHideWith notification: Notification
     ) {
         scrollView.contentInset.bottom = 0
         scrollView.verticalScrollIndicatorInsets.bottom = scrollView.contentInset.bottom

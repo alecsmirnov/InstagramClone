@@ -10,10 +10,10 @@ import UIKit
 protocol KeyboardAppearanceListenerDelegate: AnyObject {
     func keyboardAppearanceListener(
         _ listener: KeyboardAppearanceListener,
-        keyboardWillShowWith notification: NSNotification)
+        keyboardWillShowWith notification: Notification)
     func keyboardAppearanceListener(
         _ listener: KeyboardAppearanceListener,
-        keyboardWillHideWith notification: NSNotification)
+        keyboardWillHideWith notification: Notification)
 }
 
 final class KeyboardAppearanceListener {
@@ -39,25 +39,26 @@ final class KeyboardAppearanceListener {
 private extension KeyboardAppearanceListener {
     func setupKeyboardObservers() {
         NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillShow),
-            name: UIResponder.keyboardWillShowNotification, object: nil)
+            forName: UIResponder.keyboardWillShowNotification,
+            object: nil,
+            queue: nil) { [weak self] notification in
+            guard let self = self else { return }
+            
+            self.delegate?.keyboardAppearanceListener(self, keyboardWillShowWith: notification)
+        }
+        
         NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillHide),
-            name: UIResponder.keyboardWillHideNotification, object: nil)
+            forName: UIResponder.keyboardWillHideNotification,
+            object: nil,
+            queue: nil) { [weak self] notification in
+            guard let self = self else { return }
+            
+            self.delegate?.keyboardAppearanceListener(self, keyboardWillHideWith: notification)
+        }
     }
     
     func removeKeyboardObservers() {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
-    @objc func keyboardWillShow(notification: NSNotification) {
-        delegate?.keyboardAppearanceListener(self, keyboardWillShowWith: notification)
-    }
-    
-    @objc func keyboardWillHide(notification: NSNotification) {
-        delegate?.keyboardAppearanceListener(self, keyboardWillHideWith: notification)
     }
 }
