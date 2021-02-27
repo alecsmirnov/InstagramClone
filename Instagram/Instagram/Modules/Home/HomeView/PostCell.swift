@@ -12,6 +12,7 @@ protocol PostCellDelegate: AnyObject {
     func postCellDidPressOptionsButton(_ postCell: PostCell)
     
     func postCellDidPressLikeButton(_ postCell: PostCell)
+    func postCellDidPressUnlikeButton(_ postCell: PostCell)
     func postCellDidPressCommentButton(_ postCell: PostCell)
     func postCellDidPressSendButton(_ postCell: PostCell)
     func postCellDidPressBookmarkButton(_ postCell: PostCell)
@@ -24,6 +25,16 @@ final class PostCell: UICollectionViewCell {
     
     static var reuseIdentifier: String {
         return String(describing: self)
+    }
+    
+    var isLiked = false {
+        didSet {
+            if isLiked {
+                setupUnlikeButton()
+            } else {
+                setupLikeButton()
+            }
+        }
     }
     
     private var profileImageDataTask: URLSessionDataTask?
@@ -136,19 +147,23 @@ extension PostCell {
             timestampLabel.text = timeAgo + " ago"
         }
         
-        if userPost.isLiked {
-            likeButton.setImage(Images.likeFill, for: .normal)
-            likeButton.tintColor = .red
-        } else {
-            likeButton.setImage(Images.like?.withRenderingMode(.alwaysOriginal), for: .normal)
-            likeButton.tintColor = .clear
-        }
+        isLiked = userPost.isLiked
     }
 }
 
 // MARK: - Private Methods
 
 private extension PostCell {
+    func setupLikeButton() {
+        likeButton.setImage(Images.like?.withRenderingMode(.alwaysOriginal), for: .normal)
+        likeButton.tintColor = .clear
+    }
+    
+    func setupUnlikeButton() {
+        likeButton.setImage(Images.likeFill, for: .normal)
+        likeButton.tintColor = .red
+    }
+    
     func makeAttributedCaption(_ caption: String, withUsername username: String) -> NSAttributedString {
         let usernameAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.boldSystemFont(ofSize: captionLabel.font.pointSize),
@@ -440,7 +455,11 @@ private extension PostCell {
     }
     
     @objc func didPressLikeButton() {
-        delegate?.postCellDidPressLikeButton(self)
+        if isLiked {
+            delegate?.postCellDidPressUnlikeButton(self)
+        } else {
+            delegate?.postCellDidPressLikeButton(self)
+        }
     }
     
     @objc func didPressCommentButton() {

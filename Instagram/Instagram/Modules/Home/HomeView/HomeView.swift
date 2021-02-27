@@ -11,8 +11,9 @@ protocol HomeViewDelegate: AnyObject {
     func homeViewDidPullToRefresh(_ homeView: HomeView)
     
     func homeView(_ homeView: HomeView, didSelectUser user: User)
-    func homeView(_ homeView: HomeView, didPressLikeButton userPost: UserPost)
-    func homeView(_ homeView: HomeView, didSelectUserPostComment userPost: UserPost)
+    func homeView(_ homeView: HomeView, didPressLikeButtonAt index: Int, userPost: UserPost)
+    func homeView(_ homeView: HomeView, didPressUnlikeButtonAt index: Int, userPost: UserPost)
+    func homeView(_ homeView: HomeView, didPressCommentButton userPost: UserPost)
 }
 
 final class HomeView: UIView {
@@ -55,6 +56,21 @@ extension HomeView {
     
     func reloadData() {
         collectionView.reloadData()
+    }
+    
+    func reloadItem(at index: Int) {
+        let indexPath = IndexPath(row: index, section: 0)
+        collectionView.reloadItems(at: [indexPath])
+    }
+    
+    func showLikeButton(at index: Int) {
+        userPosts[index].isLiked = false
+        reloadItem(at: index)
+    }
+    
+    func showUnlikeButton(at index: Int) {
+        userPosts[index].isLiked = true
+        reloadItem(at: index)
     }
     
     func endRefreshing() {
@@ -177,7 +193,15 @@ extension HomeView: PostCellDelegate {
         
         let userPost = userPosts[indexPath.row]
         
-        delegate?.homeView(self, didPressLikeButton: userPost)
+        delegate?.homeView(self, didPressLikeButtonAt: indexPath.row, userPost: userPost)
+    }
+    
+    func postCellDidPressUnlikeButton(_ postCell: PostCell) {
+        guard let indexPath = collectionView.indexPath(for: postCell) else { return }
+        
+        let userPost = userPosts[indexPath.row]
+        
+        delegate?.homeView(self, didPressUnlikeButtonAt: indexPath.row, userPost: userPost)
     }
     
     func postCellDidPressCommentButton(_ postCell: PostCell) {
@@ -185,7 +209,7 @@ extension HomeView: PostCellDelegate {
         
         let userPost = userPosts[indexPath.row]
         
-        delegate?.homeView(self, didSelectUserPostComment: userPost)
+        delegate?.homeView(self, didPressCommentButton: userPost)
     }
     
     func postCellDidPressSendButton(_ postCell: PostCell) {

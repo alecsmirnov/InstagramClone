@@ -13,14 +13,20 @@ protocol IHomeInteractor: AnyObject {
     
     func observeUserPosts()
     
-    func likePost(_ userPost: UserPost)
-    func unlikePost(_ userPost: UserPost)
+    func likePost(_ userPost: UserPost, at index: Int)
+    func unlikePost(_ userPost: UserPost, at index: Int)
 }
 
 protocol IHomeInteractorOutput: AnyObject {
     func fetchUserPostSuccess(_ userPost: UserPost)
     func fetchUserPostNoResult()
     func fetchUserPostFailure()
+    
+    func likePostSuccess(at index: Int)
+    func likePostFailure(at index: Int)
+    
+    func unlikePostSuccess(at index: Int)
+    func unlikePostFailure(at index: Int)
 }
 
 final class HomeInteractor {
@@ -90,12 +96,14 @@ extension HomeInteractor: IHomeInteractor {
                     }
                 }
             case .failure(let error):
+                presenter?.fetchUserPostFailure()
+                
                 print("Failed to fetch following users identifiers: \(error.localizedDescription)")
             }
         }
     }
     
-    func likePost(_ userPost: UserPost) {
+    func likePost(_ userPost: UserPost, at index: Int) {
         guard
             let postOwnerIdentifier = userPost.postOwnerIdentifier,
             let postIdentifier = userPost.postIdentifier,
@@ -106,16 +114,20 @@ extension HomeInteractor: IHomeInteractor {
         
         FirebasePostService.likePost(
             postOwnerIdentifier: postOwnerIdentifier,
-            postIdentifier: postIdentifier, userIdentifier: userIdentifier) { error in
+            postIdentifier: postIdentifier, userIdentifier: userIdentifier) { [self] error in
             if let error = error {
-                print("Failed to like post: \(error.localizedDescription)")
+                presenter?.likePostFailure(at: index)
+                
+                print("Failed to like post at index \(index): \(error.localizedDescription)")
             } else {
-                print("Post successfully liked")
+                presenter?.likePostSuccess(at: index)
+                
+                print("Post at index \(index) successfully liked")
             }
         }
     }
     
-    func unlikePost(_ userPost: UserPost) {
+    func unlikePost(_ userPost: UserPost, at index: Int) {
         guard
             let postOwnerIdentifier = userPost.postOwnerIdentifier,
             let postIdentifier = userPost.postIdentifier,
@@ -126,11 +138,15 @@ extension HomeInteractor: IHomeInteractor {
         
         FirebasePostService.unlikePost(
             postOwnerIdentifier: postOwnerIdentifier,
-            postIdentifier: postIdentifier, userIdentifier: userIdentifier) { error in
+            postIdentifier: postIdentifier, userIdentifier: userIdentifier) { [self] error in
             if let error = error {
-                print("Failed to unlike post: \(error.localizedDescription)")
+                presenter?.unlikePostFailure(at: index)
+                
+                print("Failed to unlike post at index \(index): \(error.localizedDescription)")
             } else {
-                print("Post successfully unliked")
+                presenter?.unlikePostSuccess(at: index)
+                
+                print("Post at index \(index) successfully unliked")
             }
         }
     }

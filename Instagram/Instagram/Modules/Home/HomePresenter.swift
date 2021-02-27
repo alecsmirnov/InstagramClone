@@ -10,7 +10,8 @@ protocol IHomePresenter: AnyObject {
     
     func didPullToRefresh()
     func didSelectUser(_ user: User)
-    func didPressLikeButton(_ userPost: UserPost)
+    func didPressLikeButton(at index: Int, userPost: UserPost)
+    func didPressUnlikeButton(at index: Int, userPost: UserPost)
     func didSelectUserPostComment(_ userPost: UserPost)
 }
 
@@ -22,9 +23,6 @@ final class HomePresenter {
     var router: IHomeRouter?
     
     private var isRefreshed = false
-    
-    // TODO: For test. REMOVE
-    private var isLiked = true
     
     // MARK: Initialization
     
@@ -50,14 +48,12 @@ extension HomePresenter: IHomePresenter {
         router?.showProfileViewController(user: user)
     }
     
-    func didPressLikeButton(_ userPost: UserPost) {
-        if isLiked {
-            interactor?.unlikePost(userPost)
-        } else {
-            interactor?.likePost(userPost)
-        }
-        
-        isLiked.toggle()
+    func didPressLikeButton(at index: Int, userPost: UserPost) {
+        interactor?.likePost(userPost, at: index)
+    }
+    
+    func didPressUnlikeButton(at index: Int, userPost: UserPost) {
+        interactor?.unlikePost(userPost, at: index)
     }
     
     func didSelectUserPostComment(_ userPost: UserPost) {
@@ -88,5 +84,21 @@ extension HomePresenter: IHomeInteractorOutput {
     
     func fetchUserPostFailure() {
         fetchUserPostNoResult()
+    }
+    
+    func likePostSuccess(at index: Int) {
+        viewController?.showUnlikeButton(at: index)
+    }
+    
+    func likePostFailure(at index: Int) {
+        
+    }
+    
+    func unlikePostSuccess(at index: Int) {
+        viewController?.showLikeButton(at: index)
+    }
+    
+    func unlikePostFailure(at index: Int) {
+        
     }
 }

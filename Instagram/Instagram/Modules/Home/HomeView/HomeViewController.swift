@@ -14,6 +14,9 @@ protocol IHomeViewController: AnyObject {
     func reloadData()
     
     func endRefreshing()
+    
+    func showLikeButton(at index: Int)
+    func showUnlikeButton(at index: Int)
 }
 
 final class HomeViewController: CustomViewController<HomeView> {
@@ -64,6 +67,14 @@ extension HomeViewController: IHomeViewController {
     func endRefreshing() {
         customView?.endRefreshing()
     }
+    
+    func showLikeButton(at index: Int) {
+        customView?.showLikeButton(at: index)
+    }
+    
+    func showUnlikeButton(at index: Int) {
+        customView?.showUnlikeButton(at: index)
+    }
 }
 
 // MARK: - Appearance
@@ -85,11 +96,15 @@ extension HomeViewController: HomeViewDelegate {
         presenter?.didSelectUser(user)
     }
     
-    func homeView(_ homeView: HomeView, didPressLikeButton userPost: UserPost) {
-        presenter?.didPressLikeButton(userPost)
+    func homeView(_ homeView: HomeView, didPressLikeButtonAt index: Int, userPost: UserPost) {
+        presenter?.didPressLikeButton(at: index, userPost: userPost)
     }
     
-    func homeView(_ homeView: HomeView, didSelectUserPostComment userPost: UserPost) {
+    func homeView(_ homeView: HomeView, didPressUnlikeButtonAt index: Int, userPost: UserPost) {
+        presenter?.didPressUnlikeButton(at: index, userPost: userPost)
+    }
+    
+    func homeView(_ homeView: HomeView, didPressCommentButton userPost: UserPost) {
         presenter?.didSelectUserPostComment(userPost)
     }
 }
