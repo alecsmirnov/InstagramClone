@@ -14,11 +14,23 @@ final class CommentCell: UICollectionViewCell {
         return String(describing: self)
     }
     
+    private var profileImageDataTask: URLSessionDataTask?
+    
     // MARK: Subviews
     
-    private let imageView = UIImageView()
+    private let profileImageView = UIImageView()
     private let captionLabel = UILabel()
     //private let timestampLabel = UILabel()
+    
+    // MARK: Lifecycle
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        profileImageDataTask?.cancel()
+        
+        profileImageView.image = nil
+    }
     
     // MARK: Initialization
     
@@ -37,8 +49,12 @@ final class CommentCell: UICollectionViewCell {
 // MARK: - Public Methods
 
 extension CommentCell {
-    func configure(with text: String) {
-        captionLabel.text = text
+    func configure(with userComment: UserComment) {
+        if let profileImageURL = userComment.user.profileImageURL {
+            profileImageDataTask = profileImageView.download(urlString: profileImageURL)
+        }
+        
+        captionLabel.text = userComment.comment.caption
     }
 }
 
@@ -46,14 +62,14 @@ extension CommentCell {
 
 private extension CommentCell {
     func setupAppearance() {
-        setupImageViewAppearance()
+        setupProfileImageViewAppearance()
         setupCaptionLabelAppearance()
     }
     
-    func setupImageViewAppearance() {
-        imageView.backgroundColor = .red
-        imageView.layer.masksToBounds = true
-        imageView.layer.cornerRadius = 40 / 2
+    func setupProfileImageViewAppearance() {
+        profileImageView.backgroundColor = .red
+        profileImageView.layer.masksToBounds = true
+        profileImageView.layer.cornerRadius = 40 / 2
     }
     
     func setupCaptionLabelAppearance() {
@@ -68,30 +84,30 @@ private extension CommentCell {
     func setupLayout() {
         setupSubviews()
         
-        setupImageViewLayout()
+        setupProfileImageViewLayout()
         setupCaptionLabelLayout()
     }
     
     func setupSubviews() {
-        contentView.addSubview(imageView)
+        contentView.addSubview(profileImageView)
         contentView.addSubview(captionLabel)
     }
     
-    func setupImageViewLayout() {
-        imageView.translatesAutoresizingMaskIntoConstraints = false
+    func setupProfileImageViewLayout() {
+        profileImageView.translatesAutoresizingMaskIntoConstraints = false
         
-        let imageViewBottomConstraint = imageView.bottomAnchor.constraint(
+        let profileImageViewBottomConstraint = profileImageView.bottomAnchor.constraint(
             lessThanOrEqualTo: contentView.bottomAnchor,
             constant: -10)
         
-        imageViewBottomConstraint.priority = .defaultLow
-        imageViewBottomConstraint.isActive = true
+        profileImageViewBottomConstraint.priority = .defaultLow
+        profileImageViewBottomConstraint.isActive = true
         
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            imageView.heightAnchor.constraint(equalToConstant: 40),
-            imageView.widthAnchor.constraint(equalToConstant: 40),
+            profileImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            profileImageView.heightAnchor.constraint(equalToConstant: 40),
+            profileImageView.widthAnchor.constraint(equalToConstant: 40),
         ])
     }
     
@@ -99,9 +115,9 @@ private extension CommentCell {
         captionLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            captionLabel.topAnchor.constraint(equalTo: imageView.topAnchor),
+            captionLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
             captionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            captionLabel.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 10),
+            captionLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 10),
             captionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
         ])
     }

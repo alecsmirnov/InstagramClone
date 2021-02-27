@@ -47,7 +47,9 @@ extension HomePresenter: IHomePresenter {
     }
     
     func didSelectUserPostComment(_ userPost: UserPost) {
-        router?.showCommentsViewController()
+        guard let userComment = userPost.userComment else { return }
+        
+        router?.showCommentsViewController(userComment: userComment)
     }
 }
 

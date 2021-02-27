@@ -15,6 +15,12 @@ final class PlaceholderTextView: UITextView {
         set { placeholderLabel.text = newValue }
     }
     
+    override var text: String! {
+        didSet {
+            updatePlaceholder()
+        }
+    }
+    
     override var font: UIFont? {
         didSet {
             placeholderLabel.font = font
@@ -61,15 +67,11 @@ final class PlaceholderTextView: UITextView {
     }
 }
 
-// MARK: - Public Methods
+// MARK: - Private Methods
 
-extension PlaceholderTextView {
-    func showPlaceholder() {
-        placeholderLabel.isHidden = false
-    }
-    
-    func hidePlaceholder() {
-        placeholderLabel.isHidden = true
+private extension PlaceholderTextView {
+    func updatePlaceholder() {
+        placeholderLabel.alpha = text.isEmpty ? 1 : 0
     }
 }
 
@@ -135,9 +137,7 @@ private extension PlaceholderTextView {
             guard let object = notification.object as? UITextView, object == self else { return }
             
             UIView.animate(withDuration: Constants.placeholderLabelAnimationDuration) {
-                guard let self = self else { return }
-                
-                self.placeholderLabel.alpha = self.text.isEmpty ? 1 : 0
+                self?.updatePlaceholder()
             }
         }
     }

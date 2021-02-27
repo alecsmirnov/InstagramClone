@@ -7,7 +7,7 @@
 
 protocol IHomeRouter: AnyObject {
     func showProfileViewController(user: User)
-    func showCommentsViewController()
+    func showCommentsViewController(userComment: UserComment)
 }
 
 final class HomeRouter {
@@ -27,8 +27,8 @@ extension HomeRouter: IHomeRouter {
         viewController?.navigationController?.pushViewController(profileViewController, animated: true)
     }
     
-    func showCommentsViewController() {
-        let commentsViewController = CommentsAssembly.createCommentsViewController()
+    func showCommentsViewController(userComment: UserComment) {
+        let commentsViewController = CommentsAssembly.createCommentsViewController(userComment: userComment)
         
         viewController?.navigationController?.pushViewController(commentsViewController, animated: true)
     }

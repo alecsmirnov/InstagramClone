@@ -52,6 +52,8 @@
 		84549BA425BEC7AE007D24E2 /* SimpleAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BA325BEC7AE007D24E2 /* SimpleAlert.swift */; };
 		84549BAD25BEEC32007D24E2 /* LaunchAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BAC25BEEC32007D24E2 /* LaunchAssembly.swift */; };
 		84549BB025BEFC2F007D24E2 /* RootViewControllerSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BAF25BEFC2F007D24E2 /* RootViewControllerSwitcher.swift */; };
+		8454C5FC25EA1F3D000C44FD /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C5FB25EA1F3D000C44FD /* Comment.swift */; };
+		8454C5FF25EA2242000C44FD /* UserComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C5FE25EA2242000C44FD /* UserComment.swift */; };
 		8454D3F625BFFC3F00D3CC9E /* SecureTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D3F525BFFC3F00D3CC9E /* SecureTextField.swift */; };
 		8454E52E25D3E765003A89E7 /* UIImage+instagramCrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454E52D25D3E765003A89E7 /* UIImage+instagramCrop.swift */; };
 		845504F825B1C38300715C3B /* TabBarAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845504F725B1C38300715C3B /* TabBarAssembly.swift */; };
@@ -165,6 +167,8 @@
 		84549BA325BEC7AE007D24E2 /* SimpleAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleAlert.swift; sourceTree = "<group>"; };
 		84549BAC25BEEC32007D24E2 /* LaunchAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAssembly.swift; sourceTree = "<group>"; };
 		84549BAF25BEFC2F007D24E2 /* RootViewControllerSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewControllerSwitcher.swift; sourceTree = "<group>"; };
+		8454C5FB25EA1F3D000C44FD /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
+		8454C5FE25EA2242000C44FD /* UserComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserComment.swift; sourceTree = "<group>"; };
 		8454D3F525BFFC3F00D3CC9E /* SecureTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureTextField.swift; sourceTree = "<group>"; };
 		8454E52D25D3E765003A89E7 /* UIImage+instagramCrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+instagramCrop.swift"; sourceTree = "<group>"; };
 		845504F725B1C38300715C3B /* TabBarAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarAssembly.swift; sourceTree = "<group>"; };
@@ -613,7 +617,9 @@
 				845455D125BD44380007C9A2 /* UserPublicInfo.swift */,
 				845455D425BD44460007C9A2 /* UserPrivateInfo.swift */,
 				845C283F25CAB51A000731B3 /* Post.swift */,
+				8454C5FB25EA1F3D000C44FD /* Comment.swift */,
 				845D0B9825D6AA9000AD3122 /* UserPost.swift */,
+				8454C5FE25EA2242000C44FD /* UserComment.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -758,6 +764,7 @@
 				84B2E68925B0513C00B27457 /* HomeAssembly.swift in Sources */,
 				84FE47C125B814AF0048F5AA /* ImagePicker.swift in Sources */,
 				8491A84325B47DF6009EDFC2 /* RegistrationPresenter.swift in Sources */,
+				8454C5FC25EA1F3D000C44FD /* Comment.swift in Sources */,
 				845455F425BD8A410007C9A2 /* LoginAssembly.swift in Sources */,
 				84B2E65725B0267700B27457 /* HomeViewController.swift in Sources */,
 				845504F825B1C38300715C3B /* TabBarAssembly.swift in Sources */,
@@ -783,6 +790,7 @@
 				84E6609C25B955050036AB9F /* ProfileViewController.swift in Sources */,
 				8491A84025B47DE8009EDFC2 /* RegistrationInteractor.swift in Sources */,
 				845C5E0925CC2D7D002A2E16 /* SpinnerViewController.swift in Sources */,
+				8454C5FF25EA2242000C44FD /* UserComment.swift in Sources */,
 				845CC1FC25C7ECB70051372D /* SharePostView.swift in Sources */,
 				84549B7F25E8CEE7006CC21D /* CommentsViewController.swift in Sources */,
 				84F9694125D14E9D0004D838 /* UIImageView+realImageRect.swift in Sources */,

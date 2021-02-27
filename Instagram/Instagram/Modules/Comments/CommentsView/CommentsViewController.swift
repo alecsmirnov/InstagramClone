@@ -8,7 +8,9 @@
 import UIKit
 
 protocol ICommentsViewController: AnyObject {
+    func appendUserComment(_ userComment: UserComment)
     
+    func reloadData()
 }
 
 final class CommentsViewController: CustomViewController<CommentsView> {
@@ -20,6 +22,10 @@ final class CommentsViewController: CustomViewController<CommentsView> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        customView?.delegate = self
+        
+        presenter?.viewDidLoad()
         
         setupAppearance()
     }
@@ -40,7 +46,13 @@ final class CommentsViewController: CustomViewController<CommentsView> {
 // MARK: - ICommentsViewController
 
 extension CommentsViewController: ICommentsViewController {
+    func appendUserComment(_ userComment: UserComment) {
+        customView?.appendUserComment(userComment)
+    }
     
+    func reloadData() {
+        customView?.reloadData()
+    }
 }
 
 // MARK: - Appearance
@@ -69,5 +81,13 @@ private extension CommentsViewController {
             action: nil)
         
         navigationItem.rightBarButtonItem = sendBarButtonItem
+    }
+}
+
+// MARK: - CommentsViewDelegate
+
+extension CommentsViewController: CommentsViewDelegate {
+    func commentsView(_ commentsView: CommentsView, didPressSendButton commentText: String) {
+        presenter?.didPressSendButton(commentText: commentText)
     }
 }

@@ -7,8 +7,16 @@
 
 import UIKit
 
+protocol CommentsViewDelegate: AnyObject {
+    func commentsView(_ commentsView: CommentsView, didPressSendButton commentText: String)
+}
+
 final class CommentsView: UIView {
     // MARK: Properties
+    
+    weak var delegate: CommentsViewDelegate?
+    
+    private var usersComments = [UserComment]()
     
     private var collectionViewHeightMinInitialized = false
     private var collectionViewHeightMin: CGFloat = 0
@@ -59,6 +67,18 @@ final class CommentsView: UIView {
     }
 }
 
+// MARK: - Private Methods
+
+extension CommentsView {
+    func appendUserComment(_ userComment: UserComment) {
+        usersComments.append(userComment)
+    }
+    
+    func reloadData() {
+        collectionView.reloadData()
+    }
+}
+
 // MARK: - Appearance
 
 private extension CommentsView {
@@ -86,7 +106,7 @@ private extension CommentsView {
     }
     
     func setupCommentTextViewAppearance() {
-        commentTextView.placeholderText = "Enter commentary..."
+        commentTextView.placeholderText = "Enter comment..."
         commentTextView.isScrollEnabled = false
         
         commentTextView.delegate = self
@@ -94,6 +114,34 @@ private extension CommentsView {
     
     func setupSendButtonAppearance() {
         sendButton.setTitle("Send", for: .normal)
+        sendButton.isEnabled = false
+        
+//        let didPressSendButtonAction = UIAction { [weak self] _ in
+//            guard
+//                let self = self,
+//                let text = self.commentTextView.text
+//            else {
+//                return
+//            }
+//
+//            self.commentTextView.text = nil
+//            self.sendButton.isEnabled = false
+//
+//            self.delegate?.commentsView(self, didPressSendButton: text)
+//        }
+//
+//        sendButton.addAction(didPressSendButtonAction, for: .touchUpInside)
+        
+        sendButton.addTarget(self, action: #selector(didPressSendButton), for: .touchUpInside)
+    }
+    
+    @objc func didPressSendButton() {
+        guard let text = commentTextView.text else { return }
+        
+        commentTextView.text = nil
+        sendButton.isEnabled = false
+        
+        delegate?.commentsView(self, didPressSendButton: text)
     }
 }
 
@@ -224,7 +272,7 @@ private extension CommentsView {
 
 extension CommentsView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return usersComments.count
     }
 
     func collectionView(
@@ -238,12 +286,7 @@ extension CommentsView: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
-        // TODO: FOR TEST. REMOVE
-        
-        //let text = "test test test test test test test test test test test test test test test test test test test test"
-        let text = "test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test"
-        
-        cell.configure(with: text)
+        cell.configure(with: usersComments[indexPath.row])
         
         return cell
     }
@@ -280,6 +323,14 @@ extension CommentsView: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         updateContainerViewHeightLayout()
+        
+        if let text = textView.text {
+            if text.isEmpty {
+                sendButton.isEnabled = false
+            } else if text.count <= 1 {
+                sendButton.isEnabled = true
+            }
+        }
     }
 }
 

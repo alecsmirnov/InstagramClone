@@ -121,10 +121,13 @@ extension FirebasePostService {
         let postAddedHandle = userPostsReference.observe(.childAdded) { snapshot in
             guard
                 let value = snapshot.value as? [String: Any],
-                let post = JSONCoding.fromDictionary(value, type: Post.self)
+                var post = JSONCoding.fromDictionary(value, type: Post.self)
             else {
                 return
             }
+            
+            let postIdentifier = snapshot.key
+            post.identifier = postIdentifier
                 
             completion(.success(post))
         } withCancel: { error in
@@ -148,13 +151,15 @@ extension FirebasePostService {
             
             var posts = [Post]()
             
-            value.forEach { identifier, postValue in
+            value.forEach { postIdentifier, postValue in
                 guard
                     let postDictionary = postValue as? [String: Any],
-                    let post = JSONCoding.fromDictionary(postDictionary, type: Post.self)
+                    var post = JSONCoding.fromDictionary(postDictionary, type: Post.self)
                 else {
                     return
                 }
+                
+                post.identifier = postIdentifier
                 
                 posts.append(post)
             }
@@ -165,6 +170,62 @@ extension FirebasePostService {
         } withCancel: { error in
             completion(.failure(error))
         }
+    }
+    
+    static func sendComment(
+        postOwnerIdentifier: String,
+        postIdentifier: String,
+        senderIdentifier: String,
+        text: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        let comment = Comment(
+            senderIdentifier: senderIdentifier,
+            caption: text,
+            timestamp: Date().timeIntervalSince1970)
+        
+        if let commentDictionary = JSONCoding.toDictionary(comment) {
+            databaseReference
+                .child(FirebaseTables.comments)
+                .child(postOwnerIdentifier)
+                .child(postIdentifier)
+                .childByAutoId()
+                .setValue(commentDictionary) { error, _ in
+                completion(error)
+            }
+        }
+    }
+    
+    static func observeComments(
+        postOwnerIdentifier: String,
+        postIdentifier: String,
+        completion: @escaping (Result<Comment, Error>) -> Void
+    ) -> FirebaseObserver {
+        let userCommentsReference = databaseReference
+            .child(FirebaseTables.comments)
+            .child(postOwnerIdentifier)
+            .child(postIdentifier)
+        
+        let commentAddedHandle = userCommentsReference.observe(.childAdded) { snapshot in
+            guard
+                let value = snapshot.value as? [String: Any],
+                var comment = JSONCoding.fromDictionary(value, type: Comment.self)
+            else {
+                return
+            }
+            
+            let commentIdentifier = snapshot.key
+            comment.identifier = commentIdentifier
+            comment.postIdentifier = postIdentifier
+                
+            completion(.success(comment))
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+        
+        let commentAddedObserver = FirebaseObserver(reference: userCommentsReference, handle: commentAddedHandle)
+        
+        return commentAddedObserver
     }
 }
 

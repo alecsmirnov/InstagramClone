@@ -13,6 +13,8 @@ struct Post {
     let imageAspectRatio: CGFloat
     let caption: String?
     let timestamp: TimeInterval
+    
+    var identifier: String?
 }
 
 // MARK: - Codable
