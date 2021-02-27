@@ -13,7 +13,8 @@ protocol IHomeInteractor: AnyObject {
     
     func observeUserPosts()
     
-    func likePose(_ userPost: UserPost)
+    func likePost(_ userPost: UserPost)
+    func unlikePost(_ userPost: UserPost)
 }
 
 protocol IHomeInteractorOutput: AnyObject {
@@ -94,7 +95,7 @@ extension HomeInteractor: IHomeInteractor {
         }
     }
     
-    func likePose(_ userPost: UserPost) {
+    func likePost(_ userPost: UserPost) {
         guard
             let postOwnerIdentifier = userPost.user.identifier,
             let postIdentifier = userPost.post.identifier,
@@ -110,6 +111,26 @@ extension HomeInteractor: IHomeInteractor {
                 print("Failed to like post: \(error.localizedDescription)")
             } else {
                 print("Post successfully liked")
+            }
+        }
+    }
+    
+    func unlikePost(_ userPost: UserPost) {
+        guard
+            let postOwnerIdentifier = userPost.user.identifier,
+            let postIdentifier = userPost.post.identifier,
+            let userIdentifier = FirebaseAuthService.currentUserIdentifier
+        else {
+            return
+        }
+        
+        FirebasePostService.unlikePost(
+            postOwnerIdentifier: postOwnerIdentifier,
+            postIdentifier: postIdentifier, userIdentifier: userIdentifier) { error in
+            if let error = error {
+                print("Failed to unlike post: \(error.localizedDescription)")
+            } else {
+                print("Post successfully unliked")
             }
         }
     }

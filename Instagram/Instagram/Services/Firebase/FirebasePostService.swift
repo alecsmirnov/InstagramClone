@@ -287,7 +287,33 @@ extension FirebasePostService {
         userIdentifier: String,
         completion: @escaping (Error?) -> Void
     ) {
-        
+        isLikedPost(
+            postOwnerIdentifier: postOwnerIdentifier,
+            postIdentifier: postIdentifier,
+            userIdentifier: userIdentifier) { result in
+            switch result {
+            case .success(let isLiked):
+                guard isLiked else { return }
+                
+                removeLikeRecord(
+                    postOwnerIdentifier: postOwnerIdentifier,
+                    postIdentifier: postIdentifier,
+                    userIdentifier: userIdentifier) { error in
+                    guard error == nil else {
+                        completion(error)
+                        
+                        return
+                    }
+                    
+                    decreaseLikesCount(
+                        postOwnerIdentifier: postOwnerIdentifier,
+                        postIdentifier: postIdentifier,
+                        completion: completion)
+                }
+            case .failure(let error):
+                completion(error)
+            }
+        }
     }
 }
 
@@ -334,6 +360,22 @@ private extension FirebasePostService {
         }
     }
     
+    static func removeLikeRecord(
+        postOwnerIdentifier: String,
+        postIdentifier: String,
+        userIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.postsLikes)
+            .child(postOwnerIdentifier)
+            .child(postIdentifier)
+            .child(userIdentifier)
+            .removeValue { error, _ in
+            completion(error)
+        }
+    }
+    
     static func increaseLikesCount(
         postOwnerIdentifier: String,
         postIdentifier: String,
@@ -371,7 +413,7 @@ private extension FirebasePostService {
             if let count = mutableData.value as? Int, 0 < count {
                 mutableData.value = count - 1
             }
-
+            
             return TransactionResult.success(withValue: mutableData)
         } andCompletionBlock: { error, _, _ in
             completion(error)

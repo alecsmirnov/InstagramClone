@@ -23,6 +23,9 @@ final class HomePresenter {
     
     private var isRefreshed = false
     
+    // TODO: For test. REMOVE
+    private var isLiked = true
+    
     // MARK: Initialization
     
     deinit {
@@ -48,7 +51,13 @@ extension HomePresenter: IHomePresenter {
     }
     
     func didPressLikeButton(_ userPost: UserPost) {
-        interactor?.likePose(userPost)
+        if isLiked {
+            interactor?.unlikePost(userPost)
+        } else {
+            interactor?.likePost(userPost)
+        }
+        
+        isLiked.toggle()
     }
     
     func didSelectUserPostComment(_ userPost: UserPost) {
