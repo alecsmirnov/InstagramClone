@@ -58,8 +58,13 @@ final class CommentsView: UIView {
         
         setupAppearance()
         setupLayout()
+        setupGestures()
         
         keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
+        
+        // Need In inputAccessoryView
+        // TODO: Later
+        //collectionView.keyboardDismissMode = .interactive
     }
     
     required init?(coder: NSCoder) {
@@ -72,6 +77,7 @@ final class CommentsView: UIView {
 extension CommentsView {
     func appendUserComment(_ userComment: UserComment) {
         usersComments.append(userComment)
+        usersComments.sort { $0.comment.timestamp < $1.comment.timestamp }
     }
     
     func reloadData() {
@@ -265,6 +271,20 @@ private extension CommentsView {
                 equalTo: containerView.trailingAnchor,
                 constant: -Metrics.commentTextViewHorizontalSpace),
         ])
+    }
+}
+
+// MARK: - Gestures
+
+private extension CommentsView {
+    func setupGestures() {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        
+        addGestureRecognizer(tapGestureRecognizer)
+    }
+    
+    @objc func dismissKeyboard() {
+        endEditing(true)
     }
 }
 

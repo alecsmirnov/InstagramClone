@@ -49,11 +49,11 @@ final class PostCell: UICollectionViewCell {
         
         static let timestampLabelTopSpace: CGFloat = 6
         static let timestampLabelBottomSpace: CGFloat = 22
-        static let timestampLabelFontSize: CGFloat = 14
     }
     
     private enum Colors {
         static let profileImageButtonBorder = UIColor.systemGray5
+        static let timestampLabelText = UIColor.systemGray
     }
     
     private enum Images {
@@ -174,9 +174,9 @@ private extension PostCell {
     }
     
     func setupProfileImageButtonAppearance() {
-        profileImageButton.layer.cornerRadius = Metrics.profileImageButtonSize / 2
+        profileImageButton.contentMode = .scaleAspectFill
         profileImageButton.layer.masksToBounds = true
-        
+        profileImageButton.layer.cornerRadius = Metrics.profileImageButtonSize / 2
         profileImageButton.layer.borderWidth = Metrics.profileImageButtonBorderWidth
         profileImageButton.layer.borderColor = Colors.profileImageButtonBorder.cgColor
     }
@@ -203,8 +203,8 @@ private extension PostCell {
     }
     
     func setupTimestampLabelAppearance() {
-        timestampLabel.textColor = .systemGray
-        timestampLabel.font = .systemFont(ofSize: Metrics.timestampLabelFontSize)
+        timestampLabel.textColor = Colors.timestampLabelText
+        timestampLabel.font = .systemFont(ofSize: captionLabel.font.pointSize - 2)
     }
 }
 
