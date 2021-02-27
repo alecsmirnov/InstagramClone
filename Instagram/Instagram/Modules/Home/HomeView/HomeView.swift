@@ -45,7 +45,7 @@ final class HomeView: UIView {
 
 extension HomeView {    
     func appendUserPost(_ userPost: UserPost) {
-        userPosts.insert(userPost, at: 0)
+        userPosts.append(userPost)
         userPosts.sort { $0.post.timestamp > $1.post.timestamp }
     }
     

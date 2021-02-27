@@ -8,6 +8,8 @@
 struct UserPost {
     let user: User
     let post: Post
+    
+    var isLiked = false
 }
 
 extension UserPost {
@@ -28,5 +30,13 @@ extension UserPost {
             postIdentifier: postIdentifier)
         
         return comment
+    }
+    
+    var postOwnerIdentifier: String? {
+        return user.identifier
+    }
+    
+    var postIdentifier: String? {
+        return post.identifier
     }
 }

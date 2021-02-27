@@ -97,8 +97,8 @@ extension HomeInteractor: IHomeInteractor {
     
     func likePost(_ userPost: UserPost) {
         guard
-            let postOwnerIdentifier = userPost.user.identifier,
-            let postIdentifier = userPost.post.identifier,
+            let postOwnerIdentifier = userPost.postOwnerIdentifier,
+            let postIdentifier = userPost.postIdentifier,
             let userIdentifier = FirebaseAuthService.currentUserIdentifier
         else {
             return
@@ -117,8 +117,8 @@ extension HomeInteractor: IHomeInteractor {
     
     func unlikePost(_ userPost: UserPost) {
         guard
-            let postOwnerIdentifier = userPost.user.identifier,
-            let postIdentifier = userPost.post.identifier,
+            let postOwnerIdentifier = userPost.postOwnerIdentifier,
+            let postIdentifier = userPost.postIdentifier,
             let userIdentifier = FirebaseAuthService.currentUserIdentifier
         else {
             return
@@ -143,14 +143,32 @@ private extension HomeInteractor {
         FirebaseUserService.fetchUser(withIdentifier: identifier) { [self] result in
             switch result {
             case .success(let user):
-                guard let identifier = user.identifier else { return }
-                
                 observePosts(identifier: identifier) { result in
                     switch result {
                     case .success(let post):
-                        let userPost = UserPost(user: user, post: post)
+                        var userPost = UserPost(user: user, post: post)
                         
-                        completion(.success(userPost))
+                        guard
+                            let postOwnerIdentifier = userPost.postOwnerIdentifier,
+                            let postIdentifier = userPost.postIdentifier,
+                            let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier
+                        else {
+                            return
+                        }
+                        
+                        FirebasePostService.isLikedPost(
+                            postOwnerIdentifier: postOwnerIdentifier,
+                            postIdentifier: postIdentifier,
+                            userIdentifier: currentUserIdentifier) { result in
+                            switch result {
+                            case .success(let isLiked):
+                                userPost.isLiked = isLiked
+                                
+                                completion(.success(userPost))
+                            case .failure(let error):
+                                completion(.failure(error))
+                            }
+                        }
                     case .failure(let error):
                         completion(.failure(error))
                     }

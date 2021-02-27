@@ -33,14 +33,6 @@ final class CommentsPresenter {
         return userComment
     }
     
-    var postOwnerIdentifier: String? {
-        return userPost?.user.identifier
-    }
-    
-    var postIdentifier: String? {
-        return userPost?.post.identifier
-    }
-    
     // MARK: Initialization
     
     deinit {
@@ -58,8 +50,8 @@ extension CommentsPresenter: ICommentsPresenter {
         }
         
         guard
-            let postOwnerIdentifier = postOwnerIdentifier,
-            let postIdentifier = postIdentifier
+            let postOwnerIdentifier = userPost?.postOwnerIdentifier,
+            let postIdentifier = userPost?.postIdentifier
         else {
             return
         }
@@ -69,8 +61,8 @@ extension CommentsPresenter: ICommentsPresenter {
     
     func didPressSendButton(commentText: String) {
         guard
-            let postOwnerIdentifier = postOwnerIdentifier,
-            let postIdentifier = postIdentifier
+            let postOwnerIdentifier = userPost?.postOwnerIdentifier,
+            let postIdentifier = userPost?.postIdentifier
         else {
             return
         }

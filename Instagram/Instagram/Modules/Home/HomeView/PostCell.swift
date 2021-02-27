@@ -59,6 +59,7 @@ final class PostCell: UICollectionViewCell {
     private enum Images {
         static let options = UIImage(systemName: "ellipsis")
         static let like = UIImage(systemName: "heart")
+        static let likeFill = UIImage(systemName: "heart.fill")
         static let comment = UIImage(systemName: "bubble.right")
         static let send = UIImage(systemName: "paperplane")
         static let bookmark = UIImage(systemName: "bookmark")
@@ -133,6 +134,14 @@ extension PostCell {
         
         if let timeAgo = Date(timeIntervalSince1970: userPost.post.timestamp).timeAgo() {
             timestampLabel.text = timeAgo + " ago"
+        }
+        
+        if userPost.isLiked {
+            likeButton.setImage(Images.likeFill, for: .normal)
+            likeButton.tintColor = .red
+        } else {
+            likeButton.setImage(Images.like?.withRenderingMode(.alwaysOriginal), for: .normal)
+            likeButton.tintColor = .clear
         }
     }
 }
