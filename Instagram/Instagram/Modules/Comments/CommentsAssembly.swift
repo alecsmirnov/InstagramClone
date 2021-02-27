@@ -6,7 +6,7 @@
 //
 
 enum CommentsAssembly {
-    static func createCommentsViewController(userComment: UserComment) -> CommentsViewController {
+    static func createCommentsViewController(userPost: UserPost) -> CommentsViewController {
         let viewController = CommentsViewController()
         
         let interactor = CommentsInteractor()
@@ -21,7 +21,7 @@ enum CommentsAssembly {
         presenter.interactor = interactor
         presenter.router = router
         
-        presenter.postOwnerComment = userComment
+        presenter.userPost = userPost
         
         return viewController
     }

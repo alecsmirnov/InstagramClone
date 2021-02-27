@@ -11,7 +11,7 @@ struct UserPost {
 }
 
 extension UserPost {
-    var userComment: UserComment? {
+    var comment: Comment? {
         guard
             let senderIdentifier = user.identifier,
             let postIdentifier = post.identifier,
@@ -27,16 +27,6 @@ extension UserPost {
             identifier: nil,
             postIdentifier: postIdentifier)
         
-        let userComment = UserComment(user: user, comment: comment)
-        
-        return userComment
+        return comment
     }
 }
-
-/*
-struct UserPostComment {
-    let user: User
-    let post: Post
-    let comment: Comment?
-}
- */

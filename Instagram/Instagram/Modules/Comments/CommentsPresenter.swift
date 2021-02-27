@@ -12,18 +12,39 @@ protocol ICommentsPresenter: AnyObject {
 }
 
 final class CommentsPresenter {
+    // MARK: Properties
+    
     weak var viewController: ICommentsViewController?
     var interactor: ICommentsInteractor?
     var router: ICommentsRouter?
     
-    var postOwnerComment: UserComment?
+    var userPost: UserPost?
+    
+    var postOwnerComment: UserComment? {
+        guard
+            let user = userPost?.user,
+            let comment = userPost?.comment
+        else {
+            return nil
+        }
+        
+        let userComment = UserComment(user: user, comment: comment)
+        
+        return userComment
+    }
     
     var postOwnerIdentifier: String? {
-        return postOwnerComment?.user.identifier
+        return userPost?.user.identifier
     }
     
     var postIdentifier: String? {
-        return postOwnerComment?.comment.postIdentifier
+        return userPost?.post.identifier
+    }
+    
+    // MARK: Initialization
+    
+    deinit {
+        interactor?.removeObserver()
     }
 }
 
@@ -31,16 +52,17 @@ final class CommentsPresenter {
 
 extension CommentsPresenter: ICommentsPresenter {
     func viewDidLoad() {
+        if let postOwnerComment = postOwnerComment {
+            viewController?.appendUserComment(postOwnerComment)
+            viewController?.reloadData()
+        }
+        
         guard
-            let postOwnerComment = postOwnerComment,
             let postOwnerIdentifier = postOwnerIdentifier,
             let postIdentifier = postIdentifier
         else {
             return
         }
-        
-        viewController?.appendUserComment(postOwnerComment)
-        viewController?.reloadData()
         
         interactor?.observeUsersComments(postOwnerIdentifier: postOwnerIdentifier, postIdentifier: postIdentifier)
     }
