@@ -92,6 +92,8 @@ final class PostCell: UICollectionViewCell {
         
         profileImageButton.setImage(nil, for: .normal)
         imageView.image = nil
+        
+        captionLabel.attributedText = nil
     }
     
     // MARK: Initialization
