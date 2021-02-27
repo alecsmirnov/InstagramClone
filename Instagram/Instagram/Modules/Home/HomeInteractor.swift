@@ -12,6 +12,8 @@ protocol IHomeInteractor: AnyObject {
     func removeAllObservers()
     
     func observeUserPosts()
+    
+    func likePose(_ userPost: UserPost)
 }
 
 protocol IHomeInteractorOutput: AnyObject {
@@ -88,6 +90,26 @@ extension HomeInteractor: IHomeInteractor {
                 }
             case .failure(let error):
                 print("Failed to fetch following users identifiers: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func likePose(_ userPost: UserPost) {
+        guard
+            let postOwnerIdentifier = userPost.user.identifier,
+            let postIdentifier = userPost.post.identifier,
+            let userIdentifier = FirebaseAuthService.currentUserIdentifier
+        else {
+            return
+        }
+        
+        FirebasePostService.likePost(
+            postOwnerIdentifier: postOwnerIdentifier,
+            postIdentifier: postIdentifier, userIdentifier: userIdentifier) { error in
+            if let error = error {
+                print("Failed to like post: \(error.localizedDescription)")
+            } else {
+                print("Post successfully liked")
             }
         }
     }

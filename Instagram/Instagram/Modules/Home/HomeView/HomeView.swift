@@ -11,6 +11,7 @@ protocol HomeViewDelegate: AnyObject {
     func homeViewDidPullToRefresh(_ homeView: HomeView)
     
     func homeView(_ homeView: HomeView, didSelectUser user: User)
+    func homeView(_ homeView: HomeView, didPressLikeButton userPost: UserPost)
     func homeView(_ homeView: HomeView, didSelectUserPostComment userPost: UserPost)
 }
 
@@ -172,7 +173,11 @@ extension HomeView: PostCellDelegate {
     }
     
     func postCellDidPressLikeButton(_ postCell: PostCell) {
+        guard let indexPath = collectionView.indexPath(for: postCell) else { return }
         
+        let userPost = userPosts[indexPath.row]
+        
+        delegate?.homeView(self, didPressLikeButton: userPost)
     }
     
     func postCellDidPressCommentButton(_ postCell: PostCell) {

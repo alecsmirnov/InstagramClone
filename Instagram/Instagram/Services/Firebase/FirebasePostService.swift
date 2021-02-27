@@ -186,7 +186,7 @@ extension FirebasePostService {
         
         if let commentDictionary = JSONCoding.toDictionary(comment) {
             databaseReference
-                .child(FirebaseTables.comments)
+                .child(FirebaseTables.postsComments)
                 .child(postOwnerIdentifier)
                 .child(postIdentifier)
                 .childByAutoId()
@@ -202,7 +202,7 @@ extension FirebasePostService {
         completion: @escaping (Result<Comment, Error>) -> Void
     ) -> FirebaseObserver {
         let userCommentsReference = databaseReference
-            .child(FirebaseTables.comments)
+            .child(FirebaseTables.postsComments)
             .child(postOwnerIdentifier)
             .child(postIdentifier)
         
@@ -226,6 +226,68 @@ extension FirebasePostService {
         let commentAddedObserver = FirebaseObserver(reference: userCommentsReference, handle: commentAddedHandle)
         
         return commentAddedObserver
+    }
+    
+    static func isLikedPost(
+        postOwnerIdentifier: String,
+        postIdentifier: String,
+        userIdentifier: String,
+        completion: @escaping (Result<Bool, Error>) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.postsLikes)
+            .child(postOwnerIdentifier)
+            .child(postIdentifier)
+            .child(userIdentifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            completion(.success(snapshot.exists()))
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+    }
+    
+    static func likePost(
+        postOwnerIdentifier: String,
+        postIdentifier: String,
+        userIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        isLikedPost(
+            postOwnerIdentifier: postOwnerIdentifier,
+            postIdentifier: postIdentifier,
+            userIdentifier: userIdentifier) { result in
+            switch result {
+            case .success(let isLiked):
+                guard !isLiked else { return }
+                
+                createLikeRecord(
+                    postOwnerIdentifier: postOwnerIdentifier,
+                    postIdentifier: postIdentifier,
+                    userIdentifier: userIdentifier) { error in
+                    guard error == nil else {
+                        completion(error)
+                        
+                        return
+                    }
+                    
+                    increaseLikesCount(
+                        postOwnerIdentifier: postOwnerIdentifier,
+                        postIdentifier: postIdentifier,
+                        completion: completion)
+                }
+            case .failure(let error):
+                completion(error)
+            }
+        }
+    }
+    
+    static func unlikePost(
+        postOwnerIdentifier: String,
+        postIdentifier: String,
+        userIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        
     }
 }
 
@@ -253,6 +315,66 @@ private extension FirebasePostService {
                 .setValue(postDictionary) { error, _ in
                 completion(error)
             }
+        }
+    }
+    
+    static func createLikeRecord(
+        postOwnerIdentifier: String,
+        postIdentifier: String,
+        userIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.postsLikes)
+            .child(postOwnerIdentifier)
+            .child(postIdentifier)
+            .child(userIdentifier)
+            .setValue(0) { error, _ in
+            completion(error)
+        }
+    }
+    
+    static func increaseLikesCount(
+        postOwnerIdentifier: String,
+        postIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.postsLikesCount)
+            .child(postOwnerIdentifier)
+            .child(postIdentifier)
+            .runTransactionBlock { mutableData in
+            var defaultCount = 1
+            
+            if let count = mutableData.value as? Int {
+                defaultCount += count
+            }
+            
+            mutableData.value = defaultCount
+            
+            return TransactionResult.success(withValue: mutableData)
+        } andCompletionBlock: { error, _, _ in
+            completion(error)
+        }
+    }
+    
+    static func decreaseLikesCount(
+        postOwnerIdentifier: String,
+        postIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.postsLikesCount)
+            .child(postOwnerIdentifier)
+            .child(postIdentifier)
+            .runTransactionBlock { mutableData in
+            if let count = mutableData.value as? Int, 0 < count {
+                mutableData.value = count - 1
+            }
+
+            return TransactionResult.success(withValue: mutableData)
+        } andCompletionBlock: { error, _, _ in
+            completion(error)
         }
     }
 }

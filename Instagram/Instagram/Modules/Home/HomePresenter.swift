@@ -10,6 +10,7 @@ protocol IHomePresenter: AnyObject {
     
     func didPullToRefresh()
     func didSelectUser(_ user: User)
+    func didPressLikeButton(_ userPost: UserPost)
     func didSelectUserPostComment(_ userPost: UserPost)
 }
 
@@ -44,6 +45,10 @@ extension HomePresenter: IHomePresenter {
     
     func didSelectUser(_ user: User) {
         router?.showProfileViewController(user: user)
+    }
+    
+    func didPressLikeButton(_ userPost: UserPost) {
+        interactor?.likePose(userPost)
     }
     
     func didSelectUserPostComment(_ userPost: UserPost) {

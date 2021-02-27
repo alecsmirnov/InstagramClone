@@ -11,7 +11,9 @@ enum FirebaseTables {
     static let usersPrivateInfo = "users_private_info"
     
     static let posts = "posts"
-    static let comments = "comments"
+    static let postsComments = "posts_comments"
+    static let postsLikes = "posts_likes"
+    static let postsLikesCount = "posts_likes_count"
     
     static let followers = "followers"
     static let following = "following"
