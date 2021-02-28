@@ -99,7 +99,7 @@ extension FirebasePostService {
         FirebaseStorageService.storeUserPostImageData(imageData, identifier: identifier) { result in
             switch result {
             case .success(let imageURL):
-                createPostRecord(
+                createPostFeedRecord(
                     identifier: identifier,
                     imageURL: imageURL,
                     imageAspectRatio: imageAspectRatio,
@@ -323,10 +323,26 @@ extension FirebasePostService {
     }
 }
 
+// MARK: - Private Types
+
+fileprivate struct FeedValue {
+    let userIdentifier: String
+    let postIdentifier: String
+    let timestamp: TimeInterval
+}
+
+extension FeedValue: Codable {
+    enum CodingKeys: String, CodingKey {
+        case userIdentifier = "user_identifier"
+        case postIdentifier = "post_identifier"
+        case timestamp
+    }
+}
+
 // MARK: - Private Methods
 
 private extension FirebasePostService {
-    static func createPostRecord(
+    static func createPostFeedRecord(
         identifier: String,
         imageURL: String,
         imageAspectRatio: CGFloat,
@@ -340,11 +356,68 @@ private extension FirebasePostService {
             timestamp: Date().timeIntervalSince1970)
         
         if let postDictionary = JSONCoding.toDictionary(post) {
-            databaseReference
-                .child(FirebaseTables.posts)
-                .child(identifier)
-                .childByAutoId()
+            let postReference = databaseReference.child(FirebaseTables.posts).child(identifier)
+            
+            guard let postIdentifier = postReference.childByAutoId().key else { return }
+            
+            postReference
+                .child(postIdentifier)
                 .setValue(postDictionary) { error, _ in
+                guard error == nil else {
+                    completion(error)
+                    
+                    return
+                }
+                
+                // TODO: Test... or not
+                
+                createUserFeedRecord(
+                    userIdentifier: identifier,
+                    postOwnerIdentifier: identifier,
+                    postIdentifier: postIdentifier,
+                    timestamp: post.timestamp,
+                    completion: completion)
+                
+                FirebaseUserService.fetchFollowersUsersIdentifiers(identifier: identifier) { result in
+                    switch result {
+                    case .success(let followersIdentifiers):
+                        guard !followersIdentifiers.isEmpty else {
+                            completion(nil)
+                            
+                            return
+                        }
+                        
+                        followersIdentifiers.forEach { followerIdentifier in
+                            createUserFeedRecord(
+                                userIdentifier: followerIdentifier,
+                                postOwnerIdentifier: identifier,
+                                postIdentifier: postIdentifier,
+                                timestamp: post.timestamp,
+                                completion: completion)
+                        }
+                    case .failure(let error):
+                        completion(error)
+                    }
+                }
+            }
+        }
+    }
+    
+    static func createUserFeedRecord(
+        userIdentifier: String,
+        postOwnerIdentifier: String,
+        postIdentifier: String,
+        timestamp: TimeInterval,
+        completion: @escaping (Error?) -> Void
+    ) {
+        let feedValue = FeedValue(userIdentifier: userIdentifier, postIdentifier: postIdentifier, timestamp: timestamp)
+        
+        if let feedValueDictionary = JSONCoding.toDictionary(feedValue) {
+            databaseReference
+                .child(FirebaseTables.usersFeed)
+                .child(postOwnerIdentifier)
+                .child(postIdentifier)
+                .setValue(feedValueDictionary) { error, _ in
                 completion(error)
             }
         }

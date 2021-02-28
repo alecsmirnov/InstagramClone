@@ -206,6 +206,7 @@ private extension ProfileView {
 }
 
 // MARK: - UICollectionViewDataSource
+
 extension ProfileView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return posts.count

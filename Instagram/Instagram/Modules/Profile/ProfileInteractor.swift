@@ -139,7 +139,7 @@ extension ProfileInteractor: IProfileInteractor {
     func followUser(identifier: String) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebaseUserService.followUser(
+        FirebaseUserService.followUserAndFeed(
             currentUserIdentifier: currentUserIdentifier,
             followingUserIdentifier: identifier) { [self] error in
             if let error = error {
@@ -155,7 +155,7 @@ extension ProfileInteractor: IProfileInteractor {
     func unfollowUser(identifier: String) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebaseUserService.unfollowUser(
+        FirebaseUserService.unfollowUserAndFeed(
             currentUserIdentifier: currentUserIdentifier,
             followingUserIdentifier: identifier) { [self] error in
             if let error = error {

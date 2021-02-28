@@ -167,7 +167,7 @@ extension FirebaseUserService {
         }
     }
     
-    static func followUser(
+    static func followUserAndFeed(
         currentUserIdentifier: String,
         followingUserIdentifier: String,
         completion: @escaping (Error?) -> Void
@@ -197,12 +197,17 @@ extension FirebaseUserService {
                     return
                 }
                 
-                completion(nil)
+                // TODO: Test... or not
+                
+                copyUserFeed(
+                    currentUserIdentifier: currentUserIdentifier,
+                    followingUserIdentifier: followingUserIdentifier,
+                    completion: completion)
             }
         }
     }
     
-    static func unfollowUser(
+    static func unfollowUserAndFeed(
         currentUserIdentifier: String,
         followingUserIdentifier: String,
         completion: @escaping (Error?) -> Void
@@ -229,27 +234,34 @@ extension FirebaseUserService {
                     return
                 }
                 
-                completion(nil)
+                //completion(nil)
+                
+                removeUserFeed(
+                    currentUserIdentifier: currentUserIdentifier,
+                    followingUserIdentifier: followingUserIdentifier,
+                    completion: completion)
             }
         }
+    }
+    
+    static func fetchFollowersUsersIdentifiers(
+        identifier: String,
+        completion: @escaping (Result<[String], Error>) -> Void
+    ) {
+        fetchFollowingFollowersUsersIdentifiers(
+            identifier: identifier,
+            table: FirebaseTables.followers,
+            completion: completion)
     }
     
     static func fetchFollowingUsersIdentifiers(
         identifier: String,
         completion: @escaping (Result<[String], Error>) -> Void
     ) {
-        databaseReference
-            .child(FirebaseTables.following)
-            .child(identifier)
-            .observeSingleEvent(of: .value) { snapshot in
-            guard let value = snapshot.value as? [String: Any] else { return }
-            
-            let identifiers = value.keys.map { $0.description }
-            
-            completion(.success(identifiers))
-        } withCancel: { error in
-            completion(.failure(error))
-        }
+        fetchFollowingFollowersUsersIdentifiers(
+            identifier: identifier,
+            table: FirebaseTables.following,
+            completion: completion)
     }
 }
 
@@ -295,6 +307,84 @@ private extension FirebaseUserService {
                     }
                 }
             }
+        }
+    }
+    
+    static func copyUserFeed(
+        currentUserIdentifier: String,
+        followingUserIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.usersFeed)
+            .child(followingUserIdentifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            guard let value = snapshot.value as? [String: Any] else {
+                completion(nil)
+                
+                return
+            }
+            
+            databaseReference
+                .child(FirebaseTables.usersFeed)
+                .child(currentUserIdentifier)
+                .setValue(value) { error, _ in
+                completion(error)
+            }
+        } withCancel: { error in
+            completion(error)
+        }
+    }
+    
+    static func removeUserFeed(
+        currentUserIdentifier: String,
+        followingUserIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.usersFeed)
+            .child(followingUserIdentifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            guard let value = snapshot.value as? [String: Any] else {
+                completion(nil)
+                
+                return
+            }
+                
+            value.keys.forEach { postIdentifier in
+                databaseReference
+                    .child(FirebaseTables.usersFeed)
+                    .child(currentUserIdentifier)
+                    .child(postIdentifier)
+                    .removeValue()
+            }
+            
+            completion(nil)
+        } withCancel: { error in
+            completion(error)
+        }
+    }
+    
+    static func fetchFollowingFollowersUsersIdentifiers(
+        identifier: String,
+        table: String,
+        completion: @escaping (Result<[String], Error>) -> Void
+    ) {
+        databaseReference
+            .child(table)
+            .child(identifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            guard let value = snapshot.value as? [String: Any] else {
+                completion(.success([]))
+                
+                return
+            }
+            
+            let identifiers = value.keys.map { $0.description }
+            
+            completion(.success(identifiers))
+        } withCancel: { error in
+            completion(.failure(error))
         }
     }
 }
