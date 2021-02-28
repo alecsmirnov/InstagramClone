@@ -5,6 +5,8 @@
 //  Created by Admin on 21.01.2021.
 //
 
+import Foundation
+
 protocol IProfileInteractor: AnyObject {
     func fetchCurrentUser()
     func fetchPosts(identifier: String)
@@ -46,7 +48,7 @@ final class ProfileInteractor {
     
     weak var presenter: IProfileInteractorOutput?
     
-    private var lastRequestedPostIdentifier: String?
+    private var lastRequestedPostTimestamp: TimeInterval?
     
     // MARK: Constants
     
@@ -74,10 +76,10 @@ extension ProfileInteractor: IProfileInteractor {
     }
     
     func fetchPosts(identifier: String) {
-        FirebasePostService.fetchPosts(identifier: identifier, limit: Requests.postLimit) { [self] result in
+        FirebasePostService.fetchLastPosts(identifier: identifier, limit: Requests.postLimit) { [self] result in
             switch result {
             case .success(let posts):
-                lastRequestedPostIdentifier = posts.last?.identifier
+                lastRequestedPostTimestamp = posts.first?.timestamp
                 
                 presenter?.fetchPostsSuccess(posts)
             case .failure(let error):
@@ -89,15 +91,16 @@ extension ProfileInteractor: IProfileInteractor {
     }
     
     func requestPosts(identifier: String) {
-        guard let lastRequestedPostIdentifier = lastRequestedPostIdentifier else { return }
+        guard let lastRequestedPostTimestamp = lastRequestedPostTimestamp else { return }
         
-        FirebasePostService.fetchPosts(
+        FirebasePostService.fetchLastPosts(
             identifier: identifier,
-            afterPostIdentifier: lastRequestedPostIdentifier,
+            afterTimestamp: lastRequestedPostTimestamp,
+            dropFirst: true,
             limit: Requests.postLimit) { [self] result in
             switch result {
             case .success(let posts):
-                self.lastRequestedPostIdentifier = posts.last?.identifier
+                self.lastRequestedPostTimestamp = posts.first?.timestamp
                 
                 if !posts.isEmpty {
                     presenter?.fetchPostsSuccess(posts)

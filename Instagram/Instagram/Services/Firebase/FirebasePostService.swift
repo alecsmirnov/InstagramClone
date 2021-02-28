@@ -139,76 +139,40 @@ extension FirebasePostService {
         return postAddedObserver
     }
     
-    static func fetchPosts(
+    static func fetchLastPosts(
         identifier: String,
-        limit: UInt? = nil,
-        completion: @escaping (Result<[Post], Error>) -> Void
-    ) {
-        let databaseQuery: DatabaseQuery
-        
-        if let limit = limit {
-            databaseQuery = databaseReference.child(FirebaseTables.posts).child(identifier).queryLimited(toFirst: limit)
-        } else {
-            databaseQuery = databaseReference.child(FirebaseTables.posts).child(identifier)
-        }
-
-        databaseQuery.observeSingleEvent(of: .value) { snapshot in
-            guard let value = snapshot.value as? [String: Any] else { return }
-            
-            var posts = [Post]()
-            
-            value.forEach { postIdentifier, postValue in
-                guard
-                    let postDictionary = postValue as? [String: Any],
-                    var post = JSONCoding.fromDictionary(postDictionary, type: Post.self)
-                else {
-                    return
-                }
-                
-                post.identifier = postIdentifier
-                posts.append(post)
-            }
-            
-            posts.sort { $0.timestamp < $1.timestamp }
-            
-            completion(.success(posts))
-        } withCancel: { error in
-            completion(.failure(error))
-        }
-    }
-    
-    static func fetchPosts(
-        identifier: String,
-        afterPostIdentifier: String,
+        afterTimestamp: TimeInterval = Date().timeIntervalSince1970,
+        dropFirst: Bool = false,
         limit: UInt,
         completion: @escaping (Result<[Post], Error>) -> Void
     ) {
         databaseReference
             .child(FirebaseTables.posts)
             .child(identifier)
-            .queryOrderedByKey()
-            .queryStarting(atValue: afterPostIdentifier)
-            .queryLimited(toFirst: limit + 1)
+            .queryOrdered(byChild: Post.CodingKeys.timestamp.rawValue)
+            .queryEnding(atValue: afterTimestamp)
+            .queryLimited(toLast: limit)
             .observeSingleEvent(of: .value) { snapshot in
-            guard let value = snapshot.value as? [String: Any] else { return }
-            
             var posts = [Post]()
             
-            value.forEach { postIdentifier, postValue in
+            for child in snapshot.children {
                 guard
-                    let postDictionary = postValue as? [String: Any],
-                    var post = JSONCoding.fromDictionary(postDictionary, type: Post.self)
+                    let snapshot = child as? DataSnapshot,
+                    let value = snapshot.value as? [String: Any],
+                    var post = JSONCoding.fromDictionary(value, type: Post.self)
                 else {
                     return
                 }
-                
-                post.identifier = postIdentifier
+                    
+                post.identifier = snapshot.key
                 posts.append(post)
             }
-                
-            posts.sort { $0.timestamp < $1.timestamp }
             
-            completion(.success(Array(posts.dropFirst())))
+            if dropFirst {
+                completion(.success(Array(posts.dropLast())))
+            } else {
+                completion(.success(posts))
+            }
         } withCancel: { error in
             completion(.failure(error))
         }

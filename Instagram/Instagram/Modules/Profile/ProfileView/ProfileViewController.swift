@@ -109,8 +109,8 @@ private extension ProfileViewController {
 // MARK: - ProfileViewDelegate
 
 extension ProfileViewController: ProfileViewDelegate {
-    func profileViewDidRequestPost(_ view: ProfileView) {
-        presenter?.didRequestPost()
+    func profileViewDidRequestPosts(_ view: ProfileView) {
+        presenter?.didRequestPosts()
     }
     
     func profileViewDidPressFollowersButton(_ view: ProfileView) {

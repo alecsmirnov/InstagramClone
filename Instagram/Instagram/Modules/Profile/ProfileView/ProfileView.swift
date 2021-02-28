@@ -8,7 +8,7 @@
 import UIKit
 
 protocol ProfileViewDelegate: AnyObject {
-    func profileViewDidRequestPost(_ view: ProfileView)
+    func profileViewDidRequestPosts(_ view: ProfileView)
     
     func profileViewDidPressFollowersButton(_ view: ProfileView)
     func profileViewDidPressFollowingButton(_ view: ProfileView)
@@ -216,7 +216,7 @@ extension ProfileView: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         if indexPath.row == posts.count - 1 {
-            delegate?.profileViewDidRequestPost(self)
+            delegate?.profileViewDidRequestPosts(self)
         }
         
         guard let cell = collectionView.dequeueReusableCell(

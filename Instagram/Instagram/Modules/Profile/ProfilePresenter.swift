@@ -10,7 +10,7 @@ import NotificationCenter
 protocol IProfilePresenter: AnyObject {
     func viewDidLoad()
     
-    func didRequestPost()
+    func didRequestPosts()
     
     func didPressEditButton()
     func didPressFollowButton()
@@ -59,7 +59,7 @@ extension ProfilePresenter: IProfilePresenter {
         }
     }
     
-    func didRequestPost() {
+    func didRequestPosts() {
         guard let identifier = user?.identifier else { return }
         
         interactor?.requestPosts(identifier: identifier)
