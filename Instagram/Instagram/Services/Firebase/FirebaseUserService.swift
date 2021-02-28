@@ -350,16 +350,24 @@ private extension FirebaseUserService {
                 
                 return
             }
+            
+            let dispatchGroup = DispatchGroup()
                 
             value.keys.forEach { postIdentifier in
+                dispatchGroup.enter()
+                
                 databaseReference
                     .child(FirebaseTables.usersFeed)
                     .child(currentUserIdentifier)
                     .child(postIdentifier)
                     .removeValue()
+                
+                dispatchGroup.leave()
             }
             
-            completion(nil)
+            dispatchGroup.notify(queue: .main) {
+                completion(nil)
+            }
         } withCancel: { error in
             completion(error)
         }
