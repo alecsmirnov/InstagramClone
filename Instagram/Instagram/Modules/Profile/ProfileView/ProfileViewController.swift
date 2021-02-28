@@ -10,6 +10,7 @@ import UIKit
 protocol IProfileViewController: AnyObject {
     func setUser(_ user: User)
     func setPosts(_ posts: [Post])
+    func appendPost(_ post: Post)
     
     func reloadData()
     
@@ -47,6 +48,10 @@ extension ProfileViewController: IProfileViewController {
     
     func setPosts(_ posts: [Post]) {
         customView?.setPosts(posts)
+    }
+    
+    func appendPost(_ post: Post) {
+        customView?.appendPost(post)
     }
     
     func reloadData() {
@@ -104,6 +109,10 @@ private extension ProfileViewController {
 // MARK: - ProfileViewDelegate
 
 extension ProfileViewController: ProfileViewDelegate {
+    func profileViewDidRequestPost(_ view: ProfileView) {
+        presenter?.didRequestPost()
+    }
+    
     func profileViewDidPressFollowersButton(_ view: ProfileView) {
         
     }

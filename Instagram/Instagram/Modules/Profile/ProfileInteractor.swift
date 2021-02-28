@@ -8,9 +8,9 @@
 protocol IProfileInteractor: AnyObject {
     func fetchCurrentUser()
     func fetchPosts(identifier: String)
+    func requestPosts(identifier: String)
     
-    func isCurrentUserIdentifier(_ identifier: String) -> Bool
-    
+    func isCurrentUser(identifier: String) -> Bool
     func isFollowingUser(identifier: String)
     
     func followUser(identifier: String)
@@ -28,6 +28,9 @@ protocol IProfileInteractorOutput: AnyObject {
     func fetchPostsSuccess(_ posts: [Post])
     func fetchPostsFailure()
     
+    func requestPostSuccess()
+    func requestPostFailure()
+    
     func isFollowingUserSuccess(_ isFollowing: Bool)
     func isFollowingUserFailure()
     
@@ -39,7 +42,17 @@ protocol IProfileInteractorOutput: AnyObject {
 }
 
 final class ProfileInteractor {
+    // MARK: Properties
+    
     weak var presenter: IProfileInteractorOutput?
+    
+    private var lastRequestedPostIdentifier: String?
+    
+    // MARK: Constants
+    
+    private enum Requests {
+        static let postLimit: UInt = 3
+    }
 }
 
 // MARK: - IProfileInteractor
@@ -61,19 +74,43 @@ extension ProfileInteractor: IProfileInteractor {
     }
     
     func fetchPosts(identifier: String) {
-        FirebasePostService.fetchAllPosts(identifier: identifier) { [self] result in
+        FirebasePostService.fetchPosts(identifier: identifier, limit: Requests.postLimit) { [self] result in
             switch result {
             case .success(let posts):
+                lastRequestedPostIdentifier = posts.last?.identifier
+                
                 presenter?.fetchPostsSuccess(posts)
             case .failure(let error):
                 presenter?.fetchPostsFailure()
-                
+
                 print("Failed to fetch posts: \(error.localizedDescription)")
             }
         }
     }
     
-    func isCurrentUserIdentifier(_ identifier: String) -> Bool {
+    func requestPosts(identifier: String) {
+        guard let lastRequestedPostIdentifier = lastRequestedPostIdentifier else { return }
+        
+        FirebasePostService.fetchPosts(
+            identifier: identifier,
+            afterPostIdentifier: lastRequestedPostIdentifier,
+            limit: Requests.postLimit) { [self] result in
+            switch result {
+            case .success(let posts):
+                self.lastRequestedPostIdentifier = posts.last?.identifier
+                
+                if !posts.isEmpty {
+                    presenter?.fetchPostsSuccess(posts)
+                }
+            case .failure(let error):
+                presenter?.fetchPostsFailure()
+
+                print("Failed to request posts: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func isCurrentUser(identifier: String) -> Bool {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return false }
         
         return identifier == currentUserIdentifier

@@ -8,6 +8,8 @@
 import UIKit
 
 protocol ProfileViewDelegate: AnyObject {
+    func profileViewDidRequestPost(_ view: ProfileView)
+    
     func profileViewDidPressFollowersButton(_ view: ProfileView)
     func profileViewDidPressFollowingButton(_ view: ProfileView)
     
@@ -74,6 +76,11 @@ extension ProfileView {
     
     func setPosts(_ posts: [Post]) {
         self.posts = posts
+    }
+    
+    func appendPost(_ post: Post) {
+        posts.append(post)
+        posts.sort { $0.timestamp > $1.timestamp }
     }
     
     func reloadData() {
@@ -208,6 +215,10 @@ extension ProfileView: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
+        if indexPath.row == posts.count - 1 {
+            delegate?.profileViewDidRequestPost(self)
+        }
+        
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: ProfilePostCell.reuseIdentifier,
             for: indexPath) as? ProfilePostCell

@@ -10,6 +10,8 @@ import NotificationCenter
 protocol IProfilePresenter: AnyObject {
     func viewDidLoad()
     
+    func didRequestPost()
+    
     func didPressEditButton()
     func didPressFollowButton()
     func didPressUnfollowButton()
@@ -38,7 +40,7 @@ final class ProfilePresenter {
 extension ProfilePresenter: IProfilePresenter {
     func viewDidLoad() {
         if let user = user, let identifier = user.identifier {
-            if interactor?.isCurrentUserIdentifier(identifier) ?? true {
+            if interactor?.isCurrentUser(identifier: identifier) ?? true {
                 viewController?.showEditButton()
             } else {
                 interactor?.isFollowingUser(identifier: identifier)
@@ -55,6 +57,12 @@ extension ProfilePresenter: IProfilePresenter {
             
             interactor?.fetchCurrentUser()
         }
+    }
+    
+    func didRequestPost() {
+        guard let identifier = user?.identifier else { return }
+        
+        interactor?.requestPosts(identifier: identifier)
     }
     
     func didPressEditButton() {
@@ -89,6 +97,8 @@ extension ProfilePresenter: IProfileInteractorOutput {
         viewController?.setUser(user)
         viewController?.reloadData()
         
+        self.user = user
+        
         if let identifier = user.identifier {
             interactor?.fetchPosts(identifier: identifier)
         }
@@ -99,11 +109,22 @@ extension ProfilePresenter: IProfileInteractorOutput {
     }
     
     func fetchPostsSuccess(_ posts: [Post]) {
-        viewController?.setPosts(posts)
+        posts.forEach { post in
+            viewController?.appendPost(post)
+        }
+        
         viewController?.reloadData()
     }
     
     func fetchPostsFailure() {
+        
+    }
+    
+    func requestPostSuccess() {
+        
+    }
+    
+    func requestPostFailure() {
         
     }
     
