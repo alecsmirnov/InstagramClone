@@ -352,6 +352,7 @@ private extension FirebaseUserService {
             }
             
             let dispatchGroup = DispatchGroup()
+            var removedFeedErrors = [Error]()
                 
             value.keys.forEach { postIdentifier in
                 dispatchGroup.enter()
@@ -360,13 +361,19 @@ private extension FirebaseUserService {
                     .child(FirebaseTables.usersFeed)
                     .child(currentUserIdentifier)
                     .child(postIdentifier)
-                    .removeValue()
-                
-                dispatchGroup.leave()
+                    .removeValue { error, _ in
+                    if let error = error {
+                        removedFeedErrors.append(error)
+                    }
+                    
+                    dispatchGroup.leave()
+                }
             }
             
             dispatchGroup.notify(queue: .main) {
-                completion(nil)
+                let error = removedFeedErrors.first
+                
+                completion(error)
             }
         } withCancel: { error in
             completion(error)
