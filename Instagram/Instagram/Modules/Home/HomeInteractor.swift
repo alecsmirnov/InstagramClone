@@ -11,10 +11,8 @@ protocol IHomeInteractor: AnyObject {
     func fetchUserPosts()
     func requestUserPosts()
     
-    func reloadAllObservers()
-    func removeAllObservers()
-    
-    func observeUserPosts()
+    func observeUserFeed()
+    func removeUserFeedObserver()
     
     func likePost(_ userPost: UserPost, at index: Int)
     func unlikePost(_ userPost: UserPost, at index: Int)
@@ -25,6 +23,9 @@ protocol IHomeInteractorOutput: AnyObject {
     func fetchUserPostNoResult()
     func fetchUserPostFailure()
     
+    func observeUserFeedSuccess(_ userPost: UserPost)
+    func observeUserFeedFailure()
+    
     func likePostSuccess(at index: Int)
     func likePostFailure(at index: Int)
     
@@ -33,11 +34,18 @@ protocol IHomeInteractorOutput: AnyObject {
 }
 
 final class HomeInteractor {
+    // MARK: Properties
+    
     weak var presenter: IHomeInteractorOutput?
     
     private var lastRequestedPostTimestamp: TimeInterval?
+    private var userFeedObserver: FirebaseObserver?
     
-    private var userPostsObserver = [String: FirebaseObserver]()
+    // MARK: Constants
+    
+    private enum Requests {
+        static let postLimit: UInt = 1
+    }
 }
 
 // MARK: - IHomeInteractor
@@ -46,18 +54,35 @@ extension HomeInteractor: IHomeInteractor {
     func fetchUserPosts() {
         guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebasePostService.fetchLastUserFeedPosts(identifier: identifier, limit: 1) { [self] result in
+        FirebasePostService.isUserFeedExist(identifier: identifier) { [self] result in
             switch result {
-            case .success(let userPosts):
-                lastRequestedPostTimestamp = userPosts.first?.post.timestamp
+            case .success(let isFeedExist):
+                guard isFeedExist else {
+                    presenter?.fetchUserPostNoResult()
+
+                    return
+                }
                 
-                userPosts.forEach { userPost in
-                    presenter?.fetchUserPostSuccess(userPost)
+                FirebasePostService.fetchLastUserFeedPosts(
+                    identifier: identifier,
+                    limit: Requests.postLimit) { result in
+                    switch result {
+                    case .success(let userPosts):
+                        lastRequestedPostTimestamp = userPosts.first?.post.timestamp
+                        
+                        userPosts.forEach { userPost in
+                            presenter?.fetchUserPostSuccess(userPost)
+                        }
+                    case .failure(let error):
+                        presenter?.fetchUserPostFailure()
+
+                        print("Failed to fetch users posts: \(error.localizedDescription)")
+                    }
                 }
             case .failure(let error):
                 presenter?.fetchUserPostFailure()
 
-                print("Failed to fetch users posts: \(error.localizedDescription)")
+                print("Failed to check existed user feed: \(error.localizedDescription)")
             }
         }
     }
@@ -74,7 +99,7 @@ extension HomeInteractor: IHomeInteractor {
             identifier: identifier,
             afterTimestamp: lastRequestedPostTimestamp,
             dropFirst: true,
-            limit: 2) { [self] result in
+            limit: Requests.postLimit + 1) { [self] result in
             switch result {
             case .success(let userPosts):
                 self.lastRequestedPostTimestamp = userPosts.first?.post.timestamp
@@ -92,69 +117,26 @@ extension HomeInteractor: IHomeInteractor {
         }
     }
     
-    func reloadAllObservers() {
+    func observeUserFeed() {
         guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebasePostService.isAllPostsExists(identifier: identifier) { [self] result in
-            switch result {
-            case .success(let isPostsExists):
-                guard isPostsExists else {
-                    presenter?.fetchUserPostNoResult()
-                    
-                    return
-                }
-                
-                removeAllObservers()
-                observeUserPosts()
-            case .failure(let error):
-                presenter?.fetchUserPostFailure()
-                
-                print("Failed to check existed posts: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    func removeAllObservers() {
-        userPostsObserver.forEach { identifier, _ in
-            removeUserObserver(identifier: identifier)
-        }
-    }
-    
-    func observeUserPosts() {
-        guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
+        removeUserFeedObserver()
         
-        observeUserPosts(identifier: identifier) { [self] result in
+        userFeedObserver = FirebasePostService.observeUserFeedPosts(identifier: identifier) { [self] result in
             switch result {
             case .success(let userPost):
-                presenter?.fetchUserPostSuccess(userPost)
+                presenter?.observeUserFeedSuccess(userPost)
             case .failure(let error):
-                presenter?.fetchUserPostFailure()
-                
-                print("Failed to fetch user post: \(error.localizedDescription)")
+                presenter?.observeUserFeedFailure()
+
+                print("Failed to fetch observed users posts: \(error.localizedDescription)")
             }
         }
-        
-        FirebaseUserService.fetchFollowingUsersIdentifiers(identifier: identifier) { [self] result in
-            switch result {
-            case .success(let identifiers):
-                identifiers.forEach { followingUserIdentifier in
-                    observeUserPosts(identifier: followingUserIdentifier) { [self] result in
-                        switch result {
-                        case .success(let userPost):
-                            presenter?.fetchUserPostSuccess(userPost)
-                        case .failure(let error):
-                            presenter?.fetchUserPostFailure()
-                            
-                            print("Failed to fetch following user post: \(error.localizedDescription)")
-                        }
-                    }
-                }
-            case .failure(let error):
-                presenter?.fetchUserPostFailure()
-                
-                print("Failed to fetch following users identifiers: \(error.localizedDescription)")
-            }
-        }
+    }
+    
+    func removeUserFeedObserver() {
+        userFeedObserver?.remove()
+        userFeedObserver = nil
     }
     
     func likePost(_ userPost: UserPost, at index: Int) {
@@ -203,67 +185,5 @@ extension HomeInteractor: IHomeInteractor {
                 print("Post at index \(index) successfully unliked")
             }
         }
-    }
-}
-
-// MARK: - Private Methods
-
-private extension HomeInteractor {
-    func observeUserPosts(identifier: String, completion: @escaping (Result<UserPost, Error>) -> Void) {
-        FirebaseUserService.fetchUser(withIdentifier: identifier) { [self] result in
-            switch result {
-            case .success(let user):
-                observePosts(identifier: identifier) { result in
-                    switch result {
-                    case .success(let post):
-                        var userPost = UserPost(user: user, post: post)
-                        
-                        guard
-                            let postOwnerIdentifier = userPost.postOwnerIdentifier,
-                            let postIdentifier = userPost.postIdentifier,
-                            let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier
-                        else {
-                            return
-                        }
-                        
-                        FirebasePostService.isLikedPost(
-                            postOwnerIdentifier: postOwnerIdentifier,
-                            postIdentifier: postIdentifier,
-                            userIdentifier: currentUserIdentifier) { result in
-                            switch result {
-                            case .success(let isLiked):
-                                userPost.isLiked = isLiked
-                                
-                                completion(.success(userPost))
-                            case .failure(let error):
-                                completion(.failure(error))
-                            }
-                        }
-                    case .failure(let error):
-                        completion(.failure(error))
-                    }
-                }
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    func observePosts(identifier: String, completion: @escaping (Result<Post, Error>) -> Void) {
-        removeUserObserver(identifier: identifier)
-        
-        userPostsObserver[identifier] = FirebasePostService.observePosts(identifier: identifier) { result in
-            switch result {
-            case .success(let post):
-                completion(.success(post))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    func removeUserObserver(identifier: String) {
-        userPostsObserver[identifier]?.remove()
-        userPostsObserver[identifier] = nil
     }
 }

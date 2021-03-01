@@ -8,10 +8,12 @@
 import UIKit
 
 protocol IHomeViewController: AnyObject {
-    func appendUserPost(_ userPost: UserPost)
+    func appendFirstUserPost(_ userPost: UserPost)
+    func appendLastUserPost(_ userPost: UserPost)
     func removeAllUserPosts()
     
-    func insertNewRow()
+    func insertFirstRow()
+    func insertLastRow()
     func reloadData()
     
     func endRefreshing()
@@ -52,17 +54,25 @@ final class HomeViewController: CustomViewController<HomeView> {
 
 // MARK: - IHomeViewController
 
-extension HomeViewController: IHomeViewController {
-    func appendUserPost(_ userPost: UserPost) {
-        customView?.appendUserPost(userPost)
+extension HomeViewController: IHomeViewController {    
+    func appendFirstUserPost(_ userPost: UserPost) {
+        customView?.appendFirstUserPost(userPost)
+    }
+    
+    func appendLastUserPost(_ userPost: UserPost) {
+        customView?.appendLastUserPost(userPost)
+    }
+    
+    func insertFirstRow() {
+        customView?.insertFirstRow()
+    }
+    
+    func insertLastRow() {
+        customView?.insertLastRow()
     }
     
     func removeAllUserPosts() {
         customView?.removeAllUserPosts()
-    }
-    
-    func insertNewRow() {
-        customView?.insertNewRow()
     }
     
     func reloadData() {

@@ -47,7 +47,11 @@ final class HomeView: UIView {
 // MARK: - Public Methods
 
 extension HomeView {    
-    func appendUserPost(_ userPost: UserPost) {
+    func appendFirstUserPost(_ userPost: UserPost) {
+        userPosts.insert(userPost, at: 0)
+    }
+    
+    func appendLastUserPost(_ userPost: UserPost) {
         userPosts.append(userPost)
     }
     
@@ -57,14 +61,12 @@ extension HomeView {
         userPosts.removeAll()
     }
     
-    func insertNewRow() {
-        if 1 < userPosts.count {
-            let lastItemIndexPath = IndexPath(row: userPosts.count - 1, section: 0)
-            
-            collectionView.insertItems(at: [lastItemIndexPath])
-        } else {
-            collectionView.reloadData()
-        }
+    func insertFirstRow() {
+        insertRow(at: 0)
+    }
+    
+    func insertLastRow() {
+        insertRow(at: userPosts.count - 1)
     }
     
     func reloadData() {
@@ -89,6 +91,20 @@ extension HomeView {
     
     func endRefreshing() {
         collectionView.refreshControl?.endRefreshing()
+    }
+}
+
+// MARK: - Private Methods
+
+private extension HomeView {
+    func insertRow(at index: Int) {
+        if 1 < userPosts.count {
+            let lastItemIndexPath = IndexPath(row: index, section: 0)
+            
+            collectionView.insertItems(at: [lastItemIndexPath])
+        } else {
+            collectionView.reloadData()
+        }
     }
 }
 

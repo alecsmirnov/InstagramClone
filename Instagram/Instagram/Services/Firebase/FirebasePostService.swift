@@ -15,77 +15,14 @@ enum FirebasePostService {
 // MARK: - Public Methods
 
 extension FirebasePostService {
-    static func isAllPostsExists(identifier: String, completion: @escaping (Result<Bool, Error>) -> Void) {
-        isPostsExists(identifier: identifier) { result in
-            switch result {
-            case .success(let isCurrentUserPostsExists):
-                guard isCurrentUserPostsExists else {
-                    isFollowingPostsExists(identifier: identifier) { result in
-                        switch result {
-                        case .success(let isFollowingUserPostsExists):
-                            completion(.success(isFollowingUserPostsExists))
-                        case .failure(let error):
-                            completion(.failure(error))
-                        }
-                    }
-                    
-                    return
-                }
-                
-                completion(.success(true))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    static func isPostsExists(identifier: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+    static func isUserFeedExist(identifier: String, completion: @escaping (Result<Bool, Error>) -> Void) {
         databaseReference
-            .child(FirebaseTables.posts)
+            .child(FirebaseTables.usersFeed)
             .child(identifier)
             .observeSingleEvent(of: .value) { snapshot in
             completion(.success(snapshot.exists()))
         } withCancel: { error in
             completion(.failure(error))
-        }
-    }
-    
-    static func isFollowingPostsExists(identifier: String, completion: @escaping (Result<Bool, Error>) -> Void) {
-        FirebaseUserService.fetchFollowingUsersIdentifiers(identifier: identifier) { result in
-            switch result {
-            case .success(let identifiers):
-                let dispatchGroup = DispatchGroup()
-                var followingPosts = [Bool]()
-                
-                for followingUserIdentifier in identifiers {
-                    dispatchGroup.enter()
-                    
-                    isPostsExists(identifier: followingUserIdentifier) { result in
-                        switch result {
-                        case .success(let isCurrentUserPostsExist):
-                            followingPosts.append(isCurrentUserPostsExist)
-                            
-                            dispatchGroup.leave()
-                        case .failure(let error):
-                            completion(.failure(error))
-                            
-                            break
-                        }
-                    }
-                }
-                
-                dispatchGroup.notify(queue: .main) {
-                    for followingPost in followingPosts where followingPost {
-                        completion(.success(true))
-                        
-                        break
-                    }
-                    
-                    completion(.success(false))
-                }
-            case .failure(let error):
-                completion(.failure(error))
-            }
         }
     }
     
@@ -138,31 +75,50 @@ extension FirebasePostService {
         }
     }
     
-    static func observePosts(
+    static func observeUserFeedPosts(
         identifier: String,
-        completion: @escaping (Result<Post, Error>) -> Void
+        timestamp: TimeInterval = Date().timeIntervalSince1970,
+        completion: @escaping (Result<UserPost, Error>) -> Void
     ) -> FirebaseObserver {
-        let userPostsReference = databaseReference.child(FirebaseTables.posts).child(identifier)
+        let userFeedReference = databaseReference.child(FirebaseTables.usersFeed).child(identifier)
         
-        let postAddedHandle = userPostsReference.observe(.childAdded) { snapshot in
+        let feedPostAddedHandle = userFeedReference
+            .queryOrdered(byChild: FeedPost.CodingKeys.timestamp.rawValue)
+            .queryStarting(atValue: timestamp)
+            .observe(.childAdded) { snapshot in
             guard
                 let value = snapshot.value as? [String: Any],
-                var post = JSONCoding.fromDictionary(value, type: Post.self)
+                let feedPost = JSONCoding.fromDictionary(value, type: FeedPost.self)
             else {
                 return
             }
             
-            let postIdentifier = snapshot.key
-            post.identifier = postIdentifier
-                
-            completion(.success(post))
+            FirebaseUserService.fetchUser(withIdentifier: feedPost.userIdentifier) { result in
+                switch result {
+                case .success(let user):
+                let feedPostIdentifier = snapshot.key
+                    
+                fetchPost(identifier: feedPost.userIdentifier, postIdentifier: feedPostIdentifier) { result in
+                    switch result {
+                    case .success(let post):
+                        let userPost = UserPost(user: user, post: post)
+                        
+                        completion(.success(userPost))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
+                }
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
         } withCancel: { error in
             completion(.failure(error))
         }
         
-        let postAddedObserver = FirebaseObserver(reference: userPostsReference, handle: postAddedHandle)
+        let postFeedAddedObserver = FirebaseObserver(reference: userFeedReference, handle: feedPostAddedHandle)
         
-        return postAddedObserver
+        return postFeedAddedObserver
     }
     
     static func fetchLastUserFeedPosts(
@@ -322,7 +278,7 @@ extension FirebasePostService {
             let commentIdentifier = snapshot.key
             comment.identifier = commentIdentifier
             comment.postIdentifier = postIdentifier
-                
+            
             completion(.success(comment))
         } withCancel: { error in
             completion(.failure(error))

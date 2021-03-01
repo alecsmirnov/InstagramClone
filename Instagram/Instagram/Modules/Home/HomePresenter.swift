@@ -29,7 +29,7 @@ final class HomePresenter {
     // MARK: Initialization
     
     deinit {
-        interactor?.removeAllObservers()
+        interactor?.observeUserFeed()
     }
 }
 
@@ -38,12 +38,14 @@ final class HomePresenter {
 extension HomePresenter: IHomePresenter {
     func viewDidLoad() {
         interactor?.fetchUserPosts()
+        interactor?.observeUserFeed()
     }
     
     func didPullToRefresh() {
         isRefreshing = true
         
         interactor?.fetchUserPosts()
+        interactor?.observeUserFeed()
     }
     
     func didRequestPosts() {
@@ -78,9 +80,9 @@ extension HomePresenter: IHomeInteractorOutput {
             viewController?.removeAllUserPosts()
             viewController?.reloadData()
         }
-        
-        viewController?.appendUserPost(userPost)
-        viewController?.insertNewRow()
+
+        viewController?.appendLastUserPost(userPost)
+        viewController?.insertLastRow()
     }
     
     func fetchUserPostNoResult() {
@@ -91,6 +93,15 @@ extension HomePresenter: IHomeInteractorOutput {
     
     func fetchUserPostFailure() {
         fetchUserPostNoResult()
+    }
+    
+    func observeUserFeedSuccess(_ userPost: UserPost) {
+        viewController?.appendFirstUserPost(userPost)
+        viewController?.insertFirstRow()
+    }
+    
+    func observeUserFeedFailure() {
+        
     }
     
     func likePostSuccess(at index: Int) {
