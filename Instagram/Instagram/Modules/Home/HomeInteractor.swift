@@ -19,7 +19,7 @@ protocol IHomeInteractor: AnyObject {
 }
 
 protocol IHomeInteractorOutput: AnyObject {
-    func fetchUserPostSuccess(_ userPost: UserPost)
+    func fetchUserPostSuccess(_ userPosts: [UserPost])
     func fetchUserPostNoResult()
     func fetchUserPostFailure()
     
@@ -70,9 +70,7 @@ extension HomeInteractor: IHomeInteractor {
                     case .success(let userPosts):
                         lastRequestedPostTimestamp = userPosts.first?.post.timestamp
                         
-                        userPosts.forEach { userPost in
-                            presenter?.fetchUserPostSuccess(userPost)
-                        }
+                        presenter?.fetchUserPostSuccess(userPosts)
                     case .failure(let error):
                         presenter?.fetchUserPostFailure()
 
@@ -104,11 +102,7 @@ extension HomeInteractor: IHomeInteractor {
             case .success(let userPosts):
                 self.lastRequestedPostTimestamp = userPosts.first?.post.timestamp
                 
-                if !userPosts.isEmpty {
-                    userPosts.forEach { userPost in
-                        presenter?.fetchUserPostSuccess(userPost)
-                    }
-                }
+                presenter?.fetchUserPostSuccess(userPosts)
             case .failure(let error):
                 presenter?.fetchUserPostFailure()
 

@@ -72,7 +72,7 @@ extension HomePresenter: IHomePresenter {
 // MARK: - IHomeInteractorOutput
 
 extension HomePresenter: IHomeInteractorOutput {
-    func fetchUserPostSuccess(_ userPost: UserPost) {
+    func fetchUserPostSuccess(_ userPosts: [UserPost]) {
         if isRefreshing {
             isRefreshing = false
 
@@ -80,9 +80,11 @@ extension HomePresenter: IHomeInteractorOutput {
             viewController?.removeAllUserPosts()
             viewController?.reloadData()
         }
-
-        viewController?.appendLastUserPost(userPost)
-        viewController?.insertLastRow()
+        
+        userPosts.forEach { userPost in
+            viewController?.appendLastUserPost(userPost)
+            viewController?.insertLastRow()
+        }
     }
     
     func fetchUserPostNoResult() {
