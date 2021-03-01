@@ -112,6 +112,32 @@ extension FirebasePostService {
         }
     }
     
+    static func fetchPost(
+        identifier: String,
+        postIdentifier: String,
+        completion: @escaping (Result<Post, Error>) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.posts)
+            .child(identifier)
+            .child(postIdentifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            guard
+                let value = snapshot.value as? [String: Any],
+                var post = JSONCoding.fromDictionary(value, type: Post.self)
+            else {
+                return
+            }
+            
+            let postIdentifier = snapshot.key
+            post.identifier = postIdentifier
+                
+            completion(.success(post))
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+    }
+    
     static func observePosts(
         identifier: String,
         completion: @escaping (Result<Post, Error>) -> Void
@@ -137,6 +163,79 @@ extension FirebasePostService {
         let postAddedObserver = FirebaseObserver(reference: userPostsReference, handle: postAddedHandle)
         
         return postAddedObserver
+    }
+    
+    static func fetchLastUserFeedPosts(
+        identifier: String,
+        afterTimestamp: TimeInterval = Date().timeIntervalSince1970,
+        dropFirst: Bool = false,
+        limit: UInt,
+        completion: @escaping (Result<[UserPost], Error>) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.usersFeed)
+            .child(identifier)
+            .queryOrdered(byChild: FeedPost.CodingKeys.timestamp.rawValue)
+            .queryEnding(atValue: afterTimestamp)
+            .queryLimited(toLast: limit)
+            .observeSingleEvent(of: .value) { snapshot in
+            let dispatchGroup = DispatchGroup()
+            var usersPosts = [UserPost]()
+            var fetchErrors = [Error]()
+            
+            for child in snapshot.children {
+                guard
+                    let childSnapshot = child as? DataSnapshot,
+                    let childValue = childSnapshot.value as? [String: Any],
+                    let feedPost = JSONCoding.fromDictionary(childValue, type: FeedPost.self)
+                else {
+                    return
+                }
+                
+                dispatchGroup.enter()
+                
+                let feedPostIdentifier = childSnapshot.key
+                
+                FirebaseUserService.fetchUser(withIdentifier: feedPost.userIdentifier) { result in
+                    switch result {
+                    case .success(let user):
+                        fetchPost(
+                            identifier: feedPost.userIdentifier,
+                            postIdentifier: feedPostIdentifier) { result in
+                            
+                            switch result {
+                            case .success(let post):
+                                let userPost = UserPost(user: user, post: post)
+                                
+                                usersPosts.append(userPost)
+                            case .failure(let error):
+                                fetchErrors.append(error)
+                            }
+                            
+                            dispatchGroup.leave()
+                        }
+                    case .failure(let error):
+                        fetchErrors.append(error)
+                        
+                        dispatchGroup.leave()
+                    }
+                }
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                if let error = fetchErrors.first {
+                    completion(.failure(error))
+                } else {
+                    if dropFirst {
+                        completion(.success(Array(usersPosts.dropLast())))
+                    } else {
+                        completion(.success(usersPosts))
+                    }
+                }
+            }
+        } withCancel: { error in
+            completion(.failure(error))
+        }
     }
     
     static func fetchLastPosts(
@@ -323,22 +422,6 @@ extension FirebasePostService {
     }
 }
 
-// MARK: - Private Types
-
-fileprivate struct FeedValue {
-    let userIdentifier: String
-    let postIdentifier: String
-    let timestamp: TimeInterval
-}
-
-extension FeedValue: Codable {
-    enum CodingKeys: String, CodingKey {
-        case userIdentifier = "user_identifier"
-        case postIdentifier = "post_identifier"
-        case timestamp
-    }
-}
-
 // MARK: - Private Methods
 
 private extension FirebasePostService {
@@ -369,34 +452,37 @@ private extension FirebasePostService {
                     return
                 }
                 
-                // TODO: Test... or not
-                
                 createUserFeedRecord(
                     userIdentifier: identifier,
                     postOwnerIdentifier: identifier,
                     postIdentifier: postIdentifier,
-                    timestamp: post.timestamp,
-                    completion: completion)
-                
-                FirebaseUserService.fetchFollowersUsersIdentifiers(identifier: identifier) { result in
-                    switch result {
-                    case .success(let followersIdentifiers):
-                        guard !followersIdentifiers.isEmpty else {
-                            completion(nil)
-                            
-                            return
-                        }
-                        
-                        followersIdentifiers.forEach { followerIdentifier in
-                            createUserFeedRecord(
-                                userIdentifier: followerIdentifier,
-                                postOwnerIdentifier: identifier,
-                                postIdentifier: postIdentifier,
-                                timestamp: post.timestamp,
-                                completion: completion)
-                        }
-                    case .failure(let error):
+                    timestamp: post.timestamp) { error in
+                    guard error == nil else {
                         completion(error)
+                        
+                        return
+                    }
+                    
+                    FirebaseUserService.fetchFollowersUsersIdentifiers(identifier: identifier) { result in
+                        switch result {
+                        case .success(let followersIdentifiers):
+                            guard !followersIdentifiers.isEmpty else {
+                                completion(nil)
+                                
+                                return
+                            }
+                            
+                            followersIdentifiers.forEach { followerIdentifier in
+                                createUserFeedRecord(
+                                    userIdentifier: followerIdentifier,
+                                    postOwnerIdentifier: identifier,
+                                    postIdentifier: postIdentifier,
+                                    timestamp: post.timestamp,
+                                    completion: completion)
+                            }
+                        case .failure(let error):
+                            completion(error)
+                        }
                     }
                 }
             }
@@ -410,14 +496,14 @@ private extension FirebasePostService {
         timestamp: TimeInterval,
         completion: @escaping (Error?) -> Void
     ) {
-        let feedValue = FeedValue(userIdentifier: userIdentifier, postIdentifier: postIdentifier, timestamp: timestamp)
+        let feedPost = FeedPost(userIdentifier: postOwnerIdentifier, timestamp: timestamp)
         
-        if let feedValueDictionary = JSONCoding.toDictionary(feedValue) {
+        if let feedPostDictionary = JSONCoding.toDictionary(feedPost) {
             databaseReference
                 .child(FirebaseTables.usersFeed)
-                .child(postOwnerIdentifier)
+                .child(userIdentifier)
                 .child(postIdentifier)
-                .setValue(feedValueDictionary) { error, _ in
+                .setValue(feedPostDictionary) { error, _ in
                 completion(error)
             }
         }

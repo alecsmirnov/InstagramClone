@@ -197,8 +197,6 @@ extension FirebaseUserService {
                     return
                 }
                 
-                // TODO: Test... or not
-                
                 copyUserFeed(
                     currentUserIdentifier: currentUserIdentifier,
                     followingUserIdentifier: followingUserIdentifier,
@@ -233,8 +231,6 @@ extension FirebaseUserService {
                     
                     return
                 }
-                
-                //completion(nil)
                 
                 removeUserFeed(
                     currentUserIdentifier: currentUserIdentifier,
@@ -316,7 +312,7 @@ private extension FirebaseUserService {
         completion: @escaping (Error?) -> Void
     ) {
         databaseReference
-            .child(FirebaseTables.usersFeed)
+            .child(FirebaseTables.posts)
             .child(followingUserIdentifier)
             .observeSingleEvent(of: .value) { snapshot in
             guard let value = snapshot.value as? [String: Any] else {
@@ -325,10 +321,39 @@ private extension FirebaseUserService {
                 return
             }
             
-            databaseReference
-                .child(FirebaseTables.usersFeed)
-                .child(currentUserIdentifier)
-                .setValue(value) { error, _ in
+            let dispatchGroup = DispatchGroup()
+            var removedFeedErrors = [Error]()
+            
+            value.forEach { postIdentifier, postValue in
+                guard
+                    let childValue = postValue as? [String: Any],
+                    let post = JSONCoding.fromDictionary(childValue, type: Post.self)
+                else {
+                    return
+                }
+                
+                dispatchGroup.enter()
+                
+                let feedPost = FeedPost(userIdentifier: followingUserIdentifier, timestamp: post.timestamp)
+                
+                if let feedPostDictionary = JSONCoding.toDictionary(feedPost) {
+                    databaseReference
+                        .child(FirebaseTables.usersFeed)
+                        .child(currentUserIdentifier)
+                        .child(postIdentifier)
+                        .setValue(feedPostDictionary) { error, _ in
+                        if let error = error {
+                            removedFeedErrors.append(error)
+                        }
+                        
+                        dispatchGroup.leave()
+                    }
+                }
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                let error = removedFeedErrors.first
+                
                 completion(error)
             }
         } withCancel: { error in
@@ -342,7 +367,7 @@ private extension FirebaseUserService {
         completion: @escaping (Error?) -> Void
     ) {
         databaseReference
-            .child(FirebaseTables.usersFeed)
+            .child(FirebaseTables.posts)
             .child(followingUserIdentifier)
             .observeSingleEvent(of: .value) { snapshot in
             guard let value = snapshot.value as? [String: Any] else {
@@ -354,7 +379,9 @@ private extension FirebaseUserService {
             let dispatchGroup = DispatchGroup()
             var removedFeedErrors = [Error]()
                 
-            value.keys.forEach { postIdentifier in
+            value.forEach { postIdentifier, postValue in
+                guard (postValue as? [String: Any]) != nil else { return }
+                
                 dispatchGroup.enter()
                 
                 databaseReference

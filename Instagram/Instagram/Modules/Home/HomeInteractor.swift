@@ -5,9 +5,12 @@
 //  Created by Admin on 14.01.2021.
 //
 
-import Dispatch
+import Foundation
 
 protocol IHomeInteractor: AnyObject {
+    func fetchUserPosts()
+    func requestUserPosts()
+    
     func reloadAllObservers()
     func removeAllObservers()
     
@@ -32,12 +35,63 @@ protocol IHomeInteractorOutput: AnyObject {
 final class HomeInteractor {
     weak var presenter: IHomeInteractorOutput?
     
+    private var lastRequestedPostTimestamp: TimeInterval?
+    
     private var userPostsObserver = [String: FirebaseObserver]()
 }
 
 // MARK: - IHomeInteractor
 
 extension HomeInteractor: IHomeInteractor {
+    func fetchUserPosts() {
+        guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
+        
+        FirebasePostService.fetchLastUserFeedPosts(identifier: identifier, limit: 1) { [self] result in
+            switch result {
+            case .success(let userPosts):
+                lastRequestedPostTimestamp = userPosts.first?.post.timestamp
+                
+                userPosts.forEach { userPost in
+                    presenter?.fetchUserPostSuccess(userPost)
+                }
+            case .failure(let error):
+                presenter?.fetchUserPostFailure()
+
+                print("Failed to fetch users posts: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func requestUserPosts() {
+        guard
+            let identifier = FirebaseAuthService.currentUserIdentifier,
+            let lastRequestedPostTimestamp = lastRequestedPostTimestamp
+        else {
+            return
+        }
+        
+        FirebasePostService.fetchLastUserFeedPosts(
+            identifier: identifier,
+            afterTimestamp: lastRequestedPostTimestamp,
+            dropFirst: true,
+            limit: 2) { [self] result in
+            switch result {
+            case .success(let userPosts):
+                self.lastRequestedPostTimestamp = userPosts.first?.post.timestamp
+                
+                if !userPosts.isEmpty {
+                    userPosts.forEach { userPost in
+                        presenter?.fetchUserPostSuccess(userPost)
+                    }
+                }
+            case .failure(let error):
+                presenter?.fetchUserPostFailure()
+
+                print("Failed to request users posts: \(error.localizedDescription)")
+            }
+        }
+    }
+    
     func reloadAllObservers() {
         guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
         

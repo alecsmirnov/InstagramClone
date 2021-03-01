@@ -97,7 +97,7 @@ extension ProfileInteractor: IProfileInteractor {
             identifier: identifier,
             afterTimestamp: lastRequestedPostTimestamp,
             dropFirst: true,
-            limit: Requests.postLimit) { [self] result in
+            limit: Requests.postLimit + 1) { [self] result in
             switch result {
             case .success(let posts):
                 self.lastRequestedPostTimestamp = posts.first?.timestamp

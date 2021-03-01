@@ -55,6 +55,7 @@
 		8454C5FC25EA1F3D000C44FD /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C5FB25EA1F3D000C44FD /* Comment.swift */; };
 		8454C5FF25EA2242000C44FD /* UserComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C5FE25EA2242000C44FD /* UserComment.swift */; };
 		8454D3F625BFFC3F00D3CC9E /* SecureTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D3F525BFFC3F00D3CC9E /* SecureTextField.swift */; };
+		8454DCAE25ECAA92006DB3E2 /* FeedPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454DCAD25ECAA92006DB3E2 /* FeedPost.swift */; };
 		8454E52E25D3E765003A89E7 /* UIImage+instagramCrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454E52D25D3E765003A89E7 /* UIImage+instagramCrop.swift */; };
 		845504F825B1C38300715C3B /* TabBarAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845504F725B1C38300715C3B /* TabBarAssembly.swift */; };
 		845800BD25C6AFA600816642 /* NewPostConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845800BC25C6AFA600816642 /* NewPostConstants.swift */; };
@@ -170,6 +171,7 @@
 		8454C5FB25EA1F3D000C44FD /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		8454C5FE25EA2242000C44FD /* UserComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserComment.swift; sourceTree = "<group>"; };
 		8454D3F525BFFC3F00D3CC9E /* SecureTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureTextField.swift; sourceTree = "<group>"; };
+		8454DCAD25ECAA92006DB3E2 /* FeedPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPost.swift; sourceTree = "<group>"; };
 		8454E52D25D3E765003A89E7 /* UIImage+instagramCrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+instagramCrop.swift"; sourceTree = "<group>"; };
 		845504F725B1C38300715C3B /* TabBarAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarAssembly.swift; sourceTree = "<group>"; };
 		845800BC25C6AFA600816642 /* NewPostConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostConstants.swift; sourceTree = "<group>"; };
@@ -620,6 +622,7 @@
 				8454C5FB25EA1F3D000C44FD /* Comment.swift */,
 				845D0B9825D6AA9000AD3122 /* UserPost.swift */,
 				8454C5FE25EA2242000C44FD /* UserComment.swift */,
+				8454DCAD25ECAA92006DB3E2 /* FeedPost.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -812,6 +815,7 @@
 				8454E52E25D3E765003A89E7 /* UIImage+instagramCrop.swift in Sources */,
 				84B2E67B25B050CE00B27457 /* HomePresenter.swift in Sources */,
 				845464EA25DA5C7E00DCD136 /* SearchViewController.swift in Sources */,
+				8454DCAE25ECAA92006DB3E2 /* FeedPost.swift in Sources */,
 				845464F025DA5CCD00DCD136 /* SearchPresenter.swift in Sources */,
 				84E660A925B955390036AB9F /* ProfileRouter.swift in Sources */,
 				845455FB25BDAC460007C9A2 /* KeyboardAppearanceListener.swift in Sources */,

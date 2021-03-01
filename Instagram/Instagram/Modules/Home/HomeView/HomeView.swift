@@ -9,6 +9,7 @@ import UIKit
 
 protocol HomeViewDelegate: AnyObject {
     func homeViewDidPullToRefresh(_ homeView: HomeView)
+    func homeViewDidRequestPosts(_ homeView: HomeView)
     
     func homeView(_ homeView: HomeView, didSelectUser user: User)
     func homeView(_ homeView: HomeView, didPressLikeButtonAt index: Int, userPost: UserPost)
@@ -21,6 +22,7 @@ final class HomeView: UIView {
     
     weak var delegate: HomeViewDelegate?
     
+    private var lastRequestedPostIndex: Int?
     private var userPosts = [UserPost]()
     
     // MARK: Subviews
@@ -47,30 +49,42 @@ final class HomeView: UIView {
 extension HomeView {    
     func appendUserPost(_ userPost: UserPost) {
         userPosts.append(userPost)
-        userPosts.sort { $0.post.timestamp > $1.post.timestamp }
     }
     
     func removeAllUserPosts() {
+        lastRequestedPostIndex = nil
+        
         userPosts.removeAll()
+    }
+    
+    func insertNewRow() {
+        if 1 < userPosts.count {
+            let lastItemIndexPath = IndexPath(row: userPosts.count - 1, section: 0)
+            
+            collectionView.insertItems(at: [lastItemIndexPath])
+        } else {
+            collectionView.reloadData()
+        }
     }
     
     func reloadData() {
         collectionView.reloadData()
     }
     
-    func reloadItem(at index: Int) {
+    func reloadRow(at index: Int) {
         let indexPath = IndexPath(row: index, section: 0)
+        
         collectionView.reloadItems(at: [indexPath])
     }
     
     func showLikeButton(at index: Int) {
         userPosts[index].isLiked = false
-        reloadItem(at: index)
+        reloadRow(at: index)
     }
     
     func showUnlikeButton(at index: Int) {
         userPosts[index].isLiked = true
-        reloadItem(at: index)
+        reloadRow(at: index)
     }
     
     func endRefreshing() {
@@ -90,6 +104,7 @@ private extension HomeView {
     func setupCollectionViewAppearance() {
         collectionView.backgroundColor = .clear
         collectionView.delaysContentTouches = false
+        collectionView.isPrefetchingEnabled = false
         
         collectionView.dataSource = self
         
@@ -125,9 +140,9 @@ private extension HomeView {
     
     func setupCollectionViewListLayout() {
         var listConfiguration = UICollectionLayoutListConfiguration(appearance: .plain)
-        
+
         listConfiguration.showsSeparators = false
-        
+
         let collectionViewLayout = UICollectionViewCompositionalLayout.list(using: listConfiguration)
 
         collectionView.collectionViewLayout = collectionViewLayout
@@ -165,8 +180,15 @@ extension HomeView: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
-        cell.delegate = self
+        // Check for multiple function call, show hidden cells (Bug, i think...)
         
+        if indexPath.row == userPosts.count - 1 && (lastRequestedPostIndex ?? -1) < indexPath.row {
+            lastRequestedPostIndex = indexPath.row
+
+            delegate?.homeViewDidRequestPosts(self)
+        }
+        
+        cell.delegate = self
         cell.configure(with: userPosts[indexPath.row])
         
         return cell

@@ -11,6 +11,7 @@ protocol IHomeViewController: AnyObject {
     func appendUserPost(_ userPost: UserPost)
     func removeAllUserPosts()
     
+    func insertNewRow()
     func reloadData()
     
     func endRefreshing()
@@ -51,13 +52,17 @@ final class HomeViewController: CustomViewController<HomeView> {
 
 // MARK: - IHomeViewController
 
-extension HomeViewController: IHomeViewController {    
+extension HomeViewController: IHomeViewController {
     func appendUserPost(_ userPost: UserPost) {
         customView?.appendUserPost(userPost)
     }
     
     func removeAllUserPosts() {
         customView?.removeAllUserPosts()
+    }
+    
+    func insertNewRow() {
+        customView?.insertNewRow()
     }
     
     func reloadData() {
@@ -90,6 +95,10 @@ private extension HomeViewController {
 extension HomeViewController: HomeViewDelegate {
     func homeViewDidPullToRefresh(_ homeView: HomeView) {
         presenter?.didPullToRefresh()
+    }
+    
+    func homeViewDidRequestPosts(_ homeView: HomeView) {
+        presenter?.didRequestPosts()
     }
     
     func homeView(_ homeView: HomeView, didSelectUser user: User) {

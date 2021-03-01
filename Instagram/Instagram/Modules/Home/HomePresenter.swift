@@ -9,6 +9,8 @@ protocol IHomePresenter: AnyObject {
     func viewDidLoad()
     
     func didPullToRefresh()
+    func didRequestPosts()
+    
     func didSelectUser(_ user: User)
     func didPressLikeButton(at index: Int, userPost: UserPost)
     func didPressUnlikeButton(at index: Int, userPost: UserPost)
@@ -22,7 +24,7 @@ final class HomePresenter {
     var interactor: IHomeInteractor?
     var router: IHomeRouter?
     
-    private var isRefreshed = false
+    private var isRefreshing = false
     
     // MARK: Initialization
     
@@ -35,13 +37,17 @@ final class HomePresenter {
 
 extension HomePresenter: IHomePresenter {
     func viewDidLoad() {
-        interactor?.observeUserPosts()
+        interactor?.fetchUserPosts()
     }
     
     func didPullToRefresh() {
-        interactor?.reloadAllObservers()
+        isRefreshing = true
         
-        isRefreshed = true
+        interactor?.fetchUserPosts()
+    }
+    
+    func didRequestPosts() {
+        interactor?.requestUserPosts()
     }
     
     func didSelectUser(_ user: User) {
@@ -65,19 +71,20 @@ extension HomePresenter: IHomePresenter {
 
 extension HomePresenter: IHomeInteractorOutput {
     func fetchUserPostSuccess(_ userPost: UserPost) {
-        if isRefreshed {
-            isRefreshed = false
-            
+        if isRefreshing {
+            isRefreshing = false
+
             viewController?.endRefreshing()
             viewController?.removeAllUserPosts()
+            viewController?.reloadData()
         }
         
         viewController?.appendUserPost(userPost)
-        viewController?.reloadData()
+        viewController?.insertNewRow()
     }
     
     func fetchUserPostNoResult() {
-        isRefreshed = false
+        isRefreshing = false
         
         viewController?.endRefreshing()
     }
