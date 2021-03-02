@@ -196,7 +196,8 @@ extension HomeView: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
-        // Check for multiple function call, show hidden cells (Bug, i think...)
+        // Check for multiple function calls (show hidden cells) and
+        // and the size of dynamic cell, which the collectionView defines as 44 (strange bug...)
         
         if indexPath.row == userPosts.count - 1 && (lastRequestedPostIndex ?? -1) < indexPath.row {
             lastRequestedPostIndex = indexPath.row

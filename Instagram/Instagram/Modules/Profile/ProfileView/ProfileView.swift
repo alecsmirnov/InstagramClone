@@ -74,24 +74,17 @@ extension ProfileView {
         self.user = user
     }
     
-    func setPosts(_ posts: [Post]) {
-        self.posts = posts
+    func appendFirstPost(_ post: Post) {
+        posts.insert(post, at: 0)
     }
     
-    func appendPost(_ post: Post) {
+    func appendLastPost(_ post: Post) {
         posts.append(post)
-        posts.sort { $0.timestamp > $1.timestamp }
     }
     
     func reloadData() {
         collectionView.reloadData()
     }
-}
-
-// MARK: - Private Methods
-
-private extension ProfileView {
-
 }
 
 // MARK: - Appearance
@@ -216,15 +209,15 @@ extension ProfileView: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        if indexPath.row == posts.count - 1 {
-            delegate?.profileViewDidRequestPosts(self)
-        }
-        
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: ProfilePostCell.reuseIdentifier,
             for: indexPath) as? ProfilePostCell
         else {
             return UICollectionViewCell()
+        }
+        
+        if indexPath.row == posts.count - 1 {
+            delegate?.profileViewDidRequestPosts(self)
         }
         
         cell.configure(with: posts[indexPath.row])

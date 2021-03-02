@@ -75,6 +75,37 @@ extension FirebasePostService {
         }
     }
     
+    static func observePosts(
+        identifier: String,
+        timestamp: TimeInterval = Date().timeIntervalSince1970,
+        completion: @escaping (Result<Post, Error>) -> Void
+    ) -> FirebaseObserver {
+        let postsReference = databaseReference.child(FirebaseTables.posts).child(identifier)
+        
+        let postAddedHandle = postsReference
+            .queryOrdered(byChild: Post.CodingKeys.timestamp.rawValue)
+            .queryStarting(atValue: timestamp)
+            .observe(.childAdded) { snapshot in
+            guard
+                let value = snapshot.value as? [String: Any],
+                var post = JSONCoding.fromDictionary(value, type: Post.self)
+            else {
+                return
+            }
+            
+            let postIdentifier = snapshot.key
+            post.identifier = postIdentifier
+            
+            completion(.success(post))
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+        
+        let postAddedObserver = FirebaseObserver(reference: postsReference, handle: postAddedHandle)
+        
+        return postAddedObserver
+    }
+    
     static func observeUserFeedPosts(
         identifier: String,
         timestamp: TimeInterval = Date().timeIntervalSince1970,

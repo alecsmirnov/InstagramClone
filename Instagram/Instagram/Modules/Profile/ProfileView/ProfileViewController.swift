@@ -9,8 +9,8 @@ import UIKit
 
 protocol IProfileViewController: AnyObject {
     func setUser(_ user: User)
-    func setPosts(_ posts: [Post])
-    func appendPost(_ post: Post)
+    func appendFirstPost(_ post: Post)
+    func appendLastPost(_ post: Post)
     
     func reloadData()
     
@@ -46,12 +46,12 @@ extension ProfileViewController: IProfileViewController {
         customView?.setUser(user)
     }
     
-    func setPosts(_ posts: [Post]) {
-        customView?.setPosts(posts)
+    func appendFirstPost(_ post: Post) {
+        customView?.appendFirstPost(post)
     }
     
-    func appendPost(_ post: Post) {
-        customView?.appendPost(post)
+    func appendLastPost(_ post: Post) {
+        customView?.appendLastPost(post)
     }
     
     func reloadData() {

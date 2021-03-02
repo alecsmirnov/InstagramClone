@@ -29,7 +29,7 @@ final class HomePresenter {
     // MARK: Initialization
     
     deinit {
-        interactor?.observeUserFeed()
+        interactor?.removeUserFeedObserver()
     }
 }
 
@@ -81,7 +81,7 @@ extension HomePresenter: IHomeInteractorOutput {
             viewController?.reloadData()
         }
         
-        userPosts.forEach { userPost in
+        userPosts.reversed().forEach { userPost in
             viewController?.appendLastUserPost(userPost)
             viewController?.insertLastRow()
         }

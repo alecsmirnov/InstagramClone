@@ -31,6 +31,8 @@ final class ProfilePresenter {
     // MARK: Initialization
     
     deinit {
+        interactor?.removePostsObserver()
+        
         removeFollowUnfollowNotifications()
     }
 }
@@ -52,6 +54,7 @@ extension ProfilePresenter: IProfilePresenter {
             viewController?.reloadData()
             
             interactor?.fetchPosts(identifier: identifier)
+            interactor?.observePosts()
         } else {
             viewController?.showEditButton()
             
@@ -94,13 +97,14 @@ extension ProfilePresenter: IProfilePresenter {
 
 extension ProfilePresenter: IProfileInteractorOutput {
     func fetchCurrentUserSuccess(_ user: User) {
+        self.user = user
+        
         viewController?.setUser(user)
         viewController?.reloadData()
         
-        self.user = user
-        
         if let identifier = user.identifier {
             interactor?.fetchPosts(identifier: identifier)
+            interactor?.observePosts()
         }
     }
     
@@ -109,8 +113,8 @@ extension ProfilePresenter: IProfileInteractorOutput {
     }
     
     func fetchPostsSuccess(_ posts: [Post]) {
-        posts.forEach { post in
-            viewController?.appendPost(post)
+        posts.reversed().forEach { post in
+            viewController?.appendLastPost(post)
         }
         
         viewController?.reloadData()
@@ -120,11 +124,12 @@ extension ProfilePresenter: IProfileInteractorOutput {
         
     }
     
-    func requestPostSuccess() {
-        
+    func observePostsSuccess(_ post: Post) {
+        viewController?.appendFirstPost(post)
+        viewController?.reloadData()
     }
     
-    func requestPostFailure() {
+    func observePostsFailure() {
         
     }
     

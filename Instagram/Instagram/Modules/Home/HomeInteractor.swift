@@ -102,7 +102,9 @@ extension HomeInteractor: IHomeInteractor {
             case .success(let userPosts):
                 self.lastRequestedPostTimestamp = userPosts.first?.post.timestamp
                 
-                presenter?.fetchUserPostSuccess(userPosts)
+                if !userPosts.isEmpty {
+                    presenter?.fetchUserPostSuccess(userPosts)
+                }
             case .failure(let error):
                 presenter?.fetchUserPostFailure()
 

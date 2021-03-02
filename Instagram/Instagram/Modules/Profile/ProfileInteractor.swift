@@ -12,6 +12,9 @@ protocol IProfileInteractor: AnyObject {
     func fetchPosts(identifier: String)
     func requestPosts(identifier: String)
     
+    func observePosts()
+    func removePostsObserver()
+    
     func isCurrentUser(identifier: String) -> Bool
     func isFollowingUser(identifier: String)
     
@@ -30,8 +33,8 @@ protocol IProfileInteractorOutput: AnyObject {
     func fetchPostsSuccess(_ posts: [Post])
     func fetchPostsFailure()
     
-    func requestPostSuccess()
-    func requestPostFailure()
+    func observePostsSuccess(_ post: Post)
+    func observePostsFailure()
     
     func isFollowingUserSuccess(_ isFollowing: Bool)
     func isFollowingUserFailure()
@@ -49,6 +52,7 @@ final class ProfileInteractor {
     weak var presenter: IProfileInteractorOutput?
     
     private var lastRequestedPostTimestamp: TimeInterval?
+    private var postsObserver: FirebaseObserver?
     
     // MARK: Constants
     
@@ -111,6 +115,28 @@ extension ProfileInteractor: IProfileInteractor {
                 print("Failed to request posts: \(error.localizedDescription)")
             }
         }
+    }
+    
+    func observePosts() {
+        guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
+        
+        removePostsObserver()
+        
+        postsObserver = FirebasePostService.observePosts(identifier: identifier) { [self] result in
+            switch result {
+            case .success(let post):
+                presenter?.observePostsSuccess(post)
+            case .failure(let error):
+                presenter?.observePostsFailure()
+
+                print("Failed to fetch observed posts: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func removePostsObserver() {
+        postsObserver?.remove()
+        postsObserver = nil
     }
     
     func isCurrentUser(identifier: String) -> Bool {
