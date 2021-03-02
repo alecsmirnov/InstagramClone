@@ -15,6 +15,7 @@ struct Post {
     let timestamp: TimeInterval
     
     var identifier: String?
+    var isLiked = false
 }
 
 // MARK: - Codable

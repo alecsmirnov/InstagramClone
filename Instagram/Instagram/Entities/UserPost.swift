@@ -8,8 +8,6 @@
 struct UserPost {
     let user: User
     let post: Post
-    
-    var isLiked = false
 }
 
 extension UserPost {

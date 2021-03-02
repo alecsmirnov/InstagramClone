@@ -52,6 +52,7 @@ extension FirebasePostService {
     static func fetchPost(
         identifier: String,
         postIdentifier: String,
+        currentUserIdentifier: String,
         completion: @escaping (Result<Post, Error>) -> Void
     ) {
         databaseReference
@@ -68,8 +69,20 @@ extension FirebasePostService {
             
             let postIdentifier = snapshot.key
             post.identifier = postIdentifier
-                
-            completion(.success(post))
+            
+            isLikedPost(
+                postOwnerIdentifier: identifier,
+                postIdentifier: postIdentifier,
+                userIdentifier: currentUserIdentifier) { result in
+                switch result {
+                case .success(let isLiked):
+                    post.isLiked = isLiked
+                    
+                    completion(.success(post))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
         } withCancel: { error in
             completion(.failure(error))
         }
@@ -95,8 +108,20 @@ extension FirebasePostService {
             
             let postIdentifier = snapshot.key
             post.identifier = postIdentifier
-            
-            completion(.success(post))
+                
+            isLikedPost(
+                postOwnerIdentifier: identifier,
+                postIdentifier: postIdentifier,
+                userIdentifier: identifier) { result in
+                switch result {
+                case .success(let isLiked):
+                    post.isLiked = isLiked
+                    
+                    completion(.success(post))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
         } withCancel: { error in
             completion(.failure(error))
         }
@@ -129,7 +154,10 @@ extension FirebasePostService {
                 case .success(let user):
                 let feedPostIdentifier = snapshot.key
                     
-                fetchPost(identifier: feedPost.userIdentifier, postIdentifier: feedPostIdentifier) { result in
+                fetchPost(
+                    identifier: feedPost.userIdentifier,
+                    postIdentifier: feedPostIdentifier,
+                    currentUserIdentifier: identifier) { result in
                     switch result {
                     case .success(let post):
                         let userPost = UserPost(user: user, post: post)
@@ -188,7 +216,8 @@ extension FirebasePostService {
                     case .success(let user):
                         fetchPost(
                             identifier: feedPost.userIdentifier,
-                            postIdentifier: feedPostIdentifier) { result in
+                            postIdentifier: feedPostIdentifier,
+                            currentUserIdentifier: identifier) { result in
                             
                             switch result {
                             case .success(let post):

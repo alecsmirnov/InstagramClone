@@ -80,12 +80,24 @@ extension HomeView {
     }
     
     func showLikeButton(at index: Int) {
-        userPosts[index].isLiked = false
+        let userPost = userPosts[index]
+        
+        var post = userPost.post
+        post.isLiked = false
+        
+        userPosts[index] = UserPost(user: userPost.user, post: post)
+        
         reloadRow(at: index)
     }
     
     func showUnlikeButton(at index: Int) {
-        userPosts[index].isLiked = true
+        let userPost = userPosts[index]
+        
+        var post = userPost.post
+        post.isLiked = true
+        
+        userPosts[index] = UserPost(user: userPost.user, post: post)
+        
         reloadRow(at: index)
     }
     

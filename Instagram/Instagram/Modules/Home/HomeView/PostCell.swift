@@ -147,7 +147,7 @@ extension PostCell {
             timestampLabel.text = timeAgo + " ago"
         }
         
-        isLiked = userPost.isLiked
+        isLiked = userPost.post.isLiked
     }
 }
 
