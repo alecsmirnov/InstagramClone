@@ -10,6 +10,7 @@ import UIKit
 protocol ICommentsViewController: AnyObject {
     func appendUserComment(_ userComment: UserComment)
     
+    func insertNewRow()
     func reloadData()
 }
 
@@ -50,6 +51,10 @@ extension CommentsViewController: ICommentsViewController {
         customView?.appendUserComment(userComment)
     }
     
+    func insertNewRow() {
+        customView?.insertNewRow()
+    }
+    
     func reloadData() {
         customView?.reloadData()
     }
@@ -87,6 +92,10 @@ private extension CommentsViewController {
 // MARK: - CommentsViewDelegate
 
 extension CommentsViewController: CommentsViewDelegate {
+    func commentsViewDidRequestPosts(_ commentsView: CommentsView) {
+        presenter?.didRequestUserComments()
+    }
+    
     func commentsView(_ commentsView: CommentsView, didPressSendButton commentText: String) {
         presenter?.didPressSendButton(commentText: commentText)
     }

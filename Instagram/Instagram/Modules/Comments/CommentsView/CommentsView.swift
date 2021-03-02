@@ -8,6 +8,8 @@
 import UIKit
 
 protocol CommentsViewDelegate: AnyObject {
+    func commentsViewDidRequestPosts(_ commentsView: CommentsView)
+    
     func commentsView(_ commentsView: CommentsView, didPressSendButton commentText: String)
 }
 
@@ -16,6 +18,7 @@ final class CommentsView: UIView {
     
     weak var delegate: CommentsViewDelegate?
     
+    private var lastRequestedPostIndex: Int?
     private var usersComments = [UserComment]()
     
     private var collectionViewHeightMinInitialized = false
@@ -77,7 +80,16 @@ final class CommentsView: UIView {
 extension CommentsView {
     func appendUserComment(_ userComment: UserComment) {
         usersComments.append(userComment)
-        usersComments.sort { $0.comment.timestamp < $1.comment.timestamp }
+    }
+    
+    func insertNewRow() {
+        if 1 < usersComments.count {
+            let lastItemIndexPath = IndexPath(row: usersComments.count - 1, section: 0)
+            
+            collectionView.insertItems(at: [lastItemIndexPath])
+        } else {
+            collectionView.reloadData()
+        }
     }
     
     func reloadData() {
@@ -304,6 +316,12 @@ extension CommentsView: UICollectionViewDataSource {
             for: indexPath) as? CommentCell
         else {
             return UICollectionViewCell()
+        }
+        
+        if indexPath.row == usersComments.count - 1 && (lastRequestedPostIndex ?? -1) < indexPath.row {
+            lastRequestedPostIndex = indexPath.row
+            
+            delegate?.commentsViewDidRequestPosts(self)
         }
         
         cell.configure(with: usersComments[indexPath.row])

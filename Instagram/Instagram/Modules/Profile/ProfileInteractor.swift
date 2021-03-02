@@ -97,6 +97,8 @@ extension ProfileInteractor: IProfileInteractor {
     func requestPosts(identifier: String) {
         guard let lastRequestedPostTimestamp = lastRequestedPostTimestamp else { return }
         
+        self.lastRequestedPostTimestamp = nil
+        
         FirebasePostService.fetchLastPosts(
             identifier: identifier,
             afterTimestamp: lastRequestedPostTimestamp,

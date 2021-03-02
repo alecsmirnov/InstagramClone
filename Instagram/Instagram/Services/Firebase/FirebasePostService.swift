@@ -264,6 +264,70 @@ extension FirebasePostService {
         }
     }
     
+    static func fetchFirstUserComments(
+        identifier: String,
+        postIdentifier: String,
+        afterTimestamp: TimeInterval = 0,
+        dropFirst: Bool = false,
+        limit: UInt,
+        completion: @escaping (Result<[UserComment], Error>) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.postsComments)
+            .child(identifier)
+            .child(postIdentifier)
+            .queryOrdered(byChild: Comment.CodingKeys.timestamp.rawValue)
+            .queryStarting(atValue: afterTimestamp)
+            .queryLimited(toFirst: limit)
+            .observeSingleEvent(of: .value) { snapshot in
+            let dispatchGroup = DispatchGroup()
+            var userComments = [UserComment]()
+            var fetchErrors = [Error]()
+            
+            for child in snapshot.children {
+                guard
+                    let snapshot = child as? DataSnapshot,
+                    let value = snapshot.value as? [String: Any],
+                    var comment = JSONCoding.fromDictionary(value, type: Comment.self)
+                else {
+                    return
+                }
+                
+                dispatchGroup.enter()
+                
+                comment.identifier = snapshot.key
+                
+                FirebaseUserService.fetchUser(withIdentifier: comment.senderIdentifier) { result in
+                    switch result {
+                    case .success(let user):
+                        let userComment = UserComment(user: user, comment: comment)
+                        
+                        userComments.append(userComment)
+                    case .failure(let error):
+                        fetchErrors.append(error)
+                    }
+                    
+                    dispatchGroup.leave()
+                }
+                
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                if let error = fetchErrors.first {
+                    completion(.failure(error))
+                } else {
+                    if dropFirst {
+                        completion(.success(Array(userComments.dropFirst())))
+                    } else {
+                        completion(.success(userComments))
+                    }
+                }
+            }
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+    }
+    
     static func sendComment(
         postOwnerIdentifier: String,
         postIdentifier: String,
@@ -286,38 +350,6 @@ extension FirebasePostService {
                 completion(error)
             }
         }
-    }
-    
-    static func observeComments(
-        postOwnerIdentifier: String,
-        postIdentifier: String,
-        completion: @escaping (Result<Comment, Error>) -> Void
-    ) -> FirebaseObserver {
-        let userCommentsReference = databaseReference
-            .child(FirebaseTables.postsComments)
-            .child(postOwnerIdentifier)
-            .child(postIdentifier)
-        
-        let commentAddedHandle = userCommentsReference.observe(.childAdded) { snapshot in
-            guard
-                let value = snapshot.value as? [String: Any],
-                var comment = JSONCoding.fromDictionary(value, type: Comment.self)
-            else {
-                return
-            }
-            
-            let commentIdentifier = snapshot.key
-            comment.identifier = commentIdentifier
-            comment.postIdentifier = postIdentifier
-            
-            completion(.success(comment))
-        } withCancel: { error in
-            completion(.failure(error))
-        }
-        
-        let commentAddedObserver = FirebaseObserver(reference: userCommentsReference, handle: commentAddedHandle)
-        
-        return commentAddedObserver
     }
     
     static func isLikedPost(

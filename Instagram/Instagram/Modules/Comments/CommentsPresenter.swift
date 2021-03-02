@@ -8,6 +8,8 @@
 protocol ICommentsPresenter: AnyObject {
     func viewDidLoad()
     
+    func didRequestUserComments()
+    
     func didPressSendButton(commentText: String)
 }
 
@@ -19,58 +21,32 @@ final class CommentsPresenter {
     var router: ICommentsRouter?
     
     var userPost: UserPost?
-    
-    var postOwnerComment: UserComment? {
-        guard
-            let user = userPost?.user,
-            let comment = userPost?.comment
-        else {
-            return nil
-        }
-        
-        let userComment = UserComment(user: user, comment: comment)
-        
-        return userComment
-    }
-    
-    // MARK: Initialization
-    
-    deinit {
-        interactor?.removeObserver()
-    }
 }
 
 // MARK: - ICommentsPresenter
 
 extension CommentsPresenter: ICommentsPresenter {
     func viewDidLoad() {
-        if let postOwnerComment = postOwnerComment {
+        if let postOwnerComment = userPost?.userComment {
             viewController?.appendUserComment(postOwnerComment)
             viewController?.reloadData()
         }
         
-        guard
-            let postOwnerIdentifier = userPost?.postOwnerIdentifier,
-            let postIdentifier = userPost?.postIdentifier
-        else {
-            return
+        if let userPost = userPost {
+            interactor?.fetchUserComments(userPost: userPost)
         }
+    }
+    
+    func didRequestUserComments() {
+        guard let userPost = userPost else { return }
         
-        interactor?.observeUsersComments(postOwnerIdentifier: postOwnerIdentifier, postIdentifier: postIdentifier)
+        interactor?.requestUserComments(userPost: userPost)
     }
     
     func didPressSendButton(commentText: String) {
-        guard
-            let postOwnerIdentifier = userPost?.postOwnerIdentifier,
-            let postIdentifier = userPost?.postIdentifier
-        else {
-            return
-        }
+        guard let userPost = userPost else { return }
         
-        interactor?.sendComment(
-            postOwnerIdentifier: postOwnerIdentifier,
-            postIdentifier: postIdentifier,
-            text: commentText)
+        interactor?.sendComment(userPost: userPost, text: commentText)
     }
 }
 
@@ -78,19 +54,23 @@ extension CommentsPresenter: ICommentsPresenter {
 
 extension CommentsPresenter: ICommentsInteractorOutput {
     func sendCommentSuccess() {
+        guard let userPost = userPost else { return }
         
+        interactor?.fetchSentUserComment(userPost: userPost)
     }
     
     func sendCommentFailure() {
         
     }
     
-    func fetchUserCommentSuccess(_ userComment: UserComment) {
-        viewController?.appendUserComment(userComment)
-        viewController?.reloadData()
+    func fetchUserCommentsSuccess(_ userComments: [UserComment]) {
+        userComments.forEach { userComment in
+            viewController?.appendUserComment(userComment)
+            viewController?.insertNewRow()
+        }
     }
     
-    func fetchUserCommentFailure() {
+    func fetchUserCommentsFailure() {
         
     }
 }

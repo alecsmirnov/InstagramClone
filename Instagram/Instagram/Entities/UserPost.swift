@@ -13,6 +13,14 @@ struct UserPost {
 }
 
 extension UserPost {
+    var userComment: UserComment? {
+        guard let comment = comment else { return nil }
+        
+        let userComment = UserComment(user: user, comment: comment)
+        
+        return userComment
+    }
+    
     var comment: Comment? {
         guard
             let senderIdentifier = user.identifier,

@@ -93,6 +93,8 @@ extension HomeInteractor: IHomeInteractor {
             return
         }
         
+        self.lastRequestedPostTimestamp = nil
+        
         FirebasePostService.fetchLastUserFeedPosts(
             identifier: identifier,
             afterTimestamp: lastRequestedPostTimestamp,
