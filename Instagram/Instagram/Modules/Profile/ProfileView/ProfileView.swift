@@ -8,14 +8,16 @@
 import UIKit
 
 protocol ProfileViewDelegate: AnyObject {
-    func profileViewDidRequestPosts(_ view: ProfileView)
+    func profileViewDidRequestPosts(_ profileView: ProfileView)
     
-    func profileViewDidPressFollowersButton(_ view: ProfileView)
-    func profileViewDidPressFollowingButton(_ view: ProfileView)
+    func profileViewDidPressFollowersButton(_ profileView: ProfileView)
+    func profileViewDidPressFollowingButton(_ profileView: ProfileView)
     
-    func profileViewDidPressEditButton( _ view: ProfileView)
-    func profileViewDidPressFollowButton( _ view: ProfileView)
-    func profileViewDidPressUnfollowButton( _ view: ProfileView)
+    func profileViewDidPressEditButton( _ profileView: ProfileView)
+    func profileViewDidPressFollowButton( _ profileView: ProfileView)
+    func profileViewDidPressUnfollowButton( _ profileView: ProfileView)
+    
+    func profileView(_ profileView: ProfileView, didSelectPost post: Post)
 }
 
 final class ProfileView: UIView {
@@ -28,9 +30,6 @@ final class ProfileView: UIView {
     private var user: User?
     private var posts = [Post]()
     
-    private lazy var collectionViewGridLayout = ProfileView.createGridLayout()
-    private lazy var collectionViewListLayout = ProfileView.createListLayout()
-    
     // MARK: Constants
     
     enum EditFollowButtonState {
@@ -41,7 +40,6 @@ final class ProfileView: UIView {
     }
     
     private enum Metrics {
-        static let estimatedHeight: CGFloat = 44
         static let gridCellSpace: CGFloat = 1.2
     }
     
@@ -104,12 +102,10 @@ private extension ProfileView {
         collectionView.delegate = self
         
         collectionView.register(
-            ProfilePostCell.self,
-            forCellWithReuseIdentifier: ProfilePostCell.reuseIdentifier)
-        collectionView.register(
             ProfileHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: ProfileHeaderView.reuseIdentifier)
+        collectionView.register(ProfilePostCell.self, forCellWithReuseIdentifier: ProfilePostCell.reuseIdentifier)
     }
 }
 
@@ -139,18 +135,6 @@ private extension ProfileView {
     }
     
     func setupCollectionViewGridLayout() {
-        collectionView.collectionViewLayout = collectionViewGridLayout
-    }
-    
-    func setupCollectionViewListLayout() {
-        collectionView.collectionViewLayout = collectionViewListLayout
-    }
-}
-
-// MARK: - Layout Helpers
-
-private extension ProfileView {
-    static func createGridLayout() -> UICollectionViewCompositionalLayout {
         let itemLayoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
             heightDimension: .fractionalWidth(1 / CGFloat(Constants.columnsCount)))
@@ -165,36 +149,17 @@ private extension ProfileView {
         
         let section = NSCollectionLayoutSection(group: group)
         
-        section.boundarySupplementaryItems = [createSectionHeader()]
-        
-        return UICollectionViewCompositionalLayout(section: section)
-    }
-    
-    static func createListLayout() -> UICollectionViewCompositionalLayout {
-        let itemLayoutSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(Metrics.estimatedHeight))
-        
-        let item = NSCollectionLayoutItem(layoutSize: itemLayoutSize)
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemLayoutSize, subitem: item, count: 1)
-        let section = NSCollectionLayoutSection(group: group)
-        
-        section.boundarySupplementaryItems = [createSectionHeader()]
-        
-        return UICollectionViewCompositionalLayout(section: section)
-    }
-    
-    static func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
         let headerLayoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(Metrics.estimatedHeight))
-        
+            heightDimension: .estimated(44))
         let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: headerLayoutSize,
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top)
         
-        return sectionHeader
+        section.boundarySupplementaryItems = [sectionHeader]
+        
+        collectionView.collectionViewLayout = UICollectionViewCompositionalLayout(section: section)
     }
 }
 
@@ -239,6 +204,7 @@ extension ProfileView: UICollectionViewDataSource {
         }
         
         if let user = user {
+            header.delegate = self
             header.setUser(user)
         }
         
@@ -253,8 +219,6 @@ extension ProfileView: UICollectionViewDataSource {
             break
         }
         
-        header.delegate = self
-        
         return header
     }
 }
@@ -262,27 +226,25 @@ extension ProfileView: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 
 extension ProfileView: UICollectionViewDelegate {
-    
-}
-
-// MARK: - UICollectionViewDelegateFlowLayout
-
-extension ProfileView: UICollectionViewDelegateFlowLayout {
-
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let post = posts[indexPath.row]
+        
+        delegate?.profileView(self, didSelectPost: post)
+    }
 }
 
 // MARK: - ProfileHeaderViewDelegate
 
 extension ProfileView: ProfileHeaderViewDelegate {
-    func profileHeaderViewDidPressFollowersButton(_ view: ProfileHeaderView) {
+    func profileHeaderViewDidPressFollowersButton(_ profileView: ProfileHeaderView) {
         delegate?.profileViewDidPressFollowersButton(self)
     }
     
-    func profileHeaderViewDidPressFollowingButton(_ view: ProfileHeaderView) {
+    func profileHeaderViewDidPressFollowingButton(_ profileView: ProfileHeaderView) {
         delegate?.profileViewDidPressFollowingButton(self)
     }
     
-    func profileHeaderViewDidPressEditFollowButton(_ view: ProfileHeaderView) {
+    func profileHeaderViewDidPressEditFollowButton(_ profileView: ProfileHeaderView) {
         switch editFollowButtonState {
         case .edit:
             delegate?.profileViewDidPressEditButton(self)

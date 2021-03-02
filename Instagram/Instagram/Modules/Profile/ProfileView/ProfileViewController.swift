@@ -109,27 +109,31 @@ private extension ProfileViewController {
 // MARK: - ProfileViewDelegate
 
 extension ProfileViewController: ProfileViewDelegate {
-    func profileViewDidRequestPosts(_ view: ProfileView) {
+    func profileViewDidRequestPosts(_ profileView: ProfileView) {
         presenter?.didRequestPosts()
     }
     
-    func profileViewDidPressFollowersButton(_ view: ProfileView) {
+    func profileViewDidPressFollowersButton(_ profileView: ProfileView) {
         
     }
     
-    func profileViewDidPressFollowingButton(_ view: ProfileView) {
+    func profileViewDidPressFollowingButton(_ profileView: ProfileView) {
         
     }
     
-    func profileViewDidPressEditButton(_ view: ProfileView) {
+    func profileViewDidPressEditButton(_ profileView: ProfileView) {
         presenter?.didPressEditButton()
     }
     
-    func profileViewDidPressFollowButton(_ view: ProfileView) {
+    func profileViewDidPressFollowButton(_ profileView: ProfileView) {
         presenter?.didPressFollowButton()
     }
     
-    func profileViewDidPressUnfollowButton(_ view: ProfileView) {        
+    func profileViewDidPressUnfollowButton(_ profileView: ProfileView) {        
         presenter?.didPressUnfollowButton()
+    }
+    
+    func profileView(_ profileView: ProfileView, didSelectPost post: Post) {
+        
     }
 }

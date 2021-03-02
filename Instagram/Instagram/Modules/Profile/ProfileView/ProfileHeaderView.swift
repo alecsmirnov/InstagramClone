@@ -65,7 +65,6 @@ final class ProfileHeaderView: UICollectionReusableView {
     
     private enum ToolbarStackViewImages {
         static let grid = UIImage(systemName: "squareshape.split.3x3")
-        static let list = UIImage(systemName: "list.dash")
         static let bookmark = UIImage(systemName: "bookmark")
     }
     
@@ -104,7 +103,6 @@ final class ProfileHeaderView: UICollectionReusableView {
     
     private let toolbarStackView = UIStackView()
     private let gridButton = UIButton(type: .system)
-    private let listButton = UIButton(type: .system)
     private let bookmarkButton = UIButton(type: .system)
     
     private let bottomSeparatorView = UIView()
@@ -180,7 +178,6 @@ private extension ProfileHeaderView {
         
         setupToolbarStackViewAppearance()
         setupGridButtonAppearance()
-        setupListButtonAppearance()
         setupBookmarkButtonAppearance()
     }
     
@@ -272,12 +269,8 @@ private extension ProfileHeaderView {
     
     func setupGridButtonAppearance() {
         gridButton.setImage(ToolbarStackViewImages.grid, for: .normal)
-        gridButton.tintColor = Colors.toolbarStackViewButtonTint
-    }
-    
-    func setupListButtonAppearance() {
-        listButton.setImage(ToolbarStackViewImages.list, for: .normal)
-        listButton.tintColor = Colors.toolbarStackViewButtonTint
+        //gridButton.tintColor = Colors.toolbarStackViewButtonTint
+        gridButton.tintColor = .black
     }
     
     func setupBookmarkButtonAppearance() {
@@ -319,7 +312,6 @@ private extension ProfileHeaderView {
         userInfoStackView.addArrangedSubview(websiteTextView)
         
         toolbarStackView.addArrangedSubview(gridButton)
-        toolbarStackView.addArrangedSubview(listButton)
         toolbarStackView.addArrangedSubview(bookmarkButton)
     }
     
