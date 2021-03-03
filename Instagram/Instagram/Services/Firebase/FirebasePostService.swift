@@ -182,8 +182,8 @@ extension FirebasePostService {
     
     static func fetchLastUserFeedPosts(
         identifier: String,
-        afterTimestamp: TimeInterval = Date().timeIntervalSince1970,
-        dropFirst: Bool = false,
+        beforeTimestamp: TimeInterval = Date().timeIntervalSince1970,
+        dropLast: Bool = false,
         limit: UInt,
         completion: @escaping (Result<[UserPost], Error>) -> Void
     ) {
@@ -191,7 +191,7 @@ extension FirebasePostService {
             .child(FirebaseTables.usersFeed)
             .child(identifier)
             .queryOrdered(byChild: FeedPost.CodingKeys.timestamp.rawValue)
-            .queryEnding(atValue: afterTimestamp)
+            .queryEnding(atValue: beforeTimestamp)
             .queryLimited(toLast: limit)
             .observeSingleEvent(of: .value) { snapshot in
             let dispatchGroup = DispatchGroup()
@@ -242,7 +242,12 @@ extension FirebasePostService {
                 if let error = fetchErrors.first {
                     completion(.failure(error))
                 } else {
-                    if dropFirst {
+                    // To fix a firebase bug, when there is another active observer in the system
+                    // (even if not associated with a table), the fetch order is changed
+                    // In my case: if profile and home observers is enabled at the same time (idk why)
+                    usersPosts.sort { $0.post.timestamp < $1.post.timestamp }
+                    
+                    if dropLast {
                         completion(.success(Array(usersPosts.dropLast())))
                     } else {
                         completion(.success(usersPosts))
@@ -256,8 +261,8 @@ extension FirebasePostService {
     
     static func fetchLastPosts(
         identifier: String,
-        afterTimestamp: TimeInterval = Date().timeIntervalSince1970,
-        dropFirst: Bool = false,
+        beforeTimestamp: TimeInterval = Date().timeIntervalSince1970,
+        dropLast: Bool = false,
         limit: UInt,
         completion: @escaping (Result<[Post], Error>) -> Void
     ) {
@@ -265,7 +270,7 @@ extension FirebasePostService {
             .child(FirebaseTables.posts)
             .child(identifier)
             .queryOrdered(byChild: Post.CodingKeys.timestamp.rawValue)
-            .queryEnding(atValue: afterTimestamp)
+            .queryEnding(atValue: beforeTimestamp)
             .queryLimited(toLast: limit)
             .observeSingleEvent(of: .value) { snapshot in
             var posts = [Post]()
@@ -283,7 +288,7 @@ extension FirebasePostService {
                 posts.append(post)
             }
             
-            if dropFirst {
+            if dropLast {
                 completion(.success(Array(posts.dropLast())))
             } else {
                 completion(.success(posts))

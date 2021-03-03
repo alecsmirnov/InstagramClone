@@ -97,8 +97,8 @@ extension HomeInteractor: IHomeInteractor {
         
         FirebasePostService.fetchLastUserFeedPosts(
             identifier: identifier,
-            afterTimestamp: lastRequestedPostTimestamp,
-            dropFirst: true,
+            beforeTimestamp: lastRequestedPostTimestamp,
+            dropLast: true,
             limit: Requests.postLimit + 1) { [self] result in
             switch result {
             case .success(let userPosts):

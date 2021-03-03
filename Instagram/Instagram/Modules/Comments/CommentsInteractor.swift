@@ -29,7 +29,7 @@ final class CommentsInteractor {
     weak var presenter: ICommentsInteractorOutput?
     
     private var lastRequestedUserCommentTimestamp: TimeInterval?
-    private var savedLastRequestedUserCommentTimestamp: TimeInterval?
+    private var beforeSentUserCommentTimestamp: TimeInterval?
     
     // MARK: Constants
     
@@ -82,7 +82,7 @@ extension CommentsInteractor: ICommentsInteractor {
             switch result {
             case .success(let userComments):
                 lastRequestedUserCommentTimestamp = userComments.last?.comment.timestamp
-                savedLastRequestedUserCommentTimestamp = lastRequestedUserCommentTimestamp
+                beforeSentUserCommentTimestamp = lastRequestedUserCommentTimestamp
                 
                 presenter?.fetchUserCommentsSuccess(userComments)
             case .failure(let error):
@@ -118,7 +118,7 @@ extension CommentsInteractor: ICommentsInteractor {
             return
         }
         
-        let timestamp = savedLastRequestedUserCommentTimestamp ?? 0
+        let timestamp = beforeSentUserCommentTimestamp ?? 0
         
         requestNextUserComments(
             postOwnerIdentifier: postOwnerIdentifier,
@@ -141,7 +141,7 @@ private extension CommentsInteractor {
             case .success(let userComments):
                 if !userComments.isEmpty {
                     lastRequestedUserCommentTimestamp = userComments.last?.comment.timestamp
-                    savedLastRequestedUserCommentTimestamp = lastRequestedUserCommentTimestamp
+                    beforeSentUserCommentTimestamp = lastRequestedUserCommentTimestamp
                 
                     presenter?.fetchUserCommentsSuccess(userComments)
                 }
