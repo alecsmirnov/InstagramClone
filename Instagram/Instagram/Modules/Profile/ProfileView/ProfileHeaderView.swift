@@ -133,6 +133,12 @@ extension ProfileHeaderView {
         }
     }
     
+    func setUserStats(_ userStats: UserStats) {
+        postsButton.firstPartText = userStats.posts.description
+        followersButton.firstPartText = userStats.followers.description
+        followingButton.firstPartText = userStats.following.description
+    }
+    
     func setupEditFollowButtonEditStyle() {
         UIView.animate(withDuration: Constants.editFollowButtonAnimationDuration) { [self] in
             editFollowButton.setTitle(EditFollowButtonTitles.edit, for: .normal)

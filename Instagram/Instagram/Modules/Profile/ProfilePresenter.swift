@@ -31,6 +31,7 @@ final class ProfilePresenter {
     // MARK: Initialization
     
     deinit {
+        interactor?.removeUserStatsObserver()
         interactor?.removePostsObserver()
         
         removeFollowUnfollowNotifications()
@@ -52,6 +53,8 @@ extension ProfilePresenter: IProfilePresenter {
             
             viewController?.setUser(user)
             viewController?.reloadData()
+            
+            interactor?.observeUserStats(identifier: identifier)
             
             interactor?.fetchPosts(identifier: identifier)
             interactor?.observePosts()
@@ -103,12 +106,23 @@ extension ProfilePresenter: IProfileInteractorOutput {
         viewController?.reloadData()
         
         if let identifier = user.identifier {
+            interactor?.observeUserStats(identifier: identifier)
+            
             interactor?.fetchPosts(identifier: identifier)
             interactor?.observePosts()
         }
     }
     
     func fetchCurrentUserFailure() {
+        
+    }
+    
+    func fetchUserStatsSuccess(_ userStats: UserStats) {
+        viewController?.setUserStats(userStats)
+        viewController?.reloadData()
+    }
+    
+    func fetchUserStatsFailure() {
         
     }
     

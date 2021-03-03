@@ -12,6 +12,9 @@ protocol IProfileInteractor: AnyObject {
     func fetchPosts(identifier: String)
     func requestPosts(identifier: String)
     
+    func observeUserStats(identifier: String)
+    func removeUserStatsObserver()
+    
     func observePosts()
     func removePostsObserver()
     
@@ -29,6 +32,9 @@ protocol IProfileInteractor: AnyObject {
 protocol IProfileInteractorOutput: AnyObject {
     func fetchCurrentUserSuccess(_ user: User)
     func fetchCurrentUserFailure()
+    
+    func fetchUserStatsSuccess(_ userStats: UserStats)
+    func fetchUserStatsFailure()
     
     func fetchPostsSuccess(_ posts: [Post])
     func fetchPostsFailure()
@@ -52,6 +58,7 @@ final class ProfileInteractor {
     weak var presenter: IProfileInteractorOutput?
     
     private var lastRequestedPostTimestamp: TimeInterval?
+    private var userStatsObservers: [FirebaseObserver]?
     private var postsObserver: FirebaseObserver?
     
     // MARK: Constants
@@ -78,9 +85,9 @@ extension ProfileInteractor: IProfileInteractor {
             }
         }
     }
-    
+
     func fetchPosts(identifier: String) {
-        FirebasePostService.fetchLastPosts(identifier: identifier, limit: Requests.postLimit) { [self] result in
+        FirebasePostService.fetchFromEndPosts(identifier: identifier, limit: Requests.postLimit) { [self] result in
             switch result {
             case .success(let posts):
                 lastRequestedPostTimestamp = posts.first?.timestamp
@@ -99,7 +106,7 @@ extension ProfileInteractor: IProfileInteractor {
         
         self.lastRequestedPostTimestamp = nil
         
-        FirebasePostService.fetchLastPosts(
+        FirebasePostService.fetchFromEndPosts(
             identifier: identifier,
             beforeTimestamp: lastRequestedPostTimestamp,
             dropLast: true,
@@ -117,6 +124,29 @@ extension ProfileInteractor: IProfileInteractor {
                 print("Failed to request posts: \(error.localizedDescription)")
             }
         }
+    }
+    
+    func observeUserStats(identifier: String) {
+        removeUserStatsObserver()
+        
+        userStatsObservers = FirebasePostService.observeUserStats(identifier: identifier) { [self] result in
+            switch result {
+            case .success(let userStats):
+                presenter?.fetchUserStatsSuccess(userStats)
+            case .failure(let error):
+                presenter?.fetchUserStatsFailure()
+                
+                print("Failed to fetch observed user stats: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func removeUserStatsObserver() {
+        userStatsObservers?.forEach { observer in
+            observer.remove()
+        }
+        
+        userStatsObservers = nil
     }
     
     func observePosts() {

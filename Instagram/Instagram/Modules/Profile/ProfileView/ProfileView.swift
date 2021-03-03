@@ -28,6 +28,7 @@ final class ProfileView: UIView {
     var editFollowButtonState = EditFollowButtonState.none
     
     private var user: User?
+    private var userStats: UserStats?
     private var posts = [Post]()
     
     // MARK: Constants
@@ -70,6 +71,10 @@ final class ProfileView: UIView {
 extension ProfileView {
     func setUser(_ user: User) {
         self.user = user
+    }
+    
+    func setUserStats(_ userStats: UserStats) {
+        self.userStats = userStats
     }
     
     func appendFirstPost(_ post: Post) {
@@ -203,9 +208,14 @@ extension ProfileView: UICollectionViewDataSource {
             return UICollectionReusableView()
         }
         
+        header.delegate = self
+        
         if let user = user {
-            header.delegate = self
             header.setUser(user)
+        }
+        
+        if let userStats = userStats {
+            header.setUserStats(userStats)
         }
         
         switch editFollowButtonState {

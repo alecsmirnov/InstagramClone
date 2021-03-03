@@ -63,7 +63,7 @@ extension HomeInteractor: IHomeInteractor {
                     return
                 }
                 
-                FirebasePostService.fetchLastUserFeedPosts(
+                FirebasePostService.fetchFromEndUserFeedPosts(
                     identifier: identifier,
                     limit: Requests.postLimit) { result in
                     switch result {
@@ -95,7 +95,7 @@ extension HomeInteractor: IHomeInteractor {
         
         self.lastRequestedPostTimestamp = nil
         
-        FirebasePostService.fetchLastUserFeedPosts(
+        FirebasePostService.fetchFromEndUserFeedPosts(
             identifier: identifier,
             beforeTimestamp: lastRequestedPostTimestamp,
             dropLast: true,

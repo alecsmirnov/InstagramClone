@@ -11,9 +11,7 @@ struct FirebaseObserver {
     // MARK: Properties
     
     private let reference: DatabaseReference
-    //private let handle: UInt
-    
-    let handle: UInt
+    private let handle: UInt
     
     // MARK: Initialization
     

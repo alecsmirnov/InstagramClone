@@ -75,7 +75,7 @@ extension CommentsInteractor: ICommentsInteractor {
             return
         }
         
-        FirebasePostService.fetchFirstUserComments(
+        FirebasePostService.fetchFromBeginUserComments(
             identifier: postOwnerIdentifier,
             postIdentifier: postIdentifier,
             limit: Requests.commentLimit) { [self] result in
@@ -131,7 +131,7 @@ extension CommentsInteractor: ICommentsInteractor {
 
 private extension CommentsInteractor {
     func requestNextUserComments(postOwnerIdentifier: String, postIdentifier: String, timestamp: TimeInterval) {
-        FirebasePostService.fetchFirstUserComments(
+        FirebasePostService.fetchFromBeginUserComments(
             identifier: postOwnerIdentifier,
             postIdentifier: postIdentifier,
             afterTimestamp: timestamp,

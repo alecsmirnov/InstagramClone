@@ -9,6 +9,7 @@ import UIKit
 
 protocol IProfileViewController: AnyObject {
     func setUser(_ user: User)
+    func setUserStats(_ userStats: UserStats)
     func appendFirstPost(_ post: Post)
     func appendLastPost(_ post: Post)
     
@@ -44,6 +45,10 @@ extension ProfileViewController: IProfileViewController {
         navigationItem.title = user.username
         
         customView?.setUser(user)
+    }
+    
+    func setUserStats(_ userStats: UserStats) {
+        customView?.setUserStats(userStats)
     }
     
     func appendFirstPost(_ post: Post) {

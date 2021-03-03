@@ -19,6 +19,7 @@
 		84488ABF25C2F6AD00173A19 /* NewPostRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84488ABE25C2F6AD00173A19 /* NewPostRouter.swift */; };
 		84488AC225C2F6B400173A19 /* NewPostAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84488AC125C2F6B400173A19 /* NewPostAssembly.swift */; };
 		8451111F25DFBD9F008A13E5 /* Date+timeAgo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8451111E25DFBD9F008A13E5 /* Date+timeAgo.swift */; };
+		8454137C25EF5E1900B0D544 /* UserStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454137B25EF5E1900B0D544 /* UserStats.swift */; };
 		84541E7525CD14E700E0DA81 /* ProfilePostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84541E7425CD14E700E0DA81 /* ProfilePostCell.swift */; };
 		845455D225BD44380007C9A2 /* UserPublicInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455D125BD44380007C9A2 /* UserPublicInfo.swift */; };
 		845455D525BD44460007C9A2 /* UserPrivateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455D425BD44460007C9A2 /* UserPrivateInfo.swift */; };
@@ -135,6 +136,7 @@
 		84488ABE25C2F6AD00173A19 /* NewPostRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostRouter.swift; sourceTree = "<group>"; };
 		84488AC125C2F6B400173A19 /* NewPostAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostAssembly.swift; sourceTree = "<group>"; };
 		8451111E25DFBD9F008A13E5 /* Date+timeAgo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+timeAgo.swift"; sourceTree = "<group>"; };
+		8454137B25EF5E1900B0D544 /* UserStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStats.swift; sourceTree = "<group>"; };
 		84541E7425CD14E700E0DA81 /* ProfilePostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePostCell.swift; sourceTree = "<group>"; };
 		845455D125BD44380007C9A2 /* UserPublicInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPublicInfo.swift; sourceTree = "<group>"; };
 		845455D425BD44460007C9A2 /* UserPrivateInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPrivateInfo.swift; sourceTree = "<group>"; };
@@ -616,6 +618,7 @@
 				845455D825BD467A0007C9A2 /* Profile.swift */,
 				845455DC25BD46C40007C9A2 /* ProfileEdit.swift */,
 				84E6610725B9936E0036AB9F /* User.swift */,
+				8454137B25EF5E1900B0D544 /* UserStats.swift */,
 				845455D125BD44380007C9A2 /* UserPublicInfo.swift */,
 				845455D425BD44460007C9A2 /* UserPrivateInfo.swift */,
 				845C283F25CAB51A000731B3 /* Post.swift */,
@@ -789,6 +792,7 @@
 				845455F125BD8A300007C9A2 /* LoginRouter.swift in Sources */,
 				8445929625B425210028EE6A /* CustomViewController.swift in Sources */,
 				84E660A325B955200036AB9F /* ProfileInteractor.swift in Sources */,
+				8454137C25EF5E1900B0D544 /* UserStats.swift in Sources */,
 				845D0B9C25D6BB9000AD3122 /* UIButton+imageDownload.swift in Sources */,
 				84E6609C25B955050036AB9F /* ProfileViewController.swift in Sources */,
 				8491A84025B47DE8009EDFC2 /* RegistrationInteractor.swift in Sources */,

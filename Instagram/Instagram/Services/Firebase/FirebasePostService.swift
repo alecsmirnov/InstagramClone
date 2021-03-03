@@ -12,7 +12,13 @@ enum FirebasePostService {
     private static let databaseReference = Database.database().reference()
 }
 
-// MARK: - Public Methods
+// MARK: -
+
+extension FirebasePostService {
+    
+}
+
+// MARK: - User Feed Methods
 
 extension FirebasePostService {
     static func isUserFeedExist(identifier: String, completion: @escaping (Result<Bool, Error>) -> Void) {
@@ -26,161 +32,7 @@ extension FirebasePostService {
         }
     }
     
-    static func sharePost(
-        identifier: String,
-        imageData: Data,
-        imageAspectRatio: CGFloat,
-        caption: String?,
-        completion: @escaping (Error?) -> Void
-    ) {
-        FirebaseStorageService.storeUserPostImageData(imageData, identifier: identifier) { result in
-            switch result {
-            case .success(let imageURL):
-                createPostFeedRecord(
-                    identifier: identifier,
-                    imageURL: imageURL,
-                    imageAspectRatio: imageAspectRatio,
-                    caption: caption) { error in
-                    completion(error)
-                }
-            case .failure(let error):
-                completion(error)
-            }
-        }
-    }
-    
-    static func fetchPost(
-        identifier: String,
-        postIdentifier: String,
-        currentUserIdentifier: String,
-        completion: @escaping (Result<Post, Error>) -> Void
-    ) {
-        databaseReference
-            .child(FirebaseTables.posts)
-            .child(identifier)
-            .child(postIdentifier)
-            .observeSingleEvent(of: .value) { snapshot in
-            guard
-                let value = snapshot.value as? [String: Any],
-                var post = JSONCoding.fromDictionary(value, type: Post.self)
-            else {
-                return
-            }
-            
-            let postIdentifier = snapshot.key
-            post.identifier = postIdentifier
-            
-            isLikedPost(
-                postOwnerIdentifier: identifier,
-                postIdentifier: postIdentifier,
-                userIdentifier: currentUserIdentifier) { result in
-                switch result {
-                case .success(let isLiked):
-                    post.isLiked = isLiked
-                    
-                    completion(.success(post))
-                case .failure(let error):
-                    completion(.failure(error))
-                }
-            }
-        } withCancel: { error in
-            completion(.failure(error))
-        }
-    }
-    
-    static func observePosts(
-        identifier: String,
-        timestamp: TimeInterval = Date().timeIntervalSince1970,
-        completion: @escaping (Result<Post, Error>) -> Void
-    ) -> FirebaseObserver {
-        let postsReference = databaseReference.child(FirebaseTables.posts).child(identifier)
-        
-        let postAddedHandle = postsReference
-            .queryOrdered(byChild: Post.CodingKeys.timestamp.rawValue)
-            .queryStarting(atValue: timestamp)
-            .observe(.childAdded) { snapshot in
-            guard
-                let value = snapshot.value as? [String: Any],
-                var post = JSONCoding.fromDictionary(value, type: Post.self)
-            else {
-                return
-            }
-            
-            let postIdentifier = snapshot.key
-            post.identifier = postIdentifier
-                
-            isLikedPost(
-                postOwnerIdentifier: identifier,
-                postIdentifier: postIdentifier,
-                userIdentifier: identifier) { result in
-                switch result {
-                case .success(let isLiked):
-                    post.isLiked = isLiked
-                    
-                    completion(.success(post))
-                case .failure(let error):
-                    completion(.failure(error))
-                }
-            }
-        } withCancel: { error in
-            completion(.failure(error))
-        }
-        
-        let postAddedObserver = FirebaseObserver(reference: postsReference, handle: postAddedHandle)
-        
-        return postAddedObserver
-    }
-    
-    static func observeUserFeedPosts(
-        identifier: String,
-        timestamp: TimeInterval = Date().timeIntervalSince1970,
-        completion: @escaping (Result<UserPost, Error>) -> Void
-    ) -> FirebaseObserver {
-        let userFeedReference = databaseReference.child(FirebaseTables.usersFeed).child(identifier)
-        
-        let feedPostAddedHandle = userFeedReference
-            .queryOrdered(byChild: FeedPost.CodingKeys.timestamp.rawValue)
-            .queryStarting(atValue: timestamp)
-            .observe(.childAdded) { snapshot in
-            guard
-                let value = snapshot.value as? [String: Any],
-                let feedPost = JSONCoding.fromDictionary(value, type: FeedPost.self)
-            else {
-                return
-            }
-            
-            FirebaseUserService.fetchUser(withIdentifier: feedPost.userIdentifier) { result in
-                switch result {
-                case .success(let user):
-                let feedPostIdentifier = snapshot.key
-                    
-                fetchPost(
-                    identifier: feedPost.userIdentifier,
-                    postIdentifier: feedPostIdentifier,
-                    currentUserIdentifier: identifier) { result in
-                    switch result {
-                    case .success(let post):
-                        let userPost = UserPost(user: user, post: post)
-                        
-                        completion(.success(userPost))
-                    case .failure(let error):
-                        completion(.failure(error))
-                    }
-                }
-                case .failure(let error):
-                    completion(.failure(error))
-                }
-            }
-        } withCancel: { error in
-            completion(.failure(error))
-        }
-        
-        let postFeedAddedObserver = FirebaseObserver(reference: userFeedReference, handle: feedPostAddedHandle)
-        
-        return postFeedAddedObserver
-    }
-    
-    static func fetchLastUserFeedPosts(
+    static func fetchFromEndUserFeedPosts(
         identifier: String,
         beforeTimestamp: TimeInterval = Date().timeIntervalSince1970,
         dropLast: Bool = false,
@@ -242,9 +94,9 @@ extension FirebasePostService {
                 if let error = fetchErrors.first {
                     completion(.failure(error))
                 } else {
-                    // To fix a firebase bug, when there is another active observer in the system
+                    // To fix a Firebase bug, when there is another active observer in the system
                     // (even if not associated with a table), the fetch order is changed
-                    // In my case: if profile and home observers is enabled at the same time (idk why)
+                    // In my case: if "observeUserFeedPosts" and "observePosts" is enabled at the same time (idk why)
                     usersPosts.sort { $0.post.timestamp < $1.post.timestamp }
                     
                     if dropLast {
@@ -259,133 +111,59 @@ extension FirebasePostService {
         }
     }
     
-    static func fetchLastPosts(
+    static func observeUserFeedPosts(
         identifier: String,
-        beforeTimestamp: TimeInterval = Date().timeIntervalSince1970,
-        dropLast: Bool = false,
-        limit: UInt,
-        completion: @escaping (Result<[Post], Error>) -> Void
-    ) {
-        databaseReference
-            .child(FirebaseTables.posts)
-            .child(identifier)
-            .queryOrdered(byChild: Post.CodingKeys.timestamp.rawValue)
-            .queryEnding(atValue: beforeTimestamp)
-            .queryLimited(toLast: limit)
-            .observeSingleEvent(of: .value) { snapshot in
-            var posts = [Post]()
-            
-            for child in snapshot.children {
-                guard
-                    let snapshot = child as? DataSnapshot,
-                    let value = snapshot.value as? [String: Any],
-                    var post = JSONCoding.fromDictionary(value, type: Post.self)
-                else {
-                    return
-                }
-                    
-                post.identifier = snapshot.key
-                posts.append(post)
-            }
-            
-            if dropLast {
-                completion(.success(Array(posts.dropLast())))
-            } else {
-                completion(.success(posts))
-            }
-        } withCancel: { error in
-            completion(.failure(error))
-        }
-    }
-    
-    static func fetchFirstUserComments(
-        identifier: String,
-        postIdentifier: String,
-        afterTimestamp: TimeInterval = 0,
-        dropFirst: Bool = false,
-        limit: UInt,
-        completion: @escaping (Result<[UserComment], Error>) -> Void
-    ) {
-        databaseReference
-            .child(FirebaseTables.postsComments)
-            .child(identifier)
-            .child(postIdentifier)
-            .queryOrdered(byChild: Comment.CodingKeys.timestamp.rawValue)
-            .queryStarting(atValue: afterTimestamp)
-            .queryLimited(toFirst: limit)
-            .observeSingleEvent(of: .value) { snapshot in
-            let dispatchGroup = DispatchGroup()
-            var userComments = [UserComment]()
-            var fetchErrors = [Error]()
-            
-            for child in snapshot.children {
-                guard
-                    let snapshot = child as? DataSnapshot,
-                    let value = snapshot.value as? [String: Any],
-                    var comment = JSONCoding.fromDictionary(value, type: Comment.self)
-                else {
-                    return
-                }
-                
-                dispatchGroup.enter()
-                
-                comment.identifier = snapshot.key
-                
-                FirebaseUserService.fetchUser(withIdentifier: comment.senderIdentifier) { result in
-                    switch result {
-                    case .success(let user):
-                        let userComment = UserComment(user: user, comment: comment)
-                        
-                        userComments.append(userComment)
-                    case .failure(let error):
-                        fetchErrors.append(error)
-                    }
-                    
-                    dispatchGroup.leave()
-                }
-                
-            }
-            
-            dispatchGroup.notify(queue: .main) {
-                if let error = fetchErrors.first {
-                    completion(.failure(error))
-                } else {
-                    if dropFirst {
-                        completion(.success(Array(userComments.dropFirst())))
-                    } else {
-                        completion(.success(userComments))
-                    }
-                }
-            }
-        } withCancel: { error in
-            completion(.failure(error))
-        }
-    }
-    
-    static func sendComment(
-        postOwnerIdentifier: String,
-        postIdentifier: String,
-        senderIdentifier: String,
-        text: String,
-        completion: @escaping (Error?) -> Void
-    ) {
-        let comment = Comment(
-            senderIdentifier: senderIdentifier,
-            caption: text,
-            timestamp: Date().timeIntervalSince1970)
+        timestamp: TimeInterval = Date().timeIntervalSince1970,
+        completion: @escaping (Result<UserPost, Error>) -> Void
+    ) -> FirebaseObserver {
+        let userFeedReference = databaseReference.child(FirebaseTables.usersFeed).child(identifier)
         
-        if let commentDictionary = JSONCoding.toDictionary(comment) {
-            databaseReference
-                .child(FirebaseTables.postsComments)
-                .child(postOwnerIdentifier)
-                .child(postIdentifier)
-                .childByAutoId()
-                .setValue(commentDictionary) { error, _ in
-                completion(error)
+        let feedPostAddedHandle = userFeedReference
+            .queryOrdered(byChild: FeedPost.CodingKeys.timestamp.rawValue)
+            .queryStarting(atValue: timestamp)
+            .observe(.childAdded) { snapshot in
+            guard
+                let value = snapshot.value as? [String: Any],
+                let feedPost = JSONCoding.fromDictionary(value, type: FeedPost.self)
+            else {
+                return
             }
+            
+            FirebaseUserService.fetchUser(withIdentifier: feedPost.userIdentifier) { result in
+                switch result {
+                case .success(let user):
+                let feedPostIdentifier = snapshot.key
+                    
+                fetchPost(
+                    identifier: feedPost.userIdentifier,
+                    postIdentifier: feedPostIdentifier,
+                    currentUserIdentifier: identifier) { result in
+                    switch result {
+                    case .success(let post):
+                        let userPost = UserPost(user: user, post: post)
+                        
+                        completion(.success(userPost))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
+                }
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        } withCancel: { error in
+            completion(.failure(error))
         }
+        
+        let postFeedAddedObserver = FirebaseObserver(reference: userFeedReference, handle: feedPostAddedHandle)
+        
+        return postFeedAddedObserver
     }
-    
+}
+
+// MARK: - Posts Methods
+
+extension FirebasePostService {
     static func isLikedPost(
         postOwnerIdentifier: String,
         postIdentifier: String,
@@ -471,6 +249,325 @@ extension FirebasePostService {
             case .failure(let error):
                 completion(error)
             }
+        }
+    }
+    
+    static func sharePost(
+        identifier: String,
+        imageData: Data,
+        imageAspectRatio: CGFloat,
+        caption: String?,
+        completion: @escaping (Error?) -> Void
+    ) {
+        FirebaseStorageService.storeUserPostImageData(imageData, identifier: identifier) { result in
+            switch result {
+            case .success(let imageURL):
+                createPostFeedRecord(
+                    identifier: identifier,
+                    imageURL: imageURL,
+                    imageAspectRatio: imageAspectRatio,
+                    caption: caption) { error in
+                    completion(error)
+                }
+            case .failure(let error):
+                completion(error)
+            }
+        }
+    }
+    
+    static func fetchPost(
+        identifier: String,
+        postIdentifier: String,
+        currentUserIdentifier: String,
+        completion: @escaping (Result<Post, Error>) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.posts)
+            .child(identifier)
+            .child(postIdentifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            guard
+                let value = snapshot.value as? [String: Any],
+                var post = JSONCoding.fromDictionary(value, type: Post.self)
+            else {
+                return
+            }
+            
+            let postIdentifier = snapshot.key
+            post.identifier = postIdentifier
+            
+            isLikedPost(
+                postOwnerIdentifier: identifier,
+                postIdentifier: postIdentifier,
+                userIdentifier: currentUserIdentifier) { result in
+                switch result {
+                case .success(let isLiked):
+                    post.isLiked = isLiked
+                    
+                    completion(.success(post))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+    }
+    
+    static func fetchFromEndPosts(
+        identifier: String,
+        beforeTimestamp: TimeInterval = Date().timeIntervalSince1970,
+        dropLast: Bool = false,
+        limit: UInt,
+        completion: @escaping (Result<[Post], Error>) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.posts)
+            .child(identifier)
+            .queryOrdered(byChild: Post.CodingKeys.timestamp.rawValue)
+            .queryEnding(atValue: beforeTimestamp)
+            .queryLimited(toLast: limit)
+            .observeSingleEvent(of: .value) { snapshot in
+            var posts = [Post]()
+            
+            for child in snapshot.children {
+                guard
+                    let snapshot = child as? DataSnapshot,
+                    let value = snapshot.value as? [String: Any],
+                    var post = JSONCoding.fromDictionary(value, type: Post.self)
+                else {
+                    return
+                }
+                    
+                post.identifier = snapshot.key
+                posts.append(post)
+            }
+            
+            if dropLast {
+                completion(.success(Array(posts.dropLast())))
+            } else {
+                completion(.success(posts))
+            }
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+    }
+    
+    static func observePosts(
+        identifier: String,
+        timestamp: TimeInterval = Date().timeIntervalSince1970,
+        completion: @escaping (Result<Post, Error>) -> Void
+    ) -> FirebaseObserver {
+        let postsReference = databaseReference.child(FirebaseTables.posts).child(identifier)
+        
+        let postAddedHandle = postsReference
+            .queryOrdered(byChild: Post.CodingKeys.timestamp.rawValue)
+            .queryStarting(atValue: timestamp)
+            .observe(.childAdded) { snapshot in
+            guard
+                let value = snapshot.value as? [String: Any],
+                var post = JSONCoding.fromDictionary(value, type: Post.self)
+            else {
+                return
+            }
+            
+            let postIdentifier = snapshot.key
+            post.identifier = postIdentifier
+                
+            isLikedPost(
+                postOwnerIdentifier: identifier,
+                postIdentifier: postIdentifier,
+                userIdentifier: identifier) { result in
+                switch result {
+                case .success(let isLiked):
+                    post.isLiked = isLiked
+                    
+                    completion(.success(post))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+        
+        let postAddedObserver = FirebaseObserver(reference: postsReference, handle: postAddedHandle)
+        
+        return postAddedObserver
+    }
+}
+
+// MARK: - Comments Methods
+
+extension FirebasePostService {
+    static func sendComment(
+        postOwnerIdentifier: String,
+        postIdentifier: String,
+        senderIdentifier: String,
+        text: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        let comment = Comment(
+            senderIdentifier: senderIdentifier,
+            caption: text,
+            timestamp: Date().timeIntervalSince1970)
+        
+        if let commentDictionary = JSONCoding.toDictionary(comment) {
+            databaseReference
+                .child(FirebaseTables.postsComments)
+                .child(postOwnerIdentifier)
+                .child(postIdentifier)
+                .childByAutoId()
+                .setValue(commentDictionary) { error, _ in
+                completion(error)
+            }
+        }
+    }
+    
+    static func fetchFromBeginUserComments(
+        identifier: String,
+        postIdentifier: String,
+        afterTimestamp: TimeInterval = 0,
+        dropFirst: Bool = false,
+        limit: UInt,
+        completion: @escaping (Result<[UserComment], Error>) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.postsComments)
+            .child(identifier)
+            .child(postIdentifier)
+            .queryOrdered(byChild: Comment.CodingKeys.timestamp.rawValue)
+            .queryStarting(atValue: afterTimestamp)
+            .queryLimited(toFirst: limit)
+            .observeSingleEvent(of: .value) { snapshot in
+            let dispatchGroup = DispatchGroup()
+            var userComments = [UserComment]()
+            var fetchErrors = [Error]()
+            
+            for child in snapshot.children {
+                guard
+                    let snapshot = child as? DataSnapshot,
+                    let value = snapshot.value as? [String: Any],
+                    var comment = JSONCoding.fromDictionary(value, type: Comment.self)
+                else {
+                    return
+                }
+                
+                dispatchGroup.enter()
+                
+                comment.identifier = snapshot.key
+                
+                FirebaseUserService.fetchUser(withIdentifier: comment.senderIdentifier) { result in
+                    switch result {
+                    case .success(let user):
+                        let userComment = UserComment(user: user, comment: comment)
+                        
+                        userComments.append(userComment)
+                    case .failure(let error):
+                        fetchErrors.append(error)
+                    }
+                    
+                    dispatchGroup.leave()
+                }
+                
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                if let error = fetchErrors.first {
+                    completion(.failure(error))
+                } else {
+                    if dropFirst {
+                        completion(.success(Array(userComments.dropFirst())))
+                    } else {
+                        completion(.success(userComments))
+                    }
+                }
+            }
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+    }
+}
+
+// MARK: - User Stats Methods
+
+extension FirebasePostService {
+    static func observeUserStats(
+        identifier: String,
+        completion: @escaping (Result<UserStats, Error>) -> Void
+    ) -> [FirebaseObserver] {
+        let postsReference = databaseReference.child(FirebaseTables.posts).child(identifier)
+        let followersReference = databaseReference.child(FirebaseTables.followers).child(identifier)
+        let followingReference = databaseReference.child(FirebaseTables.following).child(identifier)
+        
+        let postsHandle = postsReference.observe(.value) { snapshot in
+            fetchUserStats(identifier: identifier, completion: completion)
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+        
+        let followersHandle = followersReference.observe(.value) { snapshot in
+            fetchUserStats(identifier: identifier, completion: completion)
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+        
+        let followingHandle = followingReference.observe(.value) { snapshot in
+            fetchUserStats(identifier: identifier, completion: completion)
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+        
+        let postsObserver = FirebaseObserver(reference: postsReference, handle: postsHandle)
+        let followersObserver = FirebaseObserver(reference: followersReference, handle: followersHandle)
+        let followingObserver = FirebaseObserver(reference: followingReference, handle: followingHandle)
+        
+        return [postsObserver, followersObserver, followingObserver]
+    }
+    
+    private static func fetchUserStats(identifier: String, completion: @escaping (Result<UserStats, Error>) -> Void) {
+        databaseReference
+            .child(FirebaseTables.posts)
+            .child(identifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            var posts = 0
+                
+            if let value = snapshot.value as? [String: Any] {
+                posts = value.count
+            }
+            
+            databaseReference
+                .child(FirebaseTables.followers)
+                .child(identifier)
+                .observeSingleEvent(of: .value) { snapshot in
+                var followers = 0
+                    
+                if let value = snapshot.value as? [String: Any] {
+                    followers = value.count
+                }
+                
+                databaseReference
+                    .child(FirebaseTables.following)
+                    .child(identifier)
+                    .observeSingleEvent(of: .value) { snapshot in
+                    var following = 0
+                        
+                    if let value = snapshot.value as? [String: Any] {
+                        following = value.count
+                    }
+                    
+                    let userStats = UserStats(posts: posts, followers: followers, following: following)
+                    
+                    completion(.success(userStats))
+                } withCancel: { error in
+                    completion(.failure(error))
+                }
+            } withCancel: { error in
+                completion(.failure(error))
+            }
+            
+        } withCancel: { error in
+            completion(.failure(error))
         }
     }
 }
