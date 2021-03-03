@@ -6,6 +6,9 @@
 //
 
 protocol IProfileRouter: AnyObject {
+    func showFollowersViewController(user: User, userStats: UserStats)
+    func showFollowingViewController(user: User, userStats: UserStats)
+    
     func showLoginViewController()
 }
 
@@ -20,6 +23,22 @@ final class ProfileRouter {
 // MARK: - IProfileRouter
 
 extension ProfileRouter: IProfileRouter {
+    func showFollowersViewController(user: User, userStats: UserStats) {
+        let followersViewController = FollowersFollowingAssembly.createFollowersViewController(
+            user: user,
+            userStats: userStats)
+        
+        viewController?.navigationController?.pushViewController(followersViewController, animated: true)
+    }
+    
+    func showFollowingViewController(user: User, userStats: UserStats) {
+        let followingViewController = FollowersFollowingAssembly.createFollowingViewController(
+            user: user,
+            userStats: userStats)
+        
+        viewController?.navigationController?.pushViewController(followingViewController, animated: true)
+    }
+    
     func showLoginViewController() {
         let loginViewController = LoginAssembly.createLoginViewController()
         

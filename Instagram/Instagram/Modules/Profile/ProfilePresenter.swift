@@ -12,6 +12,9 @@ protocol IProfilePresenter: AnyObject {
     
     func didRequestPosts()
     
+    func didPressFollowersButton()
+    func didPressFollowingButton()
+    
     func didPressEditButton()
     func didPressFollowButton()
     func didPressUnfollowButton()
@@ -27,6 +30,7 @@ final class ProfilePresenter {
     var router: IProfileRouter?
     
     var user: User?
+    var userStats: UserStats?
     
     // MARK: Initialization
     
@@ -69,6 +73,18 @@ extension ProfilePresenter: IProfilePresenter {
         guard let identifier = user?.identifier else { return }
         
         interactor?.requestPosts(identifier: identifier)
+    }
+    
+    func didPressFollowersButton() {
+        guard let user = user, let userStats = userStats else { return }
+        
+        router?.showFollowersViewController(user: user, userStats: userStats)
+    }
+    
+    func didPressFollowingButton() {
+        guard let user = user, let userStats = userStats else { return }
+        
+        router?.showFollowingViewController(user: user, userStats: userStats)
     }
     
     func didPressEditButton() {
@@ -118,6 +134,8 @@ extension ProfilePresenter: IProfileInteractorOutput {
     }
     
     func fetchUserStatsSuccess(_ userStats: UserStats) {
+        self.userStats = userStats
+        
         viewController?.setUserStats(userStats)
         viewController?.reloadData()
     }

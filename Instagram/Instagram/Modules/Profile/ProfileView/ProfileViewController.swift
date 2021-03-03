@@ -116,11 +116,11 @@ extension ProfileViewController: ProfileViewDelegate {
     }
     
     func profileViewDidPressFollowersButton(_ profileView: ProfileView) {
-        
+        presenter?.didPressFollowersButton()
     }
     
     func profileViewDidPressFollowingButton(_ profileView: ProfileView) {
-        
+        presenter?.didPressFollowingButton()
     }
     
     func profileViewDidPressEditButton(_ profileView: ProfileView) {

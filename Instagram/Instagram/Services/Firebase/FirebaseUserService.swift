@@ -118,6 +118,48 @@ extension FirebaseUserService {
         }
     }
     
+    static func fetchFollowersFollowing(
+        identifier: String,
+        table: String,
+        completion: @escaping (Result<[User], Error>) -> Void
+    ) {
+        databaseReference
+            .child(table)
+            .child(identifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            guard let value = snapshot.value as? [String: Any] else { return }
+            
+            let dispatchGroup = DispatchGroup()
+            var users = [User]()
+            var fetchErrors = [Error]()
+            
+            value.forEach { userIdentifier, _ in
+                dispatchGroup.enter()
+                
+                fetchUser(withIdentifier: userIdentifier) { result in
+                    switch result {
+                    case .success(let user):
+                        users.append(user)
+                    case .failure(let error):
+                        fetchErrors.append(error)
+                    }
+                    
+                    dispatchGroup.leave()
+                }
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                if let error = fetchErrors.first {
+                    completion(.failure(error))
+                } else {
+                    completion(.success(users))
+                }
+            }
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+    }
+    
     static func observeUsers(
         by username: String,
         completion: @escaping (Result<User, Error>) -> Void
