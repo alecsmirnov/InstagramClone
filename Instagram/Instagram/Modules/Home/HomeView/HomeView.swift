@@ -76,14 +76,17 @@ extension HomeView {
     func reloadRow(at index: Int) {
         let indexPath = IndexPath(row: index, section: 0)
         
-        collectionView.reloadItems(at: [indexPath])
+        UIView.performWithoutAnimation {
+            collectionView.reloadItems(at: [indexPath])
+        }
     }
     
     func showLikeButton(at index: Int) {
         let userPost = userPosts[index]
-        
         var post = userPost.post
+        
         post.isLiked = false
+        post.likesCount -= 1
         
         userPosts[index] = UserPost(user: userPost.user, post: post)
         
@@ -92,9 +95,10 @@ extension HomeView {
     
     func showUnlikeButton(at index: Int) {
         let userPost = userPosts[index]
-        
         var post = userPost.post
+        
         post.isLiked = true
+        post.likesCount += 1
         
         userPosts[index] = UserPost(user: userPost.user, post: post)
         

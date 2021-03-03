@@ -41,6 +41,7 @@ final class PostCell: UICollectionViewCell {
     private var imageDataTask: URLSessionDataTask?
     
     private var imageViewHeightConstraint: NSLayoutConstraint?
+    private var captionLabelTopConstraint: NSLayoutConstraint?
     private var timestampLabelTopConstraint: NSLayoutConstraint?
     
     // MARK: Constants
@@ -57,6 +58,8 @@ final class PostCell: UICollectionViewCell {
         static let buttonsViewTopSpace: CGFloat = 14
         static let buttonsViewBottomSpace: CGFloat = 10
         static let buttonsViewItemsSpace: CGFloat = 12
+        
+        static let likesCountLabelBottomSpace: CGFloat = 8
         
         static let timestampLabelTopSpace: CGFloat = 6
         static let timestampLabelBottomSpace: CGFloat = 22
@@ -90,6 +93,8 @@ final class PostCell: UICollectionViewCell {
     private let commentButton = UIButton(type: .system)
     private let sendButton = UIButton(type: .system)
     private let bookmarkButton = UIButton(type: .system)
+    
+    private var likesCountLabel = UILabel()
     
     private let captionLabel = UILabel()
     private let timestampLabel = UILabel()
@@ -148,6 +153,16 @@ extension PostCell {
         }
         
         isLiked = userPost.post.isLiked
+        
+        if 0 < userPost.post.likesCount {
+            likesCountLabel.text = userPost.post.likesCount.description + " likes"
+
+            captionLabelTopConstraint?.constant = Metrics.likesCountLabelBottomSpace
+        } else {
+            likesCountLabel.text = nil
+
+            captionLabelTopConstraint?.constant = 0
+        }
     }
 }
 
@@ -194,6 +209,7 @@ private extension PostCell {
         setupImageViewAppearance()
         
         setupButtonsViewItemsAppearance()
+        setupLikeCountLabelAppearance()
         setupTimestampLabelAppearance()
     }
     
@@ -226,6 +242,11 @@ private extension PostCell {
         bookmarkButton.setImage(Images.bookmark?.withRenderingMode(.alwaysOriginal), for: .normal)
     }
     
+    func setupLikeCountLabelAppearance() {
+        likesCountLabel.text = "0 likes"
+        likesCountLabel.font = .boldSystemFont(ofSize: likesCountLabel.font.pointSize)
+    }
+    
     func setupTimestampLabelAppearance() {
         timestampLabel.textColor = Colors.timestampLabelText
         timestampLabel.font = .systemFont(ofSize: captionLabel.font.pointSize - 2)
@@ -251,6 +272,7 @@ private extension PostCell {
         setupSendButtonLayout()
         setupBookmarkButtonLayout()
         
+        setupLikeCountLabelLayout()
         setupCaptionLabelLayout()
         setupTimestampLabelLayout()
     }
@@ -259,6 +281,7 @@ private extension PostCell {
         contentView.addSubview(headerView)
         contentView.addSubview(imageView)
         contentView.addSubview(buttonsView)
+        contentView.addSubview(likesCountLabel)
         contentView.addSubview(captionLabel)
         contentView.addSubview(timestampLabel)
         
@@ -402,14 +425,26 @@ private extension PostCell {
         ])
     }
     
+    func setupLikeCountLabelLayout() {
+        likesCountLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            likesCountLabel.topAnchor.constraint(equalTo: buttonsView.bottomAnchor),
+            likesCountLabel.leadingAnchor.constraint(equalTo: profileImageButton.leadingAnchor),
+            likesCountLabel.trailingAnchor.constraint(equalTo: optionsButton.leadingAnchor),
+        ])
+    }
+    
     func setupCaptionLabelLayout() {
         captionLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            captionLabel.topAnchor.constraint(equalTo: buttonsView.bottomAnchor),
             captionLabel.leadingAnchor.constraint(equalTo: profileImageButton.leadingAnchor),
             captionLabel.trailingAnchor.constraint(equalTo: optionsButton.leadingAnchor),
         ])
+        
+        captionLabelTopConstraint = captionLabel.topAnchor.constraint(equalTo: likesCountLabel.bottomAnchor)
+        captionLabelTopConstraint?.isActive = true
     }
     
     func setupTimestampLabelLayout() {
