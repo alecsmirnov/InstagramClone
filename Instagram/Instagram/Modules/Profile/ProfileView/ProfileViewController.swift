@@ -94,19 +94,16 @@ private extension ProfileViewController {
     
     func setupMenuButton() {
         let menuBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "xmark.square"),
+            //image: UIImage(named: "gear")?.withRenderingMode(.alwaysOriginal),
+            image: UIImage(systemName: "xmark")?.withRenderingMode(.alwaysOriginal),
             style: .plain,
             target: self,
-            action: #selector(didPressCloseButton))
+            action: #selector(didPressMenuButton))
         
         navigationItem.rightBarButtonItem = menuBarButtonItem
     }
-}
-
-// MARK: - Actions
-
-private extension ProfileViewController {
-    @objc func didPressCloseButton() {
+    
+    @objc func didPressMenuButton() {
         presenter?.didPressMenuButton()
     }
 }
