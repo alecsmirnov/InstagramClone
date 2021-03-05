@@ -92,7 +92,7 @@ extension FollowersFollowingPresenter: IFollowersFollowingPresenter {
     func didPressRemoveButton(at index: Int, user: User) {
         guard let userIdentifier = user.identifier else { return }
         
-        interactor?.removeUserFromFollowers(identifier: userIdentifier)
+        interactor?.removeUserFromFollowers(identifier: userIdentifier, at: index)
     }
 }
 
@@ -148,6 +148,14 @@ extension FollowersFollowingPresenter: IFollowersFollowingInteractorOutput {
     }
     
     func unfollowUserFailure(at index: Int) {
+        
+    }
+    
+    func removeUserFromFollowersSuccess(at index: Int) {
+        updateUser(state: .none, at: index)
+    }
+    
+    func removeUserFromFollowersFailure(at index: Int) {
         
     }
 }
@@ -212,13 +220,11 @@ private extension FollowersFollowingPresenter {
         
         if isCurrentUser {
             switch state {
-            case .follow:
+            case .follow, .none:
                 usersCount -= 1
             case .unfollow:
                 usersCount += 1
             case .remove:
-                break
-            case .none:
                 break
             }
             

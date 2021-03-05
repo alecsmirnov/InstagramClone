@@ -19,7 +19,7 @@ protocol IFollowersFollowingInteractor: AnyObject {
     
     func followUser(identifier: String, at index: Int)
     func unfollowUser(identifier: String, at index: Int)
-    func removeUserFromFollowers(identifier: String)
+    func removeUserFromFollowers(identifier: String, at index: Int)
 }
 
 protocol IFollowersFollowingInteractorOutput: AnyObject {
@@ -40,6 +40,9 @@ protocol IFollowersFollowingInteractorOutput: AnyObject {
     
     func unfollowUserSuccess(at index: Int)
     func unfollowUserFailure(at index: Int)
+    
+    func removeUserFromFollowersSuccess(at index: Int)
+    func removeUserFromFollowersFailure(at index: Int)
 }
 
 final class FollowersFollowingInteractor {
@@ -225,7 +228,19 @@ extension FollowersFollowingInteractor: IFollowersFollowingInteractor {
         }
     }
     
-    func removeUserFromFollowers(identifier: String) {
+    func removeUserFromFollowers(identifier: String, at index: Int) {
+        guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
+        FirebaseUserService.unfollowUserAndFeed(
+            currentUserIdentifier: identifier,
+            followingUserIdentifier: currentUserIdentifier) { [self] error in
+            if let error = error {
+                presenter?.removeUserFromFollowersFailure(at: index)
+                
+                print("Failed to remove user from followers at index \(index): \(error.localizedDescription)")
+            } else {
+                presenter?.removeUserFromFollowersSuccess(at: index)
+            }
+        }
     }
 }
