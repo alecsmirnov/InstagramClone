@@ -106,16 +106,13 @@ extension FollowersFollowingCell {
         switch followUnfollowRemoveButtonState {
         case .follow:
             activateFollowUnfollowRemoveButtonLayout()
-            
-            followUnfollowRemoveButton.setTitle("Follow", for: .normal)
+            setupFollowUnfollowRemoveButtonFollowStyle(title: "Follow")
         case .unfollow:
             activateFollowUnfollowRemoveButtonLayout()
-            
-            followUnfollowRemoveButton.setTitle("Unfollow", for: .normal)
+            setupFollowUnfollowRemoveButtonUnfollowRemoveStyle(title: "Unfollow")
         case .remove:
             activateFollowUnfollowRemoveButtonLayout()
-            
-            followUnfollowRemoveButton.setTitle("Remove", for: .normal)
+            setupFollowUnfollowRemoveButtonUnfollowRemoveStyle(title: "Remove")
         case .none:
             deactivateFollowUnfollowRemoveButtonLayout()
         }
@@ -177,6 +174,24 @@ private extension FollowersFollowingCell {
         case .none:
             break
         }
+    }
+    
+    func setupFollowUnfollowRemoveButtonFollowStyle(title: String) {
+        //UIView.animate(withDuration: 0.2) { [self] in
+            followUnfollowRemoveButton.setTitle(title, for: .normal)
+            followUnfollowRemoveButton.setTitleColor(.white, for: .normal)
+            followUnfollowRemoveButton.backgroundColor = UIColor(red: 0.25, green: 0.36, blue: 0.9, alpha: 1)
+            followUnfollowRemoveButton.layer.borderColor = UIColor.clear.cgColor
+        //}
+    }
+    
+    func setupFollowUnfollowRemoveButtonUnfollowRemoveStyle(title: String) {
+        //UIView.animate(withDuration: 0.2) { [self] in
+            followUnfollowRemoveButton.setTitle(title, for: .normal)
+            followUnfollowRemoveButton.setTitleColor(.black, for: .normal)
+            followUnfollowRemoveButton.backgroundColor = .clear
+            followUnfollowRemoveButton.layer.borderColor = UIColor.lightGray.cgColor
+        //}
     }
 }
 
