@@ -75,7 +75,7 @@ final class CommentsView: UIView {
     }
 }
 
-// MARK: - Private Methods
+// MARK: - Public Methods
 
 extension CommentsView {
     func appendUserComment(_ userComment: UserComment) {

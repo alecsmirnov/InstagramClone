@@ -6,7 +6,7 @@
 //
 
 protocol IFollowersFollowingRouter: AnyObject {
-    
+    func showProfileViewController(user: User)
 }
 
 final class FollowersFollowingRouter {
@@ -20,5 +20,9 @@ final class FollowersFollowingRouter {
 // MARK: - IFollowersFollowingRouter
 
 extension FollowersFollowingRouter: IFollowersFollowingRouter {
-    
+    func showProfileViewController(user: User) {
+        let profileViewController = ProfileAssembly.createProfileViewController(user: user)
+        
+        viewController?.navigationController?.pushViewController(profileViewController, animated: true)
+    }
 }

@@ -5,6 +5,18 @@
 //  Created by Admin on 03.03.2021.
 //
 
+enum FollowersFollowingDisplayMode {
+    case followers
+    case following
+}
+
+enum FollowUnfollowRemoveButtonState {
+    case follow
+    case unfollow
+    case remove
+    case none
+}
+
 enum FollowersFollowingAssembly {    
     static func createFollowersViewController(user: User, userStats: UserStats) -> FollowersFollowingViewController {
         let viewController = FollowersFollowingViewController()
@@ -23,7 +35,7 @@ enum FollowersFollowingAssembly {
         
         presenter.userIdentifier = user.identifier
         presenter.displayMode = .followers
-        presenter.itemsCount = userStats.followers
+        presenter.usersCount = userStats.followers
         
         return viewController
     }
@@ -45,7 +57,7 @@ enum FollowersFollowingAssembly {
         
         presenter.userIdentifier = user.identifier
         presenter.displayMode = .following
-        presenter.itemsCount = userStats.following
+        presenter.usersCount = userStats.following
         
         return viewController
     }

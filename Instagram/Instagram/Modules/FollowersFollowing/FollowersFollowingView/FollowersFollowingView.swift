@@ -8,6 +8,10 @@
 import UIKit
 
 protocol FollowersFollowingViewDelegate: AnyObject {
+    func followersFollowingViewDidPullToRefresh(_ followersFollowingView: FollowersFollowingView)
+    func followersFollowingViewDidRequestUsers(_ followersFollowingView: FollowersFollowingView)
+    
+    func followersFollowingView(_ followersFollowingView: FollowersFollowingView, didSelectUser user: User)
     func followersFollowingView(
         _ followersFollowingView: FollowersFollowingView,
         didPressFollowButtonAt index: Int,
@@ -28,7 +32,7 @@ final class FollowersFollowingView: UIView {
     weak var delegate: FollowersFollowingViewDelegate?
     
     private var users = [User]()
-    private var usersStates = [FollowUnfollowRemoveButtonState]()
+    private var buttonStates = [FollowUnfollowRemoveButtonState]()
     
     // MARK: Subviews
     
@@ -51,13 +55,28 @@ final class FollowersFollowingView: UIView {
 // MARK: - Public Methods
 
 extension FollowersFollowingView {
-    func appendUser(_ user: User, userState: FollowUnfollowRemoveButtonState) {
+    func appendUser(_ user: User, buttonState: FollowUnfollowRemoveButtonState) {
         users.append(user)
-        usersStates.append(userState)
+        buttonStates.append(buttonState)
     }
     
-    func updateUser(at index: Int, userState: FollowUnfollowRemoveButtonState) {
-        usersStates[index] = userState
+    func changeButtonState(_ buttonState: FollowUnfollowRemoveButtonState, at index: Int) {
+        buttonStates[index] = buttonState
+    }
+    
+    func removeAllUsers() {
+        users.removeAll()
+        buttonStates.removeAll()
+    }
+    
+    func insertNewRow() {
+        if 1 < users.count {
+            let lastItemIndexPath = IndexPath(row: users.count - 1, section: 0)
+            
+            collectionView.insertItems(at: [lastItemIndexPath])
+        } else {
+            collectionView.reloadData()
+        }
     }
     
     func reloadData() {
@@ -70,6 +89,10 @@ extension FollowersFollowingView {
         UIView.performWithoutAnimation {
             collectionView.reloadItems(at: [indexPath])
         }
+    }
+    
+    func endRefreshing() {
+        collectionView.refreshControl?.endRefreshing()
     }
 }
 
@@ -85,14 +108,20 @@ private extension FollowersFollowingView {
     func setupCollectionViewAppearance() {
         collectionView.backgroundColor = .clear
         collectionView.delaysContentTouches = false
-        collectionView.keyboardDismissMode = .onDrag
         
         collectionView.dataSource = self
-        //collectionView.delegate = self
+        collectionView.delegate = self
         
         collectionView.register(
             FollowersFollowingCell.self,
             forCellWithReuseIdentifier: FollowersFollowingCell.reuseIdentifier)
+        
+        collectionView.refreshControl = UIRefreshControl()
+        collectionView.refreshControl?.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+    }
+    
+    @objc func didPullToRefresh() {
+        delegate?.followersFollowingViewDidPullToRefresh(self)
     }
 }
 
@@ -151,10 +180,24 @@ extension FollowersFollowingView: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
+        if indexPath.row == users.count - 1 {
+            delegate?.followersFollowingViewDidRequestUsers(self)
+        }
+        
         cell.delegate = self
-        cell.configure(with: users[indexPath.row], userState: usersStates[indexPath.row])
+        cell.configure(with: users[indexPath.row], buttonState: buttonStates[indexPath.row])
         
         return cell
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension FollowersFollowingView: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let user = users[indexPath.row]
+        
+        delegate?.followersFollowingView(self, didSelectUser: user)
     }
 }
 

@@ -8,16 +8,9 @@
 import UIKit
 
 protocol FollowersFollowingCellDelegate: AnyObject {
-    //func followersFollowingCell(_ followersFollowingCell: FollowersFollowingCell, didSelectUser user: User)
     func followersFollowingCellDidPressFollowButton(_ followersFollowingCell: FollowersFollowingCell)
     func followersFollowingCellDidPressUnfollowButton(_ followersFollowingCell: FollowersFollowingCell)
     func followersFollowingCellDidPressRemoveButton(_ followersFollowingCell: FollowersFollowingCell)
-}
-
-enum FollowUnfollowRemoveButtonState {
-    case follow
-    case unfollow
-    case remove
 }
 
 final class FollowersFollowingCell: UICollectionViewCell {
@@ -29,20 +22,10 @@ final class FollowersFollowingCell: UICollectionViewCell {
     
     weak var delegate: FollowersFollowingCellDelegate?
     
-    private var followUnfollowRemoveButtonState: FollowUnfollowRemoveButtonState? {
-        didSet {
-            guard let followUnfollowRemoveButtonState = followUnfollowRemoveButtonState else { return }
-            
-            switch followUnfollowRemoveButtonState {
-            case .follow:
-                followUnfollowRemoveButton.setTitle(ButtonTitles.follow, for: .normal)
-            case .unfollow:
-                followUnfollowRemoveButton.setTitle(ButtonTitles.unfollow, for: .normal)
-            case .remove:
-                followUnfollowRemoveButton.setTitle(ButtonTitles.remove, for: .normal)
-            }
-        }
-    }
+    private var followUnfollowRemoveButtonState = FollowUnfollowRemoveButtonState.none
+    
+    private var stackViewLeadingConstraint: NSLayoutConstraint?
+    private var followUnfollowRemoveButtonConstraints = [NSLayoutConstraint]()
     
     private var profileImageDataTask: URLSessionDataTask?
     
@@ -62,12 +45,6 @@ final class FollowersFollowingCell: UICollectionViewCell {
         static let followUnfollowRemoveButtonBorderWidth: CGFloat = 0.5
         static let followUnfollowRemoveButtonFont: CGFloat = 15
         static let followUnfollowRemoveButtonEdgeInset: CGFloat = 8
-    }
-    
-    private enum ButtonTitles {
-        static let follow = "Follow"
-        static let unfollow = "Unfollow"
-        static let remove = "Remove"
     }
     
     private enum Colors {
@@ -110,7 +87,7 @@ final class FollowersFollowingCell: UICollectionViewCell {
 // MARK: - Public Methods
 
 extension FollowersFollowingCell {
-    func configure(with user: User, userState: FollowUnfollowRemoveButtonState) {
+    func configure(with user: User, buttonState: FollowUnfollowRemoveButtonState = .none) {
         if let profileImageURL = user.profileImageURL {
             profileImageDataTask = profileImageView.download(urlString: profileImageURL)
         }
@@ -120,11 +97,28 @@ extension FollowersFollowingCell {
         
         fullNameLabel.isHidden = (user.fullName == nil)
         
-        followUnfollowRemoveButtonState = userState
+        changeButtonState(buttonState)
     }
     
-    func changeUserState(_ userState: FollowUnfollowRemoveButtonState) {
-        followUnfollowRemoveButtonState = userState
+    func changeButtonState(_ buttonState: FollowUnfollowRemoveButtonState) {
+        followUnfollowRemoveButtonState = buttonState
+        
+        switch followUnfollowRemoveButtonState {
+        case .follow:
+            activateFollowUnfollowRemoveButtonLayout()
+            
+            followUnfollowRemoveButton.setTitle("Follow", for: .normal)
+        case .unfollow:
+            activateFollowUnfollowRemoveButtonLayout()
+            
+            followUnfollowRemoveButton.setTitle("Unfollow", for: .normal)
+        case .remove:
+            activateFollowUnfollowRemoveButtonLayout()
+            
+            followUnfollowRemoveButton.setTitle("Remove", for: .normal)
+        case .none:
+            deactivateFollowUnfollowRemoveButtonLayout()
+        }
     }
 }
 
@@ -173,8 +167,6 @@ private extension FollowersFollowingCell {
     }
     
     @objc func didPressFollowUnfollowRemoveButton() {
-        guard let followUnfollowRemoveButtonState = followUnfollowRemoveButtonState else { return }
-        
         switch followUnfollowRemoveButtonState {
         case .follow:
             delegate?.followersFollowingCellDidPressFollowButton(self)
@@ -182,6 +174,8 @@ private extension FollowersFollowingCell {
             delegate?.followersFollowingCellDidPressUnfollowButton(self)
         case .remove:
             delegate?.followersFollowingCellDidPressRemoveButton(self)
+        case .none:
+            break
         }
     }
 }
@@ -194,13 +188,12 @@ private extension FollowersFollowingCell {
         
         setupProfileImageViewLayout()
         setupStackViewLayout()
-        setupFollowUnfollowRemoveButtonLayout()
+        prepareFollowUnfollowRemoveButtonLayout()
     }
     
     func setupSubviews() {
         contentView.addSubview(profileImageView)
         contentView.addSubview(stackView)
-        contentView.addSubview(followUnfollowRemoveButton)
         
         stackView.addArrangedSubview(usernameLabel)
         stackView.addArrangedSubview(fullNameLabel)
@@ -237,13 +230,18 @@ private extension FollowersFollowingCell {
                 constant: Metrics.stackViewLeadingSpace),
             stackView.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor),
         ])
+        
+        stackViewLeadingConstraint = stackView.trailingAnchor.constraint(
+            equalTo: contentView.trailingAnchor,
+            constant: -Metrics.profileImageViewLeadingSpace)
+        stackViewLeadingConstraint?.isActive = true
     }
     
-    func setupFollowUnfollowRemoveButtonLayout() {
+    func prepareFollowUnfollowRemoveButtonLayout() {
         followUnfollowRemoveButton.translatesAutoresizingMaskIntoConstraints = false
         followUnfollowRemoveButton.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         
-        NSLayoutConstraint.activate([
+        followUnfollowRemoveButtonConstraints.append(contentsOf: [
             followUnfollowRemoveButton.leadingAnchor.constraint(
                 equalTo: stackView.trailingAnchor,
                 constant: Metrics.stackViewLeadingSpace),
@@ -253,5 +251,19 @@ private extension FollowersFollowingCell {
             followUnfollowRemoveButton.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor),
             followUnfollowRemoveButton.widthAnchor.constraint(equalToConstant: Metrics.followUnfollowRemoveButtonWidth),
         ])
+    }
+    
+    func activateFollowUnfollowRemoveButtonLayout() {
+        stackViewLeadingConstraint?.isActive = false
+        
+        contentView.addSubview(followUnfollowRemoveButton)
+        NSLayoutConstraint.activate(followUnfollowRemoveButtonConstraints)
+    }
+    
+    func deactivateFollowUnfollowRemoveButtonLayout() {
+        NSLayoutConstraint.deactivate(followUnfollowRemoveButtonConstraints)
+        followUnfollowRemoveButton.removeFromSuperview()
+        
+        stackViewLeadingConstraint?.isActive = true
     }
 }

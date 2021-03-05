@@ -12,10 +12,130 @@ enum FirebasePostService {
     private static let databaseReference = Database.database().reference()
 }
 
-// MARK: -
+// MARK: - User
 
 extension FirebasePostService {
+    static func fetchFromBeginFollowersWithKind(
+        currentUserIdentifier: String,
+        identifier: String,
+        beforeUserIdentifier: String = "",
+        dropFirst: Bool = false,
+        limit: UInt,
+        completion: @escaping (Result<[User], Error>) -> Void
+    ) {
+        fetchFromBeginFollowersFollowingWithKind(
+            currentUserIdentifier: currentUserIdentifier,
+            identifier: identifier,
+            table: FirebaseTables.followers,
+            beforeUserIdentifier: beforeUserIdentifier,
+            dropFirst: dropFirst,
+            limit: limit,
+            completion: completion)
+    }
     
+    static func fetchFromBeginFollowingWithKind(
+        currentUserIdentifier: String,
+        identifier: String,
+        beforeUserIdentifier: String = "",
+        dropFirst: Bool = false,
+        limit: UInt,
+        completion: @escaping (Result<[User], Error>) -> Void
+    ) {
+        fetchFromBeginFollowersFollowingWithKind(
+            currentUserIdentifier: currentUserIdentifier,
+            identifier: identifier,
+            table: FirebaseTables.following,
+            beforeUserIdentifier: beforeUserIdentifier,
+            dropFirst: dropFirst,
+            limit: limit,
+            completion: completion)
+    }
+    
+    static func fetchFromBeginFollowersFollowingWithKind(
+        currentUserIdentifier: String,
+        identifier: String,
+        table: String,
+        beforeUserIdentifier: String,
+        dropFirst: Bool,
+        limit: UInt,
+        completion: @escaping (Result<[User], Error>) -> Void
+    ) {
+        databaseReference
+            .child(table)
+            .child(identifier)
+            .queryOrderedByKey()
+            .queryStarting(atValue: beforeUserIdentifier)
+            .queryLimited(toFirst: limit)
+            .observeSingleEvent(of: .value) { snapshot in
+            let dispatchGroup = DispatchGroup()
+            var users = [User]()
+            var fetchErrors = [Error]()
+            
+            for child in snapshot.children {
+                guard let snapshot = child as? DataSnapshot else { return }
+                
+                dispatchGroup.enter()
+                
+                let userIdentifier = snapshot.key
+                
+                FirebaseUserService.fetchUser(withIdentifier: userIdentifier) { result in
+                    switch result {
+                    case .success(var user):
+                        user.identifier = userIdentifier
+                        
+                        if currentUserIdentifier == userIdentifier {
+                            user.kind = .current
+                            
+                            users.append(user)
+                            dispatchGroup.leave()
+                        } else {
+                            FirebaseUserService.isFollowingUser(
+                                currentUserIdentifier: currentUserIdentifier,
+                                followingUserIdentifier: userIdentifier) { result in
+                                switch result {
+                                case .success(let isFollowing):
+                                    user.kind = isFollowing ? .following : .notFollowing
+                                    
+                                    users.append(user)
+                                case .failure(let error):
+                                    fetchErrors.append(error)
+                                }
+                                
+                                dispatchGroup.leave()
+                            }
+                        }
+                    case .failure(let error):
+                        fetchErrors.append(error)
+                        dispatchGroup.leave()
+                    }
+                }
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                if let error = fetchErrors.first {
+                    completion(.failure(error))
+                } else {
+                    // Same bug (as in the method "fetchFromEndUserFeedPosts"), same fix :\
+                    users.sort { user1, user2 in
+                        guard
+                            let user1Identifier = user1.identifier,
+                            let user2Identifier = user2.identifier
+                        else {
+                            return false
+                        }
+                        
+                        return user1Identifier < user2Identifier
+                    }
+                    
+                    if dropFirst {
+                        completion(.success(Array(users.dropFirst())))
+                    } else {
+                        completion(.success(users))
+                    }
+                }
+            }
+        }
+    }
 }
 
 // MARK: - User Feed Methods
@@ -580,6 +700,41 @@ extension FirebasePostService {
                 completion(.failure(error))
             }
             
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+    }
+    
+    static func fetchUserFollowersCount(identifier: String, completion: @escaping (Result<Int, Error>) -> Void) {
+        fetchUserFollowersFollowingCount(
+            table: FirebaseTables.followers,
+            identifier: identifier,
+            completion: completion)
+    }
+    
+    static func fetchUserFollowingCount(identifier: String, completion: @escaping (Result<Int, Error>) -> Void) {
+        fetchUserFollowersFollowingCount(
+            table: FirebaseTables.following,
+            identifier: identifier,
+            completion: completion)
+    }
+    
+    private static func fetchUserFollowersFollowingCount(
+        table: String,
+        identifier: String,
+        completion: @escaping (Result<Int, Error>) -> Void
+    ) {
+        databaseReference
+            .child(table)
+            .child(identifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            var usersCount = 0
+                
+            if let value = snapshot.value as? [String: Any] {
+                usersCount = value.count
+            }
+            
+            completion(.success(usersCount))
         } withCancel: { error in
             completion(.failure(error))
         }

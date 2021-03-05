@@ -11,6 +11,13 @@ struct User {
     let profileImageURL: String?
     
     var identifier: String?
+    var kind: Kind?
+    
+    enum Kind {
+        case following
+        case notFollowing
+        case current
+    }
 }
 
 // MARK: - Codable
