@@ -11,7 +11,9 @@ protocol ISearchViewController: AnyObject {
     func appendUser(_ user: User)
     func removeAllUsers()
     
+    func insertNewRow()
     func reloadData()
+    func endRefreshing()
     
     func setupSearchAppearance()
     func setupNoResultAppearance()
@@ -60,8 +62,6 @@ final class SearchViewController: CustomViewController<SearchView>  {
         
         searchBar.isHidden = true
         searchBar.resignFirstResponder()
-        
-        presenter?.viewWillDisappear()
     }
 }
 
@@ -110,8 +110,16 @@ extension SearchViewController: ISearchViewController {
         customView?.removeAllUsers()
     }
     
+    func insertNewRow() {
+        customView?.insertNewRow()
+    }
+    
     func reloadData() {
         customView?.reloadData()
+    }
+    
+    func endRefreshing() {
+        customView?.endRefreshing()
     }
     
     func setupSearchAppearance() {
@@ -130,6 +138,14 @@ extension SearchViewController: ISearchViewController {
 // MARK: - SearchViewDelegate
 
 extension SearchViewController: SearchViewDelegate {
+    func searchViewDidPullToRefresh(_ searchView: SearchView) {
+        presenter?.didPullToRefresh()
+    }
+    
+    func searchViewDidRequestUsers(_ searchView: SearchView) {
+        presenter?.didRequestUsers()
+    }
+    
     func searchView(_ searchView: SearchView, didSelectUser user: User) {
         presenter?.didSelectUser(user)
     }

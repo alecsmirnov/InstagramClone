@@ -8,6 +8,9 @@
 import UIKit
 
 protocol SearchViewDelegate: AnyObject {
+    func searchViewDidPullToRefresh(_ searchView: SearchView)
+    func searchViewDidRequestUsers(_ searchView: SearchView)
+    
     func searchView(_ searchView: SearchView, didSelectUser user: User)
 }
 
@@ -18,6 +21,7 @@ final class SearchView: UIView {
     
     var state = SearchState.result
     
+    private var lastRequestedUserIndex: Int?
     private var users = [User]()
     
     // MARK: Constants
@@ -58,7 +62,21 @@ extension SearchView {
     }
     
     func removeAllUsers() {
+        lastRequestedUserIndex = nil
+        
         users.removeAll()
+    }
+    
+    func insertNewRow() {
+        if 1 < users.count {
+            let lastItemIndexPath = IndexPath(row: users.count - 1, section: 0)
+            
+            collectionView.insertItems(at: [lastItemIndexPath])
+        } else {
+            collectionView.reloadData()
+        }
+        
+        collectionView.layoutIfNeeded()
     }
     
     func reloadData() {
@@ -68,6 +86,12 @@ extension SearchView {
             options: [.transitionCrossDissolve]) {
             self.collectionView.reloadData()
         }
+        
+        collectionView.layoutIfNeeded()
+    }
+    
+    func endRefreshing() {
+        collectionView.refreshControl?.endRefreshing()
     }
 }
 
@@ -90,6 +114,13 @@ private extension SearchView {
         
         collectionView.register(SearchCell.self, forCellWithReuseIdentifier: SearchCell.reuseIdentifier)
         collectionView.register(UserCell.self, forCellWithReuseIdentifier: UserCell.reuseIdentifier)
+        
+        collectionView.refreshControl = UIRefreshControl()
+        collectionView.refreshControl?.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+    }
+    
+    @objc func didPullToRefresh() {
+        delegate?.searchViewDidPullToRefresh(self)
     }
 }
 
@@ -121,9 +152,9 @@ private extension SearchView {
     
     func setupCollectionViewListLayout() {
         var listConfiguration = UICollectionLayoutListConfiguration(appearance: .plain)
-        
+
         listConfiguration.showsSeparators = false
-        
+
         let collectionViewLayout = UICollectionViewCompositionalLayout.list(using: listConfiguration)
 
         collectionView.collectionViewLayout = collectionViewLayout
@@ -154,13 +185,13 @@ extension SearchView: UICollectionViewDataSource {
             else {
                 return UICollectionViewCell()
             }
-            
+
             if state == .search {
                 cell.showSearchMessage()
             } else {
                 cell.showNoResultMessage()
             }
-            
+
             return cell
         case .result:
             guard let cell = collectionView.dequeueReusableCell(
@@ -170,8 +201,14 @@ extension SearchView: UICollectionViewDataSource {
                 return UICollectionViewCell()
             }
             
+            if indexPath.row == users.count - 1 && (lastRequestedUserIndex ?? -1) < indexPath.row {
+                lastRequestedUserIndex = indexPath.row
+
+                delegate?.searchViewDidRequestUsers(self)
+            }
+
             cell.configure(with: users[indexPath.row])
-            
+
             return cell
         }
     }

@@ -6,7 +6,8 @@
 //
 
 protocol ISearchPresenter: AnyObject {
-    func viewWillDisappear()
+    func didPullToRefresh()
+    func didRequestUsers()
     
     func didSearchUser(with username: String)
     func didSelectUser(_ user: User)
@@ -16,28 +17,34 @@ final class SearchPresenter {
     weak var viewController: ISearchViewController?
     var interactor: ISearchInteractor?
     var router: ISearchRouter?
+    
+    private var isRefreshing = false
 }
 
 // MARK: - ISearchPresenter
 
 extension SearchPresenter: ISearchPresenter {
-    func viewWillDisappear() {
-        interactor?.removeObservation()
+    func didPullToRefresh() {
+        isRefreshing = true
+        
+        interactor?.refreshUsers()
+    }
+    
+    func didRequestUsers() {
+        interactor?.requestUsers()
     }
     
     func didSearchUser(with username: String) {
         viewController?.removeAllUsers()
         viewController?.setupResultAppearance()
         
-        defer {
-            viewController?.reloadData()
-        }
-        
         if !username.isEmpty {
             viewController?.setupSearchAppearance()
             
             interactor?.fetchUsers(by: username)
         }
+        
+        viewController?.reloadData()
     }
     
     func didSelectUser(_ user: User) {
@@ -48,10 +55,21 @@ extension SearchPresenter: ISearchPresenter {
 // MARK: - ISearchInteractorOutput
 
 extension SearchPresenter: ISearchInteractorOutput {
-    func fetchUserSuccess(_ user: User) {
-        viewController?.appendUser(user)
+    func fetchUsersSuccess(_ users: [User]) {
+        if isRefreshing {
+            isRefreshing = false
+
+            viewController?.endRefreshing()
+            viewController?.removeAllUsers()
+            viewController?.reloadData()
+        }
         
         viewController?.setupResultAppearance()
+        
+        users.reversed().forEach { user in
+            viewController?.appendUser(user)
+        }
+        
         viewController?.reloadData()
     }
     

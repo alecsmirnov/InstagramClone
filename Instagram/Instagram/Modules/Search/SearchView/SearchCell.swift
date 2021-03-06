@@ -17,7 +17,7 @@ final class SearchCell: UICollectionViewCell {
     // MARK: Constants
     
     private enum Metrics {
-        static let labelVerticalSpace: CGFloat = 30
+        static let labelVerticalSpace: CGFloat = 22
         static let labelHorizontalSpace: CGFloat = 16
     }
     
@@ -85,19 +85,20 @@ private extension SearchCell {
     func setupLabelLayout() {
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        let labelBottomConstraint = label.bottomAnchor.constraint(
-            equalTo: contentView.bottomAnchor,
-            constant: -Metrics.labelVerticalSpace)
-        
-        labelBottomConstraint.priority = .defaultLow
-        
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Metrics.labelVerticalSpace),
-            labelBottomConstraint,
+            
             label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Metrics.labelHorizontalSpace),
             label.trailingAnchor.constraint(
                 equalTo: contentView.trailingAnchor,
                 constant: -Metrics.labelHorizontalSpace),
         ])
+        
+        let labelBottomConstraint = label.bottomAnchor.constraint(
+            equalTo: contentView.bottomAnchor,
+            constant: -Metrics.labelVerticalSpace)
+        
+        labelBottomConstraint.priority = .defaultLow
+        labelBottomConstraint.isActive = true
     }
 }

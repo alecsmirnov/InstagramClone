@@ -160,37 +160,46 @@ extension FirebaseUserService {
         }
     }
     
-    static func observeUsers(
+    static func fetchFromBeginUsers(
         by username: String,
-        completion: @escaping (Result<User, Error>) -> Void
-    ) -> FirebaseObserver {
+        dropFirst: Bool = false,
+        limit: UInt,
+        completion: @escaping (Result<[User], Error>) -> Void
+    ) {
         let lowercasedUsername = username.lowercased()
         
-        let usersReference = databaseReference.child(FirebaseTables.users)
-        
-        let userAddedHandle = usersReference
+        databaseReference
+            .child(FirebaseTables.users)
             .queryOrdered(byChild: User.CodingKeys.username.rawValue)
             .queryStarting(atValue: lowercasedUsername)
             .queryEnding(atValue: lowercasedUsername + Values.anyCharacter)
-            .observe(.childAdded) { snapshot in
-            guard
-                let value = snapshot.value as? [String: Any],
-                var user = JSONCoding.fromDictionary(value, type: User.self)
-            else {
-                return
+            .queryLimited(toFirst: limit)
+            .observeSingleEvent(of: .value) { snapshot in
+            var users = [User]()
+            
+            for child in snapshot.children {
+                guard
+                    let childSnapshot = child as? DataSnapshot,
+                    let childValue = childSnapshot.value as? [String: Any],
+                    var user = JSONCoding.fromDictionary(childValue, type: User.self)
+                else {
+                    return
+                }
+                
+                let userIdentifier = childSnapshot.key
+                user.identifier = userIdentifier
+                
+                users.append(user)
             }
             
-            let userIdentifier = snapshot.key
-            user.identifier = userIdentifier
-            
-            completion(.success(user))
+            if dropFirst {
+                completion(.success(Array(users.dropFirst())))
+            } else {
+                completion(.success(users))
+            }
         } withCancel: { error in
             completion(.failure(error))
         }
-        
-        let userAddedObserver = FirebaseObserver(reference: usersReference, handle: userAddedHandle)
-        
-        return userAddedObserver
     }
     
     static func isFollowingUser(

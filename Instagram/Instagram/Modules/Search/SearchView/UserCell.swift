@@ -125,23 +125,23 @@ private extension UserCell {
     func setupProfileImageViewLayout() {
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         
-        let profileImageViewBottomConstraint = profileImageView.bottomAnchor.constraint(
-            equalTo: contentView.bottomAnchor,
-            constant: -Metrics.profileImageViewVerticalSpace)
-        
-        profileImageViewBottomConstraint.priority = .defaultLow
-        
         NSLayoutConstraint.activate([
             profileImageView.topAnchor.constraint(
                 equalTo: contentView.topAnchor,
                 constant: Metrics.profileImageViewVerticalSpace),
-            profileImageViewBottomConstraint,
             profileImageView.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor,
                 constant: Metrics.profileImageViewLeadingSpace),
             profileImageView.heightAnchor.constraint(equalToConstant: Metrics.profileImageViewSize),
             profileImageView.widthAnchor.constraint(equalToConstant: Metrics.profileImageViewSize),
         ])
+        
+        let profileImageViewBottomConstraint = profileImageView.bottomAnchor.constraint(
+            equalTo: contentView.bottomAnchor,
+            constant: -Metrics.profileImageViewVerticalSpace)
+        
+        profileImageViewBottomConstraint.priority = .defaultLow
+        profileImageViewBottomConstraint.isActive = true
     }
     
     func setupStackViewLayout() {
