@@ -88,7 +88,7 @@ extension ProfilePresenter: IProfilePresenter {
     }
     
     func didPressEditButton() {
-        router?.showEditProfileViewController()
+        router?.showEditProfileViewController(delegate: self)
     }
     
     func didPressFollowButton() {
@@ -199,6 +199,14 @@ extension ProfilePresenter: IProfileInteractorOutput {
     
     func unfollowUserFailure() {
         
+    }
+}
+
+// MARK: - EditProfilePresenterDelegate
+
+extension ProfilePresenter: EditProfilePresenterDelegate {
+    func editProfilePresenterDidPressEdit(_ editProfilePresenter: EditProfilePresenter) {
+        print("Edit")
     }
 }
 

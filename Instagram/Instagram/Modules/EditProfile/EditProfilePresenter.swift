@@ -10,10 +10,16 @@ protocol IEditProfilePresenter: AnyObject {
     func didPressEditButton()
 }
 
+protocol EditProfilePresenterDelegate: AnyObject {
+    func editProfilePresenterDidPressEdit(_ editProfilePresenter: EditProfilePresenter)
+}
+
 final class EditProfilePresenter {
     weak var viewController: IEditProfileViewController?
     var interactor: IEditProfileInteractor?
     var router: IEditProfileRouter?
+    
+    weak var delegate: EditProfilePresenterDelegate?
 }
 
 // MARK: - IEditProfilePresenter
@@ -24,7 +30,7 @@ extension EditProfilePresenter: IEditProfilePresenter {
     }
     
     func didPressEditButton() {
-        
+        delegate?.editProfilePresenterDidPressEdit(self)
     }
 }
 
