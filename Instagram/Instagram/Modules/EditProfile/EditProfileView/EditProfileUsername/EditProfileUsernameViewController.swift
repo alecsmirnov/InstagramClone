@@ -1,37 +1,27 @@
 //
-//  EditProfileViewController.swift
+//  EditProfileUsernameViewController.swift
 //  Instagram
 //
-//  Created by Admin on 06.03.2021.
+//  Created by Admin on 07.03.2021.
 //
 
 import UIKit
 
-protocol IEditProfileViewController: AnyObject {
-    func setUser(_ user: User)
-}
-
-final class EditProfileViewController: CustomViewController<EditProfileView> {
-    // MARK: Properties
-    
-    var presenter: IEditProfilePresenter?
-    
+final class EditProfileUsernameViewController: CustomViewController<EditProfileUsernameView> {
     // MARK: Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupAppearance()
-        
-        presenter?.viewDidLoad()
     }
 }
 
 // MARK: - Appearance
 
-private extension EditProfileViewController {
+private extension EditProfileUsernameViewController {
     func setupAppearance() {
-        navigationItem.title = "Edit Profile"
+        navigationItem.title = "Username"
         
         setupCloseButton()
         setupEditButton()
@@ -48,7 +38,7 @@ private extension EditProfileViewController {
     }
     
     @objc func didPressCloseButton() {
-        presenter?.didPressCloseButton()
+        navigationController?.popViewController(animated: true)
     }
     
     func setupEditButton() {
@@ -62,14 +52,6 @@ private extension EditProfileViewController {
     }
     
     @objc func didPressEditButton() {
-        presenter?.didPressEditButton()
-    }
-}
-
-// MARK: - IEditProfileViewController
-
-extension EditProfileViewController: IEditProfileViewController {
-    func setUser(_ user: User) {
-        customView?.setUser(user)
+        //presenter?.didPressEditButton()
     }
 }

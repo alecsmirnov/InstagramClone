@@ -7,10 +7,25 @@
 
 import UIKit
 
+protocol EditProfileViewDelegate: AnyObject {
+    func editProfileViewDidPressUsernameTextField(_ editProfileView: EditProfileView)
+    func editProfileViewDidPressBioTextField(_ editProfileView: EditProfileView)
+}
+
 final class EditProfileView: UIView {
     // MARK: Properties
     
-    var keyboardAppearanceListener: KeyboardAppearanceListener?
+    weak var delegate: EditProfileViewDelegate? {
+        didSet {
+            guard let presentationController = delegate as? UIViewController else { return }
+            
+            imagePicker = ImagePicker(presentationController: presentationController, delegate: self)
+            keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
+        }
+    }
+    
+    private var imagePicker: ImagePicker?
+    private var keyboardAppearanceListener: KeyboardAppearanceListener?
     
     // MARK: Subviews
     
@@ -25,6 +40,9 @@ final class EditProfileView: UIView {
     private let websiteTextField = MaterialTextField()
     private let bioTextField = MaterialTextField()
     
+    private let errorLabel = UILabel()
+    private let counterLabel = UILabel()
+    
     // MARK: Initialization
     
     init() {
@@ -32,8 +50,7 @@ final class EditProfileView: UIView {
         
         setupAppearance()
         setupLayout()
-        
-        keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
+        setupGestures()
     }
     
     required init?(coder: NSCoder) {
@@ -79,14 +96,22 @@ private extension EditProfileView {
         profileImageButton.setImage(LoginRegistrationConstants.Images.profile, for: .normal)
         profileImageButton.contentMode = .scaleAspectFill
         profileImageButton.tintColor = LoginRegistrationConstants.Colors.profileImageButtonTint
-        profileImageButton.layer.cornerRadius = 80 / 2
+        profileImageButton.layer.cornerRadius = 100 / 2
         profileImageButton.layer.masksToBounds = true
         profileImageButton.layer.borderColor = LoginRegistrationConstants.Colors.profileImageButtonBorder.cgColor
         profileImageButton.layer.borderWidth = LoginRegistrationConstants.Metrics.profileImageButtonBorderWidth
+        
+        profileImageButton.addTarget(self, action: #selector(didPressProfileImageButton), for: .touchUpInside)
     }
     
     func setupChangeProfileImageButtonAppearance() {
         changeProfileImageButton.setTitle("Change profile photo", for: .normal)
+        
+        changeProfileImageButton.addTarget(self, action: #selector(didPressProfileImageButton), for: .touchUpInside)
+    }
+    
+    @objc func didPressProfileImageButton() {
+        imagePicker?.takePhoto()
     }
     
     func setupNameTextFieldAppearance() {
@@ -97,6 +122,14 @@ private extension EditProfileView {
     func setupUsernameTextFieldAppearance() {
         usernameTextField.placeholder = "Username"
         usernameTextField.font = .systemFont(ofSize: 15)
+        
+        usernameTextField.addTarget(self, action: #selector(didPressUsernameTextField), for: .touchDown)
+    }
+    
+    @objc func didPressUsernameTextField() {
+        endEditing(true)
+        
+        delegate?.editProfileViewDidPressUsernameTextField(self)
     }
     
     func setupWebsiteTextFieldAppearance() {
@@ -107,6 +140,14 @@ private extension EditProfileView {
     func setupBioTextFieldAppearance() {
         bioTextField.placeholder = "Bio"
         bioTextField.font = .systemFont(ofSize: 15)
+        
+        bioTextField.addTarget(self, action: #selector(didPressBioTextField), for: .touchDown)
+    }
+    
+    @objc func didPressBioTextField() {
+        endEditing(true)
+        
+        delegate?.editProfileViewDidPressBioTextField(self)
     }
 }
 
@@ -166,10 +207,10 @@ private extension EditProfileView {
         profileImageButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            profileImageButton.topAnchor.constraint(equalTo: screenView.topAnchor, constant: 50),
-            profileImageButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            profileImageButton.heightAnchor.constraint(equalToConstant: 80),
-            profileImageButton.widthAnchor.constraint(equalToConstant: 80),
+            profileImageButton.topAnchor.constraint(equalTo: screenView.topAnchor, constant: 30),
+            profileImageButton.centerXAnchor.constraint(equalTo: screenView.centerXAnchor),
+            profileImageButton.heightAnchor.constraint(equalToConstant: 100),
+            profileImageButton.widthAnchor.constraint(equalToConstant: 100),
         ])
     }
     
@@ -220,6 +261,28 @@ private extension EditProfileView {
             bioTextField.leadingAnchor.constraint(equalTo: screenView.leadingAnchor, constant: 16),
             bioTextField.trailingAnchor.constraint(equalTo: screenView.trailingAnchor, constant: -16),
         ])
+    }
+}
+
+// MARK: - Gestures
+
+private extension EditProfileView {
+    func setupGestures() {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        
+        addGestureRecognizer(tapGestureRecognizer)
+    }
+    
+    @objc func dismissKeyboard() {
+        endEditing(true)
+    }
+}
+
+// MARK: - ImagePickerDelegate
+
+extension EditProfileView: ImagePickerDelegate {
+    func imagePicker(_ imagePicker: ImagePicker, didSelectImage image: UIImage?) {
+        profileImageButton.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
     }
 }
 
