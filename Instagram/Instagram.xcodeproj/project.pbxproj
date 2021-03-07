@@ -71,6 +71,7 @@
 		845504F825B1C38300715C3B /* TabBarAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845504F725B1C38300715C3B /* TabBarAssembly.swift */; };
 		845800BD25C6AFA600816642 /* NewPostConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845800BC25C6AFA600816642 /* NewPostConstants.swift */; };
 		8459C12E25F4B78D00FFFB36 /* MaterialTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8459C12D25F4B78D00FFFB36 /* MaterialTextField.swift */; };
+		8459C13525F4D3A300FFFB36 /* ImageCachingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8459C13425F4D3A300FFFB36 /* ImageCachingService.swift */; };
 		845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A1D3D25BAB50700F4004B /* UIImageView+download.swift */; };
 		845AD41A25DD3716007A84AC /* SearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AD41925DD3716007A84AC /* SearchCell.swift */; };
 		845AE88D25C41B04005A1155 /* MediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE88C25C41B04005A1155 /* MediaService.swift */; };
@@ -199,6 +200,7 @@
 		845504F725B1C38300715C3B /* TabBarAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarAssembly.swift; sourceTree = "<group>"; };
 		845800BC25C6AFA600816642 /* NewPostConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostConstants.swift; sourceTree = "<group>"; };
 		8459C12D25F4B78D00FFFB36 /* MaterialTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialTextField.swift; sourceTree = "<group>"; };
+		8459C13425F4D3A300FFFB36 /* ImageCachingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCachingService.swift; sourceTree = "<group>"; };
 		845A1D3D25BAB50700F4004B /* UIImageView+download.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+download.swift"; sourceTree = "<group>"; };
 		845AD41925DD3716007A84AC /* SearchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCell.swift; sourceTree = "<group>"; };
 		845AE88C25C41B04005A1155 /* MediaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaService.swift; sourceTree = "<group>"; };
@@ -517,6 +519,7 @@
 			children = (
 				8491A83625B46BBD009EDFC2 /* Firebase */,
 				845AE88C25C41B04005A1155 /* MediaService.swift */,
+				8459C13425F4D3A300FFFB36 /* ImageCachingService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -918,6 +921,7 @@
 				84F9694525D14FA10004D838 /* UIImage+crop.swift in Sources */,
 				8451111F25DFBD9F008A13E5 /* Date+timeAgo.swift in Sources */,
 				8454138C25EF94C400B0D544 /* FollowersFollowingPresenter.swift in Sources */,
+				8459C13525F4D3A300FFFB36 /* ImageCachingService.swift in Sources */,
 				845C284D25CADE16000731B3 /* FirebasePostService.swift in Sources */,
 				845B8CBE25B6D99200FE5ED6 /* FirebaseTables.swift in Sources */,
 				845C284325CABB2D000731B3 /* FirebaseStorageService.swift in Sources */,

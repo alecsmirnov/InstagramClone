@@ -45,6 +45,10 @@ final class EditProfileView: UIView {
 
 extension EditProfileView {
     func setUser(_ user: User) {
+        if let profileImageURL = user.profileImageURL {
+            profileImageButton.imageDownload(urlString: profileImageURL)
+        }
+        
         nameTextField.text = user.fullName
         usernameTextField.text = user.username
         websiteTextField.text = user.website
@@ -73,6 +77,7 @@ private extension EditProfileView {
     
     func setupProfileImageButtonAppearance() {
         profileImageButton.setImage(LoginRegistrationConstants.Images.profile, for: .normal)
+        profileImageButton.contentMode = .scaleAspectFill
         profileImageButton.tintColor = LoginRegistrationConstants.Colors.profileImageButtonTint
         profileImageButton.layer.cornerRadius = 80 / 2
         profileImageButton.layer.masksToBounds = true

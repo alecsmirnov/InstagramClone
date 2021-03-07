@@ -7,18 +7,14 @@
 
 import UIKit
 
-private let imageCache = NSCache<NSString, AnyObject>()
-
 extension UIImageView {
-    @discardableResult func download(urlString: String, completion: (() -> Void)? = nil) -> URLSessionDataTask? {
+    @discardableResult func download(urlString: String) -> URLSessionDataTask? {
         guard let url = URL(string: urlString) else { return nil }
         
         var dataTask: URLSessionDataTask?
         
-        if let image = imageCache.object(forKey: urlString as NSString) as? UIImage {
+        if let image = ImageCachingService.shared.image(forKey: urlString) {
             self.image = image
-            
-            completion?()
         } else {
             let urlRequest = URLRequest(url: url)
             
@@ -42,12 +38,10 @@ extension UIImageView {
                     return
                 }
                 
-                imageCache.setObject(image, forKey: urlString as NSString)
+                ImageCachingService.shared.setImage(image, forKey: urlString)
                 
                 DispatchQueue.main.async() {
                     self.image = image
-                    
-                    completion?()
                 }
             }
             
