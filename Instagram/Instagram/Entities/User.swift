@@ -9,6 +9,8 @@ struct User {
     let fullName: String?
     let username: String
     let profileImageURL: String?
+    var bio: String?
+    var website: String?
     
     var identifier: String?
     var kind: Kind?
@@ -27,5 +29,7 @@ extension User: Codable {
         case fullName = "full_name"
         case username
         case profileImageURL = "profile_image_url"
+        case bio
+        case website
     }
 }

@@ -6,6 +6,8 @@
 //
 
 protocol IEditProfilePresenter: AnyObject {
+    func viewDidLoad()
+    
     func didPressCloseButton()
     func didPressEditButton()
 }
@@ -19,12 +21,19 @@ final class EditProfilePresenter {
     var interactor: IEditProfileInteractor?
     var router: IEditProfileRouter?
     
+    var user: User?
     weak var delegate: EditProfilePresenterDelegate?
 }
 
 // MARK: - IEditProfilePresenter
 
 extension EditProfilePresenter: IEditProfilePresenter {
+    func viewDidLoad() {
+        guard let user = user else { return }
+        
+        viewController?.setUser(user)
+    }
+    
     func didPressCloseButton() {
         router?.closeEditProfileViewController()
     }

@@ -131,6 +131,9 @@ extension ProfileHeaderView {
         if let profileImageURL = user.profileImageURL {
             profileImageView.download(urlString: profileImageURL)
         }
+        
+        bioTextView.text = user.bio
+        websiteTextView.text = user.website
     }
     
     func setUserStats(_ userStats: UserStats) {

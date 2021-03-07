@@ -8,7 +8,7 @@
 protocol IProfileRouter: AnyObject {
     func showFollowersViewController(user: User, userStats: UserStats)
     func showFollowingViewController(user: User, userStats: UserStats)
-    func showEditProfileViewController(delegate: EditProfilePresenterDelegate)
+    func showEditProfileViewController(user: User, delegate: EditProfilePresenterDelegate)
     
     func showLoginViewController()
 }
@@ -40,8 +40,9 @@ extension ProfileRouter: IProfileRouter {
         viewController?.navigationController?.pushViewController(followingViewController, animated: true)
     }
     
-    func showEditProfileViewController(delegate: EditProfilePresenterDelegate) {
+    func showEditProfileViewController(user: User, delegate: EditProfilePresenterDelegate) {
         let editProfileViewController = EditProfileAssembly.createEditProfileNavigationViewController(
+            user: user,
             delegate: delegate)
         
         editProfileViewController.modalPresentationStyle = .fullScreen

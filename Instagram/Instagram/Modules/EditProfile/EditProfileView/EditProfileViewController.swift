@@ -8,7 +8,7 @@
 import UIKit
 
 protocol IEditProfileViewController: AnyObject {
-    
+    func setUser(_ user: User)
 }
 
 final class EditProfileViewController: CustomViewController<EditProfileView> {
@@ -22,6 +22,8 @@ final class EditProfileViewController: CustomViewController<EditProfileView> {
         super.viewDidLoad()
         
         setupAppearance()
+        
+        presenter?.viewDidLoad()
     }
 }
 
@@ -67,5 +69,7 @@ private extension EditProfileViewController {
 // MARK: - IEditProfileViewController
 
 extension EditProfileViewController: IEditProfileViewController {
-    
+    func setUser(_ user: User) {
+        customView?.setUser(user)
+    }
 }

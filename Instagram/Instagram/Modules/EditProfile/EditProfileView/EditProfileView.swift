@@ -41,6 +41,17 @@ final class EditProfileView: UIView {
     }
 }
 
+// MARK: - Public Methods
+
+extension EditProfileView {
+    func setUser(_ user: User) {
+        nameTextField.text = user.fullName
+        usernameTextField.text = user.username
+        websiteTextField.text = user.website
+        bioTextField.text = user.bio
+    }
+}
+
 // MARK: - Appearance
 
 private extension EditProfileView {

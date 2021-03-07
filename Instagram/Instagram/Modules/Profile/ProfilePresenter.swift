@@ -88,7 +88,9 @@ extension ProfilePresenter: IProfilePresenter {
     }
     
     func didPressEditButton() {
-        router?.showEditProfileViewController(delegate: self)
+        guard let user = user else { return }
+        
+        router?.showEditProfileViewController(user: user, delegate: self)
     }
     
     func didPressFollowButton() {

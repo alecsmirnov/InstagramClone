@@ -78,6 +78,12 @@ final class MaterialTextField: UITextField {
     
     // MARK: Lifecycle
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        updatePlaceholderLabel(animated: false)
+    }
+    
     override func draw(_ rect: CGRect) {
         super.draw(rect)
 
@@ -111,7 +117,7 @@ private extension MaterialTextField {
         }, for: .allEditingEvents)
     }
     
-    private func updatePlaceholderLabel() {
+    private func updatePlaceholderLabel(animated: Bool = true) {
         let scale = Metrics.placeholderLabelScale
         
         let offsetY = Metrics.verticalSpace + fontSize
@@ -120,7 +126,7 @@ private extension MaterialTextField {
 
         let transform = CGAffineTransform(translationX: translationX, y: translationY).scaledBy(x: scale, y: scale)
         
-        UIView.animate(withDuration: Constants.animationDuration) { [self] in
+        UIView.animate(withDuration: animated ? Constants.animationDuration : 0) { [self] in
             placeholderLabel.transform = (isFirstResponder || !isEmpty) ? transform : .identity
         }
     }

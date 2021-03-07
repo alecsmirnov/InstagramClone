@@ -28,10 +28,7 @@
 		8454139225EF94DB00B0D544 /* FollowersFollowingAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454139125EF94DB00B0D544 /* FollowersFollowingAssembly.swift */; };
 		8454139525EFA03400B0D544 /* FollowersFollowingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454139425EFA03400B0D544 /* FollowersFollowingCell.swift */; };
 		84541E7525CD14E700E0DA81 /* ProfilePostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84541E7425CD14E700E0DA81 /* ProfilePostCell.swift */; };
-		845455D225BD44380007C9A2 /* UserPublicInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455D125BD44380007C9A2 /* UserPublicInfo.swift */; };
 		845455D525BD44460007C9A2 /* UserPrivateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455D425BD44460007C9A2 /* UserPrivateInfo.swift */; };
-		845455D925BD467A0007C9A2 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455D825BD467A0007C9A2 /* Profile.swift */; };
-		845455DD25BD46C40007C9A2 /* ProfileEdit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455DC25BD46C40007C9A2 /* ProfileEdit.swift */; };
 		845455E525BD894A0007C9A2 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455E425BD894A0007C9A2 /* LoginView.swift */; };
 		845455E825BD89BD0007C9A2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455E725BD89BD0007C9A2 /* LoginViewController.swift */; };
 		845455EB25BD8A140007C9A2 /* LoginInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455EA25BD8A140007C9A2 /* LoginInteractor.swift */; };
@@ -159,10 +156,7 @@
 		8454139125EF94DB00B0D544 /* FollowersFollowingAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingAssembly.swift; sourceTree = "<group>"; };
 		8454139425EFA03400B0D544 /* FollowersFollowingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingCell.swift; sourceTree = "<group>"; };
 		84541E7425CD14E700E0DA81 /* ProfilePostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePostCell.swift; sourceTree = "<group>"; };
-		845455D125BD44380007C9A2 /* UserPublicInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPublicInfo.swift; sourceTree = "<group>"; };
 		845455D425BD44460007C9A2 /* UserPrivateInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPrivateInfo.swift; sourceTree = "<group>"; };
-		845455D825BD467A0007C9A2 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
-		845455DC25BD46C40007C9A2 /* ProfileEdit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEdit.swift; sourceTree = "<group>"; };
 		845455E425BD894A0007C9A2 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		845455E725BD89BD0007C9A2 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		845455EA25BD8A140007C9A2 /* LoginInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginInteractor.swift; sourceTree = "<group>"; };
@@ -689,11 +683,8 @@
 			children = (
 				84E6610B25B9940A0036AB9F /* Registration.swift */,
 				845AE89525C42ABA005A1155 /* MediaFileType.swift */,
-				845455D825BD467A0007C9A2 /* Profile.swift */,
-				845455DC25BD46C40007C9A2 /* ProfileEdit.swift */,
 				84E6610725B9936E0036AB9F /* User.swift */,
 				8454137B25EF5E1900B0D544 /* UserStats.swift */,
-				845455D125BD44380007C9A2 /* UserPublicInfo.swift */,
 				845455D425BD44460007C9A2 /* UserPrivateInfo.swift */,
 				845C283F25CAB51A000731B3 /* Post.swift */,
 				8454C5FB25EA1F3D000C44FD /* Comment.swift */,
@@ -855,7 +846,6 @@
 				845455E525BD894A0007C9A2 /* LoginView.swift in Sources */,
 				845C284025CAB51A000731B3 /* Post.swift in Sources */,
 				8445929225B41E7D0028EE6A /* RegistrationView.swift in Sources */,
-				845455D225BD44380007C9A2 /* UserPublicInfo.swift in Sources */,
 				8454924925C19805005AB7DA /* TabBarController.swift in Sources */,
 				845CC20425C7ED110051372D /* SharePostInteractor.swift in Sources */,
 				8445928F25B41E6D0028EE6A /* RegistrationViewController.swift in Sources */,
@@ -912,7 +902,6 @@
 				845464F925DA660A00DCD136 /* UserCell.swift in Sources */,
 				84549B7B25E8CED9006CC21D /* CommentsView.swift in Sources */,
 				845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */,
-				845455D925BD467A0007C9A2 /* Profile.swift in Sources */,
 				845CC20C25C7ED470051372D /* SharePostRouter.swift in Sources */,
 				845D7D8E25BC472C001E5037 /* TwoPartsButton.swift in Sources */,
 				84E6610825B9936E0036AB9F /* User.swift in Sources */,
@@ -947,7 +936,6 @@
 				84B2E65525B0267700B27457 /* SceneDelegate.swift in Sources */,
 				8454138F25EF94CF00B0D544 /* FollowersFollowingRouter.swift in Sources */,
 				8454138925EF94B800B0D544 /* FollowersFollowingInteractor.swift in Sources */,
-				845455DD25BD46C40007C9A2 /* ProfileEdit.swift in Sources */,
 				845455FF25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift in Sources */,
 				845464ED25DA5CC000DCD136 /* SearchInteractor.swift in Sources */,
 				8454F28825F389E6006C5A0E /* EditProfileRouter.swift in Sources */,
