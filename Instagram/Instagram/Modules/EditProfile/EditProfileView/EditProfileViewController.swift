@@ -80,9 +80,7 @@ extension EditProfileViewController: IEditProfileViewController {
 
 extension EditProfileViewController: EditProfileViewDelegate {
     func editProfileViewDidPressUsernameTextField(_ editProfileView: EditProfileView) {
-        let editProfileUsernameViewController = EditProfileUsernameViewController()
-        
-        navigationController?.pushViewController(editProfileUsernameViewController, animated: true)
+        presenter?.didPressUsernameTextField()
     }
     
     func editProfileViewDidPressBioTextField(_ editProfileView: EditProfileView) {

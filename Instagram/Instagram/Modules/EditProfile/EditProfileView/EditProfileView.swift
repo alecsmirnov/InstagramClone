@@ -27,6 +27,19 @@ final class EditProfileView: UIView {
     private var imagePicker: ImagePicker?
     private var keyboardAppearanceListener: KeyboardAppearanceListener?
     
+    // MARK: Constants
+    
+    private enum Metrics {
+        static let profileImageButtonTopSpace: CGFloat = 30
+        static let profileImageButtonSize: CGFloat = 100
+        
+        static let changeProfileImageButtonTopSpace: CGFloat = 8
+        
+        static let textFieldTopSpace: CGFloat = 16
+        static let textFieldHorizontalSpace: CGFloat = 16
+        static let textFieldFontSize: CGFloat = 15
+    }
+    
     // MARK: Subviews
     
     private let scrollView = UIScrollView()
@@ -96,7 +109,7 @@ private extension EditProfileView {
         profileImageButton.setImage(LoginRegistrationConstants.Images.profile, for: .normal)
         profileImageButton.contentMode = .scaleAspectFill
         profileImageButton.tintColor = LoginRegistrationConstants.Colors.profileImageButtonTint
-        profileImageButton.layer.cornerRadius = 100 / 2
+        profileImageButton.layer.cornerRadius = Metrics.profileImageButtonSize / 2
         profileImageButton.layer.masksToBounds = true
         profileImageButton.layer.borderColor = LoginRegistrationConstants.Colors.profileImageButtonBorder.cgColor
         profileImageButton.layer.borderWidth = LoginRegistrationConstants.Metrics.profileImageButtonBorderWidth
@@ -116,12 +129,12 @@ private extension EditProfileView {
     
     func setupNameTextFieldAppearance() {
         nameTextField.placeholder = "Name"
-        nameTextField.font = .systemFont(ofSize: 15)
+        nameTextField.font = .systemFont(ofSize: Metrics.textFieldFontSize)
     }
     
     func setupUsernameTextFieldAppearance() {
         usernameTextField.placeholder = "Username"
-        usernameTextField.font = .systemFont(ofSize: 15)
+        usernameTextField.font = .systemFont(ofSize: Metrics.textFieldFontSize)
         
         usernameTextField.addTarget(self, action: #selector(didPressUsernameTextField), for: .touchDown)
     }
@@ -134,12 +147,12 @@ private extension EditProfileView {
     
     func setupWebsiteTextFieldAppearance() {
         websiteTextField.placeholder = "Website"
-        websiteTextField.font = .systemFont(ofSize: 15)
+        websiteTextField.font = .systemFont(ofSize: Metrics.textFieldFontSize)
     }
     
     func setupBioTextFieldAppearance() {
         bioTextField.placeholder = "Bio"
-        bioTextField.font = .systemFont(ofSize: 15)
+        bioTextField.font = .systemFont(ofSize: Metrics.textFieldFontSize)
         
         bioTextField.addTarget(self, action: #selector(didPressBioTextField), for: .touchDown)
     }
@@ -207,10 +220,12 @@ private extension EditProfileView {
         profileImageButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            profileImageButton.topAnchor.constraint(equalTo: screenView.topAnchor, constant: 30),
+            profileImageButton.topAnchor.constraint(
+                equalTo: screenView.topAnchor,
+                constant: Metrics.profileImageButtonTopSpace),
             profileImageButton.centerXAnchor.constraint(equalTo: screenView.centerXAnchor),
-            profileImageButton.heightAnchor.constraint(equalToConstant: 100),
-            profileImageButton.widthAnchor.constraint(equalToConstant: 100),
+            profileImageButton.heightAnchor.constraint(equalToConstant: Metrics.profileImageButtonSize),
+            profileImageButton.widthAnchor.constraint(equalToConstant: Metrics.profileImageButtonSize),
         ])
     }
     
@@ -218,7 +233,9 @@ private extension EditProfileView {
         changeProfileImageButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            changeProfileImageButton.topAnchor.constraint(equalTo: profileImageButton.bottomAnchor, constant: 8),
+            changeProfileImageButton.topAnchor.constraint(
+                equalTo: profileImageButton.bottomAnchor,
+                constant: Metrics.changeProfileImageButtonTopSpace),
             changeProfileImageButton.centerXAnchor.constraint(equalTo: profileImageButton.centerXAnchor),
         ])
     }
@@ -227,9 +244,15 @@ private extension EditProfileView {
         nameTextField.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            nameTextField.topAnchor.constraint(equalTo: changeProfileImageButton.bottomAnchor, constant: 16),
-            nameTextField.leadingAnchor.constraint(equalTo: screenView.leadingAnchor, constant: 16),
-            nameTextField.trailingAnchor.constraint(equalTo: screenView.trailingAnchor, constant: -16),
+            nameTextField.topAnchor.constraint(
+                equalTo: changeProfileImageButton.bottomAnchor,
+                constant: Metrics.textFieldTopSpace),
+            nameTextField.leadingAnchor.constraint(
+                equalTo: screenView.leadingAnchor,
+                constant: Metrics.textFieldHorizontalSpace),
+            nameTextField.trailingAnchor.constraint(
+                equalTo: screenView.trailingAnchor,
+                constant: -Metrics.textFieldHorizontalSpace),
         ])
     }
     
@@ -237,9 +260,15 @@ private extension EditProfileView {
         usernameTextField.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            usernameTextField.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 16),
-            usernameTextField.leadingAnchor.constraint(equalTo: screenView.leadingAnchor, constant: 16),
-            usernameTextField.trailingAnchor.constraint(equalTo: screenView.trailingAnchor, constant: -16),
+            usernameTextField.topAnchor.constraint(
+                equalTo: nameTextField.bottomAnchor,
+                constant: Metrics.textFieldTopSpace),
+            usernameTextField.leadingAnchor.constraint(
+                equalTo: screenView.leadingAnchor,
+                constant: Metrics.textFieldHorizontalSpace),
+            usernameTextField.trailingAnchor.constraint(
+                equalTo: screenView.trailingAnchor,
+                constant: -Metrics.textFieldHorizontalSpace),
         ])
     }
     
@@ -247,9 +276,15 @@ private extension EditProfileView {
         websiteTextField.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            websiteTextField.topAnchor.constraint(equalTo: usernameTextField.bottomAnchor, constant: 16),
-            websiteTextField.leadingAnchor.constraint(equalTo: screenView.leadingAnchor, constant: 16),
-            websiteTextField.trailingAnchor.constraint(equalTo: screenView.trailingAnchor, constant: -16),
+            websiteTextField.topAnchor.constraint(
+                equalTo: usernameTextField.bottomAnchor,
+                constant: Metrics.textFieldTopSpace),
+            websiteTextField.leadingAnchor.constraint(
+                equalTo: screenView.leadingAnchor,
+                constant: Metrics.textFieldHorizontalSpace),
+            websiteTextField.trailingAnchor.constraint(
+                equalTo: screenView.trailingAnchor,
+                constant: -Metrics.textFieldHorizontalSpace),
         ])
     }
     
@@ -257,9 +292,15 @@ private extension EditProfileView {
         bioTextField.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            bioTextField.topAnchor.constraint(equalTo: websiteTextField.bottomAnchor, constant: 16),
-            bioTextField.leadingAnchor.constraint(equalTo: screenView.leadingAnchor, constant: 16),
-            bioTextField.trailingAnchor.constraint(equalTo: screenView.trailingAnchor, constant: -16),
+            bioTextField.topAnchor.constraint(
+                equalTo: websiteTextField.bottomAnchor,
+                constant: Metrics.textFieldTopSpace),
+            bioTextField.leadingAnchor.constraint(
+                equalTo: screenView.leadingAnchor,
+                constant: Metrics.textFieldHorizontalSpace),
+            bioTextField.trailingAnchor.constraint(
+                equalTo: screenView.trailingAnchor,
+                constant: -Metrics.textFieldHorizontalSpace),
         ])
     }
 }

@@ -10,6 +10,7 @@ protocol IEditProfilePresenter: AnyObject {
     
     func didPressCloseButton()
     func didPressEditButton()
+    func didPressUsernameTextField()
     func didPressBioTextField()
 }
 
@@ -41,6 +42,10 @@ extension EditProfilePresenter: IEditProfilePresenter {
     
     func didPressEditButton() {
         delegate?.editProfilePresenterDidPressEdit(self)
+    }
+    
+    func didPressUsernameTextField() {
+        
     }
     
     func didPressBioTextField() {
