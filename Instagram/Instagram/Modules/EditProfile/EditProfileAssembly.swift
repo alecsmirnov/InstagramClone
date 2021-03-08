@@ -18,7 +18,7 @@ enum EditProfileAssembly {
         return navigationController
     }
     
-    static func createEditProfileViewController(
+    private static func createEditProfileViewController(
         user: User,
         delegate: EditProfilePresenterDelegate
     ) -> EditProfileViewController {

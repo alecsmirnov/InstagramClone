@@ -7,11 +7,24 @@
 
 import UIKit
 
+protocol IEditProfileBioViewController: AnyObject {
+    func setBio(_ bio: String)
+    func setCharacterLimit(_ limit: Int)
+}
+
 final class EditProfileBioViewController: CustomViewController<EditProfileBioView> {
+    // MARK: - Properties
+    
+    var presenter: IEditProfileBioPresenter?
+    
     // MARK: Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        customView?.delegate = self
+        
+        presenter?.viewDidLoad()
         
         setupAppearance()
     }
@@ -38,7 +51,7 @@ private extension EditProfileBioViewController {
     }
     
     @objc func didPressCloseButton() {
-        navigationController?.popViewController(animated: true)
+        presenter?.didPressCloseButton()
     }
     
     func setupEditButton() {
@@ -52,7 +65,30 @@ private extension EditProfileBioViewController {
     }
     
     @objc func didPressEditButton() {
-        //presenter?.didPressEditButton()
+        presenter?.didPressEditButton(with: customView?.bio)
     }
 }
 
+// MARK: - IEditProfileBioViewController
+
+extension EditProfileBioViewController: IEditProfileBioViewController {
+    func setBio(_ bio: String) {
+        customView?.setBio(bio)
+    }
+    
+    func setCharacterLimit(_ limit: Int) {
+        customView?.characterLimit = limit
+    }
+}
+
+// MARK: - EditProfileBioViewDelegate
+
+extension EditProfileBioViewController: EditProfileBioViewDelegate {
+    func editProfileBioViewEnableEditButton(_ editProfileBioView: EditProfileBioView) {
+        navigationItem.rightBarButtonItem?.isEnabled = true
+    }
+    
+    func editProfileBioViewDisableEditButton(_ editProfileBioView: EditProfileBioView) {
+        navigationItem.rightBarButtonItem?.isEnabled = false
+    }
+}

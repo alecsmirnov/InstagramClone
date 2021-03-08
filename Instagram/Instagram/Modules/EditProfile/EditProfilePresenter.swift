@@ -10,6 +10,7 @@ protocol IEditProfilePresenter: AnyObject {
     
     func didPressCloseButton()
     func didPressEditButton()
+    func didPressBioTextField()
 }
 
 protocol EditProfilePresenterDelegate: AnyObject {
@@ -41,10 +42,26 @@ extension EditProfilePresenter: IEditProfilePresenter {
     func didPressEditButton() {
         delegate?.editProfilePresenterDidPressEdit(self)
     }
+    
+    func didPressBioTextField() {
+        router?.showEditProfileBioViewController(bio: user?.bio, delegate: self)
+    }
 }
 
 // MARK: - IEditProfileInteractorOutput
 
 extension EditProfilePresenter: IEditProfileInteractorOutput {
     
+}
+
+// MARK: - EditProfileBioPresenterDelegate
+
+extension EditProfilePresenter: EditProfileBioPresenterDelegate {
+    func editProfileBioPresenter(_ editProfileBioPresenter: EditProfileBioPresenter, didChangeBio bio: String?) {
+        user?.bio = bio
+        
+        guard let user = user else { return }
+        
+        viewController?.setUser(user)
+    }
 }

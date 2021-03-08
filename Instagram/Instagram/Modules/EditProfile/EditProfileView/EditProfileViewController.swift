@@ -86,8 +86,6 @@ extension EditProfileViewController: EditProfileViewDelegate {
     }
     
     func editProfileViewDidPressBioTextField(_ editProfileView: EditProfileView) {
-        let editProfileBioViewController = EditProfileBioViewController()
-        
-        navigationController?.pushViewController(editProfileBioViewController, animated: true)
+        presenter?.didPressBioTextField()
     }
 }

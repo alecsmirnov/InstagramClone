@@ -59,6 +59,9 @@
 		84549BB025BEFC2F007D24E2 /* RootViewControllerSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BAF25BEFC2F007D24E2 /* RootViewControllerSwitcher.swift */; };
 		8454C5FC25EA1F3D000C44FD /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C5FB25EA1F3D000C44FD /* Comment.swift */; };
 		8454C5FF25EA2242000C44FD /* UserComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C5FE25EA2242000C44FD /* UserComment.swift */; };
+		8454D0DB25F5DFA000DD27DD /* EditProfileBioPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D0DA25F5DFA000DD27DD /* EditProfileBioPresenter.swift */; };
+		8454D0E125F5FCCC00DD27DD /* EditProfileBioAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D0E025F5FCCC00DD27DD /* EditProfileBioAssembly.swift */; };
+		8454D0E425F5FD6700DD27DD /* EditProfileBioRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D0E325F5FD6700DD27DD /* EditProfileBioRouter.swift */; };
 		8454D3F625BFFC3F00D3CC9E /* SecureTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D3F525BFFC3F00D3CC9E /* SecureTextField.swift */; };
 		8454DCAE25ECAA92006DB3E2 /* FeedPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454DCAD25ECAA92006DB3E2 /* FeedPost.swift */; };
 		8454E52E25D3E765003A89E7 /* UIImage+instagramCrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454E52D25D3E765003A89E7 /* UIImage+instagramCrop.swift */; };
@@ -192,6 +195,9 @@
 		84549BAF25BEFC2F007D24E2 /* RootViewControllerSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewControllerSwitcher.swift; sourceTree = "<group>"; };
 		8454C5FB25EA1F3D000C44FD /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		8454C5FE25EA2242000C44FD /* UserComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserComment.swift; sourceTree = "<group>"; };
+		8454D0DA25F5DFA000DD27DD /* EditProfileBioPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileBioPresenter.swift; sourceTree = "<group>"; };
+		8454D0E025F5FCCC00DD27DD /* EditProfileBioAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileBioAssembly.swift; sourceTree = "<group>"; };
+		8454D0E325F5FD6700DD27DD /* EditProfileBioRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileBioRouter.swift; sourceTree = "<group>"; };
 		8454D3F525BFFC3F00D3CC9E /* SecureTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureTextField.swift; sourceTree = "<group>"; };
 		8454DCAD25ECAA92006DB3E2 /* FeedPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPost.swift; sourceTree = "<group>"; };
 		8454E52D25D3E765003A89E7 /* UIImage+instagramCrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+instagramCrop.swift"; sourceTree = "<group>"; };
@@ -432,6 +438,26 @@
 			path = Launch;
 			sourceTree = "<group>";
 		};
+		8454D0DE25F5FBB000DD27DD /* EditProfileBio */ = {
+			isa = PBXGroup;
+			children = (
+				8454D0DF25F5FBC500DD27DD /* EditProfileBioView */,
+				8454D0DA25F5DFA000DD27DD /* EditProfileBioPresenter.swift */,
+				8454D0E325F5FD6700DD27DD /* EditProfileBioRouter.swift */,
+				8454D0E025F5FCCC00DD27DD /* EditProfileBioAssembly.swift */,
+			);
+			path = EditProfileBio;
+			sourceTree = "<group>";
+		};
+		8454D0DF25F5FBC500DD27DD /* EditProfileBioView */ = {
+			isa = PBXGroup;
+			children = (
+				8459C14525F52D5A00FFFB36 /* EditProfileBioView.swift */,
+				8459C14825F52D9F00FFFB36 /* EditProfileBioViewController.swift */,
+			);
+			path = EditProfileBioView;
+			sourceTree = "<group>";
+		};
 		8454F27725F38966006C5A0E /* EditProfile */ = {
 			isa = PBXGroup;
 			children = (
@@ -447,9 +473,9 @@
 		8454F27925F3897E006C5A0E /* EditProfileView */ = {
 			isa = PBXGroup;
 			children = (
-				8459C13725F5277800FFFB36 /* EditProfile */,
+				8454F27A25F389A3006C5A0E /* EditProfileView.swift */,
+				8454F27E25F389B6006C5A0E /* EditProfileViewController.swift */,
 				8459C13925F5286A00FFFB36 /* EditProfileUsername */,
-				8459C13825F5278E00FFFB36 /* EditProfileBio */,
 			);
 			path = EditProfileView;
 			sourceTree = "<group>";
@@ -461,24 +487,6 @@
 				845504F725B1C38300715C3B /* TabBarAssembly.swift */,
 			);
 			path = TabBar;
-			sourceTree = "<group>";
-		};
-		8459C13725F5277800FFFB36 /* EditProfile */ = {
-			isa = PBXGroup;
-			children = (
-				8454F27A25F389A3006C5A0E /* EditProfileView.swift */,
-				8454F27E25F389B6006C5A0E /* EditProfileViewController.swift */,
-			);
-			path = EditProfile;
-			sourceTree = "<group>";
-		};
-		8459C13825F5278E00FFFB36 /* EditProfileBio */ = {
-			isa = PBXGroup;
-			children = (
-				8459C14525F52D5A00FFFB36 /* EditProfileBioView.swift */,
-				8459C14825F52D9F00FFFB36 /* EditProfileBioViewController.swift */,
-			);
-			path = EditProfileBio;
 			sourceTree = "<group>";
 		};
 		8459C13925F5286A00FFFB36 /* EditProfileUsername */ = {
@@ -658,6 +666,7 @@
 				845CC1FA25C7EB960051372D /* SharePost */,
 				84E6609925B954DF0036AB9F /* Profile */,
 				8454F27725F38966006C5A0E /* EditProfile */,
+				8454D0DE25F5FBB000DD27DD /* EditProfileBio */,
 				8454137F25EF946B00B0D544 /* FollowersFollowing */,
 			);
 			path = Modules;
@@ -886,6 +895,7 @@
 				845C284025CAB51A000731B3 /* Post.swift in Sources */,
 				8445929225B41E7D0028EE6A /* RegistrationView.swift in Sources */,
 				8454924925C19805005AB7DA /* TabBarController.swift in Sources */,
+				8454D0DB25F5DFA000DD27DD /* EditProfileBioPresenter.swift in Sources */,
 				845CC20425C7ED110051372D /* SharePostInteractor.swift in Sources */,
 				8445928F25B41E6D0028EE6A /* RegistrationViewController.swift in Sources */,
 				8454F28525F389D8006C5A0E /* EditProfilePresenter.swift in Sources */,
@@ -896,6 +906,7 @@
 				845C284625CAC22A000731B3 /* FirebaseAuthService.swift in Sources */,
 				84B2E65325B0267700B27457 /* AppDelegate.swift in Sources */,
 				84488AB625C2F67E00173A19 /* NewPostViewController.swift in Sources */,
+				8454D0E425F5FD6700DD27DD /* EditProfileBioRouter.swift in Sources */,
 				845455F125BD8A300007C9A2 /* LoginRouter.swift in Sources */,
 				8445929625B425210028EE6A /* CustomViewController.swift in Sources */,
 				84E660A325B955200036AB9F /* ProfileInteractor.swift in Sources */,
@@ -939,6 +950,7 @@
 				84488AB225C2F66E00173A19 /* NewPostView.swift in Sources */,
 				84549BAD25BEEC32007D24E2 /* LaunchAssembly.swift in Sources */,
 				8454D3F625BFFC3F00D3CC9E /* SecureTextField.swift in Sources */,
+				8454D0E125F5FCCC00DD27DD /* EditProfileBioAssembly.swift in Sources */,
 				845464F925DA660A00DCD136 /* UserCell.swift in Sources */,
 				8459C14625F52D5A00FFFB36 /* EditProfileBioView.swift in Sources */,
 				84549B7B25E8CED9006CC21D /* CommentsView.swift in Sources */,
