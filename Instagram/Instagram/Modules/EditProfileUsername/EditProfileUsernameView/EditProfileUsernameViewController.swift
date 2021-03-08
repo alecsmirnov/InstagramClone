@@ -7,11 +7,23 @@
 
 import UIKit
 
+protocol IEditProfileUsernameViewController: AnyObject {
+    
+}
+
 final class EditProfileUsernameViewController: CustomViewController<EditProfileUsernameView> {
+    // MARK: - Properties
+    
+    var presenter: IEditProfileUsernamePresenter?
+    
     // MARK: Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        customView?.delegate = self
+        
+        presenter?.viewDidLoad()
         
         setupAppearance()
     }
@@ -38,7 +50,7 @@ private extension EditProfileUsernameViewController {
     }
     
     @objc func didPressCloseButton() {
-        navigationController?.popViewController(animated: true)
+        presenter?.didPressCloseButton()
     }
     
     func setupEditButton() {
@@ -52,6 +64,31 @@ private extension EditProfileUsernameViewController {
     }
     
     @objc func didPressEditButton() {
-        //presenter?.didPressEditButton()
+        presenter?.didPressEditButton()
+    }
+}
+
+// MARK: - IEditProfileUsernameViewController
+
+extension EditProfileUsernameViewController: IEditProfileUsernameViewController {
+    
+}
+
+// MARK: - EditProfileUsernameViewDelegate
+
+extension EditProfileUsernameViewController: EditProfileUsernameViewDelegate {
+    func editProfileUsernameView(
+        _ editProfileUsernameView: EditProfileUsernameView,
+        usernameDidChange username: String?
+    ) {
+        
+    }
+    
+    func editProfileUsernameViewEnableEditButton(_ editProfileUsernameView: EditProfileUsernameView) {
+        navigationItem.rightBarButtonItem?.isEnabled = true
+    }
+    
+    func editProfileUsernameViewDisableEditButton(_ editProfileUsernameView: EditProfileUsernameView) {
+        navigationItem.rightBarButtonItem?.isEnabled = false
     }
 }

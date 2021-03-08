@@ -51,7 +51,7 @@ final class EditProfileBioView: UIView {
     // MARK: Subviews
     
     private let contentView = UIView()
-    private let bioTextView = PlaceholderTextView()
+    private let bioTextView = UITextView()
     private let separatorView = UIView()
     private let characterCounterLabel = UILabel()
     

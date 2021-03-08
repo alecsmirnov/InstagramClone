@@ -45,17 +45,27 @@ extension EditProfilePresenter: IEditProfilePresenter {
     }
     
     func didPressUsernameTextField() {
+        guard let username = user?.username else { return }
         
+        router?.showEditProfileUsernameViewController(username: username, delegate: self)
     }
     
     func didPressBioTextField() {
-        router?.showEditProfileBioViewController(bio: user?.bio, delegate: self)
+        guard let user = user else { return }
+        
+        router?.showEditProfileBioViewController(bio: user.bio, delegate: self)
     }
 }
 
 // MARK: - IEditProfileInteractorOutput
 
 extension EditProfilePresenter: IEditProfileInteractorOutput {
+    
+}
+
+// MARK: - EditProfileUsernamePresenterDelegate
+
+extension EditProfilePresenter: EditProfileUsernamePresenterDelegate {
     
 }
 

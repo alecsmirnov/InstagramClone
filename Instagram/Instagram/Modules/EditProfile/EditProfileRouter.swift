@@ -8,6 +8,7 @@
 protocol IEditProfileRouter: AnyObject {
     func closeEditProfileViewController()
     
+    func showEditProfileUsernameViewController(username: String, delegate: EditProfileUsernamePresenterDelegate)
     func showEditProfileBioViewController(bio: String?, delegate: EditProfileBioPresenterDelegate)
 }
 
@@ -24,6 +25,17 @@ final class EditProfileRouter {
 extension EditProfileRouter: IEditProfileRouter {
     func closeEditProfileViewController() {
         viewController?.dismiss(animated: true)
+    }
+    
+    func showEditProfileUsernameViewController(username: String, delegate: EditProfileUsernamePresenterDelegate) {
+        let navigationViewController = EditProfileUsernameAssembly.createEditProfileUsernameNavigationViewController(
+            username: username,
+            delegate: delegate)
+        
+        navigationViewController.modalPresentationStyle = .fullScreen
+        navigationViewController.modalTransitionStyle = .crossDissolve
+        
+        viewController?.present(navigationViewController, animated: true)
     }
     
     func showEditProfileBioViewController(bio: String?, delegate: EditProfileBioPresenterDelegate) {
