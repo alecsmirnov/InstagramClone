@@ -17,22 +17,27 @@ protocol EditProfileBioPresenterDelegate: AnyObject {
 }
 
 final class EditProfileBioPresenter {
+    // MARK: Properties
+    
     weak var viewController: IEditProfileBioViewController?
     var router: IEditProfileBioRouter?
     
     var bio: String?
     weak var delegate: EditProfileBioPresenterDelegate?
+    
+    // MARK: Constants
+    
+    private enum Constants {
+        static let characterLimit = 150
+    }
 }
 
 // MARK: - IEditProfileBioPresenter
 
 extension EditProfileBioPresenter: IEditProfileBioPresenter {
     func viewDidLoad() {
-        if let bio = bio {
-            viewController?.setBio(bio)
-        }
-        
-        viewController?.setCharacterLimit(10)
+        viewController?.setBio(bio)
+        viewController?.setCharacterLimit(Constants.characterLimit)
     }
     
     func didPressCloseButton() {

@@ -66,6 +66,7 @@
 		8454D0EE25F6360D00DD27DD /* EditProfileUsernamePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D0ED25F6360D00DD27DD /* EditProfileUsernamePresenter.swift */; };
 		8454D0F125F6361600DD27DD /* EditProfileUsernameRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D0F025F6361600DD27DD /* EditProfileUsernameRouter.swift */; };
 		8454D0F425F6362000DD27DD /* EditProfileUsernameAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D0F325F6362000DD27DD /* EditProfileUsernameAssembly.swift */; };
+		8454D0F725F658DC00DD27DD /* TimeoutAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D0F625F658DC00DD27DD /* TimeoutAlert.swift */; };
 		8454D3F625BFFC3F00D3CC9E /* SecureTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D3F525BFFC3F00D3CC9E /* SecureTextField.swift */; };
 		8454DCAE25ECAA92006DB3E2 /* FeedPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454DCAD25ECAA92006DB3E2 /* FeedPost.swift */; };
 		8454E52E25D3E765003A89E7 /* UIImage+instagramCrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454E52D25D3E765003A89E7 /* UIImage+instagramCrop.swift */; };
@@ -206,6 +207,7 @@
 		8454D0ED25F6360D00DD27DD /* EditProfileUsernamePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileUsernamePresenter.swift; sourceTree = "<group>"; };
 		8454D0F025F6361600DD27DD /* EditProfileUsernameRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileUsernameRouter.swift; sourceTree = "<group>"; };
 		8454D0F325F6362000DD27DD /* EditProfileUsernameAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileUsernameAssembly.swift; sourceTree = "<group>"; };
+		8454D0F625F658DC00DD27DD /* TimeoutAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutAlert.swift; sourceTree = "<group>"; };
 		8454D3F525BFFC3F00D3CC9E /* SecureTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureTextField.swift; sourceTree = "<group>"; };
 		8454DCAD25ECAA92006DB3E2 /* FeedPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPost.swift; sourceTree = "<group>"; };
 		8454E52D25D3E765003A89E7 /* UIImage+instagramCrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+instagramCrop.swift"; sourceTree = "<group>"; };
@@ -524,6 +526,7 @@
 				845B8CB425B6D3C300FE5ED6 /* JSONCoding.swift */,
 				84FE47C025B814AF0048F5AA /* ImagePicker.swift */,
 				84549BA325BEC7AE007D24E2 /* SimpleAlert.swift */,
+				8454D0F625F658DC00DD27DD /* TimeoutAlert.swift */,
 				845455FA25BDAC460007C9A2 /* KeyboardAppearanceListener.swift */,
 				84549BAF25BEFC2F007D24E2 /* RootViewControllerSwitcher.swift */,
 			);
@@ -973,6 +976,7 @@
 				845CC20F25C7ED580051372D /* SharePostAssembly.swift in Sources */,
 				84488AB225C2F66E00173A19 /* NewPostView.swift in Sources */,
 				84549BAD25BEEC32007D24E2 /* LaunchAssembly.swift in Sources */,
+				8454D0F725F658DC00DD27DD /* TimeoutAlert.swift in Sources */,
 				8454D3F625BFFC3F00D3CC9E /* SecureTextField.swift in Sources */,
 				8454D0E125F5FCCC00DD27DD /* EditProfileBioAssembly.swift in Sources */,
 				845464F925DA660A00DCD136 /* UserCell.swift in Sources */,

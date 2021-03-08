@@ -8,13 +8,30 @@
 import UIKit
 
 protocol IEditProfileUsernameViewController: AnyObject {
+    func setUsername(_ username: String)
     
+    func enableEditButton()
+    func disableEditButton()
+    
+    func showActivityIndicator()
+    func hideActivityIndicator()
+    
+    func showInvalidUsernameAlert()
+    func showAlreadyInUseUsernameAlert()
 }
 
 final class EditProfileUsernameViewController: CustomViewController<EditProfileUsernameView> {
-    // MARK: - Properties
+    // MARK: Properties
     
     var presenter: IEditProfileUsernamePresenter?
+    
+    private lazy var timeoutAlert = TimeoutAlert(presentationController: self)
+    
+    // MARK: Constants
+    
+    private enum Constants {
+        static let alertTimeout: TimeInterval = 0.5
+    }
     
     // MARK: Lifecycle
     
@@ -64,14 +81,34 @@ private extension EditProfileUsernameViewController {
     }
     
     @objc func didPressEditButton() {
-        presenter?.didPressEditButton()
+        guard let username = customView?.username else { return }
+        
+        presenter?.didPressEditButton(with: username)
     }
 }
 
 // MARK: - IEditProfileUsernameViewController
 
 extension EditProfileUsernameViewController: IEditProfileUsernameViewController {
+    func setUsername(_ username: String) {
+        customView?.username = username
+    }
     
+    func enableEditButton() {
+        navigationItem.rightBarButtonItem?.isEnabled = true
+    }
+    
+    func disableEditButton() {
+        navigationItem.rightBarButtonItem?.isEnabled = false
+    }
+    
+    func showActivityIndicator() {
+        customView?.showActivityIndicator()
+    }
+    
+    func hideActivityIndicator() {
+        customView?.hideActivityIndicator()
+    }
 }
 
 // MARK: - EditProfileUsernameViewDelegate
@@ -81,14 +118,22 @@ extension EditProfileUsernameViewController: EditProfileUsernameViewDelegate {
         _ editProfileUsernameView: EditProfileUsernameView,
         usernameDidChange username: String?
     ) {
-        
+        presenter?.didChangeUsername(username ?? "")
     }
     
     func editProfileUsernameViewEnableEditButton(_ editProfileUsernameView: EditProfileUsernameView) {
-        navigationItem.rightBarButtonItem?.isEnabled = true
+        enableEditButton()
     }
     
     func editProfileUsernameViewDisableEditButton(_ editProfileUsernameView: EditProfileUsernameView) {
-        navigationItem.rightBarButtonItem?.isEnabled = false
+        disableEditButton()
+    }
+    
+    func showInvalidUsernameAlert() {
+        timeoutAlert.showAlert(title: nil, message: "Invalid username", timeout: Constants.alertTimeout)
+    }
+    
+    func showAlreadyInUseUsernameAlert() {
+        timeoutAlert.showAlert(title: nil, message: "Username already in use", timeout: Constants.alertTimeout)
     }
 }

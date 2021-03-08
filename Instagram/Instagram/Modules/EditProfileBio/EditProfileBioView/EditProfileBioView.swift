@@ -18,7 +18,15 @@ final class EditProfileBioView: UIView {
     weak var delegate: EditProfileBioViewDelegate?
     
     var bio: String? {
-        return bioTextView.text
+        get {
+            return bioTextView.text
+        }
+        set {
+            guard let bio = newValue else { return }
+            
+            bioTextView.text = String(bio)
+            characterCounterLabel.text = String(bio.count)
+        }
     }
     
     var characterLimit = Int.max
@@ -69,15 +77,6 @@ final class EditProfileBioView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-}
-
-// MARK: - Public Methods
-
-extension EditProfileBioView {
-    func setBio(_ bio: String) {
-        bioTextView.text = String(bio)
-        characterCounterLabel.text = String(bio.count)
     }
 }
 

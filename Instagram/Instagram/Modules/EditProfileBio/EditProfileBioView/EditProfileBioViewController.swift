@@ -8,7 +8,7 @@
 import UIKit
 
 protocol IEditProfileBioViewController: AnyObject {
-    func setBio(_ bio: String)
+    func setBio(_ bio: String?)
     func setCharacterLimit(_ limit: Int)
 }
 
@@ -72,8 +72,8 @@ private extension EditProfileBioViewController {
 // MARK: - IEditProfileBioViewController
 
 extension EditProfileBioViewController: IEditProfileBioViewController {
-    func setBio(_ bio: String) {
-        customView?.setBio(bio)
+    func setBio(_ bio: String?) {
+        customView?.bio = bio
     }
     
     func setCharacterLimit(_ limit: Int) {

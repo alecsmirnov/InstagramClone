@@ -6,11 +6,14 @@
 //
 
 protocol IEditProfileUsernameInteractor: AnyObject {
-    
+    func checkUsername(_ username: String)
 }
 
 protocol IEditProfileUsernameInteractorOutput: AnyObject {
-    
+    func isValidUsername()
+    func isInvalidUsername()
+    func isUserWithUsernameExist()
+    func isEmptyUsername()
 }
 
 final class EditProfileUsernameInteractor {
@@ -20,5 +23,30 @@ final class EditProfileUsernameInteractor {
 // MARK: - IEditProfileUsernameInteractor
 
 extension EditProfileUsernameInteractor: IEditProfileUsernameInteractor {
-    
+    func checkUsername(_ username: String) {
+        guard !username.isEmpty else {
+            presenter?.isEmptyUsername()
+            
+            return
+        }
+        
+        guard InputValidation.isValidUsername(username) else {
+            presenter?.isInvalidUsername()
+            
+            return
+        }
+        
+        FirebaseUserService.isUsernameExist(username) { [self] result in
+            switch result {
+            case .success(let isUsernameExist):
+                if isUsernameExist {
+                    presenter?.isUserWithUsernameExist()
+                } else {
+                    presenter?.isValidUsername()
+                }
+            case .failure(let error):
+                print("Failed to fetch username status: \(error.localizedDescription)")
+            }
+        }
+    }    
 }

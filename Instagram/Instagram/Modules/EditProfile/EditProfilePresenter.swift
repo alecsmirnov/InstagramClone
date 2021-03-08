@@ -25,6 +25,8 @@ final class EditProfilePresenter {
     
     var user: User?
     weak var delegate: EditProfilePresenterDelegate?
+    
+    private var currentUsername: String?
 }
 
 // MARK: - IEditProfilePresenter
@@ -32,6 +34,8 @@ final class EditProfilePresenter {
 extension EditProfilePresenter: IEditProfilePresenter {
     func viewDidLoad() {
         guard let user = user else { return }
+        
+        currentUsername = user.username
         
         viewController?.setUser(user)
     }
@@ -45,9 +49,12 @@ extension EditProfilePresenter: IEditProfilePresenter {
     }
     
     func didPressUsernameTextField() {
-        guard let username = user?.username else { return }
+        guard let username = user?.username, let currentUsername = currentUsername else { return }
         
-        router?.showEditProfileUsernameViewController(username: username, delegate: self)
+        router?.showEditProfileUsernameViewController(
+            username: username,
+            currentUsername: currentUsername,
+            delegate: self)
     }
     
     func didPressBioTextField() {
@@ -66,7 +73,25 @@ extension EditProfilePresenter: IEditProfileInteractorOutput {
 // MARK: - EditProfileUsernamePresenterDelegate
 
 extension EditProfilePresenter: EditProfileUsernamePresenterDelegate {
-    
+    func editProfileUsernamePresenter(
+        _ editProfileUsernamePresenter: EditProfileUsernamePresenter,
+        didChangeUsername username: String
+    ) {
+        guard let user = user else { return }
+        
+        let newUser = User(
+            fullName: user.fullName,
+            username: username,
+            profileImageURL: user.profileImageURL,
+            bio: user.bio,
+            website: user.bio,
+            identifier: user.identifier,
+            kind: user.kind)
+        
+        self.user = newUser
+        
+        viewController?.setUser(newUser)
+    }
 }
 
 // MARK: - EditProfileBioPresenterDelegate

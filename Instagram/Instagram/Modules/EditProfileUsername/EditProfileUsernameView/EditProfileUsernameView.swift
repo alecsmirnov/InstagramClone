@@ -20,6 +20,17 @@ final class EditProfileUsernameView: UIView {
     
     weak var delegate: EditProfileUsernameViewDelegate?
     
+    var username: String? {
+        get {
+            return usernameTextField.text
+        }
+        set {
+            guard let username = newValue else { return }
+            
+            usernameTextField.text = String(username)
+        }
+    }
+    
     // MARK: Constants
     
     private enum Metrics {
@@ -27,10 +38,14 @@ final class EditProfileUsernameView: UIView {
         static let usernameTextFieldLeadingSpace: CGFloat = 6
         static let usernameTextFieldVerticalSpace: CGFloat = 8
         
-        static let activityIndicatorViewHorizontalSpace: CGFloat = 10
+        static let activityIndicatorViewHorizontalSpace: CGFloat = 17
         
         static let separatorViewHorizontalSpace: CGFloat = 10
         static let separatorViewHeight: CGFloat = 0.5
+    }
+    
+    private enum Constants {
+        static let textInputDelay = 0.6
     }
     
     // MARK: Subviews
@@ -87,6 +102,15 @@ private extension EditProfileUsernameView {
     }
     
     @objc func textFieldDidChange(_ textField: UITextField) {
+        NSObject.cancelPreviousPerformRequests(
+            withTarget: self,
+            selector: #selector(didStartTyping(_:)),
+            object: textField)
+        
+        perform(#selector(didStartTyping(_:)), with: textField, afterDelay: Constants.textInputDelay)
+    }
+    
+    @objc func didStartTyping(_ textField: UITextField) {
         delegate?.editProfileUsernameView(self, usernameDidChange: textField.text)
     }
     
