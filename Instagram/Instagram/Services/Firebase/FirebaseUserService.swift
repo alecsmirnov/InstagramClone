@@ -62,37 +62,89 @@ extension FirebaseUserService {
         FirebaseAuthService.createUser(withEmail: email, password: password) { result in
             switch result {
             case .success(let userIdentifier):
-                let lowercasedUsername = username.lowercased()
+                updateUser(
+                    identifier: userIdentifier,
+                    fullName: fullName,
+                    username: username,
+                    bio: nil,
+                    website: nil,
+                    profileImageData: profileImageData,
+                    completion: completion)
                 
-                if let profileImageData = profileImageData {
-                    FirebaseStorageService.storeUserProfileImageData(
-                        profileImageData,
-                        identifier: userIdentifier) { result in
-                        switch result {
-                        case .success(let profileImageURL):
-                            createUserRecord(
-                                identifier: userIdentifier,
-                                email: email,
-                                fullName: fullName,
-                                username: lowercasedUsername,
-                                profileImageURL: profileImageURL) { error in
-                                completion(error)
-                            }
-                        case .failure(let error):
-                            completion(error)
-                        }
-                    }
-                } else {
+//                let lowercasedUsername = username.lowercased()
+//
+//                if let profileImageData = profileImageData {
+//                    FirebaseStorageService.storeUserProfileImageData(
+//                        profileImageData,
+//                        identifier: userIdentifier) { result in
+//                        switch result {
+//                        case .success(let profileImageURL):
+//                            createUserRecord(
+//                                identifier: userIdentifier,
+//                                email: email,
+//                                fullName: fullName,
+//                                username: lowercasedUsername,
+//                                profileImageURL: profileImageURL) { error in
+//                                completion(error)
+//                            }
+//                        case .failure(let error):
+//                            completion(error)
+//                        }
+//                    }
+//                } else {
+//                    createUserRecord(
+//                        identifier: userIdentifier,
+//                        email: email,
+//                        fullName: fullName,
+//                        username: lowercasedUsername,
+//                        profileImageURL: nil) { error in
+//                        completion(error)
+//                    }
+//                }
+            case .failure(let error):
+                completion(error)
+            }
+        }
+    }
+    
+    static func updateUser(
+        identifier: String,
+        fullName: String?,
+        username: String,
+        bio: String?,
+        website: String?,
+        profileImageData: Data?,
+        completion: @escaping (Error?) -> Void
+    ) {
+        let lowercasedUsername = username.lowercased()
+        
+        if let profileImageData = profileImageData {
+            FirebaseStorageService.storeUserProfileImageData(
+                profileImageData,
+                identifier: identifier) { result in
+                switch result {
+                case .success(let profileImageURL):
                     createUserRecord(
-                        identifier: userIdentifier,
-                        email: email,
+                        identifier: identifier,
                         fullName: fullName,
                         username: lowercasedUsername,
-                        profileImageURL: nil) { error in
+                        profileImageURL: profileImageURL,
+                        bio: bio,
+                        website: website) { error in
                         completion(error)
                     }
+                case .failure(let error):
+                    completion(error)
                 }
-            case .failure(let error):
+            }
+        } else {
+            createUserRecord(
+                identifier: identifier,
+                fullName: fullName,
+                username: lowercasedUsername,
+                profileImageURL: nil,
+                bio: bio,
+                website: website) { error in
                 completion(error)
             }
         }
@@ -317,13 +369,20 @@ extension FirebaseUserService {
 private extension FirebaseUserService {    
     static func createUserRecord(
         identifier: String,
-        email: String,
+        email: String? = nil,
         fullName: String?,
         username: String,
         profileImageURL: String?,
+        bio: String? = nil,
+        website: String? = nil,
         completion: @escaping (Error?) -> Void
     ) {
-        let user = User(fullName: fullName, username: username, profileImageURL: profileImageURL)
+        let user = User(
+            fullName: fullName,
+            username: username,
+            profileImageURL: profileImageURL,
+            bio: bio,
+            website: website)
         
         if let userDictionary = JSONCoding.toDictionary(user) {
             let userReference = databaseReference.child(FirebaseTables.users).child(identifier)
@@ -331,6 +390,12 @@ private extension FirebaseUserService {
             userReference.setValue(userDictionary) { error, _ in
                 guard error == nil else {
                     completion(error)
+                    
+                    return
+                }
+                
+                guard let email = email else {
+                    completion(nil)
                     
                     return
                 }

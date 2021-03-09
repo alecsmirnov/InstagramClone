@@ -32,6 +32,8 @@ final class ProfilePresenter {
     var user: User?
     var userStats: UserStats?
     
+    private var isObserving = false
+    
     // MARK: Initialization
     
     deinit {
@@ -123,11 +125,15 @@ extension ProfilePresenter: IProfileInteractorOutput {
         viewController?.setUser(user)
         viewController?.reloadData()
         
-        if let identifier = user.identifier {
-            interactor?.observeUserStats(identifier: identifier)
+        if !isObserving {
+            if let identifier = user.identifier {
+                interactor?.observeUserStats(identifier: identifier)
+                
+                interactor?.fetchPosts(identifier: identifier)
+                interactor?.observePosts()
+            }
             
-            interactor?.fetchPosts(identifier: identifier)
-            interactor?.observePosts()
+            isObserving = true
         }
     }
     
@@ -207,8 +213,8 @@ extension ProfilePresenter: IProfileInteractorOutput {
 // MARK: - EditProfilePresenterDelegate
 
 extension ProfilePresenter: EditProfilePresenterDelegate {
-    func editProfilePresenterDidPressEdit(_ editProfilePresenter: EditProfilePresenter) {
-        print("Edit")
+    func editProfilePresenterUpdateUser(_ editProfilePresenter: EditProfilePresenter) {
+        interactor?.fetchCurrentUser()
     }
 }
 

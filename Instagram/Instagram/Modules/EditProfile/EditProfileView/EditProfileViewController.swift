@@ -9,12 +9,22 @@ import UIKit
 
 protocol IEditProfileViewController: AnyObject {
     func setUser(_ user: User)
+    
+    func showAlreadyInUseUsernameAlert()
 }
 
 final class EditProfileViewController: CustomViewController<EditProfileView> {
     // MARK: Properties
     
     var presenter: IEditProfilePresenter?
+    
+    private lazy var timeoutAlert = TimeoutAlert(presentationController: self)
+    
+    // MARK: Constants
+    
+    private enum Constants {
+        static let alertTimeout: TimeInterval = 0.5
+    }
     
     // MARK: Lifecycle
     
@@ -64,7 +74,16 @@ private extension EditProfileViewController {
     }
     
     @objc func didPressEditButton() {
-        presenter?.didPressEditButton()
+        customView?.endEditing(true)
+        
+        guard let username = customView?.username else { return }
+        
+        presenter?.didPressEditButton(
+            fullName: customView?.name,
+            username: username,
+            website: customView?.website,
+            bio: customView?.bio,
+            profileImage: customView?.profileImage)
     }
 }
 
@@ -72,7 +91,11 @@ private extension EditProfileViewController {
 
 extension EditProfileViewController: IEditProfileViewController {
     func setUser(_ user: User) {
-        customView?.setUser(user)
+        customView?.user = user
+    }
+    
+    func showAlreadyInUseUsernameAlert() {
+        timeoutAlert.showAlert(title: nil, message: "Username already in use", timeout: Constants.alertTimeout)
     }
 }
 

@@ -5,17 +5,24 @@
 //  Created by Admin on 06.03.2021.
 //
 
+import UIKit
+
 protocol IEditProfilePresenter: AnyObject {
     func viewDidLoad()
     
     func didPressCloseButton()
-    func didPressEditButton()
+    func didPressEditButton(
+        fullName: String?,
+        username: String,
+        website: String?,
+        bio: String?,
+        profileImage: UIImage?)
     func didPressUsernameTextField()
     func didPressBioTextField()
 }
 
 protocol EditProfilePresenterDelegate: AnyObject {
-    func editProfilePresenterDidPressEdit(_ editProfilePresenter: EditProfilePresenter)
+    func editProfilePresenterUpdateUser(_ editProfilePresenter: EditProfilePresenter)
 }
 
 final class EditProfilePresenter {
@@ -44,8 +51,22 @@ extension EditProfilePresenter: IEditProfilePresenter {
         router?.closeEditProfileViewController()
     }
     
-    func didPressEditButton() {
-        delegate?.editProfilePresenterDidPressEdit(self)
+    func didPressEditButton(
+        fullName: String?,
+        username: String,
+        website: String?,
+        bio: String?,
+        profileImage: UIImage?
+    ) {
+        guard let currentUsername = currentUsername else { return }
+        
+        interactor?.updateUser(
+            currentUsername: currentUsername,
+            fullName: fullName,
+            username: username,
+            website: website,
+            bio: bio,
+            profileImage: profileImage)
     }
     
     func didPressUsernameTextField() {
@@ -67,7 +88,19 @@ extension EditProfilePresenter: IEditProfilePresenter {
 // MARK: - IEditProfileInteractorOutput
 
 extension EditProfilePresenter: IEditProfileInteractorOutput {
+    func userWithUsernameExist() {
+        viewController?.showAlreadyInUseUsernameAlert()
+    }
     
+    func updateUserSuccess() {
+        delegate?.editProfilePresenterUpdateUser(self)
+        
+        router?.closeEditProfileViewController()
+    }
+    
+    func updateUserFailure() {
+        
+    }
 }
 
 // MARK: - EditProfileUsernamePresenterDelegate
@@ -84,7 +117,7 @@ extension EditProfilePresenter: EditProfileUsernamePresenterDelegate {
             username: username,
             profileImageURL: user.profileImageURL,
             bio: user.bio,
-            website: user.bio,
+            website: user.website,
             identifier: user.identifier,
             kind: user.kind)
         

@@ -24,6 +24,41 @@ final class EditProfileView: UIView {
         }
     }
     
+    var profileImage: UIImage? {
+        return profileImageButton.image(for: .normal)
+    }
+    
+    var name: String? {
+        return nameTextField.text
+    }
+    
+    var username: String? {
+        return usernameTextField.text
+    }
+    
+    var website: String? {
+        return websiteTextField.text
+    }
+    
+    var bio: String? {
+        return bioTextField.text
+    }
+    
+    var user: User? {
+        didSet {
+            guard let user = user else { return }
+            
+            if let profileImageURL = user.profileImageURL {
+                profileImageButton.imageDownload(urlString: profileImageURL)
+            }
+            
+            nameTextField.text = user.fullName
+            usernameTextField.text = user.username
+            websiteTextField.text = user.website
+            bioTextField.text = user.bio
+        }
+    }
+    
     private var imagePicker: ImagePicker?
     private var keyboardAppearanceListener: KeyboardAppearanceListener?
     
@@ -68,21 +103,6 @@ final class EditProfileView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-}
-
-// MARK: - Public Methods
-
-extension EditProfileView {
-    func setUser(_ user: User) {
-        if let profileImageURL = user.profileImageURL {
-            profileImageButton.imageDownload(urlString: profileImageURL)
-        }
-        
-        nameTextField.text = user.fullName
-        usernameTextField.text = user.username
-        websiteTextField.text = user.website
-        bioTextField.text = user.bio
     }
 }
 
@@ -148,6 +168,7 @@ private extension EditProfileView {
     func setupWebsiteTextFieldAppearance() {
         websiteTextField.placeholder = "Website"
         websiteTextField.font = .systemFont(ofSize: Metrics.textFieldFontSize)
+        websiteTextField.autocapitalizationType = .none
     }
     
     func setupBioTextFieldAppearance() {
