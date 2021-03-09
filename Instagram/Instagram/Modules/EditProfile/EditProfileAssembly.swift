@@ -8,20 +8,14 @@
 import UIKit
 
 enum EditProfileAssembly {
-    static func createEditProfileNavigationViewController(
-        user: User,
-        delegate: EditProfilePresenterDelegate
-    ) -> UINavigationController {
-        let editProfileViewController = createEditProfileViewController(user: user, delegate: delegate)
+    static func createEditProfileNavigationViewController(user: User) -> UINavigationController {
+        let editProfileViewController = createEditProfileViewController(user: user)
         let navigationController = UINavigationController(rootViewController: editProfileViewController)
         
         return navigationController
     }
     
-    private static func createEditProfileViewController(
-        user: User,
-        delegate: EditProfilePresenterDelegate
-    ) -> EditProfileViewController {
+    private static func createEditProfileViewController(user: User) -> EditProfileViewController {
         let viewController = EditProfileViewController()
         
         let interactor = EditProfileInteractor()
@@ -37,7 +31,6 @@ enum EditProfileAssembly {
         presenter.router = router
         
         presenter.user = user
-        presenter.delegate = delegate
         
         return viewController
     }

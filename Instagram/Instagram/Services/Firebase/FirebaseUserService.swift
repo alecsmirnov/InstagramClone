@@ -170,6 +170,35 @@ extension FirebaseUserService {
         }
     }
     
+    static func observeUser(
+        identifier: String,
+        completion: @escaping (Result<User, Error>) -> Void
+    ) -> FirebaseObserver {
+        let usersReference = databaseReference.child(FirebaseTables.users)
+        let usersHandle = usersReference.observe(.childChanged) { snapshot in
+            guard identifier == snapshot.key else {
+                return
+            }
+            
+            guard
+                let value = snapshot.value as? [String: Any],
+                var user = JSONCoding.fromDictionary(value, type: User.self)
+            else {
+                return
+            }
+            
+            user.identifier = identifier
+
+            completion(.success(user))
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+        
+        let usersObserver = FirebaseObserver(reference: usersReference, handle: usersHandle)
+        
+        return usersObserver
+    }
+    
     static func fetchFollowersFollowing(
         identifier: String,
         table: String,

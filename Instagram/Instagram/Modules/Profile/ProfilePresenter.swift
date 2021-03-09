@@ -32,11 +32,10 @@ final class ProfilePresenter {
     var user: User?
     var userStats: UserStats?
     
-    private var isObserving = false
-    
     // MARK: Initialization
     
     deinit {
+        interactor?.removeUserObserver()
         interactor?.removeUserStatsObserver()
         interactor?.removePostsObserver()
         
@@ -60,8 +59,8 @@ extension ProfilePresenter: IProfilePresenter {
             viewController?.setUser(user)
             viewController?.reloadData()
             
-            interactor?.observeUserStats(identifier: identifier)
-            
+            interactor?.observeUser(identifier: identifier)
+            interactor?.fetchObserveUserStats(identifier: identifier)
             interactor?.fetchPosts(identifier: identifier)
             interactor?.observePosts()
         } else {
@@ -92,7 +91,7 @@ extension ProfilePresenter: IProfilePresenter {
     func didPressEditButton() {
         guard let user = user else { return }
         
-        router?.showEditProfileViewController(user: user, delegate: self)
+        router?.showEditProfileViewController(user: user)
     }
     
     func didPressFollowButton() {
@@ -125,19 +124,26 @@ extension ProfilePresenter: IProfileInteractorOutput {
         viewController?.setUser(user)
         viewController?.reloadData()
         
-        if !isObserving {
-            if let identifier = user.identifier {
-                interactor?.observeUserStats(identifier: identifier)
-                
-                interactor?.fetchPosts(identifier: identifier)
-                interactor?.observePosts()
-            }
-            
-            isObserving = true
+        if let identifier = user.identifier {
+            interactor?.observeUser(identifier: identifier)
+            interactor?.fetchObserveUserStats(identifier: identifier)
+            interactor?.fetchPosts(identifier: identifier)
+            interactor?.observePosts()
         }
     }
     
     func fetchCurrentUserFailure() {
+        
+    }
+    
+    func fetchUserSuccess(_ user: User) {
+        self.user = user
+        
+        viewController?.setUser(user)
+        viewController?.reloadData()
+    }
+    
+    func fetchUserFailure() {
         
     }
     
@@ -207,14 +213,6 @@ extension ProfilePresenter: IProfileInteractorOutput {
     
     func unfollowUserFailure() {
         
-    }
-}
-
-// MARK: - EditProfilePresenterDelegate
-
-extension ProfilePresenter: EditProfilePresenterDelegate {
-    func editProfilePresenterUpdateUser(_ editProfilePresenter: EditProfilePresenter) {
-        interactor?.fetchCurrentUser()
     }
 }
 

@@ -9,12 +9,14 @@ import Foundation
 
 protocol IProfileInteractor: AnyObject {
     func fetchCurrentUser()
-    func fetchPosts(identifier: String)
-    func requestPosts(identifier: String)
+    func observeUser(identifier: String)
+    func removeUserObserver()
     
-    func observeUserStats(identifier: String)
+    func fetchObserveUserStats(identifier: String)
     func removeUserStatsObserver()
     
+    func fetchPosts(identifier: String)
+    func requestPosts(identifier: String)
     func observePosts()
     func removePostsObserver()
     
@@ -32,6 +34,9 @@ protocol IProfileInteractor: AnyObject {
 protocol IProfileInteractorOutput: AnyObject {
     func fetchCurrentUserSuccess(_ user: User)
     func fetchCurrentUserFailure()
+    
+    func fetchUserSuccess(_ user: User)
+    func fetchUserFailure()
     
     func fetchUserStatsSuccess(_ userStats: UserStats)
     func fetchUserStatsFailure()
@@ -58,6 +63,7 @@ final class ProfileInteractor {
     weak var presenter: IProfileInteractorOutput?
     
     private var lastRequestedPostTimestamp: TimeInterval?
+    private var userObserver: FirebaseObserver?
     private var userStatsObservers: [FirebaseObserver]?
     private var postsObserver: FirebaseObserver?
     
@@ -85,48 +91,29 @@ extension ProfileInteractor: IProfileInteractor {
             }
         }
     }
-
-    func fetchPosts(identifier: String) {
-        FirebasePostService.fetchFromEndPosts(identifier: identifier, limit: Requests.postLimit) { [self] result in
+    
+    func observeUser(identifier: String) {
+        removeUserObserver()
+        
+        userObserver = FirebaseUserService.observeUser(identifier: identifier) { [self] result in
             switch result {
-            case .success(let posts):
-                lastRequestedPostTimestamp = posts.first?.timestamp
-                
-                presenter?.fetchPostsSuccess(posts)
+            case .success(let user):
+                presenter?.fetchUserSuccess(user)
+                break
             case .failure(let error):
-                presenter?.fetchPostsFailure()
-
-                print("Failed to fetch posts: \(error.localizedDescription)")
+                presenter?.fetchUserFailure()
+                
+                print("Failed to fetch observed user: \(error.localizedDescription)")
             }
         }
     }
     
-    func requestPosts(identifier: String) {
-        guard let lastRequestedPostTimestamp = lastRequestedPostTimestamp else { return }
-        
-        self.lastRequestedPostTimestamp = nil
-        
-        FirebasePostService.fetchFromEndPosts(
-            identifier: identifier,
-            beforeTimestamp: lastRequestedPostTimestamp,
-            dropLast: true,
-            limit: Requests.postLimit + 1) { [self] result in
-            switch result {
-            case .success(let posts):
-                self.lastRequestedPostTimestamp = posts.first?.timestamp
-                
-                if !posts.isEmpty {
-                    presenter?.fetchPostsSuccess(posts)
-                }
-            case .failure(let error):
-                presenter?.fetchPostsFailure()
-
-                print("Failed to request posts: \(error.localizedDescription)")
-            }
-        }
+    func removeUserObserver() {
+        userObserver?.remove()
+        userObserver = nil
     }
     
-    func observeUserStats(identifier: String) {
+    func fetchObserveUserStats(identifier: String) {
         removeUserStatsObserver()
         
         userStatsObservers = FirebasePostService.observeUserStats(identifier: identifier) { [self] result in
@@ -147,6 +134,44 @@ extension ProfileInteractor: IProfileInteractor {
         }
         
         userStatsObservers = nil
+    }
+
+    func fetchPosts(identifier: String) {
+        FirebasePostService.fetchFromEndPosts(identifier: identifier, limit: Requests.postLimit) { [self] result in
+            switch result {
+            case .success(let posts):
+                lastRequestedPostTimestamp = posts.first?.timestamp
+                
+                presenter?.fetchPostsSuccess(posts)
+            case .failure(let error):
+                presenter?.fetchPostsFailure()
+
+                print("Failed to fetch posts: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func requestPosts(identifier: String) {
+        guard let lastRequestedPostTimestamp = lastRequestedPostTimestamp else { return }
+        
+        FirebasePostService.fetchFromEndPosts(
+            identifier: identifier,
+            beforeTimestamp: lastRequestedPostTimestamp,
+            dropLast: true,
+            limit: Requests.postLimit + 1) { [self] result in
+            switch result {
+            case .success(let posts):
+                self.lastRequestedPostTimestamp = posts.first?.timestamp
+                
+                if !posts.isEmpty {
+                    presenter?.fetchPostsSuccess(posts)
+                }
+            case .failure(let error):
+                presenter?.fetchPostsFailure()
+
+                print("Failed to request posts: \(error.localizedDescription)")
+            }
+        }
     }
     
     func observePosts() {

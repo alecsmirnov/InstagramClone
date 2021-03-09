@@ -21,17 +21,12 @@ protocol IEditProfilePresenter: AnyObject {
     func didPressBioTextField()
 }
 
-protocol EditProfilePresenterDelegate: AnyObject {
-    func editProfilePresenterUpdateUser(_ editProfilePresenter: EditProfilePresenter)
-}
-
 final class EditProfilePresenter {
     weak var viewController: IEditProfileViewController?
     var interactor: IEditProfileInteractor?
     var router: IEditProfileRouter?
     
     var user: User?
-    weak var delegate: EditProfilePresenterDelegate?
     
     private var currentUsername: String?
 }
@@ -59,6 +54,8 @@ extension EditProfilePresenter: IEditProfilePresenter {
         profileImage: UIImage?
     ) {
         guard let currentUsername = currentUsername else { return }
+        
+        // TODO: update indicator
         
         interactor?.updateUser(
             currentUsername: currentUsername,
@@ -93,8 +90,6 @@ extension EditProfilePresenter: IEditProfileInteractorOutput {
     }
     
     func updateUserSuccess() {
-        delegate?.editProfilePresenterUpdateUser(self)
-        
         router?.closeEditProfileViewController()
     }
     
