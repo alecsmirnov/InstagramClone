@@ -133,6 +133,9 @@ final class PostCell: UICollectionViewCell {
         setupAppearance()
         setupLayout()
         setupActions()
+        
+        sendButton.isEnabled = false
+        sendButton.tintColor = .darkGray
     }
     
     required init?(coder: NSCoder) {
@@ -252,7 +255,7 @@ private extension PostCell {
     func setupButtonsViewItemsAppearance() {
         likeButton.setImage(Images.like?.withRenderingMode(.alwaysOriginal), for: .normal)
         commentButton.setImage(Images.comment?.withRenderingMode(.alwaysOriginal), for: .normal)
-        sendButton.setImage(Images.send?.withRenderingMode(.alwaysOriginal), for: .normal)
+        sendButton.setImage(Images.send, for: .normal)
         bookmarkButton.tintColor = .black
         
         isBookmarked = false

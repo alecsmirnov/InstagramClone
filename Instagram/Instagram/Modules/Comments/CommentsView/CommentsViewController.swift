@@ -80,12 +80,16 @@ private extension CommentsViewController {
     
     func setupSendButton() {
         let sendBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "paperplane")?.withRenderingMode(.alwaysOriginal),
+            image: UIImage(systemName: "paperplane"),
             style: .plain,
             target: self,
             action: nil)
         
+        sendBarButtonItem.tintColor = .darkGray
+        
         navigationItem.rightBarButtonItem = sendBarButtonItem
+        
+        navigationItem.rightBarButtonItem?.isEnabled = false
     }
 }
 
