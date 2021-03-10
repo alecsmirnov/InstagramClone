@@ -10,6 +10,7 @@ protocol ICommentsPresenter: AnyObject {
     
     func didRequestUserComments()
     
+    func didSelectUser(_ user: User)
     func didPressSendButton(commentText: String)
 }
 
@@ -41,6 +42,10 @@ extension CommentsPresenter: ICommentsPresenter {
         guard let userPost = userPost else { return }
         
         interactor?.requestUserComments(userPost: userPost)
+    }
+    
+    func didSelectUser(_ user: User) {
+        router?.showProfileViewController(user: user)
     }
     
     func didPressSendButton(commentText: String) {

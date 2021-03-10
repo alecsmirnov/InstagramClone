@@ -100,6 +100,10 @@ extension CommentsViewController: CommentsViewDelegate {
         presenter?.didRequestUserComments()
     }
     
+    func commentsView(_ commentsView: CommentsView, didSelectUser user: User) {
+        presenter?.didSelectUser(user)
+    }
+    
     func commentsView(_ commentsView: CommentsView, didPressSendButton commentText: String) {
         presenter?.didPressSendButton(commentText: commentText)
     }

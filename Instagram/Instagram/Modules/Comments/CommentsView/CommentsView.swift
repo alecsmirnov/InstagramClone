@@ -10,6 +10,7 @@ import UIKit
 protocol CommentsViewDelegate: AnyObject {
     func commentsViewDidRequestPosts(_ commentsView: CommentsView)
     
+    func commentsView(_ commentsView: CommentsView, didSelectUser user: User)
     func commentsView(_ commentsView: CommentsView, didPressSendButton commentText: String)
 }
 
@@ -133,22 +134,6 @@ private extension CommentsView {
     func setupSendButtonAppearance() {
         sendButton.setTitle("Send", for: .normal)
         sendButton.isEnabled = false
-        
-//        let didPressSendButtonAction = UIAction { [weak self] _ in
-//            guard
-//                let self = self,
-//                let text = self.commentTextView.text
-//            else {
-//                return
-//            }
-//
-//            self.commentTextView.text = nil
-//            self.sendButton.isEnabled = false
-//
-//            self.delegate?.commentsView(self, didPressSendButton: text)
-//        }
-//
-//        sendButton.addAction(didPressSendButtonAction, for: .touchUpInside)
         
         sendButton.addTarget(self, action: #selector(didPressSendButton), for: .touchUpInside)
     }
@@ -292,6 +277,8 @@ private extension CommentsView {
     func setupGestures() {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         
+        tapGestureRecognizer.cancelsTouchesInView = false
+        
         addGestureRecognizer(tapGestureRecognizer)
     }
     
@@ -342,6 +329,12 @@ extension CommentsView: UICollectionViewDelegate {
         
         collectionViewHeightMin = cell.bounds.height
         collectionViewHeightMinInitialized = true
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let user = usersComments[indexPath.row].user
+        
+        delegate?.commentsView(self, didSelectUser: user)
     }
 }
 

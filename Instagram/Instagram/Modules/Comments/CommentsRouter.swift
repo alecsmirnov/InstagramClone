@@ -6,7 +6,7 @@
 //
 
 protocol ICommentsRouter: AnyObject {
-    
+    func showProfileViewController(user: User)
 }
 
 final class CommentsRouter {
@@ -20,5 +20,9 @@ final class CommentsRouter {
 // MARK: - ICommentsRouter
 
 extension CommentsRouter: ICommentsRouter {
-
+    func showProfileViewController(user: User) {
+        let profileViewController = ProfileAssembly.createProfileViewController(user: user)
+        
+        viewController?.navigationController?.pushViewController(profileViewController, animated: true)
+    }
 }
