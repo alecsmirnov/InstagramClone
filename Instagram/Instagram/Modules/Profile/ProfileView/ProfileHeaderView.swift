@@ -263,6 +263,7 @@ private extension ProfileHeaderView {
     func setupWebsiteTextViewAppearance() {
         websiteTextView.textContainerInset = UIEdgeInsets(top: Metrics.websiteTopInset, left: 0, bottom: 0, right: 0)
         websiteTextView.font = .systemFont(ofSize: Metrics.websiteFontSize)
+        websiteTextView.textColor = .link
         websiteTextView.dataDetectorTypes = .link
         websiteTextView.isUserInteractionEnabled = true
         websiteTextView.isSelectable = true

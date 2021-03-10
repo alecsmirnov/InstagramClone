@@ -120,6 +120,7 @@ extension ProfilePresenter: IProfilePresenter {
         isUsersPosts = true
         
         viewController?.removeAllPosts()
+        viewController?.reloadData()
         
         interactor?.fetchPosts(identifier: identifier)
     }
@@ -130,6 +131,7 @@ extension ProfilePresenter: IProfilePresenter {
         isUsersPosts = false
         
         viewController?.removeAllPosts()
+        viewController?.reloadData()
         
         interactor?.fetchBookmarkedPosts(identifier: identifier)
     }

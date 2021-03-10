@@ -93,7 +93,9 @@ extension ProfileView {
     }
     
     func reloadData() {
-        collectionView.reloadData()
+        UIView.transition(with: collectionView, duration: 0.1, options: [.transitionCrossDissolve]) {
+            self.collectionView.reloadData()
+        }
     }
 }
 
