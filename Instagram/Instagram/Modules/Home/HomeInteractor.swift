@@ -205,10 +205,13 @@ extension HomeInteractor: IHomeInteractor {
             return
         }
         
+        let postTimestamp = userPost.post.timestamp
+        
         FirebasePostService.addPostToBookmarks(
             postOwnerIdentifier: postOwnerIdentifier,
             postIdentifier: postIdentifier,
-            userIdentifier: userIdentifier) { [self] error in
+            userIdentifier: userIdentifier,
+            timestamp: postTimestamp) { [self] error in
             if let error = error {
                 presenter?.addPostToBookmarksFailure(at: index)
                 

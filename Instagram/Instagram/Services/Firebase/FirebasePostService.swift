@@ -562,6 +562,7 @@ extension FirebasePostService {
         postOwnerIdentifier: String,
         postIdentifier: String,
         userIdentifier: String,
+        timestamp: TimeInterval,
         completion: @escaping (Error?) -> Void
     ) {
         isBookmarkedPost(
@@ -575,6 +576,7 @@ extension FirebasePostService {
                     postOwnerIdentifier: postOwnerIdentifier,
                     postIdentifier: postIdentifier,
                     userIdentifier: userIdentifier,
+                    timestamp: timestamp,
                     completion: completion)
             case .failure(let error):
                 completion(error)
@@ -656,7 +658,7 @@ extension FirebasePostService {
                 if let error = fetchErrors.first {
                     completion(.failure(error))
                 } else {
-                    // Same bug, same fix :\
+                    // Same bug, same fix :[
                     posts.sort { $0.timestamp < $1.timestamp }
                     
                     if dropLast {
@@ -1004,9 +1006,10 @@ private extension FirebasePostService {
         postOwnerIdentifier: String,
         postIdentifier: String,
         userIdentifier: String,
+        timestamp: TimeInterval,
         completion: @escaping (Error?) -> Void
     ) {
-        let bookmarkPost = FeedPost(userIdentifier: postOwnerIdentifier, timestamp: Date().timeIntervalSince1970)
+        let bookmarkPost = FeedPost(userIdentifier: postOwnerIdentifier, timestamp: timestamp)
         
         if let bookmarkPostDictionary = JSONCoding.toDictionary(bookmarkPost) {
             databaseReference
