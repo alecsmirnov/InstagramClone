@@ -205,7 +205,6 @@ private extension FollowersFollowingPresenter {
     
     func updateUser(state: FollowUnfollowRemoveButtonState, at index: Int) {
         viewController?.changeButtonState(state, at: index)
-        viewController?.reloadRow(at: index)
         
         updateDisplayModeAfterUserChange(state: state)
     }

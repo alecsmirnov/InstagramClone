@@ -15,7 +15,6 @@ protocol IFollowersFollowingViewController: AnyObject {
     func removeAllUsers()
     
     func reloadData()
-    func reloadRow(at index: Int)
     func endRefreshing()
 }
 
@@ -87,10 +86,6 @@ extension FollowersFollowingViewController: IFollowersFollowingViewController {
     
     func reloadData() {
         customView?.reloadData()
-    }
-    
-    func reloadRow(at index: Int) {
-        customView?.reloadRow(at: index)
     }
     
     func endRefreshing() {

@@ -61,7 +61,10 @@ extension FollowersFollowingView {
     }
     
     func changeButtonState(_ buttonState: FollowUnfollowRemoveButtonState, at index: Int) {
-        buttonStates[index] = buttonState
+        let indexPath = IndexPath(row: index, section: 0)
+        let cell = collectionView.cellForItem(at: indexPath) as? FollowersFollowingCell
+        
+        cell?.changeButtonState(buttonState)
     }
     
     func removeAllUsers() {
@@ -81,14 +84,6 @@ extension FollowersFollowingView {
     
     func reloadData() {
         collectionView.reloadData()
-    }
-    
-    func reloadRow(at index: Int) {
-        let indexPath = IndexPath(row: index, section: 0)
-        
-        UIView.performWithoutAnimation {
-            collectionView.reloadItems(at: [indexPath])
-        }
     }
     
     func endRefreshing() {

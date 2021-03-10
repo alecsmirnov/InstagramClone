@@ -75,58 +75,28 @@ extension HomeView {
         collectionView.reloadData()
     }
     
-    func reloadRow(at index: Int) {
-        let indexPath = IndexPath(row: index, section: 0)
-        
-        UIView.performWithoutAnimation {
-            collectionView.reloadItems(at: [indexPath])
-        }
-    }
-    
     func showLikeButton(at index: Int) {
-        let userPost = userPosts[index]
-        var post = userPost.post
+        let post = postForItem(at: index)
         
-        post.isLiked = false
-        post.likesCount -= 1
-        
-        userPosts[index] = UserPost(user: userPost.user, post: post)
-        
-        reloadRow(at: index)
+        post?.isLiked = false
     }
     
     func showUnlikeButton(at index: Int) {
-        let userPost = userPosts[index]
-        var post = userPost.post
+        let post = postForItem(at: index)
         
-        post.isLiked = true
-        post.likesCount += 1
-        
-        userPosts[index] = UserPost(user: userPost.user, post: post)
-        
-        reloadRow(at: index)
+        post?.isLiked = true
     }
     
     func showNotBookmarkButton(at index: Int) {
-        let userPost = userPosts[index]
-        var post = userPost.post
+        let post = postForItem(at: index)
         
-        post.isBookmarked = false
-        
-        userPosts[index] = UserPost(user: userPost.user, post: post)
-        
-        reloadRow(at: index)
+        post?.isBookmarked = false
     }
     
     func showBookmarkButton(at index: Int) {
-        let userPost = userPosts[index]
-        var post = userPost.post
+        let post = postForItem(at: index)
         
-        post.isBookmarked = true
-        
-        userPosts[index] = UserPost(user: userPost.user, post: post)
-        
-        reloadRow(at: index)
+        post?.isBookmarked = true
     }
     
     func endRefreshing() {
@@ -145,6 +115,13 @@ private extension HomeView {
         } else {
             collectionView.reloadData()
         }
+    }
+    
+    func postForItem(at index: Int) -> PostCell? {
+        let indexPath = IndexPath(row: index, section: 0)
+        let cell = collectionView.cellForItem(at: indexPath) as? PostCell
+        
+        return cell
     }
 }
 
@@ -238,7 +215,6 @@ extension HomeView: UICollectionViewDataSource {
         
         // Check for multiple function calls (show hidden cells) and
         // and the size of dynamic cell, which the collectionView defines as 44 (strange bug...)
-        
         if indexPath.row == userPosts.count - 1 && (lastRequestedPostIndex ?? -1) < indexPath.row {
             lastRequestedPostIndex = indexPath.row
 

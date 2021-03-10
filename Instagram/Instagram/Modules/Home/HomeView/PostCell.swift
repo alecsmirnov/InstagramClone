@@ -32,8 +32,14 @@ final class PostCell: UICollectionViewCell {
         didSet {
             if isLiked {
                 setupUnlikeButton()
+                
+                likesCount += 1
+                setupLikesCount(likesCount)
             } else {
                 setupLikeButton()
+                
+                likesCount -= 1
+                setupLikesCount(likesCount)
             }
         }
     }
@@ -47,6 +53,8 @@ final class PostCell: UICollectionViewCell {
             }
         }
     }
+    
+    private var likesCount = 0
     
     private var profileImageDataTask: URLSessionDataTask?
     private var imageDataTask: URLSessionDataTask?
@@ -168,16 +176,9 @@ extension PostCell {
         }
         
         isLiked = userPost.post.isLiked
+        likesCount = userPost.post.likesCount
         
-        if 0 < userPost.post.likesCount {
-            likesCountLabel.text = userPost.post.likesCount.description + " likes"
-
-            captionLabelTopConstraint?.constant = Metrics.likesCountLabelBottomSpace
-        } else {
-            likesCountLabel.text = nil
-
-            captionLabelTopConstraint?.constant = 0
-        }
+        setupLikesCount(likesCount)
         
         isBookmarked = userPost.post.isBookmarked
     }
@@ -194,6 +195,18 @@ private extension PostCell {
     func setupUnlikeButton() {
         likeButton.setImage(Images.likeFill, for: .normal)
         likeButton.tintColor = .red
+    }
+    
+    func setupLikesCount(_ likesCount: Int) {
+        if 0 < likesCount {
+            likesCountLabel.text = String(likesCount) + " likes"
+
+            captionLabelTopConstraint?.constant = Metrics.likesCountLabelBottomSpace
+        } else {
+            likesCountLabel.text = nil
+
+            captionLabelTopConstraint?.constant = 0
+        }
     }
     
     func makeAttributedCaption(_ caption: String, withUsername username: String) -> NSAttributedString {
