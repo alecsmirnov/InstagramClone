@@ -20,6 +20,9 @@ protocol IProfileInteractor: AnyObject {
     func observePosts()
     func removePostsObserver()
     
+    func fetchBookmarkedPosts(identifier: String)
+    func requestBookmarkedPosts(identifier: String)
+    
     func isCurrentUser(identifier: String) -> Bool
     func isFollowingUser(identifier: String)
     
@@ -43,6 +46,9 @@ protocol IProfileInteractorOutput: AnyObject {
     
     func fetchPostsSuccess(_ posts: [Post])
     func fetchPostsFailure()
+    
+    func fetchBookmarkedPostsSuccess(_ posts: [Post])
+    func fetchBookmarkedPostsFailure()
     
     func observePostsSuccess(_ post: Post)
     func observePostsFailure()
@@ -194,6 +200,46 @@ extension ProfileInteractor: IProfileInteractor {
     func removePostsObserver() {
         postsObserver?.remove()
         postsObserver = nil
+    }
+    
+    func fetchBookmarkedPosts(identifier: String) {
+        FirebasePostService.fetchFromEndBookmarksPosts(
+            identifier: identifier,
+            limit: Requests.postLimit) { [self] result in
+            switch result {
+            case .success(let posts):
+                lastRequestedPostTimestamp = posts.first?.timestamp
+                
+                presenter?.fetchBookmarkedPostsSuccess(posts)
+            case .failure(let error):
+                presenter?.fetchBookmarkedPostsFailure()
+
+                print("Failed to fetch bookmarked posts: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func requestBookmarkedPosts(identifier: String) {
+        guard let lastRequestedPostTimestamp = lastRequestedPostTimestamp else { return }
+        
+        FirebasePostService.fetchFromEndBookmarksPosts(
+            identifier: identifier,
+            beforeTimestamp: lastRequestedPostTimestamp,
+            dropLast: true,
+            limit: Requests.postLimit + 1) { [self] result in
+            switch result {
+            case .success(let posts):
+                self.lastRequestedPostTimestamp = posts.first?.timestamp
+                
+                if !posts.isEmpty {
+                    presenter?.fetchBookmarkedPostsSuccess(posts)
+                }
+            case .failure(let error):
+                presenter?.fetchBookmarkedPostsFailure()
+
+                print("Failed to request bookmarked posts: \(error.localizedDescription)")
+            }
+        }
     }
     
     func isCurrentUser(identifier: String) -> Bool {

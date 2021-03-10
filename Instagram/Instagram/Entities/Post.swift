@@ -15,6 +15,7 @@ struct Post {
     let timestamp: TimeInterval
     
     var identifier: String?
+    var userIdentifier: String?
     var isLiked = false
     var isBookmarked = false
     var likesCount = 0

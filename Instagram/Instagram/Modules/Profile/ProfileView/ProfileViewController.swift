@@ -12,6 +12,7 @@ protocol IProfileViewController: AnyObject {
     func setUserStats(_ userStats: UserStats)
     func appendFirstPost(_ post: Post)
     func appendLastPost(_ post: Post)
+    func removeAllPosts()
     
     func reloadData()
     
@@ -57,6 +58,10 @@ extension ProfileViewController: IProfileViewController {
     
     func appendLastPost(_ post: Post) {
         customView?.appendLastPost(post)
+    }
+    
+    func removeAllPosts() {
+        customView?.removeAllPosts()
     }
     
     func reloadData() {
@@ -133,6 +138,14 @@ extension ProfileViewController: ProfileViewDelegate {
     
     func profileViewDidPressUnfollowButton(_ profileView: ProfileView) {        
         presenter?.didPressUnfollowButton()
+    }
+    
+    func profileViewDidPressGridButton(_ profileView: ProfileView) {
+        presenter?.didPressGridButton()
+    }
+    
+    func profileViewDidPressBookmarkButton(_ profileView: ProfileView) {
+        presenter?.didPressBookmarkButton()
     }
     
     func profileView(_ profileView: ProfileView, didSelectPost post: Post) {

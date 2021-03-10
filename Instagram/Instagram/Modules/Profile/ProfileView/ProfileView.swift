@@ -14,8 +14,11 @@ protocol ProfileViewDelegate: AnyObject {
     func profileViewDidPressFollowingButton(_ profileView: ProfileView)
     
     func profileViewDidPressEditButton( _ profileView: ProfileView)
-    func profileViewDidPressFollowButton( _ profileView: ProfileView)
+    func profileViewDidPressFollowButton(_ profileView: ProfileView)
     func profileViewDidPressUnfollowButton( _ profileView: ProfileView)
+    
+    func profileViewDidPressGridButton(_ profileView: ProfileView)
+    func profileViewDidPressBookmarkButton(_ profileView: ProfileView)
     
     func profileView(_ profileView: ProfileView, didSelectPost post: Post)
 }
@@ -83,6 +86,10 @@ extension ProfileView {
     
     func appendLastPost(_ post: Post) {
         posts.append(post)
+    }
+    
+    func removeAllPosts() {
+        posts.removeAll()
     }
     
     func reloadData() {
@@ -265,5 +272,13 @@ extension ProfileView: ProfileHeaderViewDelegate {
         case .none:
             break
         }
+    }
+    
+    func profileHeaderViewDidPressGridButton(_ view: ProfileHeaderView) {
+        delegate?.profileViewDidPressGridButton(self)
+    }
+    
+    func profileHeaderViewDidPressBookmarkButton(_ view: ProfileHeaderView) {
+        delegate?.profileViewDidPressBookmarkButton(self)
     }
 }

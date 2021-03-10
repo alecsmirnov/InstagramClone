@@ -18,6 +18,8 @@ protocol IProfilePresenter: AnyObject {
     func didPressEditButton()
     func didPressFollowButton()
     func didPressUnfollowButton()
+    func didPressGridButton()
+    func didPressBookmarkButton()
     
     func didPressMenuButton()
 }
@@ -31,6 +33,8 @@ final class ProfilePresenter {
     
     var user: User?
     var userStats: UserStats?
+    
+    private var isUsersPosts = true
     
     // MARK: Initialization
     
@@ -73,7 +77,11 @@ extension ProfilePresenter: IProfilePresenter {
     func didRequestPosts() {
         guard let identifier = user?.identifier else { return }
         
-        interactor?.requestPosts(identifier: identifier)
+        if isUsersPosts {
+            interactor?.requestPosts(identifier: identifier)
+        } else {
+            interactor?.requestBookmarkedPosts(identifier: identifier)
+        }
     }
     
     func didPressFollowersButton() {
@@ -104,6 +112,26 @@ extension ProfilePresenter: IProfilePresenter {
         guard let identifier = user?.identifier else { return }
         
         interactor?.unfollowUser(identifier: identifier)
+    }
+    
+    func didPressGridButton() {
+        guard let identifier = user?.identifier else { return }
+        
+        isUsersPosts = true
+        
+        viewController?.removeAllPosts()
+        
+        interactor?.fetchPosts(identifier: identifier)
+    }
+    
+    func didPressBookmarkButton() {
+        guard let identifier = user?.identifier else { return }
+        
+        isUsersPosts = false
+        
+        viewController?.removeAllPosts()
+        
+        interactor?.fetchBookmarkedPosts(identifier: identifier)
     }
     
     func didPressMenuButton() {
@@ -159,6 +187,8 @@ extension ProfilePresenter: IProfileInteractorOutput {
     }
     
     func fetchPostsSuccess(_ posts: [Post]) {
+        guard isUsersPosts else { return }
+        
         posts.reversed().forEach { post in
             viewController?.appendLastPost(post)
         }
@@ -176,6 +206,20 @@ extension ProfilePresenter: IProfileInteractorOutput {
     }
     
     func observePostsFailure() {
+        
+    }
+    
+    func fetchBookmarkedPostsSuccess(_ posts: [Post]) {
+        guard !isUsersPosts else { return }
+        
+        posts.reversed().forEach { post in
+            viewController?.appendLastPost(post)
+        }
+        
+        viewController?.reloadData()
+    }
+    
+    func fetchBookmarkedPostsFailure() {
         
     }
     

@@ -10,7 +10,9 @@ import UIKit
 protocol ProfileHeaderViewDelegate: AnyObject {
     func profileHeaderViewDidPressFollowersButton(_ view: ProfileHeaderView)
     func profileHeaderViewDidPressFollowingButton(_ view: ProfileHeaderView)
-    func profileHeaderViewDidPressEditFollowButton( _ view: ProfileHeaderView)
+    func profileHeaderViewDidPressEditFollowButton(_ view: ProfileHeaderView)
+    func profileHeaderViewDidPressGridButton(_ view: ProfileHeaderView)
+    func profileHeaderViewDidPressBookmarkButton(_ view: ProfileHeaderView)
 }
 
 final class ProfileHeaderView: UICollectionReusableView {
@@ -278,13 +280,30 @@ private extension ProfileHeaderView {
     
     func setupGridButtonAppearance() {
         gridButton.setImage(ToolbarStackViewImages.grid, for: .normal)
-        //gridButton.tintColor = Colors.toolbarStackViewButtonTint
         gridButton.tintColor = .black
+        
+        gridButton.addTarget(self, action: #selector(didPressGridButton), for: .touchUpInside)
+    }
+    
+    @objc func didPressGridButton() {
+        gridButton.tintColor = .black
+        bookmarkButton.tintColor = Colors.toolbarStackViewButtonTint
+        
+        delegate?.profileHeaderViewDidPressGridButton(self)
     }
     
     func setupBookmarkButtonAppearance() {
         bookmarkButton.setImage(ToolbarStackViewImages.bookmark, for: .normal)
         bookmarkButton.tintColor = Colors.toolbarStackViewButtonTint
+        
+        bookmarkButton.addTarget(self, action: #selector(didPressBookmarkButton), for: .touchUpInside)
+    }
+    
+    @objc func didPressBookmarkButton() {
+        bookmarkButton.tintColor = .black
+        gridButton.tintColor = Colors.toolbarStackViewButtonTint
+        
+        delegate?.profileHeaderViewDidPressBookmarkButton(self)
     }
 }
 

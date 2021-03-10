@@ -603,6 +603,73 @@ extension FirebasePostService {
             }
         }
     }
+    
+    static func fetchFromEndBookmarksPosts(
+        identifier: String,
+        beforeTimestamp: TimeInterval = Date().timeIntervalSince1970,
+        dropLast: Bool = false,
+        limit: UInt,
+        completion: @escaping (Result<[Post], Error>) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.postsBookmarks)
+            .child(identifier)
+            .queryOrdered(byChild: FeedPost.CodingKeys.timestamp.rawValue)
+            .queryEnding(atValue: beforeTimestamp)
+            .queryLimited(toLast: limit)
+            .observeSingleEvent(of: .value) { snapshot in
+            let dispatchGroup = DispatchGroup()
+            var posts = [Post]()
+            var fetchErrors = [Error]()
+            
+            for child in snapshot.children {
+                guard
+                    let childSnapshot = child as? DataSnapshot,
+                    let childValue = childSnapshot.value as? [String: Any],
+                    let feedPost = JSONCoding.fromDictionary(childValue, type: FeedPost.self)
+                else {
+                    return
+                }
+                
+                dispatchGroup.enter()
+                
+                let feedPostIdentifier = childSnapshot.key
+                
+                fetchPost(
+                    identifier: feedPost.userIdentifier,
+                    postIdentifier: feedPostIdentifier,
+                    currentUserIdentifier: identifier) { result in
+                    switch result {
+                    case .success(var post):
+                        post.userIdentifier = feedPost.userIdentifier
+                        
+                        posts.append(post)
+                    case .failure(let error):
+                        fetchErrors.append(error)
+                    }
+                    
+                    dispatchGroup.leave()
+                }
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                if let error = fetchErrors.first {
+                    completion(.failure(error))
+                } else {
+                    // Same bug, same fix :\
+                    posts.sort { $0.timestamp < $1.timestamp }
+                    
+                    if dropLast {
+                        completion(.success(Array(posts.dropLast())))
+                    } else {
+                        completion(.success(posts))
+                    }
+                }
+            }
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+    }
 }
 
 // MARK: - Comments Methods
