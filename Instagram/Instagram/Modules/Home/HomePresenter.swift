@@ -15,6 +15,8 @@ protocol IHomePresenter: AnyObject {
     func didPressLikeButton(at index: Int, userPost: UserPost)
     func didPressUnlikeButton(at index: Int, userPost: UserPost)
     func didSelectUserPostComment(_ userPost: UserPost)
+    func didPressAddToBookmarksButton(at index: Int, userPost: UserPost)
+    func didPressRemoveFromBookmarksButton(at index: Int, userPost: UserPost)
 }
 
 final class HomePresenter {
@@ -66,6 +68,14 @@ extension HomePresenter: IHomePresenter {
     
     func didSelectUserPostComment(_ userPost: UserPost) {
         router?.showCommentsViewController(userPost: userPost)
+    }
+    
+    func didPressAddToBookmarksButton(at index: Int, userPost: UserPost) {
+        interactor?.addPostToBookmarks(userPost, at: index)
+    }
+    
+    func didPressRemoveFromBookmarksButton(at index: Int, userPost: UserPost) {
+        interactor?.removePostFromBookmarks(userPost, at: index)
     }
 }
 
@@ -119,6 +129,22 @@ extension HomePresenter: IHomeInteractorOutput {
     }
     
     func unlikePostFailure(at index: Int) {
+        
+    }
+    
+    func addPostToBookmarksSuccess(at index: Int) {
+        viewController?.showBookmarkButton(at: index)
+    }
+    
+    func addPostToBookmarksFailure(at index: Int) {
+        
+    }
+    
+    func removePostFromBookmarksSuccess(at index: Int) {
+        viewController?.showNotBookmarkButton(at: index)
+    }
+    
+    func removePostFromBookmarksFailure(at index: Int) {
         
     }
 }

@@ -16,6 +16,9 @@ protocol IHomeInteractor: AnyObject {
     
     func likePost(_ userPost: UserPost, at index: Int)
     func unlikePost(_ userPost: UserPost, at index: Int)
+    
+    func addPostToBookmarks(_ userPost: UserPost, at index: Int)
+    func removePostFromBookmarks(_ userPost: UserPost, at index: Int)
 }
 
 protocol IHomeInteractorOutput: AnyObject {
@@ -31,6 +34,12 @@ protocol IHomeInteractorOutput: AnyObject {
     
     func unlikePostSuccess(at index: Int)
     func unlikePostFailure(at index: Int)
+    
+    func addPostToBookmarksSuccess(at index: Int)
+    func addPostToBookmarksFailure(at index: Int)
+    
+    func removePostFromBookmarksSuccess(at index: Int)
+    func removePostFromBookmarksFailure(at index: Int)
 }
 
 final class HomeInteractor {
@@ -148,7 +157,8 @@ extension HomeInteractor: IHomeInteractor {
         
         FirebasePostService.likePost(
             postOwnerIdentifier: postOwnerIdentifier,
-            postIdentifier: postIdentifier, userIdentifier: userIdentifier) { [self] error in
+            postIdentifier: postIdentifier,
+            userIdentifier: userIdentifier) { [self] error in
             if let error = error {
                 presenter?.likePostFailure(at: index)
                 
@@ -172,7 +182,8 @@ extension HomeInteractor: IHomeInteractor {
         
         FirebasePostService.unlikePost(
             postOwnerIdentifier: postOwnerIdentifier,
-            postIdentifier: postIdentifier, userIdentifier: userIdentifier) { [self] error in
+            postIdentifier: postIdentifier,
+            userIdentifier: userIdentifier) { [self] error in
             if let error = error {
                 presenter?.unlikePostFailure(at: index)
                 
@@ -181,6 +192,54 @@ extension HomeInteractor: IHomeInteractor {
                 presenter?.unlikePostSuccess(at: index)
                 
                 print("Post at index \(index) successfully unliked")
+            }
+        }
+    }
+    
+    func addPostToBookmarks(_ userPost: UserPost, at index: Int) {
+        guard
+            let postOwnerIdentifier = userPost.postOwnerIdentifier,
+            let postIdentifier = userPost.postIdentifier,
+            let userIdentifier = FirebaseAuthService.currentUserIdentifier
+        else {
+            return
+        }
+        
+        FirebasePostService.addPostToBookmarks(
+            postOwnerIdentifier: postOwnerIdentifier,
+            postIdentifier: postIdentifier,
+            userIdentifier: userIdentifier) { [self] error in
+            if let error = error {
+                presenter?.addPostToBookmarksFailure(at: index)
+                
+                print("Failed to add post at index \(index) to bookmarks: \(error.localizedDescription)")
+            } else {
+                presenter?.addPostToBookmarksSuccess(at: index)
+                
+                print("Post at index \(index) successfully added to bookmarks")
+            }
+        }
+    }
+    
+    func removePostFromBookmarks(_ userPost: UserPost, at index: Int) {
+        guard
+            let postIdentifier = userPost.postIdentifier,
+            let userIdentifier = FirebaseAuthService.currentUserIdentifier
+        else {
+            return
+        }
+        
+        FirebasePostService.removePostFromBookmarks(
+            userIdentifier: userIdentifier,
+            postIdentifier: postIdentifier) { [self] error in
+            if let error = error {
+                presenter?.removePostFromBookmarksFailure(at: index)
+                
+                print("Failed to remove post at index \(index) from bookmarks: \(error.localizedDescription)")
+            } else {
+                presenter?.removePostFromBookmarksSuccess(at: index)
+                
+                print("Post at index \(index) successfully removed from bookmarks")
             }
         }
     }

@@ -20,6 +20,9 @@ protocol IHomeViewController: AnyObject {
     
     func showLikeButton(at index: Int)
     func showUnlikeButton(at index: Int)
+    
+    func showNotBookmarkButton(at index: Int)
+    func showBookmarkButton(at index: Int)
 }
 
 final class HomeViewController: CustomViewController<HomeView> {
@@ -90,6 +93,14 @@ extension HomeViewController: IHomeViewController {
     func showUnlikeButton(at index: Int) {
         customView?.showUnlikeButton(at: index)
     }
+    
+    func showNotBookmarkButton(at index: Int) {
+        customView?.showNotBookmarkButton(at: index)
+    }
+    
+    func showBookmarkButton(at index: Int) {
+        customView?.showBookmarkButton(at: index)
+    }
 }
 
 // MARK: - Appearance
@@ -125,5 +136,13 @@ extension HomeViewController: HomeViewDelegate {
     
     func homeView(_ homeView: HomeView, didPressCommentButton userPost: UserPost) {
         presenter?.didSelectUserPostComment(userPost)
+    }
+    
+    func homeView(_ homeView: HomeView, didPressAddToBookmarksButtonAt index: Int, userPost: UserPost) {
+        presenter?.didPressAddToBookmarksButton(at: index, userPost: userPost)
+    }
+    
+    func homeView(_ homeView: HomeView, didPressRemoveFromBookmarksButtonAt index: Int, userPost: UserPost) {
+        presenter?.didPressRemoveFromBookmarksButton(at: index, userPost: userPost)
     }
 }

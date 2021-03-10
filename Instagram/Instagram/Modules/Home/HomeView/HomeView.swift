@@ -15,6 +15,8 @@ protocol HomeViewDelegate: AnyObject {
     func homeView(_ homeView: HomeView, didPressLikeButtonAt index: Int, userPost: UserPost)
     func homeView(_ homeView: HomeView, didPressUnlikeButtonAt index: Int, userPost: UserPost)
     func homeView(_ homeView: HomeView, didPressCommentButton userPost: UserPost)
+    func homeView(_ homeView: HomeView, didPressAddToBookmarksButtonAt index: Int, userPost: UserPost)
+    func homeView(_ homeView: HomeView, didPressRemoveFromBookmarksButtonAt index: Int, userPost: UserPost)
 }
 
 final class HomeView: UIView {
@@ -99,6 +101,28 @@ extension HomeView {
         
         post.isLiked = true
         post.likesCount += 1
+        
+        userPosts[index] = UserPost(user: userPost.user, post: post)
+        
+        reloadRow(at: index)
+    }
+    
+    func showNotBookmarkButton(at index: Int) {
+        let userPost = userPosts[index]
+        var post = userPost.post
+        
+        post.isBookmarked = false
+        
+        userPosts[index] = UserPost(user: userPost.user, post: post)
+        
+        reloadRow(at: index)
+    }
+    
+    func showBookmarkButton(at index: Int) {
+        let userPost = userPosts[index]
+        var post = userPost.post
+        
+        post.isBookmarked = true
         
         userPosts[index] = UserPost(user: userPost.user, post: post)
         
@@ -272,6 +296,18 @@ extension HomeView: PostCellDelegate {
     }
     
     func postCellDidPressBookmarkButton(_ postCell: PostCell) {
+        guard let indexPath = collectionView.indexPath(for: postCell) else { return }
         
+        let userPost = userPosts[indexPath.row]
+        
+        delegate?.homeView(self, didPressAddToBookmarksButtonAt: indexPath.row, userPost: userPost)
+    }
+    
+    func postCellDidPressNotBookmarkButton(_ postCell: PostCell) {
+        guard let indexPath = collectionView.indexPath(for: postCell) else { return }
+        
+        let userPost = userPosts[indexPath.row]
+        
+        delegate?.homeView(self, didPressRemoveFromBookmarksButtonAt: indexPath.row, userPost: userPost)
     }
 }

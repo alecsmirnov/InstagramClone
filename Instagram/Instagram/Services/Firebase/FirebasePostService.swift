@@ -302,6 +302,22 @@ extension FirebasePostService {
         }
     }
     
+    static func isBookmarkedPost(
+        userIdentifier: String,
+        postIdentifier: String,
+        completion: @escaping (Result<Bool, Error>) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.postsBookmarks)
+            .child(userIdentifier)
+            .child(postIdentifier)
+            .observeSingleEvent(of: .value) { snapshot in
+            completion(.success(snapshot.exists()))
+        } withCancel: { error in
+            completion(.failure(error))
+        }
+    }
+    
     static func likePost(
         postOwnerIdentifier: String,
         postIdentifier: String,
@@ -428,14 +444,25 @@ extension FirebasePostService {
                 case .success(let isLiked):
                     post.isLiked = isLiked
                     
-                    fetchLikesCount(
-                        postOwnerIdentifier: identifier,
+                    isBookmarkedPost(
+                        userIdentifier: currentUserIdentifier,
                         postIdentifier: postIdentifier) { result in
                         switch result {
-                        case .success(let likesCount):
-                            post.likesCount = likesCount
+                        case .success(let isBookmarked):
+                            post.isBookmarked = isBookmarked
                             
-                            completion(.success(post))
+                            fetchLikesCount(
+                                postOwnerIdentifier: identifier,
+                                postIdentifier: postIdentifier) { result in
+                                switch result {
+                                case .success(let likesCount):
+                                    post.likesCount = likesCount
+                                    
+                                    completion(.success(post))
+                                case .failure(let error):
+                                    completion(.failure(error))
+                                }
+                            }
                         case .failure(let error):
                             completion(.failure(error))
                         }
@@ -529,6 +556,52 @@ extension FirebasePostService {
         let postAddedObserver = FirebaseObserver(reference: postsReference, handle: postAddedHandle)
         
         return postAddedObserver
+    }
+    
+    static func addPostToBookmarks(
+        postOwnerIdentifier: String,
+        postIdentifier: String,
+        userIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        isBookmarkedPost(
+            userIdentifier: userIdentifier,
+            postIdentifier: postIdentifier) { result in
+            switch result {
+            case .success(let isBookmarked):
+                guard !isBookmarked else { return }
+                
+                createBookmarkRecord(
+                    postOwnerIdentifier: postOwnerIdentifier,
+                    postIdentifier: postIdentifier,
+                    userIdentifier: userIdentifier,
+                    completion: completion)
+            case .failure(let error):
+                completion(error)
+            }
+        }
+    }
+    
+    static func removePostFromBookmarks(
+        userIdentifier: String,
+        postIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        isBookmarkedPost(
+            userIdentifier: userIdentifier,
+            postIdentifier: postIdentifier) { result in
+            switch result {
+            case .success(let isBookmarked):
+                guard isBookmarked else { return }
+                
+                removeBookmarkRecord(
+                    userIdentifier: userIdentifier,
+                    postIdentifier: postIdentifier,
+                    completion: completion)
+            case .failure(let error):
+                completion(error)
+            }
+        }
     }
 }
 
@@ -855,6 +928,39 @@ private extension FirebasePostService {
             .child(postOwnerIdentifier)
             .child(postIdentifier)
             .child(userIdentifier)
+            .removeValue { error, _ in
+            completion(error)
+        }
+    }
+    
+    static func createBookmarkRecord(
+        postOwnerIdentifier: String,
+        postIdentifier: String,
+        userIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        let bookmarkPost = FeedPost(userIdentifier: postOwnerIdentifier, timestamp: Date().timeIntervalSince1970)
+        
+        if let bookmarkPostDictionary = JSONCoding.toDictionary(bookmarkPost) {
+            databaseReference
+                .child(FirebaseTables.postsBookmarks)
+                .child(userIdentifier)
+                .child(postIdentifier)
+                .setValue(bookmarkPostDictionary) { error, _ in
+                completion(error)
+            }
+        }
+    }
+    
+    static func removeBookmarkRecord(
+        userIdentifier: String,
+        postIdentifier: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        databaseReference
+            .child(FirebaseTables.postsBookmarks)
+            .child(userIdentifier)
+            .child(postIdentifier)
             .removeValue { error, _ in
             completion(error)
         }

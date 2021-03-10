@@ -16,6 +16,7 @@ protocol PostCellDelegate: AnyObject {
     func postCellDidPressCommentButton(_ postCell: PostCell)
     func postCellDidPressSendButton(_ postCell: PostCell)
     func postCellDidPressBookmarkButton(_ postCell: PostCell)
+    func postCellDidPressNotBookmarkButton(_ postCell: PostCell)
 }
 
 final class PostCell: UICollectionViewCell {
@@ -33,6 +34,16 @@ final class PostCell: UICollectionViewCell {
                 setupUnlikeButton()
             } else {
                 setupLikeButton()
+            }
+        }
+    }
+    
+    var isBookmarked = false {
+        didSet {
+            if isBookmarked {
+                bookmarkButton.setImage(Images.notBookmarked, for: .normal)
+            } else {
+                bookmarkButton.setImage(Images.bookmarked?.withRenderingMode(.alwaysOriginal), for: .normal)
             }
         }
     }
@@ -76,7 +87,8 @@ final class PostCell: UICollectionViewCell {
         static let likeFill = UIImage(systemName: "heart.fill")
         static let comment = UIImage(systemName: "bubble.right")
         static let send = UIImage(systemName: "paperplane")
-        static let bookmark = UIImage(systemName: "bookmark")
+        static let bookmarked = UIImage(systemName: "bookmark")
+        static let notBookmarked = UIImage(systemName: "bookmark.fill")
     }
     
     // MARK: Subviews
@@ -163,6 +175,8 @@ extension PostCell {
 
             captionLabelTopConstraint?.constant = 0
         }
+        
+        isBookmarked = userPost.post.isBookmarked
     }
 }
 
@@ -239,7 +253,9 @@ private extension PostCell {
         likeButton.setImage(Images.like?.withRenderingMode(.alwaysOriginal), for: .normal)
         commentButton.setImage(Images.comment?.withRenderingMode(.alwaysOriginal), for: .normal)
         sendButton.setImage(Images.send?.withRenderingMode(.alwaysOriginal), for: .normal)
-        bookmarkButton.setImage(Images.bookmark?.withRenderingMode(.alwaysOriginal), for: .normal)
+        bookmarkButton.tintColor = .black
+        
+        isBookmarked = false
     }
     
     func setupLikeCountLabelAppearance() {
@@ -506,6 +522,10 @@ private extension PostCell {
     }
     
     @objc func didPressBookmarkButton() {
-        delegate?.postCellDidPressBookmarkButton(self)
+        if isBookmarked {
+            delegate?.postCellDidPressNotBookmarkButton(self)
+        } else {
+            delegate?.postCellDidPressBookmarkButton(self)
+        }
     }
 }

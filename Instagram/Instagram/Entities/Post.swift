@@ -16,6 +16,7 @@ struct Post {
     
     var identifier: String?
     var isLiked = false
+    var isBookmarked = false
     var likesCount = 0
 }
 
