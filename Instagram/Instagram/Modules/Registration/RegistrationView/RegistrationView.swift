@@ -7,6 +7,20 @@
 
 import UIKit
 
+protocol RegistrationViewProtocol: UIView {
+    func showEmailAlertLabel(text: String)
+    func hideEmailAlertLabel()
+    
+    func showUsernameAlertLabel(text: String)
+    func hideUsernameAlertLabel()
+    
+    func showPasswordAlertLabel(text: String)
+    func hidePasswordAlertLabel()
+    
+    func enableSignUpButton()
+    func disableSignUpButton()
+}
+
 protocol RegistrationViewDelegate: AnyObject {
     func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView, withInfo info: Registration)
     func registrationViewDidPressLogInButton(_ registrationView: RegistrationView)
@@ -42,7 +56,7 @@ final class RegistrationView: LoginRegistrationBaseView {
     private let emailTextField = SecureTextField()
     private let fullNameTextField = SecureTextField()
     private let usernameTextField = SecureTextField()
-    private let passwordTextField = SecureTextField(isSecurityControlHidden: false, isSecureTextEntry: true)
+    private let passwordTextField = SecureTextField(isSecureTextEntry: true)
     private let signUpButton = UIButton(type: .system)
     
     private let separatorView = UIView()
@@ -90,9 +104,9 @@ final class RegistrationView: LoginRegistrationBaseView {
     }
 }
 
-// MARK: - Public Methods
+// MARK: - Interface
 
-extension RegistrationView {
+extension RegistrationView: RegistrationViewProtocol {
     func showEmailAlertLabel(text: String) {
         LoginRegistrationBaseView.insertSubviewToStackView(emailAlertLabel, stackView: stackView, below: emailTextField)
         
@@ -205,11 +219,7 @@ private extension RegistrationView {
     }
     
     func setupSignUpButtonAppearance() {
-        signUpButton.setTitle(LoginRegistrationConstants.ButtonTitles.signUpMain, for: .normal)
-        signUpButton.setTitleColor(LoginRegistrationConstants.Colors.mainButtonTitle, for: .normal)
-        signUpButton.titleLabel?.font = .boldSystemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
-        signUpButton.backgroundColor = LoginRegistrationConstants.Colors.mainButtonBackground
-        signUpButton.layer.cornerRadius = LoginRegistrationConstants.Metrics.mainButtonCornerRadius
+        signUpButton.mainStyle(title: "Sign Up")
     }
     
     func setupSeparatorViewAppearance() {
@@ -317,7 +327,7 @@ private extension RegistrationView {
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(
                 equalTo: profileImageButton.bottomAnchor,
-                constant: LoginRegistrationConstants.Metrics.stackViewTopSpace),
+                constant: LoginRegistrationConstants.Metrics.logoImageViewBottomSpace),
             stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             stackView.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor,

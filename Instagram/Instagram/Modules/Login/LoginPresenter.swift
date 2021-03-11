@@ -5,20 +5,10 @@
 //  Created by Admin on 24.01.2021.
 //
 
-protocol ILoginPresenter {
-    func viewDidLoad()
-    
-    func didPressLogInButton(withEmail email: String, password: String)
-    func didPressSignUpButton()
-    
-    func emailDidChange(_ email: String)
-    func passwordDidChange(_ password: String)
-}
-
 final class LoginPresenter {
     // MARK: Properties
     
-    weak var viewController: ILoginViewController?
+    weak var view: ILoginView?
     var interactor: ILoginInteractor?
     var router: ILoginRouter?
     
@@ -31,14 +21,18 @@ final class LoginPresenter {
     }
 }
 
-// MARK: - ILoginPresenter
+// MARK: - ILoginViewOutput
 
-extension LoginPresenter: ILoginPresenter {
+extension LoginPresenter: ILoginViewOutput {
     func viewDidLoad() {
-        viewController?.disableLogInButton()
+        view?.disableLogInButton()
     }
     
     func didPressLogInButton(withEmail email: String, password: String) {
+        view?.isUserInteractionEnabled = false
+        view?.disableLogInButton()
+        view?.startAnimatingLogInButton()
+        
         interactor?.signIn(withEmail: email, password: password)
     }
     
@@ -61,37 +55,37 @@ extension LoginPresenter: ILoginInteractorOutput {
     func isValidEmail() {
         isEmailChecked = true
         
-        viewController?.hideEmailAlert()
+        view?.hideEmailAlert()
     }
     
     func isInvalidEmail() {
         isEmailChecked = false
         
-        viewController?.showInvalidEmailAlert()
+        view?.showInvalidEmailAlert()
     }
 
     func isEmptyEmail() {
         isEmailChecked = false
         
-        viewController?.hideEmailAlert()
+        view?.hideEmailAlert()
     }
     
     func isValidPassword() {
         isPasswordChecked = true
         
-        viewController?.hidePasswordAlert()
+        view?.hidePasswordAlert()
     }
     
     func isInvalidPassword(lengthMin: Int) {
         isPasswordChecked = false
         
-        viewController?.showShortPasswordAlert(lengthMin: lengthMin)
+        view?.showShortPasswordAlert(lengthMin: lengthMin)
     }
     
     func isEmptyPassword() {
         isPasswordChecked = false
         
-        viewController?.hidePasswordAlert()
+        view?.hidePasswordAlert()
     }
     
     func signInSuccess() {
@@ -99,11 +93,15 @@ extension LoginPresenter: ILoginInteractorOutput {
     }
     
     func signInIncorrectUserFailure() {
-        viewController?.showIncorrectUserAlert()
+        view?.stopAnimatingLogInButton()
+        view?.isUserInteractionEnabled = true
+        view?.showIncorrectUserAlert()
     }
     
     func signInIncorrectPasswordFailure() {
-        viewController?.showIncorrectPasswordAlert()
+        view?.stopAnimatingLogInButton()
+        view?.isUserInteractionEnabled = true
+        view?.showIncorrectPasswordAlert()
     }
 }
 
@@ -112,9 +110,9 @@ extension LoginPresenter: ILoginInteractorOutput {
 private extension LoginPresenter {
     func validateInput() {
         if isEmailChecked && isPasswordChecked {
-            viewController?.enableLogInButton()
+            view?.enableLogInButton()
         } else {
-            viewController?.disableLogInButton()
+            view?.disableLogInButton()
         }
     }
 }

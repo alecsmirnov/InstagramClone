@@ -13,11 +13,11 @@ enum LoginAssembly {
         let presenter = LoginPresenter()
         let router = LoginRouter(viewController: viewController)
         
-        viewController.presenter = presenter
+        viewController.output = presenter
         
         interactor.presenter = presenter
         
-        presenter.viewController = viewController
+        presenter.view = viewController
         presenter.interactor = interactor
         presenter.router = router
         

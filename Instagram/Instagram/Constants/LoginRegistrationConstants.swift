@@ -9,17 +9,29 @@ import UIKit
 
 enum LoginRegistrationConstants {
     enum Metrics {
+        static let containerViewNegativeTopSpace: CGFloat = 100
+        static let containerViewHorizontalSpace: CGFloat = 20
+        
+        static let logoImageViewBottomSpace: CGFloat = 20
+        
+        static let inputItemTopSpace: CGFloat = 6
+        static let inputItemHeight: CGFloat = 40
+        
+        static let mainButtonTopSpace: CGFloat = 16
+        static let extraButtonVerticalSpace: CGFloat = 10
+        
+        //
+        
         static let profileImageButtonSize: CGFloat = 110
         static let profileImageButtonBorderWidth: CGFloat = 1
         
-        static let stackViewTopSpace: CGFloat = 20
+        
         static let stackViewHorizontalSpace: CGFloat = 20
         static let stackViewSpace: CGFloat = 6
         static let stackViewPasswordTextFieldSpace: CGFloat = 16
         static let stackViewSubviewHeight: CGFloat = 40
         
         static let mainButtonCornerRadius: CGFloat = 4
-        static let extraButtonVerticalSpace: CGFloat = 10
         
         static let separatorViewWidth: CGFloat = 1.4
         
@@ -52,18 +64,13 @@ enum LoginRegistrationConstants {
     }
     
     enum ButtonTitles {
-        static let signUpMain = "Sign Up"
         static let logInMain = "Log In"
-        
-        static let signUpExtraFirstPart = "Don't have an account?"
-        static let signUpExtraSecondPart = "Sign Up"
         
         static let logInExtraFirstPart = "Already have an account?"
         static let logInExtraSecondPart = "Log In"
     }
     
     enum Images {
-        static let logoBlack = UIImage(named: "instagram_logo_black")
         static let profile = UIImage(named: "profile_default")
     }
     
