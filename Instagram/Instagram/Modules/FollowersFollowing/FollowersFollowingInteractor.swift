@@ -7,9 +7,9 @@
 
 protocol IFollowersFollowingInteractor: AnyObject {
     func fetchFollowers(userIdentifier: String)
-    func fetchFollowing(userIdentifier: String)
-    
     func requestFollowers(userIdentifier: String)
+    
+    func fetchFollowing(userIdentifier: String)
     func requestFollowing(userIdentifier: String)
     
     func fetchFollowersCount(userIdentifier: String)
@@ -65,9 +65,9 @@ extension FollowersFollowingInteractor: IFollowersFollowingInteractor {
     func fetchFollowers(userIdentifier: String) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebasePostService.fetchFromBeginFollowersWithKind(
+        FirebaseDatabaseService.fetchFollowersWithKindFromBegin(
             currentUserIdentifier: currentUserIdentifier,
-            identifier: userIdentifier,
+            userIdentifier: userIdentifier,
             limit: Requests.usersLimit) { [self] result in
             switch result {
             case .success(let users):
@@ -82,12 +82,41 @@ extension FollowersFollowingInteractor: IFollowersFollowingInteractor {
         }
     }
     
+    func requestFollowers(userIdentifier: String) {
+        guard
+            let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier,
+            let lastRequestedUserIdentifier = lastRequestedUserIdentifier
+        else {
+            return
+        }
+        
+        FirebaseDatabaseService.fetchFollowersWithKindFromBegin(
+            currentUserIdentifier: currentUserIdentifier,
+            userIdentifier: userIdentifier,
+            startAtUserIdentifier: lastRequestedUserIdentifier,
+            dropFirst: true,
+            limit: Requests.usersLimit + 1) { [self] result in
+            switch result {
+            case .success(let users):
+                self.lastRequestedUserIdentifier = users.last?.identifier
+                
+                if !users.isEmpty {
+                    presenter?.fetchFollowersSuccess(users)
+                }
+            case .failure(let error):
+                presenter?.fetchFollowersFailure()
+                
+                print("Failed to fetch followers: \(error.localizedDescription)")
+            }
+        }
+    }
+    
     func fetchFollowing(userIdentifier: String) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebasePostService.fetchFromBeginFollowingWithKind(
+        FirebaseDatabaseService.fetchFollowingWithKindFromBegin(
             currentUserIdentifier: currentUserIdentifier,
-            identifier: userIdentifier,
+            userIdentifier: userIdentifier,
             limit: Requests.usersLimit) { [self] result in
             switch result {
             case .success(let users):
@@ -102,37 +131,6 @@ extension FollowersFollowingInteractor: IFollowersFollowingInteractor {
         }
     }
     
-    func requestFollowers(userIdentifier: String) {
-        guard
-            let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier,
-            let lastRequestedUserIdentifier = lastRequestedUserIdentifier
-        else {
-            return
-        }
-        
-        self.lastRequestedUserIdentifier = nil
-        
-        FirebasePostService.fetchFromBeginFollowersWithKind(
-            currentUserIdentifier: currentUserIdentifier,
-            identifier: userIdentifier,
-            beforeUserIdentifier: lastRequestedUserIdentifier,
-            dropFirst: true,
-            limit: Requests.usersLimit + 1) { [self] result in
-            switch result {
-            case .success(let users):
-                if !users.isEmpty {
-                    self.lastRequestedUserIdentifier = users.last?.identifier
-                
-                    presenter?.fetchFollowersSuccess(users)
-                }
-            case .failure(let error):
-                presenter?.fetchFollowersFailure()
-                
-                print("Failed to fetch followers: \(error.localizedDescription)")
-            }
-        }
-    }
-    
     func requestFollowing(userIdentifier: String) {
         guard
             let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier,
@@ -141,19 +139,17 @@ extension FollowersFollowingInteractor: IFollowersFollowingInteractor {
             return
         }
         
-        self.lastRequestedUserIdentifier = nil
-        
-        FirebasePostService.fetchFromBeginFollowingWithKind(
+        FirebaseDatabaseService.fetchFollowingWithKindFromBegin(
             currentUserIdentifier: currentUserIdentifier,
-            identifier: userIdentifier,
-            beforeUserIdentifier: lastRequestedUserIdentifier,
+            userIdentifier: userIdentifier,
+            startAtUserIdentifier: lastRequestedUserIdentifier,
             dropFirst: true,
             limit: Requests.usersLimit + 1) { [self] result in
             switch result {
             case .success(let users):
-                if !users.isEmpty {
-                    self.lastRequestedUserIdentifier = users.last?.identifier
+                self.lastRequestedUserIdentifier = users.last?.identifier
                 
+                if !users.isEmpty {
                     presenter?.fetchFollowingSuccess(users)
                 }
             case .failure(let error):
@@ -165,7 +161,7 @@ extension FollowersFollowingInteractor: IFollowersFollowingInteractor {
     }
     
     func fetchFollowersCount(userIdentifier: String) {
-        FirebasePostService.fetchUserFollowersCount(identifier: userIdentifier) { [self] result in
+        FirebaseDatabaseService.fetchUserFollowersCount(userIdentifier: userIdentifier) { [self] result in
             switch result {
             case .success(let usersCount):
                 presenter?.fetchFollowersCountSuccess(usersCount)
@@ -178,7 +174,7 @@ extension FollowersFollowingInteractor: IFollowersFollowingInteractor {
     }
     
     func fetchFollowingsCount(userIdentifier: String) {
-        FirebasePostService.fetchUserFollowingCount(identifier: userIdentifier) { [self] result in
+        FirebaseDatabaseService.fetchUserFollowingCount(userIdentifier: userIdentifier) { [self] result in
             switch result {
             case .success(let usersCount):
                 presenter?.fetchFollowingsCountSuccess(usersCount)
@@ -199,7 +195,7 @@ extension FollowersFollowingInteractor: IFollowersFollowingInteractor {
     func followUser(identifier: String, at index: Int) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebaseUserService.followUserAndFeed(
+        FirebaseDatabaseService.followUserAndFeed(
             currentUserIdentifier: currentUserIdentifier,
             followingUserIdentifier: identifier) { [self] error in
             if let error = error {
@@ -215,7 +211,7 @@ extension FollowersFollowingInteractor: IFollowersFollowingInteractor {
     func unfollowUser(identifier: String, at index: Int) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebaseUserService.unfollowUserAndFeed(
+        FirebaseDatabaseService.unfollowUserAndFeed(
             currentUserIdentifier: currentUserIdentifier,
             followingUserIdentifier: identifier) { [self] error in
             if let error = error {
@@ -231,7 +227,7 @@ extension FollowersFollowingInteractor: IFollowersFollowingInteractor {
     func removeUserFromFollowers(identifier: String, at index: Int) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebaseUserService.unfollowUserAndFeed(
+        FirebaseDatabaseService.unfollowUserAndFeed(
             currentUserIdentifier: identifier,
             followingUserIdentifier: currentUserIdentifier) { [self] error in
             if let error = error {

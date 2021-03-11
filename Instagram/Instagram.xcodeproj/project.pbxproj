@@ -45,7 +45,6 @@
 		845464F325DA5CD900DCD136 /* SearchRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464F225DA5CD900DCD136 /* SearchRouter.swift */; };
 		845464F625DA5CE500DCD136 /* SearchAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464F525DA5CE500DCD136 /* SearchAssembly.swift */; };
 		845464F925DA660A00DCD136 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464F825DA660A00DCD136 /* UserCell.swift */; };
-		8454650E25DA85B100DCD136 /* FirebaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454650D25DA85B100DCD136 /* FirebaseObserver.swift */; };
 		8454924925C19805005AB7DA /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454924825C19805005AB7DA /* TabBarController.swift */; };
 		84549B7B25E8CED9006CC21D /* CommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549B7A25E8CED9006CC21D /* CommentsView.swift */; };
 		84549B7F25E8CEE7006CC21D /* CommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549B7E25E8CEE7006CC21D /* CommentsViewController.swift */; };
@@ -90,16 +89,14 @@
 		845AE89225C42425005A1155 /* MediaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE89125C42425005A1155 /* MediaCell.swift */; };
 		845AE89625C42ABA005A1155 /* MediaFileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE89525C42ABA005A1155 /* MediaFileType.swift */; };
 		845B8C9925B6AC8000FE5ED6 /* InputValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B8C9825B6AC8000FE5ED6 /* InputValidation.swift */; };
-		845B8CB225B6D2E100FE5ED6 /* FirebaseUserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B8CB125B6D2E100FE5ED6 /* FirebaseUserService.swift */; };
 		845B8CB525B6D3C300FE5ED6 /* JSONCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B8CB425B6D3C300FE5ED6 /* JSONCoding.swift */; };
-		845B8CBE25B6D99200FE5ED6 /* FirebaseTables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B8CBD25B6D99200FE5ED6 /* FirebaseTables.swift */; };
 		845BB22125C94B3200B01721 /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BB22025C94B3200B01721 /* PlaceholderTextView.swift */; };
 		845BB22525C95D0C00B01721 /* SelfSizedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BB22425C95D0C00B01721 /* SelfSizedTextView.swift */; };
 		845BB22825C9759600B01721 /* SharePostConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BB22725C9759600B01721 /* SharePostConstants.swift */; };
 		845C284025CAB51A000731B3 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C283F25CAB51A000731B3 /* Post.swift */; };
 		845C284325CABB2D000731B3 /* FirebaseStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C284225CABB2D000731B3 /* FirebaseStorageService.swift */; };
 		845C284625CAC22A000731B3 /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C284525CAC22A000731B3 /* FirebaseAuthService.swift */; };
-		845C284D25CADE16000731B3 /* FirebasePostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C284C25CADE16000731B3 /* FirebasePostService.swift */; };
+		845C284D25CADE16000731B3 /* FirebaseDatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C284C25CADE16000731B3 /* FirebaseDatabaseService.swift */; };
 		845C5E0225CC2733002A2E16 /* SpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C5E0125CC2733002A2E16 /* SpinnerView.swift */; };
 		845C5E0525CC2C3D002A2E16 /* UIViewController+add.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C5E0425CC2C3D002A2E16 /* UIViewController+add.swift */; };
 		845C5E0925CC2D7D002A2E16 /* SpinnerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C5E0825CC2D7D002A2E16 /* SpinnerViewController.swift */; };
@@ -140,7 +137,6 @@
 		84F9694125D14E9D0004D838 /* UIImageView+realImageRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F9694025D14E9D0004D838 /* UIImageView+realImageRect.swift */; };
 		84F9694525D14FA10004D838 /* UIImage+crop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F9694425D14FA10004D838 /* UIImage+crop.swift */; };
 		84FE47C125B814AF0048F5AA /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FE47C025B814AF0048F5AA /* ImagePicker.swift */; };
-		84FE47D625B81FD50048F5AA /* FirebaseStorages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FE47D525B81FD50048F5AA /* FirebaseStorages.swift */; };
 		84FE47DA25B8230E0048F5AA /* UIImage+resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FE47D925B8230E0048F5AA /* UIImage+resize.swift */; };
 		9DFC1E389EC702ABE81B355C /* Pods_Instagram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36B5F8DC54A8206E88CDD9B6 /* Pods_Instagram.framework */; };
 /* End PBXBuildFile section */
@@ -186,7 +182,6 @@
 		845464F225DA5CD900DCD136 /* SearchRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchRouter.swift; sourceTree = "<group>"; };
 		845464F525DA5CE500DCD136 /* SearchAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchAssembly.swift; sourceTree = "<group>"; };
 		845464F825DA660A00DCD136 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
-		8454650D25DA85B100DCD136 /* FirebaseObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseObserver.swift; sourceTree = "<group>"; };
 		8454924825C19805005AB7DA /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		84549B7A25E8CED9006CC21D /* CommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsView.swift; sourceTree = "<group>"; };
 		84549B7E25E8CEE7006CC21D /* CommentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewController.swift; sourceTree = "<group>"; };
@@ -231,16 +226,14 @@
 		845AE89125C42425005A1155 /* MediaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCell.swift; sourceTree = "<group>"; };
 		845AE89525C42ABA005A1155 /* MediaFileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaFileType.swift; sourceTree = "<group>"; };
 		845B8C9825B6AC8000FE5ED6 /* InputValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputValidation.swift; sourceTree = "<group>"; };
-		845B8CB125B6D2E100FE5ED6 /* FirebaseUserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseUserService.swift; sourceTree = "<group>"; };
 		845B8CB425B6D3C300FE5ED6 /* JSONCoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONCoding.swift; sourceTree = "<group>"; };
-		845B8CBD25B6D99200FE5ED6 /* FirebaseTables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseTables.swift; sourceTree = "<group>"; };
 		845BB22025C94B3200B01721 /* PlaceholderTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
 		845BB22425C95D0C00B01721 /* SelfSizedTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfSizedTextView.swift; sourceTree = "<group>"; };
 		845BB22725C9759600B01721 /* SharePostConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostConstants.swift; sourceTree = "<group>"; };
 		845C283F25CAB51A000731B3 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		845C284225CABB2D000731B3 /* FirebaseStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseStorageService.swift; sourceTree = "<group>"; };
 		845C284525CAC22A000731B3 /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
-		845C284C25CADE16000731B3 /* FirebasePostService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebasePostService.swift; sourceTree = "<group>"; };
+		845C284C25CADE16000731B3 /* FirebaseDatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDatabaseService.swift; sourceTree = "<group>"; };
 		845C5E0125CC2733002A2E16 /* SpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerView.swift; sourceTree = "<group>"; };
 		845C5E0425CC2C3D002A2E16 /* UIViewController+add.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+add.swift"; sourceTree = "<group>"; };
 		845C5E0825CC2D7D002A2E16 /* SpinnerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerViewController.swift; sourceTree = "<group>"; };
@@ -283,7 +276,6 @@
 		84F9694025D14E9D0004D838 /* UIImageView+realImageRect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+realImageRect.swift"; sourceTree = "<group>"; };
 		84F9694425D14FA10004D838 /* UIImage+crop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+crop.swift"; sourceTree = "<group>"; };
 		84FE47C025B814AF0048F5AA /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
-		84FE47D525B81FD50048F5AA /* FirebaseStorages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseStorages.swift; sourceTree = "<group>"; };
 		84FE47D925B8230E0048F5AA /* UIImage+resize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+resize.swift"; sourceTree = "<group>"; };
 		AC01405E30E4478582768FE7 /* Pods-Instagram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Instagram.release.xcconfig"; path = "Target Support Files/Pods-Instagram/Pods-Instagram.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -571,8 +563,6 @@
 		8491A80625B43116009EDFC2 /* Constants */ = {
 			isa = PBXGroup;
 			children = (
-				845B8CBD25B6D99200FE5ED6 /* FirebaseTables.swift */,
-				84FE47D525B81FD50048F5AA /* FirebaseStorages.swift */,
 				845455F625BDA5830007C9A2 /* LoginRegistrationConstants.swift */,
 				845800BC25C6AFA600816642 /* NewPostConstants.swift */,
 				845BB22725C9759600B01721 /* SharePostConstants.swift */,
@@ -593,11 +583,9 @@
 		8491A83625B46BBD009EDFC2 /* Firebase */ = {
 			isa = PBXGroup;
 			children = (
-				8454650D25DA85B100DCD136 /* FirebaseObserver.swift */,
 				845C284525CAC22A000731B3 /* FirebaseAuthService.swift */,
 				845C284225CABB2D000731B3 /* FirebaseStorageService.swift */,
-				845B8CB125B6D2E100FE5ED6 /* FirebaseUserService.swift */,
-				845C284C25CADE16000731B3 /* FirebasePostService.swift */,
+				845C284C25CADE16000731B3 /* FirebaseDatabaseService.swift */,
 			);
 			path = Firebase;
 			sourceTree = "<group>";
@@ -945,7 +933,6 @@
 				84549B7F25E8CEE7006CC21D /* CommentsViewController.swift in Sources */,
 				8459C12E25F4B78D00FFFB36 /* MaterialTextField.swift in Sources */,
 				84F9694125D14E9D0004D838 /* UIImageView+realImageRect.swift in Sources */,
-				845B8CB225B6D2E100FE5ED6 /* FirebaseUserService.swift in Sources */,
 				8454D0EB25F635FD00DD27DD /* EditProfileUsernameInteractor.swift in Sources */,
 				84549B8E25E8DB6E006CC21D /* CommentCell.swift in Sources */,
 				845464F325DA5CD900DCD136 /* SearchRouter.swift in Sources */,
@@ -970,7 +957,6 @@
 				845464F025DA5CCD00DCD136 /* SearchPresenter.swift in Sources */,
 				84E660A925B955390036AB9F /* ProfileRouter.swift in Sources */,
 				845455FB25BDAC460007C9A2 /* KeyboardAppearanceListener.swift in Sources */,
-				84FE47D625B81FD50048F5AA /* FirebaseStorages.swift in Sources */,
 				845BB22125C94B3200B01721 /* PlaceholderTextView.swift in Sources */,
 				84B2E67625B0509700B27457 /* HomeView.swift in Sources */,
 				845CC20F25C7ED580051372D /* SharePostAssembly.swift in Sources */,
@@ -1000,12 +986,10 @@
 				8451111F25DFBD9F008A13E5 /* Date+timeAgo.swift in Sources */,
 				8454138C25EF94C400B0D544 /* FollowersFollowingPresenter.swift in Sources */,
 				8459C13525F4D3A300FFFB36 /* ImageCachingService.swift in Sources */,
-				845C284D25CADE16000731B3 /* FirebasePostService.swift in Sources */,
-				845B8CBE25B6D99200FE5ED6 /* FirebaseTables.swift in Sources */,
+				845C284D25CADE16000731B3 /* FirebaseDatabaseService.swift in Sources */,
 				845C284325CABB2D000731B3 /* FirebaseStorageService.swift in Sources */,
 				84E660A625B9552D0036AB9F /* ProfilePresenter.swift in Sources */,
 				84549BB025BEFC2F007D24E2 /* RootViewControllerSwitcher.swift in Sources */,
-				8454650E25DA85B100DCD136 /* FirebaseObserver.swift in Sources */,
 				84E6610C25B9940A0036AB9F /* Registration.swift in Sources */,
 				84549B8B25E8CF1B006CC21D /* CommentsAssembly.swift in Sources */,
 				84B2E68625B0512100B27457 /* HomeRouter.swift in Sources */,

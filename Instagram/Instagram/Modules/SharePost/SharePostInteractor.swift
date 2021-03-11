@@ -34,8 +34,8 @@ extension SharePostInteractor: ISharePostInteractor {
             let imageAspectRatio = croppedImage.size.width / croppedImage.size.height
             let caption = (caption?.isEmpty ?? true) ? nil : caption
             
-            FirebasePostService.sharePost(
-                identifier: userIdentifier,
+            FirebaseDatabaseService.sharePost(
+                userIdentifier: userIdentifier,
                 imageData: imageData,
                 imageAspectRatio: imageAspectRatio,
                 caption: caption) { [self] error in

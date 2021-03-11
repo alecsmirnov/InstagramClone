@@ -8,6 +8,15 @@
 import FirebaseStorage
 
 enum FirebaseStorageService {
+    // MARK: Constants
+    
+    private enum Storages {
+        static let profileImages = "profile_images"
+        static let postImages = "post_images"
+    }
+    
+    // MARK: Properties
+    
     private static let storageReference = Storage.storage().reference()
 }
 
@@ -15,27 +24,29 @@ enum FirebaseStorageService {
 
 extension FirebaseStorageService {
     static func storeUserProfileImageData(
-        _ data: Data,
-        identifier: String,
+        userIdentifier: String,
+        data: Data,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
-        let imageDataReference = storageReference.child(FirebaseStorages.profileImages).child("\(identifier).jpg")
+        let imageDataReference = storageReference
+            .child(Storages.profileImages)
+            .child("\(userIdentifier).jpg")
         
-        storeImageData(data, to: imageDataReference, completion: completion)
+        storeImageData(data, toStorage: imageDataReference, completion: completion)
     }
     
     static func storeUserPostImageData(
-        _ data: Data,
-        identifier: String,
+        userIdentifier: String,
+        data: Data,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
         let imageIdentifier = UUID().description
         let imageDataReference = storageReference
-            .child(FirebaseStorages.postImages)
-            .child(identifier)
+            .child(Storages.postImages)
+            .child(userIdentifier)
             .child("\(imageIdentifier).jpg")
         
-        storeImageData(data, to: imageDataReference, completion: completion)
+        storeImageData(data, toStorage: imageDataReference, completion: completion)
     }
 }
 
@@ -44,7 +55,7 @@ extension FirebaseStorageService {
 private extension FirebaseStorageService {
     static func storeImageData(
         _ data: Data,
-        to storageReference: StorageReference,
+        toStorage storageReference: StorageReference,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
         storageReference.putData(data, metadata: nil) { _, error in

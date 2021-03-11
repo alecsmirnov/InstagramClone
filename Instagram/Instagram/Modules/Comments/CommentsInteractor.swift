@@ -43,17 +43,17 @@ final class CommentsInteractor {
 extension CommentsInteractor: ICommentsInteractor {
     func sendComment(userPost: UserPost, text: String) {
         guard
+            let senderIdentifier = FirebaseAuthService.currentUserIdentifier,
             let postOwnerIdentifier = userPost.postOwnerIdentifier,
-            let postIdentifier = userPost.postIdentifier,
-            let senderIdentifier = FirebaseAuthService.currentUserIdentifier
+            let postIdentifier = userPost.postIdentifier
         else {
             return
         }
         
-        FirebasePostService.sendComment(
+        FirebaseDatabaseService.sendComment(
+            senderIdentifier: senderIdentifier,
             postOwnerIdentifier: postOwnerIdentifier,
             postIdentifier: postIdentifier,
-            senderIdentifier: senderIdentifier,
             text: text) { [self] error in
             if let error = error {
                 presenter?.sendCommentFailure()
@@ -75,8 +75,8 @@ extension CommentsInteractor: ICommentsInteractor {
             return
         }
         
-        FirebasePostService.fetchFromBeginUserComments(
-            identifier: postOwnerIdentifier,
+        FirebaseDatabaseService.fetchUserCommentsFromBegin(
+            userIdentifier: postOwnerIdentifier,
             postIdentifier: postIdentifier,
             limit: Requests.commentLimit) { [self] result in
             switch result {
@@ -131,10 +131,10 @@ extension CommentsInteractor: ICommentsInteractor {
 
 private extension CommentsInteractor {
     func requestNextUserComments(postOwnerIdentifier: String, postIdentifier: String, timestamp: TimeInterval) {
-        FirebasePostService.fetchFromBeginUserComments(
-            identifier: postOwnerIdentifier,
+        FirebaseDatabaseService.fetchUserCommentsFromBegin(
+            userIdentifier: postOwnerIdentifier,
             postIdentifier: postIdentifier,
-            afterTimestamp: timestamp,
+            startAtTimestamp: timestamp,
             dropFirst: true,
             limit: Requests.commentLimit + 1) { [self] result in
             switch result {

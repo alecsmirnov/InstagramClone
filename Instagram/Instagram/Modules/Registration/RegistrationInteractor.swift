@@ -79,7 +79,7 @@ extension RegistrationInteractor: IRegistrationInteractor {
             return
         }
         
-        FirebaseUserService.isUsernameExist(username) { [self] result in
+        FirebaseDatabaseService.isUsernameExist(username) { [self] result in
             switch result {
             case .success(let isUsernameExist):
                 if isUsernameExist {
@@ -117,7 +117,7 @@ extension RegistrationInteractor: IRegistrationInteractor {
             height: LoginRegistrationConstants.Metrics.profileImageButtonSize,
             contentMode: .aspectFill).jpegData(compressionQuality: 1)
         
-        FirebaseUserService.createUser(
+        FirebaseDatabaseService.createUser(
             withEmail: info.email,
             fullName: info.fullName.isEmpty ? nil : info.fullName,
             username: info.username,

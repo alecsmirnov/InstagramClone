@@ -63,7 +63,7 @@ extension HomeInteractor: IHomeInteractor {
     func fetchUserPosts() {
         guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebasePostService.isUserFeedExist(identifier: identifier) { [self] result in
+        FirebaseDatabaseService.isUserFeedExist(userIdentifier: identifier) { [self] result in
             switch result {
             case .success(let isFeedExist):
                 guard isFeedExist else {
@@ -72,8 +72,8 @@ extension HomeInteractor: IHomeInteractor {
                     return
                 }
                 
-                FirebasePostService.fetchFromEndUserFeedPosts(
-                    identifier: identifier,
+                FirebaseDatabaseService.fetchUserFeedPostsFromEnd(
+                    userIdentifier: identifier,
                     limit: Requests.postLimit) { result in
                     switch result {
                     case .success(let userPosts):
@@ -104,9 +104,9 @@ extension HomeInteractor: IHomeInteractor {
         
         self.lastRequestedPostTimestamp = nil
         
-        FirebasePostService.fetchFromEndUserFeedPosts(
-            identifier: identifier,
-            beforeTimestamp: lastRequestedPostTimestamp,
+        FirebaseDatabaseService.fetchUserFeedPostsFromEnd(
+            userIdentifier: identifier,
+            endAtTimestamp: lastRequestedPostTimestamp,
             dropLast: true,
             limit: Requests.postLimit + 1) { [self] result in
             switch result {
@@ -129,7 +129,7 @@ extension HomeInteractor: IHomeInteractor {
         
         removeUserFeedObserver()
         
-        userFeedObserver = FirebasePostService.observeUserFeedPosts(identifier: identifier) { [self] result in
+        userFeedObserver = FirebaseDatabaseService.observeUserFeedPosts(userIdentifier: identifier) { [self] result in
             switch result {
             case .success(let userPost):
                 presenter?.observeUserFeedSuccess(userPost)
@@ -155,10 +155,10 @@ extension HomeInteractor: IHomeInteractor {
             return
         }
         
-        FirebasePostService.likePost(
+        FirebaseDatabaseService.likePost(
+            userIdentifier: userIdentifier,
             postOwnerIdentifier: postOwnerIdentifier,
-            postIdentifier: postIdentifier,
-            userIdentifier: userIdentifier) { [self] error in
+            postIdentifier: postIdentifier) { [self] error in
             if let error = error {
                 presenter?.likePostFailure(at: index)
                 
@@ -180,10 +180,10 @@ extension HomeInteractor: IHomeInteractor {
             return
         }
         
-        FirebasePostService.unlikePost(
+        FirebaseDatabaseService.unlikePost(
+            userIdentifier: userIdentifier,
             postOwnerIdentifier: postOwnerIdentifier,
-            postIdentifier: postIdentifier,
-            userIdentifier: userIdentifier) { [self] error in
+            postIdentifier: postIdentifier) { [self] error in
             if let error = error {
                 presenter?.unlikePostFailure(at: index)
                 
@@ -207,10 +207,10 @@ extension HomeInteractor: IHomeInteractor {
         
         let postTimestamp = userPost.post.timestamp
         
-        FirebasePostService.addPostToBookmarks(
+        FirebaseDatabaseService.addPostToBookmarks(
+            userIdentifier: userIdentifier,
             postOwnerIdentifier: postOwnerIdentifier,
             postIdentifier: postIdentifier,
-            userIdentifier: userIdentifier,
             timestamp: postTimestamp) { [self] error in
             if let error = error {
                 presenter?.addPostToBookmarksFailure(at: index)
@@ -232,7 +232,7 @@ extension HomeInteractor: IHomeInteractor {
             return
         }
         
-        FirebasePostService.removePostFromBookmarks(
+        FirebaseDatabaseService.removePostFromBookmarks(
             userIdentifier: userIdentifier,
             postIdentifier: postIdentifier) { [self] error in
             if let error = error {

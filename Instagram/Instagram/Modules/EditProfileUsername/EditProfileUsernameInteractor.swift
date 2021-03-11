@@ -36,7 +36,7 @@ extension EditProfileUsernameInteractor: IEditProfileUsernameInteractor {
             return
         }
         
-        FirebaseUserService.isUsernameExist(username) { [self] result in
+        FirebaseDatabaseService.isUsernameExist(username) { [self] result in
             switch result {
             case .success(let isUsernameExist):
                 if isUsernameExist {

@@ -39,7 +39,7 @@ final class SearchInteractor {
 
 extension SearchInteractor: ISearchInteractor {
     func fetchUsers(by username: String) {
-        FirebaseUserService.isUsernamePrefixExist(username) { [weak self] result in
+        FirebaseDatabaseService.isUsernamePrefixExist(username) { [weak self] result in
             switch result {
             case .success(let isExist):
                 guard isExist else {
@@ -50,7 +50,9 @@ extension SearchInteractor: ISearchInteractor {
                 
                 self?.username = username
                 
-                FirebaseUserService.fetchFromBeginUsers(by: username, limit: Requests.usersLimit) { [self] result in
+                FirebaseDatabaseService.fetchUsersFromBegin(
+                    startAtUsername: username,
+                    limit: Requests.usersLimit) { [self] result in
                     switch result {
                     case .success(let users):
                         self?.lastRequestedUsername = users.last?.username
@@ -73,8 +75,8 @@ extension SearchInteractor: ISearchInteractor {
     func requestUsers() {
         guard let lastRequestedUsername = lastRequestedUsername else { return }
         
-        FirebaseUserService.fetchFromBeginUsers(
-            by: lastRequestedUsername,
+        FirebaseDatabaseService.fetchUsersFromBegin(
+            startAtUsername: lastRequestedUsername,
             dropFirst: true,
             limit: Requests.usersLimit + 1) { [self] result in
             switch result {

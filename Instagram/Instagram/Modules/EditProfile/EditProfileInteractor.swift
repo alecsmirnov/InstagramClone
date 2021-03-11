@@ -39,7 +39,7 @@ extension EditProfileInteractor: IEditProfileInteractor {
         profileImage: UIImage?
     ) {
         if username != currentUsername {
-            FirebaseUserService.isUsernameExist(username) { [self] result in
+            FirebaseDatabaseService.isUsernameExist(username) { [self] result in
                 switch result {
                 case .success(let isExist):
                     if isExist {
@@ -86,8 +86,8 @@ private extension EditProfileInteractor {
             height: LoginRegistrationConstants.Metrics.profileImageButtonSize,
             contentMode: .aspectFill).jpegData(compressionQuality: 1)
         
-        FirebaseUserService.updateUser(
-            identifier: currentUserIdentifier,
+        FirebaseDatabaseService.updateUser(
+            userIdentifier: currentUserIdentifier,
             fullName: fullName,
             username: username,
             bio: bio,

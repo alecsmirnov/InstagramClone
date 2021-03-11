@@ -107,7 +107,7 @@ extension FollowersFollowingPresenter: IFollowersFollowingInteractorOutput {
         
     }
     
-    func fetchFollowingSuccess(_ users: [User]) {
+    func fetchFollowingSuccess(_ users: [User]) {        
         fetchSuccess(displayMode: .following, users: users)
     }
     

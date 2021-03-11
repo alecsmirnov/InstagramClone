@@ -86,7 +86,7 @@ extension ProfileInteractor: IProfileInteractor {
     func fetchCurrentUser() {
         guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebaseUserService.fetchUser(withIdentifier: identifier) { [self] result in
+        FirebaseDatabaseService.fetchUser(userIdentifier: identifier) { [self] result in
             switch result {
             case .success(let user):
                 presenter?.fetchCurrentUserSuccess(user)
@@ -101,7 +101,7 @@ extension ProfileInteractor: IProfileInteractor {
     func observeUser(identifier: String) {
         removeUserObserver()
         
-        userObserver = FirebaseUserService.observeUser(identifier: identifier) { [self] result in
+        userObserver = FirebaseDatabaseService.observeUser(userIdentifier: identifier) { [self] result in
             switch result {
             case .success(let user):
                 presenter?.fetchUserSuccess(user)
@@ -122,7 +122,7 @@ extension ProfileInteractor: IProfileInteractor {
     func fetchObserveUserStats(identifier: String) {
         removeUserStatsObserver()
         
-        userStatsObservers = FirebasePostService.observeUserStats(identifier: identifier) { [self] result in
+        userStatsObservers = FirebaseDatabaseService.observeUserStats(userIdentifier: identifier) { [self] result in
             switch result {
             case .success(let userStats):
                 presenter?.fetchUserStatsSuccess(userStats)
@@ -143,7 +143,9 @@ extension ProfileInteractor: IProfileInteractor {
     }
 
     func fetchPosts(identifier: String) {
-        FirebasePostService.fetchFromEndPosts(identifier: identifier, limit: Requests.postLimit) { [self] result in
+        FirebaseDatabaseService.fetchPostsFromEnd(
+            userIdentifier: identifier,
+            limit: Requests.postLimit) { [self] result in
             switch result {
             case .success(let posts):
                 lastRequestedPostTimestamp = posts.first?.timestamp
@@ -160,9 +162,9 @@ extension ProfileInteractor: IProfileInteractor {
     func requestPosts(identifier: String) {
         guard let lastRequestedPostTimestamp = lastRequestedPostTimestamp else { return }
         
-        FirebasePostService.fetchFromEndPosts(
-            identifier: identifier,
-            beforeTimestamp: lastRequestedPostTimestamp,
+        FirebaseDatabaseService.fetchPostsFromEnd(
+            userIdentifier: identifier,
+            endAtTimestamp: lastRequestedPostTimestamp,
             dropLast: true,
             limit: Requests.postLimit + 1) { [self] result in
             switch result {
@@ -185,7 +187,7 @@ extension ProfileInteractor: IProfileInteractor {
         
         removePostsObserver()
         
-        postsObserver = FirebasePostService.observePosts(identifier: identifier) { [self] result in
+        postsObserver = FirebaseDatabaseService.observePosts(userIdentifier: identifier) { [self] result in
             switch result {
             case .success(let post):
                 presenter?.observePostsSuccess(post)
@@ -203,8 +205,8 @@ extension ProfileInteractor: IProfileInteractor {
     }
     
     func fetchBookmarkedPosts(identifier: String) {
-        FirebasePostService.fetchFromEndBookmarksPosts(
-            identifier: identifier,
+        FirebaseDatabaseService.fetchBookmarkedPostsFromEnd(
+            userIdentifier: identifier,
             limit: Requests.postLimit) { [self] result in
             switch result {
             case .success(let posts):
@@ -222,9 +224,9 @@ extension ProfileInteractor: IProfileInteractor {
     func requestBookmarkedPosts(identifier: String) {
         guard let lastRequestedPostTimestamp = lastRequestedPostTimestamp else { return }
         
-        FirebasePostService.fetchFromEndBookmarksPosts(
-            identifier: identifier,
-            beforeTimestamp: lastRequestedPostTimestamp,
+        FirebaseDatabaseService.fetchBookmarkedPostsFromEnd(
+            userIdentifier: identifier,
+            endAtTimestamp: lastRequestedPostTimestamp,
             dropLast: true,
             limit: Requests.postLimit + 1) { [self] result in
             switch result {
@@ -251,7 +253,7 @@ extension ProfileInteractor: IProfileInteractor {
     func isFollowingUser(identifier: String) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebaseUserService.isFollowingUser(
+        FirebaseDatabaseService.isFollowingUser(
             currentUserIdentifier: currentUserIdentifier,
             followingUserIdentifier: identifier) { [self] result in
             switch result {
@@ -268,7 +270,7 @@ extension ProfileInteractor: IProfileInteractor {
     func followUser(identifier: String) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebaseUserService.followUserAndFeed(
+        FirebaseDatabaseService.followUserAndFeed(
             currentUserIdentifier: currentUserIdentifier,
             followingUserIdentifier: identifier) { [self] error in
             if let error = error {
@@ -284,7 +286,7 @@ extension ProfileInteractor: IProfileInteractor {
     func unfollowUser(identifier: String) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebaseUserService.unfollowUserAndFeed(
+        FirebaseDatabaseService.unfollowUserAndFeed(
             currentUserIdentifier: currentUserIdentifier,
             followingUserIdentifier: identifier) { [self] error in
             if let error = error {
