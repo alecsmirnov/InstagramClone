@@ -8,95 +8,77 @@
 import UIKit
 
 protocol RegistrationViewProtocol: UIView {
-    func showEmailAlertLabel(text: String)
-    func hideEmailAlertLabel()
+    var isUserInteractionEnabled: Bool { get set }
     
-    func showUsernameAlertLabel(text: String)
-    func hideUsernameAlertLabel()
+    func setProfileImage(_ image: UIImage?)
     
-    func showPasswordAlertLabel(text: String)
-    func hidePasswordAlertLabel()
+    func showEmailWarning(text: String)
+    func hideEmailWarning()
+    
+    func showUsernameWarning(text: String)
+    func hideUsernameWarning()
+    
+    func showPasswordWarning(text: String)
+    func hidePasswordWarning()
     
     func enableSignUpButton()
     func disableSignUpButton()
 }
 
-protocol RegistrationViewDelegate: AnyObject {
-    func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView, withInfo info: Registration)
-    func registrationViewDidPressLogInButton(_ registrationView: RegistrationView)
+protocol RegistrationViewOutputProtocol: AnyObject {
+    func emailDidChange(_ email: String)
+    func usernameDidChange(_ username: String)
+    func passwordDidChange(_ password: String)
     
-    func registrationViewEmailDidChange(_ registrationView: RegistrationView, email: String)
-    func registrationViewUsernameDidChange(_ registrationView: RegistrationView, username: String)
-    func registrationViewPasswordDidChange(_ registrationView: RegistrationView, password: String)
+    func didTapProfileImageButton()
+    func didTapSignUpButton(
+        withEmail email: String,
+        fullName: String,
+        username: String,
+        password: String,
+        profileImage: UIImage?)
+    func didTapLogInButton()
 }
 
-final class RegistrationView: LoginRegistrationBaseView {
+final class RegistrationView: UIView {
     // MARK: Properties
     
-    weak var delegate: RegistrationViewDelegate? {
-        didSet {
-            guard let presentationController = delegate as? UIViewController else { return }
-            
-            imagePicker = ImagePicker(presentationController: presentationController, delegate: self)
-            keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
-        }
-    }
+    weak var output: RegistrationViewOutputProtocol?
     
-    private var imagePicker: ImagePicker?
-    private var keyboardAppearanceListener: KeyboardAppearanceListener?
+    private lazy var keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
+    
+    private var emailWarningLabelTopConstrain: NSLayoutConstraint?
+    private var usernameWarningLabelTopConstrain: NSLayoutConstraint?
+    private var passwordWarningLabelTopConstrain: NSLayoutConstraint?
     
     // MARK: Subviews
     
     private let scrollView = UIScrollView()
     private let screenView = UIView()
-    
-    private let contentView = UIView()
+    private let containerView = UIView()
     private let profileImageButton = UIButton(type: .system)
-    private let stackView = UIStackView()
-    private let emailTextField = SecureTextField()
-    private let fullNameTextField = SecureTextField()
-    private let usernameTextField = SecureTextField()
-    private let passwordTextField = SecureTextField(isSecureTextEntry: true)
-    private let signUpButton = UIButton(type: .system)
-    
+    private let emailTextField = UITextField()
+    private let emailWarningLabel = UILabel()
+    private let fullNameTextField = UITextField()
+    private let usernameTextField = UITextField()
+    private let usernameWarningLabel = UILabel()
+    private let passwordTextField = SecureTextField()
+    private let passwordWarningLabel = UILabel()
+    private let signUpButton = SpinnerButton(type: .system)
     private let separatorView = UIView()
-    private let logInButton = TwoPartsButton()
+    private let logInButton = UIButton()
     
-    private lazy var emailAlertLabel: UILabel = {
-        let label = UILabel()
-        
-        label.font = .systemFont(ofSize: LoginRegistrationConstants.Metrics.alertFontSize)
-        label.textColor = LoginRegistrationConstants.Colors.alert
-        
-        return label
-    }()
+    // MARK: Lifecycle
     
-    private let usernameAlertLabel: UILabel = {
-        let label = UILabel()
-        
-        label.font = .systemFont(ofSize: LoginRegistrationConstants.Metrics.alertFontSize)
-        label.textColor = LoginRegistrationConstants.Colors.alert
-        
-        return label
-    }()
-    
-    private let passwordAlertLabel: UILabel = {
-        let label = UILabel()
-        
-        label.font = .systemFont(ofSize: LoginRegistrationConstants.Metrics.alertFontSize)
-        label.textColor = LoginRegistrationConstants.Colors.alert
-        
-        return label
-    }()
-    
-    // MARK: Initialization
-    
-    override init() {
-        super.init()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         setupAppearance()
         setupLayout()
-        setupActions()
+        setupButtonActions()
+        setupTextFieldActions()
+        setupEndEditingGesture()
+        keyboardAppearanceListener.setupKeyboardObservers()
     }
     
     required init?(coder: NSCoder) {
@@ -107,59 +89,56 @@ final class RegistrationView: LoginRegistrationBaseView {
 // MARK: - Interface
 
 extension RegistrationView: RegistrationViewProtocol {
-    func showEmailAlertLabel(text: String) {
-        LoginRegistrationBaseView.insertSubviewToStackView(emailAlertLabel, stackView: stackView, below: emailTextField)
+    func setProfileImage(_ image: UIImage?) {
+        let profileImage = (image != nil ) ? image : LoginRegistrationConstants.Images.profile
         
-        emailAlertLabel.text = text
+        profileImageButton.setImage(profileImage?.withRenderingMode(.alwaysOriginal), for: .normal)
     }
     
-    func hideEmailAlertLabel() {
-        LoginRegistrationBaseView.removeSubviewFromStackView(emailAlertLabel, stackView: stackView)
+    func showEmailWarning(text: String) {
+        emailWarningLabel.text = text
+        emailWarningLabelTopConstrain?.constant = LoginRegistrationConstants.Metrics.stackViewSpace
     }
     
-    func showUsernameAlertLabel(text: String) {
-        LoginRegistrationBaseView.insertSubviewToStackView(
-            usernameAlertLabel,
-            stackView: stackView,
-            below: usernameTextField)
-        
-        usernameAlertLabel.text = text
+    func hideEmailWarning() {
+        emailWarningLabel.text = nil
+        emailWarningLabelTopConstrain?.constant = 0
     }
     
-    func hideUsernameAlertLabel() {
-        LoginRegistrationBaseView.removeSubviewFromStackView(usernameAlertLabel, stackView: stackView)
+    func showUsernameWarning(text: String) {
+        usernameWarningLabel.text = text
+        usernameWarningLabelTopConstrain?.constant = LoginRegistrationConstants.Metrics.stackViewSpace
     }
     
-    func showPasswordAlertLabel(text: String) {
-        LoginRegistrationBaseView.insertSubviewToStackView(
-            passwordAlertLabel,
-            stackView: stackView,
-            below: passwordTextField)
-        
-        stackView.setCustomSpacing(LoginRegistrationConstants.Metrics.stackViewSpace, after: passwordTextField)
-        stackView.setCustomSpacing(
-            LoginRegistrationConstants.Metrics.stackViewPasswordTextFieldSpace,
-            after: passwordAlertLabel)
-        
-        passwordAlertLabel.text = text
+    func hideUsernameWarning() {
+        usernameWarningLabel.text = nil
+        usernameWarningLabelTopConstrain?.constant = 0
     }
     
-    func hidePasswordAlertLabel() {
-        LoginRegistrationBaseView.removeSubviewFromStackView(passwordAlertLabel, stackView: stackView)
-        
-        stackView.setCustomSpacing(
-            LoginRegistrationConstants.Metrics.stackViewPasswordTextFieldSpace,
-            after: passwordTextField)
+    func showPasswordWarning(text: String) {
+        passwordWarningLabel.text = text
+        passwordWarningLabelTopConstrain?.constant = LoginRegistrationConstants.Metrics.stackViewSpace
+    }
+    
+    func hidePasswordWarning() {
+        passwordWarningLabel.text = nil
+        passwordWarningLabelTopConstrain?.constant = 0
     }
     
     func enableSignUpButton() {
-        signUpButton.isEnabled = true
-        signUpButton.alpha = LoginRegistrationConstants.Constants.mainButtonEnableAlpha
+        signUpButton.enable()
     }
     
     func disableSignUpButton() {
-        signUpButton.isEnabled = false
-        signUpButton.alpha = LoginRegistrationConstants.Constants.mainButtonDisableAlpha
+        signUpButton.disable()
+    }
+    
+    func startAnimatingSignUpButton() {
+        signUpButton.startAnimatingActivityIndicator()
+    }
+    
+    func stopAnimatingSignUpButton() {
+        signUpButton.stopAnimatingActivityIndicator()
     }
 }
 
@@ -171,7 +150,13 @@ private extension RegistrationView {
         
         setupScrollViewAppearance()
         setupProfileImageButtonAppearance()
-        setupStackViewAppearance()
+        setupEmailTextFieldAppearance()
+        setupEmailWarningLabelAppearance()
+        setupFullNameTextFieldAppearance()
+        setupUsernameTextFieldAppearance()
+        setupUsernameWarningLabelAppearance()
+        setupPasswordTextFieldAppearance()
+        setupPasswordWarningLabelAppearance()
         setupSignUpButtonAppearance()
         setupSeparatorViewAppearance()
         setupLogInButtonAppearance()
@@ -182,40 +167,39 @@ private extension RegistrationView {
     }
     
     func setupProfileImageButtonAppearance() {
-        profileImageButton.setImage(LoginRegistrationConstants.Images.profile, for: .normal)
-        profileImageButton.tintColor = LoginRegistrationConstants.Colors.profileImageButtonTint
-        profileImageButton.layer.cornerRadius = LoginRegistrationConstants.Metrics.profileImageButtonSize / 2
-        profileImageButton.layer.masksToBounds = true
-        profileImageButton.layer.borderColor = LoginRegistrationConstants.Colors.profileImageButtonBorder.cgColor
-        profileImageButton.layer.borderWidth = LoginRegistrationConstants.Metrics.profileImageButtonBorderWidth
+        profileImageButton.largeProfileImageStyle()
     }
     
-    func setupStackViewAppearance() {
-        stackView.axis = .vertical
-        stackView.alignment = .fill
-        
-        LoginRegistrationBaseView.setupStackViewTextFieldAppearance(
-            emailTextField,
-            placeholder: LoginRegistrationConstants.TextFieldPlaceholders.email)
-        LoginRegistrationBaseView.setupStackViewTextFieldAppearance(
-            fullNameTextField,
-            placeholder: LoginRegistrationConstants.TextFieldPlaceholders.fullName)
-        LoginRegistrationBaseView.setupStackViewTextFieldAppearance(
-            usernameTextField,
-            placeholder: LoginRegistrationConstants.TextFieldPlaceholders.username)
-        LoginRegistrationBaseView.setupStackViewTextFieldAppearance(
-            passwordTextField,
-            placeholder: LoginRegistrationConstants.TextFieldPlaceholders.password)
-        
+    func setupEmailTextFieldAppearance() {
+        emailTextField.inputStyle(placeholder: "Email", returnKeyType: .continue)
         emailTextField.delegate = self
+    }
+    
+    func setupEmailWarningLabelAppearance() {
+        emailWarningLabel.warningStyle()
+    }
+    
+    func setupFullNameTextFieldAppearance() {
+        fullNameTextField.inputStyle(placeholder: "Full Name", returnKeyType: .continue)
         fullNameTextField.delegate = self
+    }
+    
+    func setupUsernameTextFieldAppearance() {
+        usernameTextField.inputStyle(placeholder: "Username", returnKeyType: .continue)
         usernameTextField.delegate = self
+    }
+    
+    func setupUsernameWarningLabelAppearance() {
+        usernameWarningLabel.warningStyle()
+    }
+    
+    func setupPasswordTextFieldAppearance() {
+        passwordTextField.inputStyle(placeholder: "Password", returnKeyType: .done)
         passwordTextField.delegate = self
-        
-        emailTextField.returnKeyType = .continue
-        fullNameTextField.returnKeyType = .continue
-        usernameTextField.returnKeyType = .continue
-        passwordTextField.returnKeyType = .done
+    }
+    
+    func setupPasswordWarningLabelAppearance() {
+        passwordWarningLabel.warningStyle()
     }
     
     func setupSignUpButtonAppearance() {
@@ -227,15 +211,7 @@ private extension RegistrationView {
     }
     
     func setupLogInButtonAppearance() {
-        logInButton.firstPartText = LoginRegistrationConstants.ButtonTitles.logInExtraFirstPart
-        logInButton.secondPartText = LoginRegistrationConstants.ButtonTitles.logInExtraSecondPart
-        
-        logInButton.firstPartFont = .systemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
-        logInButton.secondPartFont = .boldSystemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
-        
-        logInButton.firstPartColor = LoginRegistrationConstants.Colors.extendButtonFirstPart
-        logInButton.secondPartColor = LoginRegistrationConstants.Colors.extendButtonSecondPart
-        
+        logInButton.extraStyle(firstTitle: "Already have an account?", secondTitle: "Log In")
         logInButton.titleLabel?.adjustsFontSizeToFitWidth = true
     }
 }
@@ -248,9 +224,16 @@ private extension RegistrationView {
         
         setupScrollViewLayout()
         setupScreenViewLayout()
-        setupContentViewLayout()
+        setupContainerViewLayout()
         setupProfileImageButtonLayout()
-        setupStackViewLayout()
+        setupEmailTextFieldLayout()
+        setupEmailWarningLabelLayout()
+        setupFullNameTextFieldLayout()
+        setupUsernameTextFieldLayout()
+        setupUsernameWarningLabelLayout()
+        setupPasswordTextFieldLayout()
+        setupPasswordWarningLabelLayout()
+        setupSignUpButtonLayout()
         setupSeparatorViewLayout()
         setupLogInButtonLayout()
     }
@@ -259,18 +242,20 @@ private extension RegistrationView {
         addSubview(scrollView)
         
         scrollView.addSubview(screenView)
-        screenView.addSubview(contentView)
+        
+        screenView.addSubview(containerView)
         screenView.addSubview(separatorView)
         screenView.addSubview(logInButton)
-        
-        contentView.addSubview(profileImageButton)
-        contentView.addSubview(stackView)
-        
-        stackView.addArrangedSubview(emailTextField)
-        stackView.addArrangedSubview(fullNameTextField)
-        stackView.addArrangedSubview(usernameTextField)
-        stackView.addArrangedSubview(passwordTextField)
-        stackView.addArrangedSubview(signUpButton)
+
+        containerView.addSubview(profileImageButton)
+        containerView.addSubview(emailTextField)
+        containerView.addSubview(emailWarningLabel)
+        containerView.addSubview(fullNameTextField)
+        containerView.addSubview(usernameTextField)
+        containerView.addSubview(usernameWarningLabel)
+        containerView.addSubview(passwordTextField)
+        containerView.addSubview(passwordWarningLabel)
+        containerView.addSubview(signUpButton)
     }
     
     func setupScrollViewLayout() {
@@ -296,59 +281,141 @@ private extension RegistrationView {
         ])
     }
     
-    func setupContentViewLayout() {
-        contentView.translatesAutoresizingMaskIntoConstraints = false
+    func setupContainerViewLayout() {
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            contentView.centerYAnchor.constraint(
-                equalTo: screenView.centerYAnchor,
-                constant: -LoginRegistrationConstants.Metrics.profileImageButtonSize / 2),
-            contentView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            containerView.leadingAnchor.constraint(
+                equalTo: screenView.leadingAnchor,
+                constant: LoginRegistrationConstants.Metrics.containerViewHorizontalSpace),
+            containerView.trailingAnchor.constraint(
+                equalTo: screenView.trailingAnchor,
+                constant: -LoginRegistrationConstants.Metrics.containerViewHorizontalSpace),
         ])
     }
     
     func setupProfileImageButtonLayout() {
         profileImageButton.translatesAutoresizingMaskIntoConstraints = false
         
-        let profileImageButtonSize = LoginRegistrationConstants.Metrics.profileImageButtonSize
-        
         NSLayoutConstraint.activate([
-            profileImageButton.topAnchor.constraint(equalTo: contentView.topAnchor),
-            profileImageButton.centerXAnchor.constraint(equalTo: screenView.centerXAnchor),
-            profileImageButton.heightAnchor.constraint(equalToConstant: profileImageButtonSize),
-            profileImageButton.widthAnchor.constraint(equalToConstant: profileImageButtonSize),
+            profileImageButton.topAnchor.constraint(equalTo: containerView.topAnchor),
+            profileImageButton.bottomAnchor.constraint(
+                equalTo: emailTextField.topAnchor,
+                constant: -LoginRegistrationConstants.Metrics.logoImageViewBottomSpace),
+            profileImageButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            profileImageButton.heightAnchor.constraint(
+                equalToConstant: LoginRegistrationConstants.Metrics.profileImageButtonSize),
+            profileImageButton.widthAnchor.constraint(
+                equalToConstant: LoginRegistrationConstants.Metrics.profileImageButtonSize),
         ])
     }
     
-    func setupStackViewLayout() {
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+    func setupEmailTextFieldLayout() {
+        emailTextField.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(
-                equalTo: profileImageButton.bottomAnchor,
-                constant: LoginRegistrationConstants.Metrics.logoImageViewBottomSpace),
-            stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            stackView.leadingAnchor.constraint(
-                equalTo: contentView.leadingAnchor,
-                constant: LoginRegistrationConstants.Metrics.stackViewHorizontalSpace),
-            stackView.trailingAnchor.constraint(
-                equalTo: contentView.trailingAnchor,
-                constant: -LoginRegistrationConstants.Metrics.stackViewHorizontalSpace),
+            emailTextField.topAnchor.constraint(
+                equalTo: screenView.centerYAnchor,
+                constant: -LoginRegistrationConstants.Metrics.containerViewNegativeTopSpace),
+            emailTextField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            emailTextField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            emailTextField.heightAnchor.constraint(equalToConstant: LoginRegistrationConstants.Metrics.inputItemHeight),
+        ])
+    }
+    
+    func setupEmailWarningLabelLayout() {
+        emailWarningLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            emailWarningLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            emailWarningLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
         ])
         
-        stackView.spacing = LoginRegistrationConstants.Metrics.stackViewSpace
-        stackView.setCustomSpacing(
-            LoginRegistrationConstants.Metrics.stackViewPasswordTextFieldSpace,
-            after: passwordTextField)
+        emailWarningLabelTopConstrain = emailWarningLabel.topAnchor.constraint(equalTo: emailTextField.bottomAnchor)
+        emailWarningLabelTopConstrain?.isActive = true
+    }
+    
+    func setupFullNameTextFieldLayout() {
+        fullNameTextField.translatesAutoresizingMaskIntoConstraints = false
         
-        let stackViewSubviewHeight = LoginRegistrationConstants.Metrics.stackViewSubviewHeight
+        NSLayoutConstraint.activate([
+            fullNameTextField.topAnchor.constraint(
+                equalTo: emailWarningLabel.bottomAnchor,
+                constant: LoginRegistrationConstants.Metrics.inputItemTopSpace),
+            fullNameTextField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            fullNameTextField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            fullNameTextField.heightAnchor.constraint(
+                equalToConstant: LoginRegistrationConstants.Metrics.inputItemHeight),
+        ])
+    }
+    
+    func setupUsernameTextFieldLayout() {
+        usernameTextField.translatesAutoresizingMaskIntoConstraints = false
         
-        LoginRegistrationBaseView.setupStackViewSubviewLayout(emailTextField, height: stackViewSubviewHeight)
-        LoginRegistrationBaseView.setupStackViewSubviewLayout(fullNameTextField, height: stackViewSubviewHeight)
-        LoginRegistrationBaseView.setupStackViewSubviewLayout(usernameTextField, height: stackViewSubviewHeight)
-        LoginRegistrationBaseView.setupStackViewSubviewLayout(passwordTextField, height: stackViewSubviewHeight)
-        LoginRegistrationBaseView.setupStackViewSubviewLayout(signUpButton, height: stackViewSubviewHeight)
+        NSLayoutConstraint.activate([
+            usernameTextField.topAnchor.constraint(
+                equalTo: fullNameTextField.bottomAnchor,
+                constant: LoginRegistrationConstants.Metrics.inputItemTopSpace),
+            usernameTextField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            usernameTextField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            usernameTextField.heightAnchor.constraint(
+                equalToConstant: LoginRegistrationConstants.Metrics.inputItemHeight),
+        ])
+    }
+    
+    func setupUsernameWarningLabelLayout() {
+        usernameWarningLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            usernameWarningLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            usernameWarningLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+        ])
+        
+        usernameWarningLabelTopConstrain = usernameWarningLabel.topAnchor.constraint(
+            equalTo: usernameTextField.bottomAnchor)
+        usernameWarningLabelTopConstrain?.isActive = true
+    }
+    
+    func setupPasswordTextFieldLayout() {
+        passwordTextField.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            passwordTextField.topAnchor.constraint(
+                equalTo: usernameWarningLabel.bottomAnchor,
+                constant: LoginRegistrationConstants.Metrics.inputItemTopSpace),
+            passwordTextField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            passwordTextField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            passwordTextField.heightAnchor.constraint(
+                equalToConstant: LoginRegistrationConstants.Metrics.inputItemHeight),
+        ])
+    }
+    
+    func setupPasswordWarningLabelLayout() {
+        passwordWarningLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            passwordWarningLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            passwordWarningLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+        ])
+        
+        passwordWarningLabelTopConstrain = passwordWarningLabel.topAnchor.constraint(
+            equalTo: passwordTextField.bottomAnchor)
+        passwordWarningLabelTopConstrain?.isActive = true
+    }
+    
+    func setupSignUpButtonLayout() {
+        signUpButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            signUpButton.topAnchor.constraint(
+                equalTo: passwordWarningLabel.bottomAnchor,
+                constant: LoginRegistrationConstants.Metrics.mainButtonTopSpace),
+            signUpButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            signUpButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            signUpButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            signUpButton.heightAnchor.constraint(
+                equalToConstant: LoginRegistrationConstants.Metrics.inputItemHeight),
+        ])
     }
     
     func setupSeparatorViewLayout() {
@@ -377,22 +444,45 @@ private extension RegistrationView {
     }
 }
 
-// MARK: - Actions
+// MARK: - Button Actions
 
 private extension RegistrationView {
-    func setupActions() {
-        profileImageButton.addTarget(self, action: #selector(didPressProfileImageButton), for: .touchUpInside)
+    func setupButtonActions() {
+        profileImageButton.addTarget(self, action: #selector(didTapProfileImageButton), for: .touchUpInside)
+        signUpButton.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
+        logInButton.addTarget(self, action: #selector(didTapLogInButton), for: .touchUpInside)
+    }
+    
+    @objc func didTapProfileImageButton() {
+        output?.didTapProfileImageButton()
+    }
+    
+    @objc func didTapSignUpButton() {
+        let isDefaultProfileImage = (profileImageButton.currentImage == LoginRegistrationConstants.Images.profile)
+        let profileImage = isDefaultProfileImage ? nil : profileImageButton.currentImage
         
+        endEditing(true)
+        
+        output?.didTapSignUpButton(
+            withEmail: emailTextField.text ?? "",
+            fullName: fullNameTextField.text ?? "",
+            username: usernameTextField.text ?? "",
+            password: usernameTextField.text ?? "",
+            profileImage: profileImage)
+    }
+    
+    @objc func didTapLogInButton() {
+        output?.didTapLogInButton()
+    }
+}
+
+// MARK: - TextField Actions
+
+private extension RegistrationView {
+    func setupTextFieldActions() {
         emailTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
         usernameTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
         passwordTextField.addTarget(self, action: #selector(textFieldDidChangeWithDelay(_:)), for: .editingChanged)
-        
-        signUpButton.addTarget(self, action: #selector(didPressSignUpButton), for: .touchUpInside)
-        logInButton.addTarget(self, action: #selector(didPressLogInButton), for: .touchUpInside)
-    }
-    
-    @objc func didPressProfileImageButton() {
-        imagePicker?.takePhoto()
     }
     
     @objc func textFieldDidChangeWithDelay(_ textField: UITextField) {
@@ -407,37 +497,17 @@ private extension RegistrationView {
             afterDelay: LoginRegistrationConstants.Constants.textFieldInputDelay)
     }
     
-    @objc func textFieldDidChange(_ textField: UITextField) {        
+    @objc func textFieldDidChange(_ textField: UITextField) {
         switch textField {
         case emailTextField:
-            delegate?.registrationViewEmailDidChange(self, email: emailTextField.text ?? "")
+            output?.emailDidChange(emailTextField.text ?? "")
         case usernameTextField:
-            delegate?.registrationViewUsernameDidChange(self, username: usernameTextField.text ?? "")
+            output?.usernameDidChange(usernameTextField.text ?? "")
         case passwordTextField:
-            delegate?.registrationViewPasswordDidChange(self, password: passwordTextField.text ?? "")
+            output?.passwordDidChange(passwordTextField.text ?? "")
         default:
             break
         }
-    }
-    
-    @objc func didPressSignUpButton() {
-        let isDefaultProfileImage = profileImageButton.currentImage == LoginRegistrationConstants.Images.profile
-        let profileImage = isDefaultProfileImage ? nil : profileImageButton.currentImage
-        
-        let info = Registration(
-            profileImage: profileImage,
-            email: emailTextField.text ?? "",
-            fullName: fullNameTextField.text ?? "",
-            username: usernameTextField.text ?? "",
-            password: passwordTextField.text ?? "")
-        
-        delegate?.registrationViewDidPressSignUpButton(self, withInfo: info)
-        
-        endEditing(true)
-    }
-    
-    @objc func didPressLogInButton() {
-        delegate?.registrationViewDidPressLogInButton(self)
     }
 }
 
@@ -454,21 +524,13 @@ extension RegistrationView: UITextFieldDelegate {
             passwordTextField.becomeFirstResponder()
         case passwordTextField:
             if signUpButton.isEnabled {
-                didPressSignUpButton()
+                didTapSignUpButton()
             }
         default:
             break
         }
         
         return true
-    }
-}
-
-// MARK: - ImagePickerDelegate
-
-extension RegistrationView: ImagePickerDelegate {
-    func imagePicker(_ imagePicker: ImagePicker, didSelectImage image: UIImage?) {
-        profileImageButton.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
     }
 }
 

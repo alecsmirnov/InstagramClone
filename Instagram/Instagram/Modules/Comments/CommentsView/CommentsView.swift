@@ -275,16 +275,16 @@ private extension CommentsView {
 
 private extension CommentsView {
     func setupGestures() {
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        
-        tapGestureRecognizer.cancelsTouchesInView = false
-        
-        addGestureRecognizer(tapGestureRecognizer)
+//        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+//        
+//        tapGestureRecognizer.cancelsTouchesInView = false
+//        
+//        addGestureRecognizer(tapGestureRecognizer)
     }
     
-    @objc func dismissKeyboard() {
-        endEditing(true)
-    }
+//    @objc func dismissKeyboard() {
+//        endEditing(true)
+//    }
 }
 
 // MARK: - UICollectionViewDataSource

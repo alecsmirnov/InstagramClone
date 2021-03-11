@@ -62,7 +62,7 @@ final class LoginView: UIView {
         setupLayout()
         setupButtonActions()
         setupTextFieldActions()
-        setupGestures()
+        setupEndEditingGesture()
     }
     
     required init?(coder: NSCoder) {
@@ -395,20 +395,6 @@ extension LoginView {
         default:
             break
         }
-    }
-}
-
-// MARK: - Gestures
-
-private extension LoginView {
-    func setupGestures() {
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        
-        addGestureRecognizer(tapGestureRecognizer)
-    }
-    
-    @objc func dismissKeyboard() {
-        endEditing(true)
     }
 }
 

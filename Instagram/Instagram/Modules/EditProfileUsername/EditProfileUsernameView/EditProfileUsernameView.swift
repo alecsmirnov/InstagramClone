@@ -192,12 +192,12 @@ private extension EditProfileUsernameView {
 
 private extension EditProfileUsernameView {
     func setupGestures() {
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        
-        addGestureRecognizer(tapGestureRecognizer)
+//        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+//        
+//        addGestureRecognizer(tapGestureRecognizer)
     }
     
-    @objc func dismissKeyboard() {
-        endEditing(true)
-    }
+//    @objc func dismissKeyboard() {
+//        endEditing(true)
+//    }
 }

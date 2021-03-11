@@ -55,37 +55,37 @@ extension LoginPresenter: ILoginInteractorOutput {
     func isValidEmail() {
         isEmailChecked = true
         
-        view?.hideEmailAlert()
+        view?.hideEmailWarning()
     }
     
     func isInvalidEmail() {
         isEmailChecked = false
         
-        view?.showInvalidEmailAlert()
+        view?.showInvalidEmailWarning()
     }
 
     func isEmptyEmail() {
         isEmailChecked = false
         
-        view?.hideEmailAlert()
+        view?.hideEmailWarning()
     }
     
     func isValidPassword() {
         isPasswordChecked = true
         
-        view?.hidePasswordAlert()
+        view?.hidePasswordWarning()
     }
     
     func isInvalidPassword(lengthMin: Int) {
         isPasswordChecked = false
         
-        view?.showShortPasswordAlert(lengthMin: lengthMin)
+        view?.showShortPasswordWarning(lengthMin: lengthMin)
     }
     
     func isEmptyPassword() {
         isPasswordChecked = false
         
-        view?.hidePasswordAlert()
+        view?.hidePasswordWarning()
     }
     
     func signInSuccess() {

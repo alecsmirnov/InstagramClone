@@ -13,11 +13,11 @@ enum RegistrationAssembly {
         let presenter = RegistrationPresenter()
         let router = RegistrationRouter(viewController: viewController)
         
-        viewController.presenter = presenter
+        viewController.output = presenter
         
         interactor.presenter = presenter
         
-        presenter.viewController = viewController
+        presenter.view = viewController
         presenter.interactor = interactor
         presenter.router = router
         

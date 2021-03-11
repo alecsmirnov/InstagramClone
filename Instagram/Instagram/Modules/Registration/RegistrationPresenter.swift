@@ -5,21 +5,12 @@
 //  Created by Admin on 17.01.2021.
 //
 
-protocol IRegistrationPresenter {
-    func viewDidLoad()
-    
-    func emailDidChange(_ email: String)
-    func usernameDidChange(_ username: String)
-    func passwordDidChange(_ password: String)
-    
-    func didPressSignUpButton(withInfo info: Registration)
-    func didPressLogInButton()
-}
+import UIKit
 
 final class RegistrationPresenter {
     // MARK: Properties
     
-    weak var viewController: IRegistrationViewController?
+    weak var view: IRegistrationView?
     var interactor: IRegistrationInteractor?
     var router: IRegistrationRouter?
     
@@ -36,11 +27,11 @@ final class RegistrationPresenter {
     }
 }
 
-// MARK: - IRegistrationPresenter
+// MARK: - IRegistrationViewOutput
 
-extension RegistrationPresenter: IRegistrationPresenter {
+extension RegistrationPresenter: IRegistrationViewOutput {
     func viewDidLoad() {
-        viewController?.disableSignUpButton()
+        view?.disableSignUpButton()
     }
     
     func emailDidChange(_ email: String) {
@@ -55,8 +46,18 @@ extension RegistrationPresenter: IRegistrationPresenter {
         interactor?.checkPassword(password)
     }
     
-    func didPressSignUpButton(withInfo info: Registration) {
-        interactor?.signUp(withInfo: info)
+    func didPressSignUpButton(
+        withEmail email: String,
+        fullName: String,
+        username: String,
+        password: String,
+        profileImage: UIImage?
+    ) {
+        view?.isUserInteractionEnabled = false
+        view?.disableSignUpButton()
+        view?.startAnimatingSignUpButton()
+        
+        //interactor?.signUp(withInfo: info)
     }
     
     func didPressLogInButton() {
@@ -70,67 +71,67 @@ extension RegistrationPresenter: IRegistrationInteractorOutput {
     func isValidEmail() {
         isEmailChecked = true
         
-        viewController?.hideEmailAlert()
+        view?.hideEmailWarning()
     }
     
     func isInvalidEmail() {
         isEmailChecked = false
         
-        viewController?.showInvalidEmailAlert()
+        view?.showInvalidEmailWarning()
     }
     
     func isUserWithEmailExist() {
         isEmailChecked = false
         
-        viewController?.showAlreadyInUseEmailAlert()
+        view?.showAlreadyInUseEmailWarning()
     }
     
     func isEmptyEmail() {
         isEmailChecked = false
         
-        viewController?.hideEmailAlert()
+        view?.hideEmailWarning()
     }
     
     func isValidUsername() {
         isUsernameChecked = true
         
-        viewController?.hideUsernameAlert()
+        view?.hideUsernameWarning()
     }
     
     func isInvalidUsername() {
         isUsernameChecked = false
         
-        viewController?.showInvalidUsernameAlert()
+        view?.showInvalidUsernameWarning()
     }
     
     func isUserWithUsernameExist() {
         isUsernameChecked = false
         
-        viewController?.showAlreadyInUseUsernameAlert()
+        view?.showAlreadyInUseUsernameWarning()
     }
     
     func isEmptyUsername() {
         isUsernameChecked = false
         
-        viewController?.hideUsernameAlert()
+        view?.hideUsernameWarning()
     }
     
     func isValidPassword() {
         isPasswordChecked = true
         
-        viewController?.hidePasswordAlert()
+        view?.hidePasswordWarning()
     }
     
     func isInvalidPassword(lengthMin: Int) {
         isPasswordChecked = false
         
-        viewController?.showShortPasswordAlert(lengthMin: lengthMin)
+        view?.showShortPasswordWarning(lengthMin: lengthMin)
     }
     
     func isEmptyPassword() {
         isPasswordChecked = false
         
-        viewController?.hidePasswordAlert()
+        view?.hidePasswordWarning()
     }
     
     func signUpSuccess() {
@@ -147,9 +148,9 @@ extension RegistrationPresenter: IRegistrationInteractorOutput {
 private extension RegistrationPresenter {
     func validateInput() {
         if isEmailChecked && isUsernameChecked && isPasswordChecked {
-            viewController?.enableSignUpButton()
+            view?.enableSignUpButton()
         } else {
-            viewController?.disableSignUpButton()
+            view?.disableSignUpButton()
         }
     }
 }

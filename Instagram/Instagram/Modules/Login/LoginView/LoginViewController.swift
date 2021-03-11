@@ -10,11 +10,11 @@ import UIKit
 protocol ILoginView: AnyObject {
     var isUserInteractionEnabled: Bool { get set }
     
-    func showInvalidEmailAlert()
-    func hideEmailAlert()
+    func showInvalidEmailWarning()
+    func hideEmailWarning()
     
-    func showShortPasswordAlert(lengthMin: Int)
-    func hidePasswordAlert()
+    func showShortPasswordWarning(lengthMin: Int)
+    func hidePasswordWarning()
     
     func showIncorrectUserAlert()
     func showIncorrectPasswordAlert()
@@ -85,19 +85,19 @@ extension LoginViewController: ILoginView {
         }
     }
     
-    func showInvalidEmailAlert() {
+    func showInvalidEmailWarning() {
         customView?.showEmailWarning(text: "Invalid Email address")
     }
     
-    func hideEmailAlert() {
+    func hideEmailWarning() {
         customView?.hideEmailWarning()
     }
     
-    func showShortPasswordAlert(lengthMin: Int) {
+    func showShortPasswordWarning(lengthMin: Int) {
         customView?.showPasswordWarning(text: "Password must be \(lengthMin) or more characters")
     }
     
-    func hidePasswordAlert() {
+    func hidePasswordWarning() {
         customView?.hidePasswordWarning()
     }
     

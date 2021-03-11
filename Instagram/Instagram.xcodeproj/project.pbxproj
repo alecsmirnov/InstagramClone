@@ -25,6 +25,8 @@
 		8453275E25FA25A100B39D6D /* UIButton+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8453275D25FA25A100B39D6D /* UIButton+.swift */; };
 		8453276325FA26A500B39D6D /* UILabel+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8453276225FA26A500B39D6D /* UILabel+.swift */; };
 		8453276625FA273500B39D6D /* UITextField+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8453276525FA273500B39D6D /* UITextField+.swift */; };
+		8453276925FA305F00B39D6D /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8453276825FA305F00B39D6D /* UIImage+.swift */; };
+		8453276C25FA318700B39D6D /* UIView+setupEndEditingGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8453276B25FA318700B39D6D /* UIView+setupEndEditingGesture.swift */; };
 		8454137C25EF5E1900B0D544 /* UserStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454137B25EF5E1900B0D544 /* UserStats.swift */; };
 		8454138225EF949C00B0D544 /* FollowersFollowingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454138125EF949C00B0D544 /* FollowersFollowingView.swift */; };
 		8454138625EF94AC00B0D544 /* FollowersFollowingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454138525EF94AC00B0D544 /* FollowersFollowingViewController.swift */; };
@@ -43,7 +45,6 @@
 		845455F425BD8A410007C9A2 /* LoginAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455F325BD8A410007C9A2 /* LoginAssembly.swift */; };
 		845455F725BDA5830007C9A2 /* LoginRegistrationConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455F625BDA5830007C9A2 /* LoginRegistrationConstants.swift */; };
 		845455FB25BDAC460007C9A2 /* KeyboardAppearanceListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455FA25BDAC460007C9A2 /* KeyboardAppearanceListener.swift */; };
-		845455FF25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455FE25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift */; };
 		845464E725DA5C6D00DCD136 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464E625DA5C6D00DCD136 /* SearchView.swift */; };
 		845464EA25DA5C7E00DCD136 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464E925DA5C7E00DCD136 /* SearchViewController.swift */; };
 		845464ED25DA5CC000DCD136 /* SearchInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464EC25DA5CC000DCD136 /* SearchInteractor.swift */; };
@@ -168,6 +169,8 @@
 		8453275D25FA25A100B39D6D /* UIButton+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+.swift"; sourceTree = "<group>"; };
 		8453276225FA26A500B39D6D /* UILabel+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+.swift"; sourceTree = "<group>"; };
 		8453276525FA273500B39D6D /* UITextField+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+.swift"; sourceTree = "<group>"; };
+		8453276825FA305F00B39D6D /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
+		8453276B25FA318700B39D6D /* UIView+setupEndEditingGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+setupEndEditingGesture.swift"; sourceTree = "<group>"; };
 		8454137B25EF5E1900B0D544 /* UserStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStats.swift; sourceTree = "<group>"; };
 		8454138125EF949C00B0D544 /* FollowersFollowingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingView.swift; sourceTree = "<group>"; };
 		8454138525EF94AC00B0D544 /* FollowersFollowingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingViewController.swift; sourceTree = "<group>"; };
@@ -186,7 +189,6 @@
 		845455F325BD8A410007C9A2 /* LoginAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginAssembly.swift; sourceTree = "<group>"; };
 		845455F625BDA5830007C9A2 /* LoginRegistrationConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRegistrationConstants.swift; sourceTree = "<group>"; };
 		845455FA25BDAC460007C9A2 /* KeyboardAppearanceListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAppearanceListener.swift; sourceTree = "<group>"; };
-		845455FE25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRegistrationBaseView.swift; sourceTree = "<group>"; };
 		845464E625DA5C6D00DCD136 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		845464E925DA5C7E00DCD136 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		845464EC25DA5CC000DCD136 /* SearchInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchInteractor.swift; sourceTree = "<group>"; };
@@ -385,6 +387,7 @@
 				8453275D25FA25A100B39D6D /* UIButton+.swift */,
 				8453276225FA26A500B39D6D /* UILabel+.swift */,
 				8453276525FA273500B39D6D /* UITextField+.swift */,
+				8453276825FA305F00B39D6D /* UIImage+.swift */,
 			);
 			path = Design;
 			sourceTree = "<group>";
@@ -584,7 +587,6 @@
 			children = (
 				845BB22425C95D0C00B01721 /* SelfSizedTextView.swift */,
 				845D7D8D25BC472C001E5037 /* TwoPartsButton.swift */,
-				845455FE25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift */,
 				845C5E0125CC2733002A2E16 /* SpinnerView.swift */,
 			);
 			path = Views;
@@ -790,6 +792,7 @@
 		84FE47D825B822C70048F5AA /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				8453276B25FA318700B39D6D /* UIView+setupEndEditingGesture.swift */,
 				84FE47D925B8230E0048F5AA /* UIImage+resize.swift */,
 				84F9694425D14FA10004D838 /* UIImage+crop.swift */,
 				8454E52D25D3E765003A89E7 /* UIImage+instagramCrop.swift */,
@@ -1005,6 +1008,7 @@
 				8454D3F625BFFC3F00D3CC9E /* SecureTextField.swift in Sources */,
 				8454D0E125F5FCCC00DD27DD /* EditProfileBioAssembly.swift in Sources */,
 				845464F925DA660A00DCD136 /* UserCell.swift in Sources */,
+				8453276925FA305F00B39D6D /* UIImage+.swift in Sources */,
 				8459C14625F52D5A00FFFB36 /* EditProfileBioView.swift in Sources */,
 				84549B7B25E8CED9006CC21D /* CommentsView.swift in Sources */,
 				845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */,
@@ -1012,6 +1016,7 @@
 				845D7D8E25BC472C001E5037 /* TwoPartsButton.swift in Sources */,
 				84E6610825B9936E0036AB9F /* User.swift in Sources */,
 				84488AC225C2F6B400173A19 /* NewPostAssembly.swift in Sources */,
+				8453276C25FA318700B39D6D /* UIView+setupEndEditingGesture.swift in Sources */,
 				8454139225EF94DB00B0D544 /* FollowersFollowingAssembly.swift in Sources */,
 				8454139525EFA03400B0D544 /* FollowersFollowingCell.swift in Sources */,
 				8454F28225F389CA006C5A0E /* EditProfileInteractor.swift in Sources */,
@@ -1043,7 +1048,6 @@
 				84B2E65525B0267700B27457 /* SceneDelegate.swift in Sources */,
 				8454138F25EF94CF00B0D544 /* FollowersFollowingRouter.swift in Sources */,
 				8454138925EF94B800B0D544 /* FollowersFollowingInteractor.swift in Sources */,
-				845455FF25BDDC8B0007C9A2 /* LoginRegistrationBaseView.swift in Sources */,
 				8459C14325F5299100FFFB36 /* EditProfileUsernameViewController.swift in Sources */,
 				845464ED25DA5CC000DCD136 /* SearchInteractor.swift in Sources */,
 				8454F28825F389E6006C5A0E /* EditProfileRouter.swift in Sources */,

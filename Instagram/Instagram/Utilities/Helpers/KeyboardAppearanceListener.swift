@@ -25,8 +25,6 @@ final class KeyboardAppearanceListener {
     
     init(delegate: KeyboardAppearanceListenerDelegate) {
         self.delegate = delegate
-        
-        setupKeyboardObservers()
     }
     
     deinit {
@@ -34,9 +32,9 @@ final class KeyboardAppearanceListener {
     }
 }
 
-// MARK: - Private Methods
+// MARK: - Public Methods
 
-private extension KeyboardAppearanceListener {
+extension KeyboardAppearanceListener {
     func setupKeyboardObservers() {
         NotificationCenter.default.addObserver(
             forName: UIResponder.keyboardWillShowNotification,

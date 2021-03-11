@@ -230,14 +230,14 @@ private extension EditProfileBioView {
 
 private extension EditProfileBioView {
     func setupGestures() {
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        
-        addGestureRecognizer(tapGestureRecognizer)
+//        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+//        
+//        addGestureRecognizer(tapGestureRecognizer)
     }
     
-    @objc func dismissKeyboard() {
-        endEditing(true)
-    }
+//    @objc func dismissKeyboard() {
+//        endEditing(true)
+//    }
 }
 
 // MARK: - UITextViewDelegate

@@ -7,71 +7,141 @@
 
 import UIKit
 
-protocol IRegistrationViewController: AnyObject {
-    func showInvalidEmailAlert()
-    func showAlreadyInUseEmailAlert()
-    func hideEmailAlert()
+protocol IRegistrationView: AnyObject {
+    var isUserInteractionEnabled: Bool { get set }
     
-    func showInvalidUsernameAlert()
-    func showAlreadyInUseUsernameAlert()
-    func hideUsernameAlert()
+    func showInvalidEmailWarning()
+    func showAlreadyInUseEmailWarning()
+    func hideEmailWarning()
     
-    func showShortPasswordAlert(lengthMin: Int)
-    func hidePasswordAlert()
+    func showInvalidUsernameWarning()
+    func showAlreadyInUseUsernameWarning()
+    func hideUsernameWarning()
+    
+    func showShortPasswordWarning(lengthMin: Int)
+    func hidePasswordWarning()
     
     func enableSignUpButton()
     func disableSignUpButton()
+    
+    func startAnimatingSignUpButton()
+    func stopAnimatingSignUpButton()
+}
+
+protocol IRegistrationViewOutput: AnyObject {
+    func viewDidLoad()
+    
+    func emailDidChange(_ email: String)
+    func usernameDidChange(_ username: String)
+    func passwordDidChange(_ password: String)
+    
+    func didPressSignUpButton(
+        withEmail email: String,
+        fullName: String,
+        username: String,
+        password: String,
+        profileImage: UIImage?)
+    func didPressLogInButton()
 }
 
 final class RegistrationViewController: CustomViewController<RegistrationView> {
     // MARK: Properties
     
-    var presenter: IRegistrationPresenter?
+    var output: IRegistrationViewOutput?
+    
+    private lazy var imagePicker = ImagePicker(presentationController: self, delegate: self)
     
     // MARK: Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        customView?.delegate = self
-        
-        presenter?.viewDidLoad()
+        customView?.output = self
+        output?.viewDidLoad()
     }
 }
 
-// MARK: - IRegistrationViewController
+// MARK: - Custom View Output
 
-extension RegistrationViewController: IRegistrationViewController {
-    func showInvalidEmailAlert() {
-        customView?.showEmailAlertLabel(text: "Invalid Email address")
+extension RegistrationViewController: RegistrationViewOutputProtocol {
+    func emailDidChange(_ email: String) {
+        output?.emailDidChange(email)
     }
     
-    func showAlreadyInUseEmailAlert() {
-        customView?.showEmailAlertLabel(text: "Email address already in use")
+    func usernameDidChange(_ username: String) {
+        output?.usernameDidChange(username)
     }
     
-    func hideEmailAlert() {
-        customView?.hideEmailAlertLabel()
+    func passwordDidChange(_ password: String) {
+        output?.passwordDidChange(password)
     }
     
-    func showInvalidUsernameAlert() {
-        customView?.showUsernameAlertLabel(text: "Invalid Username")
+    func didTapProfileImageButton() {
+        imagePicker.takePhoto()
     }
     
-    func showAlreadyInUseUsernameAlert() {
-        customView?.showUsernameAlertLabel(text: "Username already in use")
+    func didTapSignUpButton(
+        withEmail email: String,
+        fullName: String,
+        username: String,
+        password: String,
+        profileImage: UIImage?
+    ) {
+        output?.didPressSignUpButton(
+            withEmail: email,
+            fullName: fullName,
+            username: username,
+            password: password,
+            profileImage: profileImage)
     }
     
-    func hideUsernameAlert() {
-        customView?.hideUsernameAlertLabel()
+    func didTapLogInButton() {
+        output?.didPressLogInButton()
+    }
+}
+
+// MARK: - Registration View Input
+
+extension RegistrationViewController: IRegistrationView {
+    var isUserInteractionEnabled: Bool {
+        get {
+            return customView?.isUserInteractionEnabled ?? false
+        }
+        set {
+            customView?.isUserInteractionEnabled = newValue
+        }
     }
     
-    func showShortPasswordAlert(lengthMin: Int) {
-        customView?.showPasswordAlertLabel(text: "Password must be \(lengthMin) or more characters")
+    func showInvalidEmailWarning() {
+        customView?.showEmailWarning(text: "Invalid Email address")
     }
     
-    func hidePasswordAlert() {
-        customView?.hidePasswordAlertLabel()
+    func showAlreadyInUseEmailWarning() {
+        customView?.showEmailWarning(text: "Email address already in use")
+    }
+    
+    func hideEmailWarning() {
+        customView?.hideEmailWarning()
+    }
+    
+    func showInvalidUsernameWarning() {
+        customView?.showUsernameWarning(text: "Invalid Username")
+    }
+    
+    func showAlreadyInUseUsernameWarning() {
+        customView?.showUsernameWarning(text: "Username already in use")
+    }
+    
+    func hideUsernameWarning() {
+        customView?.hideUsernameWarning()
+    }
+    
+    func showShortPasswordWarning(lengthMin: Int) {
+        customView?.showPasswordWarning(text: "Password must be \(lengthMin) or more characters")
+    }
+    
+    func hidePasswordWarning() {
+        customView?.hidePasswordWarning()
     }
     
     func enableSignUpButton() {
@@ -81,28 +151,20 @@ extension RegistrationViewController: IRegistrationViewController {
     func disableSignUpButton() {
         customView?.disableSignUpButton()
     }
+    
+    func startAnimatingSignUpButton() {
+        customView?.startAnimatingSignUpButton()
+    }
+    
+    func stopAnimatingSignUpButton() {
+        customView?.stopAnimatingSignUpButton()
+    }
 }
 
-// MARK: - RegistrationViewDelegate
+// MARK: - ImagePickerDelegate
 
-extension RegistrationViewController: RegistrationViewDelegate {    
-    func registrationViewDidPressSignUpButton(_ registrationView: RegistrationView, withInfo info: Registration) {
-        presenter?.didPressSignUpButton(withInfo: info)
-    }
-    
-    func registrationViewDidPressLogInButton(_ registrationView: RegistrationView) {
-        presenter?.didPressLogInButton()
-    }
-    
-    func registrationViewEmailDidChange(_ registrationView: RegistrationView, email: String) {
-        presenter?.emailDidChange(email)
-    }
-    
-    func registrationViewUsernameDidChange(_ registrationView: RegistrationView, username: String) {
-        presenter?.usernameDidChange(username)
-    }
-    
-    func registrationViewPasswordDidChange(_ registrationView: RegistrationView, password: String) {
-        presenter?.passwordDidChange(password)
+extension RegistrationViewController: ImagePickerDelegate {
+    func imagePicker(_ imagePicker: ImagePicker, didSelectImage image: UIImage?) {
+        customView?.setProfileImage(image)
     }
 }

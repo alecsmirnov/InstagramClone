@@ -36,4 +36,13 @@ extension UIButton {
         isEnabled = false
         alpha = LoginRegistrationConstants.Constants.mainButtonDisableAlpha
     }
+    
+    func largeProfileImageStyle() {
+        setImage(LoginRegistrationConstants.Images.profile, for: .normal)
+        tintColor = LoginRegistrationConstants.Colors.profileImageButtonTint
+        layer.cornerRadius = LoginRegistrationConstants.Metrics.profileImageButtonSize / 2
+        layer.masksToBounds = true
+        layer.borderColor = LoginRegistrationConstants.Colors.profileImageButtonBorder.cgColor
+        layer.borderWidth = LoginRegistrationConstants.Metrics.profileImageButtonBorderWidth
+    }
 }
