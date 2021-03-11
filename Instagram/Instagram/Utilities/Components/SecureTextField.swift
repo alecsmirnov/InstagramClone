@@ -74,6 +74,7 @@ final class SecureTextField: UITextField {
 
 private extension SecureTextField {
     func setupRightViewLayout() {
+        eyeButton.translatesAutoresizingMaskIntoConstraints = false
         eyeButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: Metrics.eyeButtonRightInset)
         eyeButton.imageEdgeInsets = UIEdgeInsets(
             top: Metrics.eyeButtonImageInsets,

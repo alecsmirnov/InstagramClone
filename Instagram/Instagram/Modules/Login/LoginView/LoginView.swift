@@ -58,11 +58,13 @@ final class LoginView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        //setupEndEditingGesture()
+        
         setupAppearance()
         setupLayout()
         setupButtonActions()
         setupTextFieldActions()
-        setupEndEditingGesture()
+
     }
     
     required init?(coder: NSCoder) {
