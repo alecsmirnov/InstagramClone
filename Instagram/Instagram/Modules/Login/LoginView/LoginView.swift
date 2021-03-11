@@ -36,8 +36,12 @@ final class LoginView: UIView {
     
     weak var output: LoginViewOutputProtocol?
     
-    private var emailWarningLabelTopConstrain: NSLayoutConstraint?
-    private var passwordWarningLabelTopConstrain: NSLayoutConstraint?
+    private lazy var keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
+    
+    private var emailTextFieldTopConstraint: NSLayoutConstraint?
+    private var emailWarningLabelTopConstraint: NSLayoutConstraint?
+    private var passwordWarningLabelTopConstraint: NSLayoutConstraint?
+    private var screenViewHeightConstraint: NSLayoutConstraint?
     
     // MARK: Subviews
     
@@ -63,6 +67,7 @@ final class LoginView: UIView {
         setupButtonActions()
         setupTextFieldActions()
         setupEndEditingGesture()
+        keyboardAppearanceListener.setupKeyboardObservers()
     }
     
     required init?(coder: NSCoder) {
@@ -75,22 +80,22 @@ final class LoginView: UIView {
 extension LoginView: LoginViewProtocol {
     func showEmailWarning(text: String) {
         emailWarningLabel.text = text
-        emailWarningLabelTopConstrain?.constant = LoginRegistrationConstants.Metrics.stackViewSpace
+        emailWarningLabelTopConstraint?.constant = LoginRegistrationConstants.Metrics.inputItemTopSpace
     }
     
     func hideEmailWarning() {
         emailWarningLabel.text = nil
-        emailWarningLabelTopConstrain?.constant = 0
+        emailWarningLabelTopConstraint?.constant = 0
     }
     
     func showPasswordWarning(text: String) {
         passwordWarningLabel.text = text
-        passwordWarningLabelTopConstrain?.constant = LoginRegistrationConstants.Metrics.stackViewSpace
+        passwordWarningLabelTopConstraint?.constant = LoginRegistrationConstants.Metrics.inputItemTopSpace
     }
     
     func hidePasswordWarning() {
         passwordWarningLabel.text = nil
-        passwordWarningLabelTopConstrain?.constant = 0
+        passwordWarningLabelTopConstraint?.constant = 0
     }
     
     func enableLogInButton() {
@@ -224,8 +229,10 @@ private extension LoginView {
             screenView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             screenView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             screenView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
-            screenView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor),
         ])
+        
+        screenViewHeightConstraint = screenView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor)
+        screenViewHeightConstraint?.isActive = true
     }
     
     func setupContainerViewLayout() {
@@ -258,13 +265,18 @@ private extension LoginView {
         emailTextField.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            emailTextField.topAnchor.constraint(
-                equalTo: screenView.centerYAnchor,
-                constant: -LoginRegistrationConstants.Metrics.containerViewNegativeTopSpace),
+//            emailTextField.topAnchor.constraint(
+//                equalTo: screenView.centerYAnchor,
+//                constant: -LoginRegistrationConstants.Metrics.containerViewNegativeTopSpace),
             emailTextField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             emailTextField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             emailTextField.heightAnchor.constraint(equalToConstant: LoginRegistrationConstants.Metrics.inputItemHeight),
         ])
+        
+        emailTextFieldTopConstraint = emailTextField.topAnchor.constraint(
+            equalTo: screenView.centerYAnchor,
+            constant: -LoginRegistrationConstants.Metrics.containerViewNegativeTopSpace)
+        emailTextFieldTopConstraint?.isActive = true
     }
     
     func setupEmailWarningLabelLayout() {
@@ -275,8 +287,8 @@ private extension LoginView {
             emailWarningLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
         ])
         
-        emailWarningLabelTopConstrain = emailWarningLabel.topAnchor.constraint(equalTo: emailTextField.bottomAnchor)
-        emailWarningLabelTopConstrain?.isActive = true
+        emailWarningLabelTopConstraint = emailWarningLabel.topAnchor.constraint(equalTo: emailTextField.bottomAnchor)
+        emailWarningLabelTopConstraint?.isActive = true
     }
     
     func setupPasswordTextFieldLayout() {
@@ -301,9 +313,9 @@ private extension LoginView {
             passwordWarningLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
         ])
         
-        passwordWarningLabelTopConstrain = passwordWarningLabel.topAnchor.constraint(
+        passwordWarningLabelTopConstraint = passwordWarningLabel.topAnchor.constraint(
             equalTo: passwordTextField.bottomAnchor)
-        passwordWarningLabelTopConstrain?.isActive = true
+        passwordWarningLabelTopConstraint?.isActive = true
     }
     
     func setupLogInButtonLayout() {
@@ -356,12 +368,14 @@ private extension LoginView {
     }
     
     @objc func didTapLogInButton() {
-        output?.didTapLogInButton(withEmail: emailTextField.text ?? "", password: passwordTextField.text ?? "")
-        
         endEditing(true)
+        
+        output?.didTapLogInButton(withEmail: emailTextField.text ?? "", password: passwordTextField.text ?? "")
     }
     
     @objc func didTapSignUpButton() {
+        endEditing(true)
+        
         output?.didTapSignUpButton()
     }
 }
@@ -414,5 +428,49 @@ extension LoginView: UITextFieldDelegate {
         }
         
         return true
+    }
+}
+
+// MARK: - KeyboardAppearanceListenerDelegate
+
+extension LoginView: KeyboardAppearanceListenerDelegate {
+    func keyboardAppearanceListener(
+        _ listener: KeyboardAppearanceListener,
+        keyboardWillShowWith notification: Notification
+    ) {
+        guard
+            let userInfo = notification.userInfo,
+            let keyboardSize = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue
+        else {
+            return
+        }
+        
+        changeScrollViewAndHeight(bottomInset: keyboardSize.cgRectValue.height)
+    }
+    
+    func keyboardAppearanceListener(
+        _ listener: KeyboardAppearanceListener,
+        keyboardWillHideWith notification: Notification
+    ) {
+        
+        changeScrollViewAndHeight(bottomInset: 0)
+    }
+    
+    private func changeScrollViewAndHeight(bottomInset: CGFloat) {
+        scrollView.contentInset.bottom = bottomInset
+        scrollView.verticalScrollIndicatorInsets.bottom = bottomInset
+        
+        let insetSqueezeCoefficient: CGFloat = 1.5
+        let bottomOffset = bottomInset / insetSqueezeCoefficient
+        let topOffset = -LoginRegistrationConstants.Metrics.containerViewNegativeTopSpace + bottomOffset / 2
+        
+        screenViewHeightConstraint?.constant = -bottomOffset
+        emailTextFieldTopConstraint?.constant = topOffset
+        
+        layoutIfNeeded()
+        
+        UIView.animate(withDuration: LoginRegistrationConstants.Constants.scrollViewAnimationDuration) {
+            self.layoutIfNeeded()
+        }
     }
 }

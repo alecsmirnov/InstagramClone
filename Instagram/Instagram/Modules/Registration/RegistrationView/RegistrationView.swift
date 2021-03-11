@@ -47,9 +47,10 @@ final class RegistrationView: UIView {
     
     private lazy var keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
     
-    private var emailWarningLabelTopConstrain: NSLayoutConstraint?
-    private var usernameWarningLabelTopConstrain: NSLayoutConstraint?
-    private var passwordWarningLabelTopConstrain: NSLayoutConstraint?
+    private var emailWarningLabelTopConstraint: NSLayoutConstraint?
+    private var usernameWarningLabelTopConstraint: NSLayoutConstraint?
+    private var passwordWarningLabelTopConstraint: NSLayoutConstraint?
+    private var screenViewHeightConstraint: NSLayoutConstraint?
     
     // MARK: Subviews
     
@@ -97,32 +98,32 @@ extension RegistrationView: RegistrationViewProtocol {
     
     func showEmailWarning(text: String) {
         emailWarningLabel.text = text
-        emailWarningLabelTopConstrain?.constant = LoginRegistrationConstants.Metrics.stackViewSpace
+        emailWarningLabelTopConstraint?.constant = LoginRegistrationConstants.Metrics.inputItemTopSpace
     }
     
     func hideEmailWarning() {
         emailWarningLabel.text = nil
-        emailWarningLabelTopConstrain?.constant = 0
+        emailWarningLabelTopConstraint?.constant = 0
     }
     
     func showUsernameWarning(text: String) {
         usernameWarningLabel.text = text
-        usernameWarningLabelTopConstrain?.constant = LoginRegistrationConstants.Metrics.stackViewSpace
+        usernameWarningLabelTopConstraint?.constant = LoginRegistrationConstants.Metrics.inputItemTopSpace
     }
     
     func hideUsernameWarning() {
         usernameWarningLabel.text = nil
-        usernameWarningLabelTopConstrain?.constant = 0
+        usernameWarningLabelTopConstraint?.constant = 0
     }
     
     func showPasswordWarning(text: String) {
         passwordWarningLabel.text = text
-        passwordWarningLabelTopConstrain?.constant = LoginRegistrationConstants.Metrics.stackViewSpace
+        passwordWarningLabelTopConstraint?.constant = LoginRegistrationConstants.Metrics.inputItemTopSpace
     }
     
     func hidePasswordWarning() {
         passwordWarningLabel.text = nil
-        passwordWarningLabelTopConstrain?.constant = 0
+        passwordWarningLabelTopConstraint?.constant = 0
     }
     
     func enableSignUpButton() {
@@ -277,8 +278,10 @@ private extension RegistrationView {
             screenView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             screenView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             screenView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
-            screenView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor),
         ])
+        
+        screenViewHeightConstraint = screenView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor)
+        screenViewHeightConstraint?.isActive = true
     }
     
     func setupContainerViewLayout() {
@@ -331,8 +334,8 @@ private extension RegistrationView {
             emailWarningLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
         ])
         
-        emailWarningLabelTopConstrain = emailWarningLabel.topAnchor.constraint(equalTo: emailTextField.bottomAnchor)
-        emailWarningLabelTopConstrain?.isActive = true
+        emailWarningLabelTopConstraint = emailWarningLabel.topAnchor.constraint(equalTo: emailTextField.bottomAnchor)
+        emailWarningLabelTopConstraint?.isActive = true
     }
     
     func setupFullNameTextFieldLayout() {
@@ -371,9 +374,9 @@ private extension RegistrationView {
             usernameWarningLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
         ])
         
-        usernameWarningLabelTopConstrain = usernameWarningLabel.topAnchor.constraint(
+        usernameWarningLabelTopConstraint = usernameWarningLabel.topAnchor.constraint(
             equalTo: usernameTextField.bottomAnchor)
-        usernameWarningLabelTopConstrain?.isActive = true
+        usernameWarningLabelTopConstraint?.isActive = true
     }
     
     func setupPasswordTextFieldLayout() {
@@ -398,9 +401,9 @@ private extension RegistrationView {
             passwordWarningLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
         ])
         
-        passwordWarningLabelTopConstrain = passwordWarningLabel.topAnchor.constraint(
+        passwordWarningLabelTopConstraint = passwordWarningLabel.topAnchor.constraint(
             equalTo: passwordTextField.bottomAnchor)
-        passwordWarningLabelTopConstrain?.isActive = true
+        passwordWarningLabelTopConstraint?.isActive = true
     }
     
     func setupSignUpButtonLayout() {
@@ -458,10 +461,10 @@ private extension RegistrationView {
     }
     
     @objc func didTapSignUpButton() {
+        endEditing(true)
+        
         let isDefaultProfileImage = (profileImageButton.currentImage == LoginRegistrationConstants.Images.profile)
         let profileImage = isDefaultProfileImage ? nil : profileImageButton.currentImage
-        
-        endEditing(true)
         
         output?.didTapSignUpButton(
             withEmail: emailTextField.text ?? "",
@@ -472,6 +475,8 @@ private extension RegistrationView {
     }
     
     @objc func didTapLogInButton() {
+        endEditing(true)
+        
         output?.didTapLogInButton()
     }
 }
@@ -548,15 +553,27 @@ extension RegistrationView: KeyboardAppearanceListenerDelegate {
             return
         }
         
-        scrollView.contentInset.bottom = keyboardSize.cgRectValue.height
-        scrollView.verticalScrollIndicatorInsets.bottom = scrollView.contentInset.bottom
+       changeScrollViewInsetAndHeight(bottomInset: keyboardSize.cgRectValue.height)
     }
     
     func keyboardAppearanceListener(
         _ listener: KeyboardAppearanceListener,
         keyboardWillHideWith notification: Notification
     ) {
-        scrollView.contentInset.bottom = 0
-        scrollView.verticalScrollIndicatorInsets.bottom = scrollView.contentInset.bottom
+        changeScrollViewInsetAndHeight(bottomInset: 0)
+    }
+    
+    private func changeScrollViewInsetAndHeight(bottomInset: CGFloat) {
+        scrollView.contentInset.bottom = bottomInset
+        scrollView.verticalScrollIndicatorInsets.bottom = bottomInset
+        
+        let insetSqueezeCoefficient: CGFloat = 2
+        screenViewHeightConstraint?.constant = -bottomInset / insetSqueezeCoefficient
+        
+        layoutIfNeeded()
+        
+        UIView.animate(withDuration: LoginRegistrationConstants.Constants.scrollViewAnimationDuration) {
+            self.layoutIfNeeded()
+        }
     }
 }

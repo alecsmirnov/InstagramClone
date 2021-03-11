@@ -14,24 +14,15 @@ enum LoginRegistrationConstants {
         
         static let logoImageViewBottomSpace: CGFloat = 20
         
+        static let profileImageButtonSize: CGFloat = 110
+        static let profileImageButtonBorderWidth: CGFloat = 1
+        
         static let inputItemTopSpace: CGFloat = 6
         static let inputItemHeight: CGFloat = 40
         
         static let mainButtonTopSpace: CGFloat = 16
-        static let extraButtonVerticalSpace: CGFloat = 10
-        
-        //
-        
-        static let profileImageButtonSize: CGFloat = 110
-        static let profileImageButtonBorderWidth: CGFloat = 1
-        
-        
-        static let stackViewHorizontalSpace: CGFloat = 20
-        static let stackViewSpace: CGFloat = 6
-        static let stackViewPasswordTextFieldSpace: CGFloat = 16
-        static let stackViewSubviewHeight: CGFloat = 40
-        
         static let mainButtonCornerRadius: CGFloat = 4
+        static let extraButtonVerticalSpace: CGFloat = 10
         
         static let separatorViewWidth: CGFloat = 1.4
         
@@ -56,20 +47,6 @@ enum LoginRegistrationConstants {
         static let alert = UIColor(red: 0.99, green: 0.11, blue: 0.11, alpha: 1)
     }
     
-    enum TextFieldPlaceholders {
-        static let email = "Email"
-        static let fullName = "Full Name"
-        static let username = "Username"
-        static let password = "Password"
-    }
-    
-    enum ButtonTitles {
-        static let logInMain = "Log In"
-        
-        static let logInExtraFirstPart = "Already have an account?"
-        static let logInExtraSecondPart = "Log In"
-    }
-    
     enum Images {
         static let profile = UIImage(named: "profile_default")
     }
@@ -78,6 +55,8 @@ enum LoginRegistrationConstants {
         static let mainButtonEnableAlpha: CGFloat = 1
         static let mainButtonDisableAlpha: CGFloat = 0.4
         
-        static let textFieldInputDelay = 0.6
+        static let textFieldInputDelay: TimeInterval = 0.6
+        
+        static let scrollViewAnimationDuration: TimeInterval = 0.25
     }
 }
