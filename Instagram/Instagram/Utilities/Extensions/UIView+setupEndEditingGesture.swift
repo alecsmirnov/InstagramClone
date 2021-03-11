@@ -11,7 +11,7 @@ extension UIView {
     func setupEndEditingGesture(cancelsTouchesInView: Bool = true) {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         
-        tapGestureRecognizer.cancelsTouchesInView = false
+        tapGestureRecognizer.cancelsTouchesInView = cancelsTouchesInView
         
         addGestureRecognizer(tapGestureRecognizer)
     }
