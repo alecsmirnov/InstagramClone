@@ -61,45 +61,6 @@ final class RegistrationViewController: CustomViewController<RegistrationView> {
     }
 }
 
-// MARK: - Custom View Output
-
-extension RegistrationViewController: RegistrationViewOutputProtocol {
-    func emailDidChange(_ email: String) {
-        output?.emailDidChange(email)
-    }
-    
-    func usernameDidChange(_ username: String) {
-        output?.usernameDidChange(username)
-    }
-    
-    func passwordDidChange(_ password: String) {
-        output?.passwordDidChange(password)
-    }
-    
-    func didTapProfileImageButton() {
-        imagePicker.takePhoto()
-    }
-    
-    func didTapSignUpButton(
-        withEmail email: String,
-        fullName: String,
-        username: String,
-        password: String,
-        profileImage: UIImage?
-    ) {
-        output?.didPressSignUpButton(
-            withEmail: email,
-            fullName: fullName,
-            username: username,
-            password: password,
-            profileImage: profileImage)
-    }
-    
-    func didTapLogInButton() {
-        output?.didPressLogInButton()
-    }
-}
-
 // MARK: - Registration View Input
 
 extension RegistrationViewController: IRegistrationView {
@@ -158,6 +119,45 @@ extension RegistrationViewController: IRegistrationView {
     
     func stopAnimatingSignUpButton() {
         customView?.stopAnimatingSignUpButton()
+    }
+}
+
+// MARK: - Custom View Output
+
+extension RegistrationViewController: RegistrationViewOutputProtocol {
+    func emailDidChange(_ email: String) {
+        output?.emailDidChange(email)
+    }
+    
+    func usernameDidChange(_ username: String) {
+        output?.usernameDidChange(username)
+    }
+    
+    func passwordDidChange(_ password: String) {
+        output?.passwordDidChange(password)
+    }
+    
+    func didTapProfileImageButton() {
+        imagePicker.takePhoto()
+    }
+    
+    func didTapSignUpButton(
+        withEmail email: String,
+        fullName: String,
+        username: String,
+        password: String,
+        profileImage: UIImage?
+    ) {
+        output?.didPressSignUpButton(
+            withEmail: email,
+            fullName: fullName,
+            username: username,
+            password: password,
+            profileImage: profileImage)
+    }
+    
+    func didTapLogInButton() {
+        output?.didPressLogInButton()
     }
 }
 

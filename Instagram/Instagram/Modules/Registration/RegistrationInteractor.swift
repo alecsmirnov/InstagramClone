@@ -112,26 +112,26 @@ extension RegistrationInteractor: IRegistrationInteractor {
     func signUp(withInfo info: Registration) {
         guard !info.email.isEmpty, !info.username.isEmpty, !info.password.isEmpty else { return }
         
-        let profileImageData = info.profileImage?.resize(
-            withWidth: LoginRegistrationConstants.Metrics.profileImageButtonSize,
-            height: LoginRegistrationConstants.Metrics.profileImageButtonSize,
-            contentMode: .aspectFill).jpegData(compressionQuality: 1)
-        
-        FirebaseDatabaseService.createUser(
-            withEmail: info.email,
-            fullName: info.fullName.isEmpty ? nil : info.fullName,
-            username: info.username,
-            password: info.password,
-            profileImageData: profileImageData) { [self] error in
-            if let error = error {
-                presenter?.signUpFailure()
-                
-                print("Failed to create user: \(error)")
-            } else {
-                presenter?.signUpSuccess()
-                
-                print("User successfully created")
-            }
-        }
+//        let profileImageData = info.profileImage?.resize(
+//            withWidth: LoginRegistrationConstants.Metrics.profileImageButtonSize,
+//            height: LoginRegistrationConstants.Metrics.profileImageButtonSize,
+//            contentMode: .aspectFill).jpegData(compressionQuality: 1)
+//        
+//        FirebaseDatabaseService.createUser(
+//            withEmail: info.email,
+//            fullName: info.fullName.isEmpty ? nil : info.fullName,
+//            username: info.username,
+//            password: info.password,
+//            profileImageData: profileImageData) { [self] error in
+//            if let error = error {
+//                presenter?.signUpFailure()
+//                
+//                print("Failed to create user: \(error)")
+//            } else {
+//                presenter?.signUpSuccess()
+//                
+//                print("User successfully created")
+//            }
+//        }
     }
 }

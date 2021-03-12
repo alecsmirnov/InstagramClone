@@ -595,10 +595,10 @@
 		8491A80625B43116009EDFC2 /* Constants */ = {
 			isa = PBXGroup;
 			children = (
+				8453275425FA172F00B39D6D /* AppConstants.swift */,
 				845455F625BDA5830007C9A2 /* LoginRegistrationConstants.swift */,
 				845800BC25C6AFA600816642 /* NewPostConstants.swift */,
 				845BB22725C9759600B01721 /* SharePostConstants.swift */,
-				8453275425FA172F00B39D6D /* AppConstants.swift */,
 			);
 			path = Constants;
 			sourceTree = "<group>";

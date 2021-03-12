@@ -53,26 +53,6 @@ final class LoginViewController: CustomViewController<LoginView> {
     }
 }
 
-// MARK: - Custom View Output
-
-extension LoginViewController: LoginViewOutputProtocol {
-    func didTapLogInButton(withEmail email: String, password: String) {
-        output?.didPressLogInButton(withEmail: email, password: password)
-    }
-    
-    func didTapSignUpButton() {
-        output?.didPressSignUpButton()
-    }
-    
-    func emailDidChange(_ email: String) {
-        output?.emailDidChange(email)
-    }
-    
-    func passwordDidChange(_ password: String) {
-        output?.passwordDidChange(password)
-    }
-}
-
 // MARK: - Login View Input
 
 extension LoginViewController: ILoginView {
@@ -127,5 +107,25 @@ extension LoginViewController: ILoginView {
     
     func stopAnimatingLogInButton() {
         customView?.stopAnimatingLogInButton()
+    }
+}
+
+// MARK: - Custom View Output
+
+extension LoginViewController: LoginViewOutputProtocol {
+    func didTapLogInButton(withEmail email: String, password: String) {
+        output?.didPressLogInButton(withEmail: email, password: password)
+    }
+    
+    func didTapSignUpButton() {
+        output?.didPressSignUpButton()
+    }
+    
+    func emailDidChange(_ email: String) {
+        output?.emailDidChange(email)
+    }
+    
+    func passwordDidChange(_ password: String) {
+        output?.passwordDidChange(password)
     }
 }

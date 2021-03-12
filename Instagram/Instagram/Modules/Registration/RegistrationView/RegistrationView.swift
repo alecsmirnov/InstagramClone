@@ -91,7 +91,7 @@ final class RegistrationView: UIView {
 
 extension RegistrationView: RegistrationViewProtocol {
     func setProfileImage(_ image: UIImage?) {
-        let profileImage = (image != nil ) ? image : LoginRegistrationConstants.Images.profile
+        let profileImage = (image != nil ) ? image : LoginRegistrationConstants.Images.profileDefault
         
         profileImageButton.setImage(profileImage?.withRenderingMode(.alwaysOriginal), for: .normal)
     }
@@ -204,7 +204,7 @@ private extension RegistrationView {
     }
     
     func setupSignUpButtonAppearance() {
-        signUpButton.mainStyle(title: "Sign Up")
+        signUpButton.mainStyle(title: "Sign Up", fontSize: LoginRegistrationConstants.Metrics.mainButtonFontSize)
     }
     
     func setupSeparatorViewAppearance() {
@@ -463,7 +463,7 @@ private extension RegistrationView {
     @objc func didTapSignUpButton() {
         endEditing(true)
         
-        let isDefaultProfileImage = (profileImageButton.currentImage == LoginRegistrationConstants.Images.profile)
+        let isDefaultProfileImage = profileImageButton.currentImage == LoginRegistrationConstants.Images.profileDefault
         let profileImage = isDefaultProfileImage ? nil : profileImageButton.currentImage
         
         output?.didTapSignUpButton(
@@ -567,7 +567,7 @@ extension RegistrationView: KeyboardAppearanceListenerDelegate {
         scrollView.contentInset.bottom = bottomInset
         scrollView.verticalScrollIndicatorInsets.bottom = bottomInset
         
-        let insetSqueezeCoefficient: CGFloat = 2
+        let insetSqueezeCoefficient = LoginRegistrationConstants.Constants.loginKeyboardInsetSqueezeCoefficient
         screenViewHeightConstraint?.constant = -bottomInset / insetSqueezeCoefficient
         
         layoutIfNeeded()

@@ -81,25 +81,25 @@ private extension EditProfileInteractor {
     ) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        let profileImageData = profileImage?.resize(
-            withWidth: LoginRegistrationConstants.Metrics.profileImageButtonSize,
-            height: LoginRegistrationConstants.Metrics.profileImageButtonSize,
-            contentMode: .aspectFill).jpegData(compressionQuality: 1)
-        
-        FirebaseDatabaseService.updateUser(
-            userIdentifier: currentUserIdentifier,
-            fullName: fullName,
-            username: username,
-            bio: bio,
-            website: website,
-            profileImageData: profileImageData) { [self] error in
-            if let error = error {
-                presenter?.updateUserFailure()
-                
-                print("Failed to update user: \(error.localizedDescription)")
-            } else {
-                presenter?.updateUserSuccess()
-            }
-        }
+//        let profileImageData = profileImage?.resize(
+//            withWidth: LoginRegistrationConstants.Metrics.profileImageButtonSize,
+//            height: LoginRegistrationConstants.Metrics.profileImageButtonSize,
+//            contentMode: .aspectFill).jpegData(compressionQuality: 1)
+//        
+//        FirebaseDatabaseService.updateUser(
+//            userIdentifier: currentUserIdentifier,
+//            fullName: fullName,
+//            username: username,
+//            bio: bio,
+//            website: website,
+//            profileImageData: profileImageData) { [self] error in
+//            if let error = error {
+//                presenter?.updateUserFailure()
+//                
+//                print("Failed to update user: \(error.localizedDescription)")
+//            } else {
+//                presenter?.updateUserSuccess()
+//            }
+//        }
     }
 }

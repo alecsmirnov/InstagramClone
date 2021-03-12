@@ -9,7 +9,7 @@ import UIKit
 
 extension UILabel {
     func warningStyle() {
-        font = .systemFont(ofSize: LoginRegistrationConstants.Metrics.alertFontSize)
-        textColor = LoginRegistrationConstants.Colors.alert
+        font = .systemFont(ofSize: LoginRegistrationConstants.Metrics.warningLabelFontSize)
+        textColor = LoginRegistrationConstants.Colors.warningTextColor
     }
 }

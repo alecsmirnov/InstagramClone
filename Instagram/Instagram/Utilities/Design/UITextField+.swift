@@ -13,7 +13,7 @@ extension UITextField {
         self.returnKeyType = returnKeyType
         borderStyle = .roundedRect
         backgroundColor = LoginRegistrationConstants.Colors.textFieldBackground
-        font = .systemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
+        font = .systemFont(ofSize: LoginRegistrationConstants.Metrics.textFieldFontSize)
         autocorrectionType = .no
         autocapitalizationType = .none
     }

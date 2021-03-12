@@ -126,13 +126,7 @@ private extension EditProfileView {
     }
     
     func setupProfileImageButtonAppearance() {
-        profileImageButton.setImage(LoginRegistrationConstants.Images.profile, for: .normal)
-        profileImageButton.contentMode = .scaleAspectFill
-        profileImageButton.tintColor = LoginRegistrationConstants.Colors.profileImageButtonTint
-        profileImageButton.layer.cornerRadius = Metrics.profileImageButtonSize / 2
-        profileImageButton.layer.masksToBounds = true
-        profileImageButton.layer.borderColor = LoginRegistrationConstants.Colors.profileImageButtonBorder.cgColor
-        profileImageButton.layer.borderWidth = LoginRegistrationConstants.Metrics.profileImageButtonBorderWidth
+        profileImageButton.largeProfileImageStyle()
         
         profileImageButton.addTarget(self, action: #selector(didPressProfileImageButton), for: .touchUpInside)
     }

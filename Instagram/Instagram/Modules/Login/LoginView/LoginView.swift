@@ -160,7 +160,7 @@ private extension LoginView {
     }
     
     func setupLogInButtonAppearance() {
-        logInButton.mainStyle(title: "Log In")
+        logInButton.mainStyle(title: "Log In", fontSize: LoginRegistrationConstants.Metrics.mainButtonFontSize)
         logInButton.activityIndicatorColor = .white
     }
     
@@ -265,9 +265,6 @@ private extension LoginView {
         emailTextField.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-//            emailTextField.topAnchor.constraint(
-//                equalTo: screenView.centerYAnchor,
-//                constant: -LoginRegistrationConstants.Metrics.containerViewNegativeTopSpace),
             emailTextField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             emailTextField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             emailTextField.heightAnchor.constraint(equalToConstant: LoginRegistrationConstants.Metrics.inputItemHeight),
@@ -460,8 +457,7 @@ extension LoginView: KeyboardAppearanceListenerDelegate {
         scrollView.contentInset.bottom = bottomInset
         scrollView.verticalScrollIndicatorInsets.bottom = bottomInset
         
-        let insetSqueezeCoefficient: CGFloat = 1.5
-        let bottomOffset = bottomInset / insetSqueezeCoefficient
+        let bottomOffset = bottomInset / LoginRegistrationConstants.Constants.loginKeyboardInsetSqueezeCoefficient
         let topOffset = -LoginRegistrationConstants.Metrics.containerViewNegativeTopSpace + bottomOffset / 2
         
         screenViewHeightConstraint?.constant = -bottomOffset

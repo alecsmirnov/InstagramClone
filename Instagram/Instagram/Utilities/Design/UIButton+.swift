@@ -8,41 +8,42 @@
 import UIKit
 
 extension UIButton {
-    func mainStyle(title: String) {
+    func mainStyle(title: String, fontSize: CGFloat) {
         setTitle(title, for: .normal)
-        setTitleColor(LoginRegistrationConstants.Colors.mainButtonTitle, for: .normal)
-        titleLabel?.font = .boldSystemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize)
-        backgroundColor = LoginRegistrationConstants.Colors.mainButtonBackground
-        layer.cornerRadius = LoginRegistrationConstants.Metrics.mainButtonCornerRadius
+        setTitleColor(AppConstants.Colors.roundedButtonMainTitle, for: .normal)
+        titleLabel?.font = .boldSystemFont(ofSize: fontSize)
+        backgroundColor = AppConstants.Colors.roundedButtonMainBackground
+        layer.cornerRadius = AppConstants.Metrics.roundedButtonCornerRadius
     }
     
     func extraStyle(firstTitle: String, secondTitle: String) {
         twoPartTitle(
             firstPartText: firstTitle,
-            firstPartFont: .systemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize),
-            firstPartColor: LoginRegistrationConstants.Colors.extendButtonFirstPart,
+            firstPartFont: .systemFont(ofSize: LoginRegistrationConstants.Metrics.extraButtonFontSize),
+            firstPartColor: LoginRegistrationConstants.Colors.extraButtonFirstTitle,
             secondPartText: secondTitle,
-            secondPartFont: .boldSystemFont(ofSize: LoginRegistrationConstants.Metrics.fontSize),
-            secondPartColor: LoginRegistrationConstants.Colors.extendButtonSecondPart,
+            secondPartFont: .boldSystemFont(ofSize: LoginRegistrationConstants.Metrics.extraButtonFontSize),
+            secondPartColor: LoginRegistrationConstants.Colors.extraButtonSecondTitle,
             partDivider: " ")
     }
     
     func enable() {
         isEnabled = true
-        alpha = LoginRegistrationConstants.Constants.mainButtonEnableAlpha
+        alpha = AppConstants.Constants.roundedButtonEnableAlpha
     }
     
     func disable() {
         isEnabled = false
-        alpha = LoginRegistrationConstants.Constants.mainButtonDisableAlpha
+        alpha = AppConstants.Constants.roundedButtonDisableAlpha
     }
     
     func largeProfileImageStyle() {
-        setImage(LoginRegistrationConstants.Images.profile, for: .normal)
-        tintColor = LoginRegistrationConstants.Colors.profileImageButtonTint
-        layer.cornerRadius = LoginRegistrationConstants.Metrics.profileImageButtonSize / 2
+        setImage(AppConstants.Images.profileDefault, for: .normal)
+        tintColor = AppConstants.Colors.profileImageButtonTint
+        contentMode = .scaleAspectFill
+        layer.cornerRadius = AppConstants.Metrics.profileImageLargeSize / 2
         layer.masksToBounds = true
-        layer.borderColor = LoginRegistrationConstants.Colors.profileImageButtonBorder.cgColor
-        layer.borderWidth = LoginRegistrationConstants.Metrics.profileImageButtonBorderWidth
+        layer.borderColor = AppConstants.Colors.profileImageBorder.cgColor
+        layer.borderWidth = AppConstants.Metrics.profileImageBorderWidth
     }
 }
