@@ -61,8 +61,9 @@ enum TabBarAssembly {
 // MARK: - Public Methods
 
 extension TabBarAssembly {
-    static func createTabBarController() -> UITabBarController {
-        let homeViewController = HomeAssembly.createHomeViewController()
+    static func createTabBarController(coordinator: HomeCoordinatorProtocol? = nil) -> UITabBarController {
+        let homeViewController = HomeAssembly.createHomeViewController(coordinator: coordinator)
+        
         let homeTab = createNavigationController(viewController: homeViewController, tabBarItem: TabBarItems.home)
         
         let searchViewController = SearchAssembly.createSearchViewController()

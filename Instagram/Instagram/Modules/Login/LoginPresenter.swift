@@ -6,24 +6,27 @@
 //
 
 final class LoginPresenter {
-    // MARK: Properties
+    weak var view: LoginViewControllerProtocol?
+    weak var coordinator: LoginCoordinatorProtocol?
     
-    weak var view: ILoginView?
-    var interactor: ILoginInteractor?
-    var router: ILoginRouter?
+    var loginService: LoginServiceProtocol?
     
     private var isEmailChecked = false {
-        didSet { validateInput() }
+        didSet {
+            validateInput()
+        }
     }
     
     private var isPasswordChecked = false {
-        didSet { validateInput() }
+        didSet {
+            validateInput()
+        }
     }
 }
 
-// MARK: - ILoginViewOutput
+// MARK: - LoginView Output
 
-extension LoginPresenter: ILoginViewOutput {
+extension LoginPresenter: LoginViewControllerOutputProtocol {
     func viewDidLoad() {
         view?.disableLogInButton()
     }
@@ -33,75 +36,63 @@ extension LoginPresenter: ILoginViewOutput {
         view?.disableLogInButton()
         view?.startAnimatingLogInButton()
         
-        interactor?.signIn(withEmail: email, password: password)
+        loginService?.signIn(withEmail: email, password: password) { [weak self] error in
+            if let error = error {
+                self?.view?.stopAnimatingLogInButton()
+                self?.view?.isUserInteractionEnabled = true
+                
+                switch error {
+                case .userNotFound:
+                    self?.view?.showIncorrectUserAlert()
+                case .wrongPassword:
+                    self?.view?.showIncorrectPasswordAlert()
+                }
+            } else {
+                self?.coordinator?.showTabBarController()
+            }
+        }
     }
     
     func didPressSignUpButton() {
-        router?.showRegistrationViewController()
+        coordinator?.showRegistrationViewController()
     }
     
     func emailDidChange(_ email: String) {
-        interactor?.checkEmail(email)
+        loginService?.checkEmail(email) { [weak self] error in
+            if let error = error {
+                self?.isEmailChecked = false
+                
+                switch error {
+                case .empty:
+                    self?.view?.hideEmailWarning()
+                case .invalid:
+                    self?.view?.showInvalidEmailWarning()
+                }
+            } else {
+                self?.isEmailChecked = true
+                
+                self?.view?.hideEmailWarning()
+            }
+        }
     }
     
     func passwordDidChange(_ password: String) {
-        interactor?.checkPassword(password)
-    }
-}
-
-// MARK: - ILoginInteractorOutput
-
-extension LoginPresenter: ILoginInteractorOutput {
-    func isValidEmail() {
-        isEmailChecked = true
-        
-        view?.hideEmailWarning()
-    }
-    
-    func isInvalidEmail() {
-        isEmailChecked = false
-        
-        view?.showInvalidEmailWarning()
-    }
-
-    func isEmptyEmail() {
-        isEmailChecked = false
-        
-        view?.hideEmailWarning()
-    }
-    
-    func isValidPassword() {
-        isPasswordChecked = true
-        
-        view?.hidePasswordWarning()
-    }
-    
-    func isInvalidPassword(lengthMin: Int) {
-        isPasswordChecked = false
-        
-        view?.showShortPasswordWarning(lengthMin: lengthMin)
-    }
-    
-    func isEmptyPassword() {
-        isPasswordChecked = false
-        
-        view?.hidePasswordWarning()
-    }
-    
-    func signInSuccess() {
-        router?.showTabBarController()
-    }
-    
-    func signInIncorrectUserFailure() {
-        view?.stopAnimatingLogInButton()
-        view?.isUserInteractionEnabled = true
-        view?.showIncorrectUserAlert()
-    }
-    
-    func signInIncorrectPasswordFailure() {
-        view?.stopAnimatingLogInButton()
-        view?.isUserInteractionEnabled = true
-        view?.showIncorrectPasswordAlert()
+        loginService?.checkPassword(password) { [weak self] error in
+            if let error = error {
+                self?.isPasswordChecked = false
+                
+                switch error {
+                case .empty:
+                    self?.view?.hidePasswordWarning()
+                case .invalid(let lengthMin):
+                    self?.view?.showShortPasswordWarning(lengthMin: lengthMin)
+                }
+            } else {
+                self?.isPasswordChecked = true
+                
+                self?.view?.hidePasswordWarning()
+            }
+        }
     }
 }
 

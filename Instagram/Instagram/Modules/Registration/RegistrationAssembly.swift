@@ -6,20 +6,17 @@
 //
 
 enum RegistrationAssembly {
-    static func createRegistrationViewController() -> RegistrationViewController {
+    static func createRegistrationViewController(
+        coordinator: RegistrationCoordinatorProtocol
+    ) -> RegistrationViewController {
         let viewController = RegistrationViewController()
-        
-        let interactor = RegistrationInteractor()
         let presenter = RegistrationPresenter()
-        let router = RegistrationRouter(viewController: viewController)
         
         viewController.output = presenter
-        
-        interactor.presenter = presenter
-        
         presenter.view = viewController
-        presenter.interactor = interactor
-        presenter.router = router
+        presenter.coordinator = coordinator
+        
+        presenter.registrationService = RegistrationService()
         
         return viewController
     }

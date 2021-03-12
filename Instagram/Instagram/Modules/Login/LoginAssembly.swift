@@ -6,20 +6,15 @@
 //
 
 enum LoginAssembly {
-    static func createLoginViewController() -> LoginViewController {
+    static func createLoginViewController(coordinator: LoginCoordinatorProtocol) -> LoginViewController {
         let viewController = LoginViewController()
-        
-        let interactor = LoginInteractor()
         let presenter = LoginPresenter()
-        let router = LoginRouter(viewController: viewController)
         
         viewController.output = presenter
-        
-        interactor.presenter = presenter
-        
         presenter.view = viewController
-        presenter.interactor = interactor
-        presenter.router = router
+        presenter.coordinator = coordinator
+        
+        presenter.loginService = LoginService()
         
         return viewController
     }

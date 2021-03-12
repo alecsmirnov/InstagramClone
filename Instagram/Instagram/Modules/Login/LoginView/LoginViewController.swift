@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol ILoginView: AnyObject {
+protocol LoginViewControllerProtocol: AnyObject {
     var isUserInteractionEnabled: Bool { get set }
     
     func showInvalidEmailWarning()
@@ -26,7 +26,7 @@ protocol ILoginView: AnyObject {
     func stopAnimatingLogInButton()
 }
 
-protocol ILoginViewOutput: AnyObject {
+protocol LoginViewControllerOutputProtocol: AnyObject {
     func viewDidLoad()
     
     func didPressLogInButton(withEmail email: String, password: String)
@@ -39,7 +39,7 @@ protocol ILoginViewOutput: AnyObject {
 final class LoginViewController: CustomViewController<LoginView> {
     // MARK: Properties
     
-    var output: ILoginViewOutput?
+    var output: LoginViewControllerOutputProtocol?
     
     private lazy var alertController = SimpleAlert(presentationController: self)
     
@@ -53,9 +53,9 @@ final class LoginViewController: CustomViewController<LoginView> {
     }
 }
 
-// MARK: - Login View Input
+// MARK: - LoginViewController Interface
 
-extension LoginViewController: ILoginView {
+extension LoginViewController: LoginViewControllerProtocol {
     var isUserInteractionEnabled: Bool {
         get {
             return customView?.isUserInteractionEnabled ?? false
@@ -110,7 +110,7 @@ extension LoginViewController: ILoginView {
     }
 }
 
-// MARK: - Custom View Output
+// MARK: - LoginView Output
 
 extension LoginViewController: LoginViewOutputProtocol {
     func didTapLogInButton(withEmail email: String, password: String) {

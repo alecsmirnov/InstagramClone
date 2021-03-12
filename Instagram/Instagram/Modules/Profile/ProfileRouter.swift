@@ -49,8 +49,8 @@ extension ProfileRouter: IProfileRouter {
     }
     
     func showLoginViewController() {
-        let loginViewController = LoginAssembly.createLoginViewController()
+        //let loginViewController = LoginAssembly.createLoginViewController()
         
-        RootViewControllerSwitcher.setRootViewController(loginViewController)
+        //RootViewControllerSwitcher.setRootViewController(loginViewController)
     }
 }

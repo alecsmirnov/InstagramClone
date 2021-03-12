@@ -33,7 +33,7 @@ protocol RegistrationViewOutputProtocol: AnyObject {
     func didTapProfileImageButton()
     func didTapSignUpButton(
         withEmail email: String,
-        fullName: String,
+        fullName: String?,
         username: String,
         password: String,
         profileImage: UIImage?)
@@ -468,7 +468,7 @@ private extension RegistrationView {
         
         output?.didTapSignUpButton(
             withEmail: emailTextField.text ?? "",
-            fullName: fullNameTextField.text ?? "",
+            fullName: fullNameTextField.text,
             username: usernameTextField.text ?? "",
             password: usernameTextField.text ?? "",
             profileImage: profileImage)

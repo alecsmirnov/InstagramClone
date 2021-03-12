@@ -8,6 +8,8 @@
 protocol IHomePresenter: AnyObject {
     func viewDidLoad()
     
+    func didPressCloseButton()
+    
     func didPullToRefresh()
     func didRequestPosts()
     
@@ -28,6 +30,8 @@ final class HomePresenter {
     
     private var isRefreshing = false
     
+    weak var coordinator: HomeCoordinatorProtocol?
+    
     // MARK: Initialization
     
     deinit {
@@ -41,6 +45,10 @@ extension HomePresenter: IHomePresenter {
     func viewDidLoad() {
         interactor?.fetchUserPosts()
         interactor?.observeUserFeed()
+    }
+    
+    func didPressCloseButton() {
+        coordinator?.closeTabBarController()
     }
     
     func didPullToRefresh() {

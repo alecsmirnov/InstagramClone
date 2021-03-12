@@ -40,6 +40,8 @@ final class HomeViewController: CustomViewController<HomeView> {
         presenter?.viewDidLoad()
         
         setupNavigationItemTitle()
+        
+        setupCloseButton()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -52,6 +54,21 @@ final class HomeViewController: CustomViewController<HomeView> {
         super.viewWillDisappear(animated)
         
         navigationItem.titleView?.isHidden = true
+    }
+    
+    func setupCloseButton() {
+        let closeBarButtonItem = UIBarButtonItem(
+            //image: UIImage(named: "gear")?.withRenderingMode(.alwaysOriginal),
+            image: UIImage(systemName: "xmark")?.withRenderingMode(.alwaysOriginal),
+            style: .plain,
+            target: self,
+            action: #selector(didPressCloseButton))
+        
+        navigationItem.rightBarButtonItem = closeBarButtonItem
+    }
+    
+    @objc func didPressCloseButton() {
+        presenter?.didPressCloseButton()
     }
 }
 

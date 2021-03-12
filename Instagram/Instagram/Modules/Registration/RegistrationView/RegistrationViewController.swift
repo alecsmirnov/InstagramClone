@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol IRegistrationView: AnyObject {
+protocol RegistrationViewControllerProtocol: AnyObject {
     var isUserInteractionEnabled: Bool { get set }
     
     func showInvalidEmailWarning()
@@ -21,6 +21,8 @@ protocol IRegistrationView: AnyObject {
     func showShortPasswordWarning(lengthMin: Int)
     func hidePasswordWarning()
     
+    func showUnknownSignUpAlert()
+    
     func enableSignUpButton()
     func disableSignUpButton()
     
@@ -28,7 +30,7 @@ protocol IRegistrationView: AnyObject {
     func stopAnimatingSignUpButton()
 }
 
-protocol IRegistrationViewOutput: AnyObject {
+protocol RegistrationViewControllerOutputProtocol: AnyObject {
     func viewDidLoad()
     
     func emailDidChange(_ email: String)
@@ -37,7 +39,7 @@ protocol IRegistrationViewOutput: AnyObject {
     
     func didPressSignUpButton(
         withEmail email: String,
-        fullName: String,
+        fullName: String?,
         username: String,
         password: String,
         profileImage: UIImage?)
@@ -47,9 +49,10 @@ protocol IRegistrationViewOutput: AnyObject {
 final class RegistrationViewController: CustomViewController<RegistrationView> {
     // MARK: Properties
     
-    var output: IRegistrationViewOutput?
+    var output: RegistrationViewControllerOutputProtocol?
     
     private lazy var imagePicker = ImagePicker(presentationController: self, delegate: self)
+    private lazy var alertController = SimpleAlert(presentationController: self)
     
     // MARK: Lifecycle
     
@@ -61,9 +64,9 @@ final class RegistrationViewController: CustomViewController<RegistrationView> {
     }
 }
 
-// MARK: - Registration View Input
+// MARK: - RegistrationViewController Interface
 
-extension RegistrationViewController: IRegistrationView {
+extension RegistrationViewController: RegistrationViewControllerProtocol {
     var isUserInteractionEnabled: Bool {
         get {
             return customView?.isUserInteractionEnabled ?? false
@@ -105,6 +108,10 @@ extension RegistrationViewController: IRegistrationView {
         customView?.hidePasswordWarning()
     }
     
+    func showUnknownSignUpAlert() {
+        alertController.showAlert(title: "Oops!", message: "Sorry, unknown error has occurred")
+    }
+    
     func enableSignUpButton() {
         customView?.enableSignUpButton()
     }
@@ -122,7 +129,7 @@ extension RegistrationViewController: IRegistrationView {
     }
 }
 
-// MARK: - Custom View Output
+// MARK: - RegistrationView Output
 
 extension RegistrationViewController: RegistrationViewOutputProtocol {
     func emailDidChange(_ email: String) {
@@ -143,7 +150,7 @@ extension RegistrationViewController: RegistrationViewOutputProtocol {
     
     func didTapSignUpButton(
         withEmail email: String,
-        fullName: String,
+        fullName: String?,
         username: String,
         password: String,
         profileImage: UIImage?

@@ -8,47 +8,101 @@
 import UIKit
 
 final class RegistrationPresenter {
-    // MARK: Properties
+    weak var view: RegistrationViewControllerProtocol?
+    weak var coordinator: RegistrationCoordinatorProtocol?
     
-    weak var view: IRegistrationView?
-    var interactor: IRegistrationInteractor?
-    var router: IRegistrationRouter?
+    var registrationService: RegistrationServiceProtocol?
     
     private var isEmailChecked = false {
-        didSet { validateInput() }
+        didSet {
+            validateInput()
+        }
     }
     
     private var isUsernameChecked = false {
-        didSet { validateInput() }
+        didSet {
+            validateInput()
+        }
     }
     
     private var isPasswordChecked = false {
-        didSet { validateInput() }
+        didSet {
+            validateInput()
+        }
     }
 }
 
-// MARK: - IRegistrationViewOutput
+// MARK: - RegistrationView Output
 
-extension RegistrationPresenter: IRegistrationViewOutput {
+extension RegistrationPresenter: RegistrationViewControllerOutputProtocol {
     func viewDidLoad() {
         view?.disableSignUpButton()
     }
     
     func emailDidChange(_ email: String) {
-        interactor?.checkEmail(email)
+        registrationService?.checkEmail(email) { [weak self] error in
+            if let error = error {
+                self?.isEmailChecked = false
+                
+                switch error {
+                case .empty:
+                    self?.view?.hideEmailWarning()
+                case .invalid:
+                    self?.view?.showInvalidEmailWarning()
+                case .exist:
+                    self?.view?.showAlreadyInUseEmailWarning()
+                }
+            } else {
+                self?.isEmailChecked = true
+                
+                self?.view?.hideEmailWarning()
+            }
+        }
     }
     
     func usernameDidChange(_ username: String) {
-        interactor?.checkUsername(username)
+        registrationService?.checkUsername(username) { [weak self] error in
+            if let error = error {
+                self?.isUsernameChecked = false
+                
+                switch error {
+                case .empty:
+                    self?.view?.hideUsernameWarning()
+                case .invalid:
+                    self?.view?.showInvalidUsernameWarning()
+                case .exist:
+                    self?.view?.showAlreadyInUseUsernameWarning()
+                }
+            } else {
+                self?.isUsernameChecked = true
+                
+                self?.view?.hideUsernameWarning()
+            }
+        }
     }
     
     func passwordDidChange(_ password: String) {
-        interactor?.checkPassword(password)
+        registrationService?.checkPassword(password) { [weak self] error in
+            if let error = error {
+                self?.isPasswordChecked = false
+                
+                switch error {
+                case .empty:
+                    self?.view?.hidePasswordWarning()
+                case .invalid(let lengthMin):
+                    self?.view?.showShortPasswordWarning(lengthMin: lengthMin)
+                }
+            } else {
+                self?.isPasswordChecked = true
+                
+                self?.view?.hidePasswordWarning()
+            }
+        }
     }
     
     func didPressSignUpButton(
         withEmail email: String,
-        fullName: String,
+        fullName: String?,
         username: String,
         password: String,
         profileImage: UIImage?
@@ -57,89 +111,30 @@ extension RegistrationPresenter: IRegistrationViewOutput {
         view?.disableSignUpButton()
         view?.startAnimatingSignUpButton()
         
-        //interactor?.signUp(withInfo: info)
+        let imageSize = LoginRegistrationConstants.Metrics.profileImageButtonSize
+        let profileImageData = profileImage?.resize(
+            withWidth: imageSize,
+            height: imageSize,
+            contentMode: .aspectFill).jpegData(compressionQuality: 1)
+        
+        registrationService?.signUp(
+            withEmail: email,
+            fullName: fullName,
+            username: username,
+            password: password,
+            profileImageData: profileImageData) { [weak self] error in
+            guard error == nil else {
+                self?.view?.showUnknownSignUpAlert()
+                
+                return
+            }
+            
+            self?.coordinator?.showTabBarController()
+        }
     }
     
     func didPressLogInButton() {
-        router?.closeRegistrationViewController()
-    }
-}
-
-// MARK: - IRegistrationInteractorOutput
-
-extension RegistrationPresenter: IRegistrationInteractorOutput {
-    func isValidEmail() {
-        isEmailChecked = true
-        
-        view?.hideEmailWarning()
-    }
-    
-    func isInvalidEmail() {
-        isEmailChecked = false
-        
-        view?.showInvalidEmailWarning()
-    }
-    
-    func isUserWithEmailExist() {
-        isEmailChecked = false
-        
-        view?.showAlreadyInUseEmailWarning()
-    }
-    
-    func isEmptyEmail() {
-        isEmailChecked = false
-        
-        view?.hideEmailWarning()
-    }
-    
-    func isValidUsername() {
-        isUsernameChecked = true
-        
-        view?.hideUsernameWarning()
-    }
-    
-    func isInvalidUsername() {
-        isUsernameChecked = false
-        
-        view?.showInvalidUsernameWarning()
-    }
-    
-    func isUserWithUsernameExist() {
-        isUsernameChecked = false
-        
-        view?.showAlreadyInUseUsernameWarning()
-    }
-    
-    func isEmptyUsername() {
-        isUsernameChecked = false
-        
-        view?.hideUsernameWarning()
-    }
-    
-    func isValidPassword() {
-        isPasswordChecked = true
-        
-        view?.hidePasswordWarning()
-    }
-    
-    func isInvalidPassword(lengthMin: Int) {
-        isPasswordChecked = false
-        
-        view?.showShortPasswordWarning(lengthMin: lengthMin)
-    }
-    
-    func isEmptyPassword() {
-        isPasswordChecked = false
-        
-        view?.hidePasswordWarning()
-    }
-    
-    func signUpSuccess() {
-        router?.showTabBarController()
-    }
-    
-    func signUpFailure() {
- 
+        coordinator?.closeRegistrationViewController()
     }
 }
 
