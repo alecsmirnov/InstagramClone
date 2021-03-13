@@ -11,12 +11,11 @@ protocol HomeCoordinatorProtocol: AnyObject {
     
 }
 
-final class HomeCoordinator: Coordinator {
+final class HomeCoordinator: CoordinatorProtocol {
     // MARK: Properties
     
-    var childCoordinators: [Coordinator] = []
-    
     var navigationController: UINavigationController
+    var childCoordinators: [CoordinatorProtocol] = []
     
     // MARK: Lifecycle
     

@@ -21,12 +21,11 @@ protocol AuthCoordinatorDelegate: AnyObject {
     func authCoordinatorDidFinishAuthentication(_ authCoordinator: AuthCoordinator)
 }
 
-final class AuthCoordinator: Coordinator {
+final class AuthCoordinator: CoordinatorProtocol {
     // MARK: Properties
     
-    var childCoordinators: [Coordinator] = []
-    
     var navigationController: UINavigationController
+    var childCoordinators: [CoordinatorProtocol] = []
     
     private weak var delegate: AuthCoordinatorDelegate?
     

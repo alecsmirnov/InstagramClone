@@ -7,12 +7,11 @@
 
 import UIKit
 
-final class MainCoordinator: Coordinator {
+final class MainCoordinator: CoordinatorProtocol {
     // MARK: Properties
     
-    var childCoordinators: [Coordinator] = []
-    
     var navigationController: UINavigationController
+    var childCoordinators: [CoordinatorProtocol] = []
     
     // MARK: Lifecycle
     

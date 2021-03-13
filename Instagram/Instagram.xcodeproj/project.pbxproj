@@ -117,7 +117,7 @@
 		845D0B9C25D6BB9000AD3122 /* UIButton+imageDownload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845D0B9B25D6BB9000AD3122 /* UIButton+imageDownload.swift */; };
 		845D7D8E25BC472C001E5037 /* TwoPartsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845D7D8D25BC472C001E5037 /* TwoPartsButton.swift */; };
 		845DEFAA25FB554A00F02D77 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845DEFA925FB554A00F02D77 /* AppCoordinator.swift */; };
-		845DEFAD25FB555600F02D77 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845DEFAC25FB555600F02D77 /* Coordinator.swift */; };
+		845DEFAD25FB555600F02D77 /* CoordinatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845DEFAC25FB555600F02D77 /* CoordinatorProtocol.swift */; };
 		845DEFB125FB603100F02D77 /* AuthCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845DEFB025FB603100F02D77 /* AuthCoordinator.swift */; };
 		845DEFB925FB890500F02D77 /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845DEFB825FB890500F02D77 /* MainCoordinator.swift */; };
 		845DEFBC25FBAB4400F02D77 /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845DEFBB25FBAB4400F02D77 /* LoginService.swift */; };
@@ -264,7 +264,7 @@
 		845D0B9B25D6BB9000AD3122 /* UIButton+imageDownload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+imageDownload.swift"; sourceTree = "<group>"; };
 		845D7D8D25BC472C001E5037 /* TwoPartsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoPartsButton.swift; sourceTree = "<group>"; };
 		845DEFA925FB554A00F02D77 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
-		845DEFAC25FB555600F02D77 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		845DEFAC25FB555600F02D77 /* CoordinatorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorProtocol.swift; sourceTree = "<group>"; };
 		845DEFB025FB603100F02D77 /* AuthCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthCoordinator.swift; sourceTree = "<group>"; };
 		845DEFB825FB890500F02D77 /* MainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinator.swift; sourceTree = "<group>"; };
 		845DEFBB25FBAB4400F02D77 /* LoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginService.swift; sourceTree = "<group>"; };
@@ -532,6 +532,14 @@
 			path = EditProfileView;
 			sourceTree = "<group>";
 		};
+		845ADF3A25FCFBE0003DEC7A /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				845DEFAC25FB555600F02D77 /* CoordinatorProtocol.swift */,
+			);
+			path = Protocol;
+			sourceTree = "<group>";
+		};
 		845B8C9325B6AB9300FE5ED6 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -576,10 +584,10 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		845DEFA825FB534E00F02D77 /* Coordinator */ = {
+		845DEFA825FB534E00F02D77 /* Coordinators */ = {
 			isa = PBXGroup;
 			children = (
-				845DEFAC25FB555600F02D77 /* Coordinator.swift */,
+				845ADF3A25FCFBE0003DEC7A /* Protocol */,
 				845DEFA925FB554A00F02D77 /* AppCoordinator.swift */,
 				845DEFB025FB603100F02D77 /* AuthCoordinator.swift */,
 				845DEFB825FB890500F02D77 /* MainCoordinator.swift */,
@@ -588,7 +596,7 @@
 				845ADF3125FCD7CA003DEC7A /* NewPostCoordinator.swift */,
 				845ADF2E25FCD7AB003DEC7A /* ProfileCoordinator.swift */,
 			);
-			path = Coordinator;
+			path = Coordinators;
 			sourceTree = "<group>";
 		};
 		8491A80625B43116009EDFC2 /* Constants */ = {
@@ -660,7 +668,7 @@
 				84B2E66B25B04EFD00B27457 /* Utilities */,
 				8491A80625B43116009EDFC2 /* Constants */,
 				84E6610525B993470036AB9F /* Entities */,
-				845DEFA825FB534E00F02D77 /* Coordinator */,
+				845DEFA825FB534E00F02D77 /* Coordinators */,
 				8491A83525B46BA1009EDFC2 /* Services */,
 				84B2E67125B04F8400B27457 /* Modules */,
 			);
@@ -970,7 +978,7 @@
 				845CC1FC25C7ECB70051372D /* SharePostView.swift in Sources */,
 				84549B7F25E8CEE7006CC21D /* CommentsViewController.swift in Sources */,
 				8459C12E25F4B78D00FFFB36 /* MaterialTextField.swift in Sources */,
-				845DEFAD25FB555600F02D77 /* Coordinator.swift in Sources */,
+				845DEFAD25FB555600F02D77 /* CoordinatorProtocol.swift in Sources */,
 				8453275525FA172F00B39D6D /* AppConstants.swift in Sources */,
 				84F9694125D14E9D0004D838 /* UIImageView+realImageRect.swift in Sources */,
 				8454D0EB25F635FD00DD27DD /* EditProfileUsernameInteractor.swift in Sources */,

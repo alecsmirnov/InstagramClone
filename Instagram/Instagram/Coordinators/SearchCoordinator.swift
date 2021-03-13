@@ -11,12 +11,11 @@ protocol SearchCoordinatorProtocol: AnyObject {
     
 }
 
-final class SearchCoordinator: Coordinator {
+final class SearchCoordinator: CoordinatorProtocol {
     // MARK: Properties
     
-    var childCoordinators: [Coordinator] = []
-    
     var navigationController: UINavigationController
+    var childCoordinators: [CoordinatorProtocol] = []
     
     // MARK: Lifecycle
     

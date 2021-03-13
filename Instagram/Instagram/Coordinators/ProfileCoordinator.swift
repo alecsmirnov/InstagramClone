@@ -11,14 +11,13 @@ protocol ProfileCoordinatorProtocol: AnyObject {
     
 }
 
-final class ProfileCoordinator: Coordinator {
+final class ProfileCoordinator: CoordinatorProtocol {
     // MARK: Properties
     
     var user: User?
     
-    var childCoordinators: [Coordinator] = []
-    
     var navigationController: UINavigationController
+    var childCoordinators: [CoordinatorProtocol] = []
     
     // MARK: Lifecycle
     

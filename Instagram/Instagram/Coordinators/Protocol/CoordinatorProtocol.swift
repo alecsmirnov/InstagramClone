@@ -1,5 +1,5 @@
 //
-//  Coordinator.swift
+//  CoordinatorProtocol.swift
 //  Instagram
 //
 //  Created by Admin on 12.03.2021.
@@ -7,12 +7,11 @@
 
 import UIKit
 
-protocol Coordinator: AnyObject {
+protocol CoordinatorProtocol: AnyObject {
     // MARK: Properties
         
-    var childCoordinators: [Coordinator] { get set }
-    
     var navigationController: UINavigationController { get set }
+    var childCoordinators: [CoordinatorProtocol] { get set }
     
     // MARK: Lifecycle
     
@@ -23,22 +22,22 @@ protocol Coordinator: AnyObject {
     func start()
     func finish()
     
-    func appendChildCoordinator(_ coordinator: Coordinator)
-    func removeChildCoordinator(_ coordinator: Coordinator)
+    func appendChildCoordinator(_ coordinator: CoordinatorProtocol)
+    func removeChildCoordinator(_ coordinator: CoordinatorProtocol)
 }
 
-extension Coordinator {
+extension CoordinatorProtocol {
     func finish() {
         childCoordinators.removeAll()
     }
     
-    func appendChildCoordinator(_ coordinator: Coordinator) {
+    func appendChildCoordinator(_ coordinator: CoordinatorProtocol) {
         if childCoordinators.firstIndex(where: { $0 === coordinator }) == nil {
             childCoordinators.append(coordinator)
         }
     }
     
-    func removeChildCoordinator(_ coordinator: Coordinator) {
+    func removeChildCoordinator(_ coordinator: CoordinatorProtocol) {
         if let index = childCoordinators.firstIndex(where: { $0 === coordinator }) {
             childCoordinators.remove(at: index)
         }

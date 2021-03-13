@@ -16,12 +16,11 @@ protocol NewPostCoordinatorDelegate: AnyObject {
     func newPostCoordinatorDidClose(_ newPostCoordinator: NewPostCoordinator)
 }
 
-final class NewPostCoordinator: Coordinator {
+final class NewPostCoordinator: CoordinatorProtocol {
     // MARK: Properties
     
-    var childCoordinators: [Coordinator] = []
-    
     var navigationController: UINavigationController
+    var childCoordinators: [CoordinatorProtocol] = []
     
     private weak var presenterController: UIViewController?
     private weak var delegate: NewPostCoordinatorDelegate?
