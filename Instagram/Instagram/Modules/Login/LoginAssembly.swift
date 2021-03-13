@@ -6,7 +6,7 @@
 //
 
 enum LoginAssembly {
-    static func createLoginViewController(coordinator: LoginCoordinatorProtocol) -> LoginViewController {
+    static func createLoginViewController(coordinator: LoginCoordinatorProtocol? = nil) -> LoginViewController {
         let viewController = LoginViewController()
         let presenter = LoginPresenter()
         

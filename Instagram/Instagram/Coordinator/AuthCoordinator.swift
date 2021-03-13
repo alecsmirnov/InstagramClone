@@ -9,18 +9,22 @@ import UIKit
 
 protocol LoginCoordinatorProtocol: AnyObject {
     func showRegistrationViewController()
-    func showTabBarController()
+    func finishLogIn()
 }
 
 protocol RegistrationCoordinatorProtocol: AnyObject {
     func closeRegistrationViewController()
-    func showTabBarController()
+    func finishSignUp()
+}
+
+protocol AuthCoordinatorDelegate: AnyObject {
+    func authCoordinatorDidFinishAuthentication(_ authCoordinator: AuthCoordinator)
 }
 
 final class AuthCoordinator: Coordinator {
     // MARK: Properties
     
-    weak var delegate: CoordinatorDelegate?
+    weak var delegate: AuthCoordinatorDelegate?
     
     var childCoordinators: [Coordinator] = []
     
@@ -52,13 +56,8 @@ extension AuthCoordinator: LoginCoordinatorProtocol {
         navigationController.pushViewController(registrationViewController, animated: true)
     }
     
-    func showTabBarController() {
-        let mainCoordinator = MainCoordinator(navigationController: navigationController)
-        
-        mainCoordinator.delegate = delegate
-        mainCoordinator.start()
-        
-        appendChildCoordinator(mainCoordinator)
+    func finishLogIn() {
+        delegate?.authCoordinatorDidFinishAuthentication(self)
     }
 }
 
@@ -67,5 +66,9 @@ extension AuthCoordinator: LoginCoordinatorProtocol {
 extension AuthCoordinator: RegistrationCoordinatorProtocol {
     func closeRegistrationViewController() {
         navigationController.popViewController(animated: true)
+    }
+    
+    func finishSignUp() {
+        delegate?.authCoordinatorDidFinishAuthentication(self)
     }
 }

@@ -10,8 +10,6 @@ import UIKit
 final class AppCoordinator: Coordinator {
     // MARK: Properties
     
-    weak var delegate: CoordinatorDelegate?
-    
     var childCoordinators: [Coordinator] = []
 
     var navigationController: UINavigationController
@@ -41,6 +39,16 @@ extension AppCoordinator {
     }
 }
 
+// MARK: - AuthCoordinatorDelegate
+
+extension AppCoordinator: AuthCoordinatorDelegate {
+    func authCoordinatorDidFinishAuthentication(_ authCoordinator: AuthCoordinator) {
+        //removeAllChildCoordinators()
+        
+        startMainFlow()
+    }
+}
+
 // MARK: - Private Methods
 
 private extension AppCoordinator {
@@ -56,17 +64,9 @@ private extension AppCoordinator {
     func startMainFlow() {
         let mainCoordinator = MainCoordinator(navigationController: navigationController)
         
-        mainCoordinator.delegate = self
+        //mainCoordinator.delegate = self
         mainCoordinator.start()
         
         appendChildCoordinator(mainCoordinator)
-    }
-}
-
-// MARK: - CoordinatorDelegate
-
-extension AppCoordinator: CoordinatorDelegate {
-    func coordinatorDidFinish(_ coordinator: Coordinator) {
-        navigationController.popToRootViewController(animated: true)
     }
 }

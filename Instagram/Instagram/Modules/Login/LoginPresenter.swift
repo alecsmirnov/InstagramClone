@@ -48,7 +48,7 @@ extension LoginPresenter: LoginViewControllerOutputProtocol {
                     self?.view?.showIncorrectPasswordAlert()
                 }
             } else {
-                self?.coordinator?.showTabBarController()
+                self?.coordinator?.finishLogIn()
             }
         }
     }

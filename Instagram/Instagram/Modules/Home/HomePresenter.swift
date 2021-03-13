@@ -48,7 +48,7 @@ extension HomePresenter: IHomePresenter {
     }
     
     func didPressCloseButton() {
-        coordinator?.closeTabBarController()
+        //coordinator?.closeTabBarController()
     }
     
     func didPullToRefresh() {

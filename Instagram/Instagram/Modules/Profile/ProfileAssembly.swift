@@ -6,7 +6,10 @@
 //
 
 enum ProfileAssembly {
-    static func createProfileViewController(user: User? = nil) -> ProfileViewController {
+    static func createProfileViewController(
+        user: User? = nil,
+        coordinator: ProfileCoordinatorProtocol? = nil
+    ) -> ProfileViewController {
         let viewController = ProfileViewController()
         
         let interactor = ProfileInteractor()

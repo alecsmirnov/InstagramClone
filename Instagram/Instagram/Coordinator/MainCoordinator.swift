@@ -7,14 +7,12 @@
 
 import UIKit
 
-protocol HomeCoordinatorProtocol: AnyObject {
-    func closeTabBarController()
+protocol TabBarCoordinatorProtocol: AnyObject {
+    func showNewPostViewController()
 }
 
 final class MainCoordinator: Coordinator {
     // MARK: Properties
-    
-    weak var delegate: CoordinatorDelegate?
     
     var childCoordinators: [Coordinator] = []
     
@@ -31,14 +29,42 @@ final class MainCoordinator: Coordinator {
 
 extension MainCoordinator {
     func start() {
-        let tabBarController = TabBarAssembly.createTabBarController(coordinator: self)
-        
-        navigationController.pushViewController(tabBarController, animated: true)
+        showMainTabBarController()
     }
 }
 
-extension MainCoordinator: HomeCoordinatorProtocol {
-    func closeTabBarController() {
-        finish()
+// MARK: - Private Methods
+
+private extension MainCoordinator {
+    func showMainTabBarController() {
+        let homeCoordinator = HomeCoordinator()
+        let searchCoordinator = SearchCoordinator()
+        let profileCoordinator = ProfileCoordinator()
+        
+        homeCoordinator.start()
+        searchCoordinator.start()
+        profileCoordinator.start()
+  
+        appendChildCoordinator(homeCoordinator)
+        appendChildCoordinator(searchCoordinator)
+        appendChildCoordinator(profileCoordinator)
+        
+        let mainTabBarController = MainTabBarController()
+        
+        mainTabBarController.appendNavigationController(homeCoordinator.navigationController, item: .home)
+        mainTabBarController.appendNavigationController(searchCoordinator.navigationController, item: .search)
+        mainTabBarController.appendNavigationController(UINavigationController(), item: .plus)
+        mainTabBarController.appendNavigationController(UINavigationController(), item: .like)
+        mainTabBarController.appendNavigationController(profileCoordinator.navigationController, item: .profile)
+        
+        mainTabBarController.didSelectPlusTabItem = { [weak self] in
+            let newPostCoordinator = NewPostCoordinator(tabBarController: mainTabBarController)
+            
+            newPostCoordinator.start()
+            
+            self?.appendChildCoordinator(newPostCoordinator)
+        }
+        
+        navigationController.pushViewController(mainTabBarController, animated: true)
     }
 }

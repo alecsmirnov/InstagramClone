@@ -8,11 +8,11 @@
 import UIKit
 
 enum NewPostAssembly {
-    static func createNewPostNavigationController() -> UINavigationController {
-        return UINavigationController(rootViewController: createNewPostViewController())
+    static func createNewPostNavigationController(coordinator: NewPostCoordinator? = nil) -> UINavigationController {
+        return UINavigationController(rootViewController: createNewPostViewController(coordinator: coordinator))
     }
     
-    private static func createNewPostViewController() -> NewPostViewController {
+    static func createNewPostViewController(coordinator: NewPostCoordinator? = nil) -> NewPostViewController {
         let viewController = NewPostViewController()
         
         let interactor = NewPostInteractor()

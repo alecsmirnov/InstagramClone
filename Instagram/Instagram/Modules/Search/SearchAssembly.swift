@@ -6,7 +6,7 @@
 //
 
 enum SearchAssembly {
-    static func createSearchViewController() -> SearchViewController {
+    static func createSearchViewController(coordinator: SearchCoordinatorProtocol? = nil) -> SearchViewController {
         let viewController = SearchViewController()
         
         let interactor = SearchInteractor()

@@ -129,7 +129,7 @@ extension RegistrationPresenter: RegistrationViewControllerOutputProtocol {
                 return
             }
             
-            self?.coordinator?.showTabBarController()
+            self?.coordinator?.finishSignUp()
         }
     }
     

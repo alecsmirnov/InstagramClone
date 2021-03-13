@@ -7,22 +7,9 @@
 
 import UIKit
 
-//enum CoordinatorType {
-//    case app
-//    case login
-//    case registration
-//    case tabBar
-//}
-
-protocol CoordinatorDelegate: AnyObject {
-    func coordinatorDidFinish(_ coordinator: Coordinator)
-}
-
 protocol Coordinator: AnyObject {
     // MARK: Properties
-    
-    var delegate: CoordinatorDelegate? { get set }
-    
+        
     var childCoordinators: [Coordinator] { get set }
     
     var navigationController: UINavigationController { get set }
@@ -43,8 +30,6 @@ protocol Coordinator: AnyObject {
 extension Coordinator {
     func finish() {
         childCoordinators.removeAll()
-        
-        delegate?.coordinatorDidFinish(self)
     }
     
     func appendChildCoordinator(_ coordinator: Coordinator) {
@@ -57,5 +42,9 @@ extension Coordinator {
         if let index = childCoordinators.firstIndex(where: { $0 === coordinator }) {
             childCoordinators.remove(at: index)
         }
+    }
+    
+    func removeAllChildCoordinators() {
+        childCoordinators.removeAll()
     }
 }
