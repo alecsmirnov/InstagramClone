@@ -36,7 +36,7 @@ struct LoginService: LoginServiceProtocol {
             return
         }
         
-        guard InputValidation.isValidEmail(email) else {
+        guard ValidationService.isValidEmail(email) else {
             completion(.invalid)
             
             return
@@ -52,8 +52,8 @@ struct LoginService: LoginServiceProtocol {
             return
         }
         
-        guard InputValidation.passwordLengthMin <= password.count else {
-            completion(.invalid(InputValidation.passwordLengthMin))
+        guard ValidationService.passwordLengthMin <= password.count else {
+            completion(.invalid(ValidationService.passwordLengthMin))
             
             return
         }

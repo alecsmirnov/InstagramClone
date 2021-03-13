@@ -49,11 +49,8 @@ final class SharePostView: UIView {
 // MARK: - Public Methods
 
 extension SharePostView {
-    func setMediaFile(_ mediaFile: MediaFileType) {
-        switch mediaFile {
-        case .image(let image):
-            imageView.image = image
-        }
+    func setMediaFile(_ mediaFile: UIImage) {
+        imageView.image = mediaFile
     }
     
     func disableInteractions() {

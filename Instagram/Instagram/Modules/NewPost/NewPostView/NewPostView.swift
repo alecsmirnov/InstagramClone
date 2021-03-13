@@ -21,7 +21,7 @@ final class NewPostView: UIView {
         }
     }
     
-    private var mediaFiles = [MediaFileType]()
+    private var mediaFiles = [UIImage]()
     private var selectedMediaFileIndex: Int?
     
     // MARK: Subviews
@@ -45,7 +45,7 @@ final class NewPostView: UIView {
 // MARK: - Public Methods
 
 extension NewPostView {    
-    func appendCellMediaFile(_ mediaFile: MediaFileType) {
+    func appendCellMediaFile(_ mediaFile: UIImage) {
         mediaFiles.append(mediaFile)
         
         if selectedMediaFileIndex == nil {
@@ -57,14 +57,14 @@ extension NewPostView {
         collectionView.reloadData()
     }
     
-    func setOriginalMediaFile(_ mediaFile: MediaFileType) {
+    func setOriginalMediaFile(_ mediaFile: UIImage) {
         if let headerView = collectionView.visibleSupplementaryViews(
             ofKind: UICollectionView.elementKindSectionHeader).first as? NewPostHeaderView {
             headerView.configure(with: mediaFile)
         }
     }
     
-    func getSelectedMediaFile() -> MediaFileType? {
+    func getSelectedMediaFile() -> UIImage? {
         guard
             let headerView = collectionView.visibleSupplementaryViews(
                 ofKind: UICollectionView.elementKindSectionHeader).first as? NewPostHeaderView,
@@ -73,7 +73,7 @@ extension NewPostView {
             return nil
         }
         
-        return .image(croppedImage)
+        return croppedImage
     }
 }
 

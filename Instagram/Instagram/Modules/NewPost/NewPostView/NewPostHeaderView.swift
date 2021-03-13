@@ -40,11 +40,8 @@ final class NewPostHeaderView: UICollectionReusableView {
 // MARK: - Public Methods
 
 extension NewPostHeaderView {
-    func configure(with mediaFile: MediaFileType) {
-        switch mediaFile {
-        case .image(let image):
-            setImage(image)
-        }
+    func configure(with mediaFile: UIImage) {
+        setImage(mediaFile)
     }
     
     func getCroppedImage() -> UIImage? {

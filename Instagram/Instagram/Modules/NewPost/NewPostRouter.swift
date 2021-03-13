@@ -5,9 +5,11 @@
 //  Created by Admin on 28.01.2021.
 //
 
+import UIKit
+
 protocol INewPostRouter: AnyObject {
     func closeNewPostViewController()
-    func showSharePostViewController(mediaFile: MediaFileType)
+    func showSharePostViewController(mediaFile: UIImage)
 }
 
 final class NewPostRouter {
@@ -25,7 +27,7 @@ extension NewPostRouter: INewPostRouter {
         viewController?.dismiss(animated: true)
     }
     
-    func showSharePostViewController(mediaFile: MediaFileType) {
+    func showSharePostViewController(mediaFile: UIImage) {
         let sharePostViewController = SharePostAssembly.createSharePostViewController(mediaFile: mediaFile)
         
         viewController?.navigationController?.pushViewController(sharePostViewController, animated: true)

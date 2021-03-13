@@ -5,9 +5,11 @@
 //  Created by Admin on 28.01.2021.
 //
 
+import UIKit
+
 protocol INewPostPresenter: AnyObject {
     func didPressCloseButton()
-    func didPressNextButton(with mediaFile: MediaFileType?)
+    func didPressNextButton(with mediaFile: UIImage?)
     
     func didRequestCellMediaFile()
     func didRequestOriginalMediaFile(at index: Int)
@@ -30,7 +32,7 @@ extension NewPostPresenter: INewPostPresenter {
         coordinator?.closeNewPostViewController()
     }
     
-    func didPressNextButton(with mediaFile: MediaFileType?) {
+    func didPressNextButton(with mediaFile: UIImage?) {
         guard let mediaFile = mediaFile else { return }
         
         router?.showSharePostViewController(mediaFile: mediaFile)
@@ -50,11 +52,11 @@ extension NewPostPresenter: INewPostPresenter {
 // MARK: - INewPostInteractorOutput
 
 extension NewPostPresenter: INewPostInteractorOutput {
-    func fetchCellMediaFileSuccess(_ mediaFile: MediaFileType) {
+    func fetchCellMediaFileSuccess(_ mediaFile: UIImage) {
         viewController?.appendCellMediaFile(mediaFile)
     }
     
-    func fetchOriginalMediaFileSuccess(_ mediaFile: MediaFileType, at index: Int) {
+    func fetchOriginalMediaFileSuccess(_ mediaFile: UIImage, at index: Int) {
         viewController?.setOriginalMediaFile(mediaFile)
         
         viewController?.enableNextButton()

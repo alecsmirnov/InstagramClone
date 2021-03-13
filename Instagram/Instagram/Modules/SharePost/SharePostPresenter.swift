@@ -5,10 +5,12 @@
 //  Created by Admin on 01.02.2021.
 //
 
+import UIKit
+
 protocol ISharePostPresenter: AnyObject {
     func viewDidLoad()
     
-    func didPressShareButton(withMediaFile mediaFile: MediaFileType, caption: String?)
+    func didPressShareButton(withMediaFile mediaFile: UIImage, caption: String?)
 }
 
 final class SharePostPresenter {
@@ -18,7 +20,7 @@ final class SharePostPresenter {
     var interactor: ISharePostInteractor?
     var router: ISharePostRouter?
     
-    var mediaFile: MediaFileType?
+    var mediaFile: UIImage?
 }
 
 // MARK: - ISharePostPresenter
@@ -30,7 +32,7 @@ extension SharePostPresenter: ISharePostPresenter {
         viewController?.setMediaFile(mediaFile)
     }
     
-    func didPressShareButton(withMediaFile mediaFile: MediaFileType, caption: String?) {
+    func didPressShareButton(withMediaFile mediaFile: UIImage, caption: String?) {
         viewController?.showSpinner()
         
         interactor?.sharePost(withMediaFile: mediaFile, caption: caption)

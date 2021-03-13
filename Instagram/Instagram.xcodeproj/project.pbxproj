@@ -92,10 +92,9 @@
 		845ADF2C25FCD790003DEC7A /* SearchCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845ADF2B25FCD790003DEC7A /* SearchCoordinator.swift */; };
 		845ADF2F25FCD7AB003DEC7A /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845ADF2E25FCD7AB003DEC7A /* ProfileCoordinator.swift */; };
 		845ADF3225FCD7CA003DEC7A /* NewPostCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845ADF3125FCD7CA003DEC7A /* NewPostCoordinator.swift */; };
-		845AE88D25C41B04005A1155 /* MediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE88C25C41B04005A1155 /* MediaService.swift */; };
+		845AE88D25C41B04005A1155 /* LocalImagesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE88C25C41B04005A1155 /* LocalImagesService.swift */; };
 		845AE89225C42425005A1155 /* MediaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE89125C42425005A1155 /* MediaCell.swift */; };
-		845AE89625C42ABA005A1155 /* MediaFileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AE89525C42ABA005A1155 /* MediaFileType.swift */; };
-		845B8C9925B6AC8000FE5ED6 /* InputValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B8C9825B6AC8000FE5ED6 /* InputValidation.swift */; };
+		845B8C9925B6AC8000FE5ED6 /* ValidationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B8C9825B6AC8000FE5ED6 /* ValidationService.swift */; };
 		845B8CB525B6D3C300FE5ED6 /* JSONCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B8CB425B6D3C300FE5ED6 /* JSONCoding.swift */; };
 		845BB22125C94B3200B01721 /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BB22025C94B3200B01721 /* PlaceholderTextView.swift */; };
 		845BB22525C95D0C00B01721 /* SelfSizedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845BB22425C95D0C00B01721 /* SelfSizedTextView.swift */; };
@@ -239,10 +238,9 @@
 		845ADF2B25FCD790003DEC7A /* SearchCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCoordinator.swift; sourceTree = "<group>"; };
 		845ADF2E25FCD7AB003DEC7A /* ProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinator.swift; sourceTree = "<group>"; };
 		845ADF3125FCD7CA003DEC7A /* NewPostCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostCoordinator.swift; sourceTree = "<group>"; };
-		845AE88C25C41B04005A1155 /* MediaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaService.swift; sourceTree = "<group>"; };
+		845AE88C25C41B04005A1155 /* LocalImagesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalImagesService.swift; sourceTree = "<group>"; };
 		845AE89125C42425005A1155 /* MediaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCell.swift; sourceTree = "<group>"; };
-		845AE89525C42ABA005A1155 /* MediaFileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaFileType.swift; sourceTree = "<group>"; };
-		845B8C9825B6AC8000FE5ED6 /* InputValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputValidation.swift; sourceTree = "<group>"; };
+		845B8C9825B6AC8000FE5ED6 /* ValidationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationService.swift; sourceTree = "<group>"; };
 		845B8CB425B6D3C300FE5ED6 /* JSONCoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONCoding.swift; sourceTree = "<group>"; };
 		845BB22025C94B3200B01721 /* PlaceholderTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
 		845BB22425C95D0C00B01721 /* SelfSizedTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfSizedTextView.swift; sourceTree = "<group>"; };
@@ -364,7 +362,7 @@
 		84488AC425C2F6BA00173A19 /* NewPostView */ = {
 			isa = PBXGroup;
 			children = (
-				845AE89125C42425005A1155 /* MediaCell.swift */,
+				845ADF3C25FCFDEA003DEC7A /* ImageCell */,
 				8411AF1225CD917A00547628 /* NewPostHeaderView.swift */,
 				84488AB125C2F66E00173A19 /* NewPostView.swift */,
 				84488AB525C2F67E00173A19 /* NewPostViewController.swift */,
@@ -540,6 +538,14 @@
 			path = Protocol;
 			sourceTree = "<group>";
 		};
+		845ADF3C25FCFDEA003DEC7A /* ImageCell */ = {
+			isa = PBXGroup;
+			children = (
+				845AE89125C42425005A1155 /* MediaCell.swift */,
+			);
+			path = ImageCell;
+			sourceTree = "<group>";
+		};
 		845B8C9325B6AB9300FE5ED6 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -614,8 +620,8 @@
 			isa = PBXGroup;
 			children = (
 				8491A83625B46BBD009EDFC2 /* Firebase */,
-				845B8C9825B6AC8000FE5ED6 /* InputValidation.swift */,
-				845AE88C25C41B04005A1155 /* MediaService.swift */,
+				845B8C9825B6AC8000FE5ED6 /* ValidationService.swift */,
+				845AE88C25C41B04005A1155 /* LocalImagesService.swift */,
 				8459C13425F4D3A300FFFB36 /* ImageCachingService.swift */,
 				845DEFBB25FBAB4400F02D77 /* LoginService.swift */,
 				845DEFC025FBCB9C00F02D77 /* RegistrationService.swift */,
@@ -667,9 +673,9 @@
 				84B2E66A25B0289D00B27457 /* Resources */,
 				84B2E66B25B04EFD00B27457 /* Utilities */,
 				8491A80625B43116009EDFC2 /* Constants */,
-				84E6610525B993470036AB9F /* Entities */,
-				845DEFA825FB534E00F02D77 /* Coordinators */,
+				84E6610525B993470036AB9F /* Model */,
 				8491A83525B46BA1009EDFC2 /* Services */,
+				845DEFA825FB534E00F02D77 /* Coordinators */,
 				84B2E67125B04F8400B27457 /* Modules */,
 			);
 			path = Instagram;
@@ -782,10 +788,9 @@
 			path = ProfileView;
 			sourceTree = "<group>";
 		};
-		84E6610525B993470036AB9F /* Entities */ = {
+		84E6610525B993470036AB9F /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				845AE89525C42ABA005A1155 /* MediaFileType.swift */,
 				84E6610725B9936E0036AB9F /* User.swift */,
 				8454137B25EF5E1900B0D544 /* UserStats.swift */,
 				845455D425BD44460007C9A2 /* UserPrivateInfo.swift */,
@@ -795,7 +800,7 @@
 				8454C5FE25EA2242000C44FD /* UserComment.swift */,
 				8454DCAD25ECAA92006DB3E2 /* FeedPost.swift */,
 			);
-			path = Entities;
+			path = Model;
 			sourceTree = "<group>";
 		};
 		84FE47D825B822C70048F5AA /* Extensions */ = {
@@ -988,7 +993,7 @@
 				84E6612825B9BC8A0036AB9F /* ProfileHeaderView.swift in Sources */,
 				84488AB925C2F69F00173A19 /* NewPostInteractor.swift in Sources */,
 				8453275925FA1B0F00B39D6D /* UIButton+twoPartTitle.swift in Sources */,
-				845B8C9925B6AC8000FE5ED6 /* InputValidation.swift in Sources */,
+				845B8C9925B6AC8000FE5ED6 /* ValidationService.swift in Sources */,
 				84488ABC25C2F6A600173A19 /* NewPostPresenter.swift in Sources */,
 				84549B8225E8CEF7006CC21D /* CommentsInteractor.swift in Sources */,
 				84549B8825E8CF14006CC21D /* CommentsRouter.swift in Sources */,
@@ -996,7 +1001,7 @@
 				845464F625DA5CE500DCD136 /* SearchAssembly.swift in Sources */,
 				8459C14925F52D9F00FFFB36 /* EditProfileBioViewController.swift in Sources */,
 				8454D0F425F6362000DD27DD /* EditProfileUsernameAssembly.swift in Sources */,
-				845AE88D25C41B04005A1155 /* MediaService.swift in Sources */,
+				845AE88D25C41B04005A1155 /* LocalImagesService.swift in Sources */,
 				845BB22525C95D0C00B01721 /* SelfSizedTextView.swift in Sources */,
 				8454E52E25D3E765003A89E7 /* UIImage+instagramCrop.swift in Sources */,
 				84B2E67B25B050CE00B27457 /* HomePresenter.swift in Sources */,
@@ -1033,7 +1038,6 @@
 				845800BD25C6AFA600816642 /* NewPostConstants.swift in Sources */,
 				8454138225EF949C00B0D544 /* FollowersFollowingView.swift in Sources */,
 				845455E825BD89BD0007C9A2 /* LoginViewController.swift in Sources */,
-				845AE89625C42ABA005A1155 /* MediaFileType.swift in Sources */,
 				84549BA425BEC7AE007D24E2 /* SimpleAlert.swift in Sources */,
 				84F9694525D14FA10004D838 /* UIImage+crop.swift in Sources */,
 				8453275E25FA25A100B39D6D /* UIButton+.swift in Sources */,

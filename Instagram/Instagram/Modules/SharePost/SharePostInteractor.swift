@@ -5,8 +5,10 @@
 //  Created by Admin on 01.02.2021.
 //
 
+import UIKit
+
 protocol ISharePostInteractor: AnyObject {
-    func sharePost(withMediaFile mediaFile: MediaFileType, caption: String?)
+    func sharePost(withMediaFile mediaFile: UIImage, caption: String?)
 }
 
 protocol ISharePostInteractorOutput: AnyObject {
@@ -21,33 +23,30 @@ final class SharePostInteractor {
 // MARK: - ISharePostInteractor
 
 extension SharePostInteractor: ISharePostInteractor {
-    func sharePost(withMediaFile mediaFile: MediaFileType, caption: String?) {
+    func sharePost(withMediaFile mediaFile: UIImage, caption: String?) {
         guard let userIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        switch mediaFile {
-        case .image(let image):
-            let croppedImage = image.instagramCrop() ?? image
-            
-            guard let imageData = croppedImage.jpegData(
-                compressionQuality: SharePostConstants.Constants.imageCompressionQuality) else { return }
-            
-            let imageAspectRatio = croppedImage.size.width / croppedImage.size.height
-            let caption = (caption?.isEmpty ?? true) ? nil : caption
-            
-            FirebaseDatabaseService.sharePost(
-                userIdentifier: userIdentifier,
-                imageData: imageData,
-                imageAspectRatio: imageAspectRatio,
-                caption: caption) { [self] error in
-                if let error = error {
-                    presenter?.sharePostFailure()
-                    
-                    print("Failed to share post: \(error.localizedDescription)")
-                } else {
-                    presenter?.sharePostSuccess()
-                    
-                    print("Post successfully shared")
-                }
+        let croppedImage = mediaFile.instagramCrop() ?? mediaFile
+        
+        guard let imageData = croppedImage.jpegData(
+            compressionQuality: SharePostConstants.Constants.imageCompressionQuality) else { return }
+        
+        let imageAspectRatio = croppedImage.size.width / croppedImage.size.height
+        let caption = (caption?.isEmpty ?? true) ? nil : caption
+        
+        FirebaseDatabaseService.sharePost(
+            userIdentifier: userIdentifier,
+            imageData: imageData,
+            imageAspectRatio: imageAspectRatio,
+            caption: caption) { [self] error in
+            if let error = error {
+                presenter?.sharePostFailure()
+                
+                print("Failed to share post: \(error.localizedDescription)")
+            } else {
+                presenter?.sharePostSuccess()
+                
+                print("Post successfully shared")
             }
         }
     }

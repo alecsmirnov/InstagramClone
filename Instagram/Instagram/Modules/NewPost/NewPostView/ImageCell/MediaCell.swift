@@ -35,11 +35,8 @@ final class MediaCell: UICollectionViewCell {
 // MARK: - Public Methods
 
 extension MediaCell {
-    func configure(with mediaFile: MediaFileType) {
-        switch mediaFile {
-        case .image(let image):
-            imageView.image = image
-        }
+    func configure(with mediaFile: UIImage) {
+        imageView.image = mediaFile
     }
 }
 

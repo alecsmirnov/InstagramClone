@@ -30,7 +30,7 @@ extension EditProfileUsernameInteractor: IEditProfileUsernameInteractor {
             return
         }
         
-        guard InputValidation.isValidUsername(username) else {
+        guard ValidationService.isValidUsername(username) else {
             presenter?.isInvalidUsername()
             
             return

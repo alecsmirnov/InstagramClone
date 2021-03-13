@@ -6,6 +6,7 @@
 //
 
 import Photos
+import UIKit
 
 final class LocalImagesService {
     // MARK: Properties
@@ -27,6 +28,8 @@ final class LocalImagesService {
         static let creationDate = "creationDate"
     }
     
+    // MARK: Lifecycle
+    
     init() {
         fetchImagesAssets()
     }
@@ -37,7 +40,7 @@ final class LocalImagesService {
 extension LocalImagesService {
     func fetchNextImage(
         targetSize: CGSize = PHImageManagerMaximumSize,
-        completion: @escaping (MediaFileType?) -> Void
+        completion: @escaping (UIImage?) -> Void
     ) {
         if currentImageIndex < imagesCount {
             fetchImage(at: currentImageIndex, targetSize: targetSize, completion: completion)
@@ -49,7 +52,7 @@ extension LocalImagesService {
     func fetchImage(
         at index: Int,
         targetSize: CGSize = PHImageManagerMaximumSize,
-        completion: @escaping (MediaFileType?) -> Void
+        completion: @escaping (UIImage?) -> Void
     ) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let asset = self?.assets?.object(at: index) else {
@@ -67,7 +70,7 @@ extension LocalImagesService {
                 options: self?.imageRequestOptions) { image, _ in                
                 if let image = image {
                     DispatchQueue.main.async {
-                        completion(.image(image))
+                        completion(image)
                     }
                     
                     self?.cachingImageManager.startCachingImages(

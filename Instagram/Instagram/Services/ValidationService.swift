@@ -1,5 +1,5 @@
 //
-//  InputValidation.swift
+//  ValidationService.swift
 //  Instagram
 //
 //  Created by Admin on 19.01.2021.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum InputValidation {
+enum ValidationService {
     // MARK: Properties
     
     static let passwordLengthMin = 6
@@ -15,7 +15,7 @@ enum InputValidation {
 
 // MARK: - Public Methods
 
-extension InputValidation {
+extension ValidationService {
     static func isValidEmail(_ email: String) -> Bool {
         let emailRegex = "[A-Z0-9a-z._-]+@[A-Z0-9a-z]+\\.[A-Za-z]{2,6}"
         let isValid = NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: email)

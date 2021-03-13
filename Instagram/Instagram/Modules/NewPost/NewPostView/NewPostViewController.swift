@@ -8,8 +8,8 @@
 import UIKit
 
 protocol INewPostViewController: AnyObject {
-    func appendCellMediaFile(_ mediaFile: MediaFileType)
-    func setOriginalMediaFile(_ mediaFile: MediaFileType)
+    func appendCellMediaFile(_ mediaFile: UIImage)
+    func setOriginalMediaFile(_ mediaFile: UIImage)
     
     func enableNextButton()
     func disableNextButton()
@@ -38,11 +38,11 @@ final class NewPostViewController: CustomViewController<NewPostView> {
 // MARK: - INewPostViewController
 
 extension NewPostViewController: INewPostViewController {
-    func appendCellMediaFile(_ mediaFile: MediaFileType) {
+    func appendCellMediaFile(_ mediaFile: UIImage) {
         customView?.appendCellMediaFile(mediaFile)
     }
     
-    func setOriginalMediaFile(_ mediaFile: MediaFileType) {
+    func setOriginalMediaFile(_ mediaFile: UIImage) {
         customView?.setOriginalMediaFile(mediaFile)
     }
     

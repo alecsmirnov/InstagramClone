@@ -5,14 +5,16 @@
 //  Created by Admin on 28.01.2021.
 //
 
+import UIKit
+
 protocol INewPostInteractor: AnyObject {
     func fetchCellMediaFile()
     func fetchOriginalMediaFile(at index: Int)
 }
 
 protocol INewPostInteractorOutput: AnyObject {
-    func fetchCellMediaFileSuccess(_ mediaFile: MediaFileType)
-    func fetchOriginalMediaFileSuccess(_ mediaFile: MediaFileType, at index: Int)
+    func fetchCellMediaFileSuccess(_ mediaFile: UIImage)
+    func fetchOriginalMediaFileSuccess(_ mediaFile: UIImage, at index: Int)
 }
 
 final class NewPostInteractor {
@@ -20,7 +22,7 @@ final class NewPostInteractor {
     
     weak var presenter: INewPostInteractorOutput?
     
-    private var mediaService = MediaService()
+    private var mediaService = LocalImagesService()
 }
 
 // MARK: - INewPostInteractor

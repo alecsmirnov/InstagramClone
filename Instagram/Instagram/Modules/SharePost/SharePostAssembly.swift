@@ -5,8 +5,10 @@
 //  Created by Admin on 01.02.2021.
 //
 
+import UIKit
+
 enum SharePostAssembly {
-    static func createSharePostViewController(mediaFile: MediaFileType) -> SharePostViewController {
+    static func createSharePostViewController(mediaFile: UIImage) -> SharePostViewController {
         let viewController = SharePostViewController()
         
         let interactor = SharePostInteractor()

@@ -49,7 +49,7 @@ struct RegistrationService: RegistrationServiceProtocol {
             return
         }
         
-        guard InputValidation.isValidEmail(email) else {
+        guard ValidationService.isValidEmail(email) else {
             completion(.invalid)
             
             return
@@ -72,7 +72,7 @@ struct RegistrationService: RegistrationServiceProtocol {
             return
         }
         
-        guard InputValidation.isValidUsername(username) else {
+        guard ValidationService.isValidUsername(username) else {
             completion(.invalid)
             
             return
@@ -95,8 +95,8 @@ struct RegistrationService: RegistrationServiceProtocol {
             return
         }
         
-        guard InputValidation.passwordLengthMin <= password.count else {
-            completion(.invalid(InputValidation.passwordLengthMin))
+        guard ValidationService.passwordLengthMin <= password.count else {
+            completion(.invalid(ValidationService.passwordLengthMin))
             
             return
         }

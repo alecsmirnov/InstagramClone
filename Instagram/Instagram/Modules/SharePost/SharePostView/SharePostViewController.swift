@@ -8,7 +8,7 @@
 import UIKit
 
 protocol ISharePostViewController: AnyObject {
-    func setMediaFile(_ mediaFile: MediaFileType)
+    func setMediaFile(_ mediaFile: UIImage)
     
     func showSpinner()
     func hideSpinner()
@@ -41,7 +41,7 @@ final class SharePostViewController: CustomViewController<SharePostView> {
 // MARK: - ISharePostViewController
 
 extension SharePostViewController: ISharePostViewController {
-    func setMediaFile(_ mediaFile: MediaFileType) {
+    func setMediaFile(_ mediaFile: UIImage) {
         customView?.setMediaFile(mediaFile)
     }
     
@@ -92,6 +92,6 @@ private extension SharePostViewController {
     @objc func didPressShareButton() {
         guard let image = customView?.image else { return }
         
-        presenter?.didPressShareButton(withMediaFile: .image(image), caption: customView?.caption)
+        presenter?.didPressShareButton(withMediaFile: image, caption: customView?.caption)
     }
 }
