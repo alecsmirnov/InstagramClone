@@ -8,8 +8,6 @@
 protocol IHomePresenter: AnyObject {
     func viewDidLoad()
     
-    func didPressCloseButton()
-    
     func didPullToRefresh()
     func didRequestPosts()
     
@@ -45,10 +43,6 @@ extension HomePresenter: IHomePresenter {
     func viewDidLoad() {
         interactor?.fetchUserPosts()
         interactor?.observeUserFeed()
-    }
-    
-    func didPressCloseButton() {
-        //coordinator?.closeTabBarController()
     }
     
     func didPullToRefresh() {

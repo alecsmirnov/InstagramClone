@@ -59,7 +59,6 @@
 		84549B8B25E8CF1B006CC21D /* CommentsAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549B8A25E8CF1B006CC21D /* CommentsAssembly.swift */; };
 		84549B8E25E8DB6E006CC21D /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549B8D25E8DB6E006CC21D /* CommentCell.swift */; };
 		84549BA425BEC7AE007D24E2 /* SimpleAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BA325BEC7AE007D24E2 /* SimpleAlert.swift */; };
-		84549BB025BEFC2F007D24E2 /* RootViewControllerSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84549BAF25BEFC2F007D24E2 /* RootViewControllerSwitcher.swift */; };
 		8454C5FC25EA1F3D000C44FD /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C5FB25EA1F3D000C44FD /* Comment.swift */; };
 		8454C5FF25EA2242000C44FD /* UserComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C5FE25EA2242000C44FD /* UserComment.swift */; };
 		8454D0DB25F5DFA000DD27DD /* EditProfileBioPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D0DA25F5DFA000DD27DD /* EditProfileBioPresenter.swift */; };
@@ -205,7 +204,6 @@
 		84549B8A25E8CF1B006CC21D /* CommentsAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsAssembly.swift; sourceTree = "<group>"; };
 		84549B8D25E8DB6E006CC21D /* CommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
 		84549BA325BEC7AE007D24E2 /* SimpleAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleAlert.swift; sourceTree = "<group>"; };
-		84549BAF25BEFC2F007D24E2 /* RootViewControllerSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewControllerSwitcher.swift; sourceTree = "<group>"; };
 		8454C5FB25EA1F3D000C44FD /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		8454C5FE25EA2242000C44FD /* UserComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserComment.swift; sourceTree = "<group>"; };
 		8454D0DA25F5DFA000DD27DD /* EditProfileBioPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileBioPresenter.swift; sourceTree = "<group>"; };
@@ -377,6 +375,9 @@
 				845BB22025C94B3200B01721 /* PlaceholderTextView.swift */,
 				8459C12D25F4B78D00FFFB36 /* MaterialTextField.swift */,
 				8453273D25F9EC2700B39D6D /* SpinnerButton.swift */,
+				845D7D8D25BC472C001E5037 /* TwoPartsButton.swift */,
+				845C5E0125CC2733002A2E16 /* SpinnerView.swift */,
+				845BB22425C95D0C00B01721 /* SelfSizedTextView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -546,6 +547,15 @@
 			path = ImageCell;
 			sourceTree = "<group>";
 		};
+		845ADF4A25FD0BD2003DEC7A /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				845DEFBB25FBAB4400F02D77 /* LoginService.swift */,
+				845DEFC025FBCB9C00F02D77 /* RegistrationService.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
 		845B8C9325B6AB9300FE5ED6 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -554,7 +564,6 @@
 				84549BA325BEC7AE007D24E2 /* SimpleAlert.swift */,
 				8454D0F625F658DC00DD27DD /* TimeoutAlert.swift */,
 				845455FA25BDAC460007C9A2 /* KeyboardAppearanceListener.swift */,
-				84549BAF25BEFC2F007D24E2 /* RootViewControllerSwitcher.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -578,16 +587,6 @@
 				845CC1FF25C7ECE20051372D /* SharePostViewController.swift */,
 			);
 			path = SharePostView;
-			sourceTree = "<group>";
-		};
-		845D7D8525BC1DD2001E5037 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				845BB22425C95D0C00B01721 /* SelfSizedTextView.swift */,
-				845D7D8D25BC472C001E5037 /* TwoPartsButton.swift */,
-				845C5E0125CC2733002A2E16 /* SpinnerView.swift */,
-			);
-			path = Views;
 			sourceTree = "<group>";
 		};
 		845DEFA825FB534E00F02D77 /* Coordinators */ = {
@@ -620,11 +619,10 @@
 			isa = PBXGroup;
 			children = (
 				8491A83625B46BBD009EDFC2 /* Firebase */,
+				845ADF4A25FD0BD2003DEC7A /* Auth */,
 				845B8C9825B6AC8000FE5ED6 /* ValidationService.swift */,
 				845AE88C25C41B04005A1155 /* LocalImagesService.swift */,
 				8459C13425F4D3A300FFFB36 /* ImageCachingService.swift */,
-				845DEFBB25FBAB4400F02D77 /* LoginService.swift */,
-				845DEFC025FBCB9C00F02D77 /* RegistrationService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -676,7 +674,7 @@
 				84E6610525B993470036AB9F /* Model */,
 				8491A83525B46BA1009EDFC2 /* Services */,
 				845DEFA825FB534E00F02D77 /* Coordinators */,
-				84B2E67125B04F8400B27457 /* Modules */,
+				84B2E67125B04F8400B27457 /* Screens */,
 			);
 			path = Instagram;
 			sourceTree = "<group>";
@@ -706,7 +704,6 @@
 			children = (
 				8453275C25FA256D00B39D6D /* Design */,
 				8453273725F9E3C600B39D6D /* Components */,
-				845D7D8525BC1DD2001E5037 /* Views */,
 				8445929425B425060028EE6A /* Controllers */,
 				845B8C9325B6AB9300FE5ED6 /* Helpers */,
 				84FE47D825B822C70048F5AA /* Extensions */,
@@ -714,10 +711,9 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
-		84B2E67125B04F8400B27457 /* Modules */ = {
+		84B2E67125B04F8400B27457 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
-				8454924825C19805005AB7DA /* MainTabBarController.swift */,
 				8445928C25B41DF50028EE6A /* Login */,
 				8445928D25B41E3A0028EE6A /* Registration */,
 				84B2E67225B0507200B27457 /* Home */,
@@ -730,8 +726,9 @@
 				8454D0E725F6334400DD27DD /* EditProfileUsername */,
 				8454D0DE25F5FBB000DD27DD /* EditProfileBio */,
 				8454137F25EF946B00B0D544 /* FollowersFollowing */,
+				8454924825C19805005AB7DA /* MainTabBarController.swift */,
 			);
-			path = Modules;
+			path = Screens;
 			sourceTree = "<group>";
 		};
 		84B2E67225B0507200B27457 /* Home */ = {
@@ -1047,7 +1044,6 @@
 				845C284D25CADE16000731B3 /* FirebaseDatabaseService.swift in Sources */,
 				845C284325CABB2D000731B3 /* FirebaseStorageService.swift in Sources */,
 				84E660A625B9552D0036AB9F /* ProfilePresenter.swift in Sources */,
-				84549BB025BEFC2F007D24E2 /* RootViewControllerSwitcher.swift in Sources */,
 				84549B8B25E8CF1B006CC21D /* CommentsAssembly.swift in Sources */,
 				84B2E68625B0512100B27457 /* HomeRouter.swift in Sources */,
 				845CC20825C7ED370051372D /* SharePostPresenter.swift in Sources */,
