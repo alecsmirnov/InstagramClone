@@ -24,16 +24,22 @@ protocol AuthCoordinatorDelegate: AnyObject {
 final class AuthCoordinator: Coordinator {
     // MARK: Properties
     
-    weak var delegate: AuthCoordinatorDelegate?
-    
     var childCoordinators: [Coordinator] = []
     
     var navigationController: UINavigationController
+    
+    private weak var delegate: AuthCoordinatorDelegate?
     
     // MARK: Lifecycle
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
+    }
+    
+    convenience init(navigationController: UINavigationController, delegate: AuthCoordinatorDelegate?) {
+        self.init(navigationController: navigationController)
+        
+        self.delegate = delegate
     }
 }
 

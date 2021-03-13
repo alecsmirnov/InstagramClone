@@ -8,7 +8,12 @@
 import UIKit
 
 protocol NewPostCoordinatorProtocol: AnyObject {
-    
+    func closeNewPostViewController()
+    func showSharePostViewController()
+}
+
+protocol NewPostCoordinatorDelegate: AnyObject {
+    func newPostCoordinatorDidClose(_ newPostCoordinator: NewPostCoordinator)
 }
 
 final class NewPostCoordinator: Coordinator {
@@ -18,7 +23,8 @@ final class NewPostCoordinator: Coordinator {
     
     var navigationController: UINavigationController
     
-    private var tabBarController: UITabBarController?
+    private weak var presenterController: UIViewController?
+    private weak var delegate: NewPostCoordinatorDelegate?
     
     // MARK: Lifecycle
     
@@ -26,10 +32,11 @@ final class NewPostCoordinator: Coordinator {
         self.navigationController = navigationController
     }
     
-    convenience init(tabBarController: UITabBarController?) {
+    convenience init(presenterController: UIViewController?, delegate: NewPostCoordinatorDelegate?) {
         self.init(navigationController: UINavigationController())
         
-        self.tabBarController = tabBarController
+        self.presenterController = presenterController
+        self.delegate = delegate
     }
 }
 
@@ -41,12 +48,20 @@ extension NewPostCoordinator {
         
         newPostViewController.modalPresentationStyle = .fullScreen
 
-        tabBarController?.present(newPostViewController, animated: true)
+        presenterController?.present(newPostViewController, animated: true)
     }
 }
 
 // MARK: - NewPostCoordinatorProtocol
 
 extension NewPostCoordinator: NewPostCoordinatorProtocol {
+    func closeNewPostViewController() {
+        presenterController?.dismiss(animated: true)
+        
+        delegate?.newPostCoordinatorDidClose(self)
+    }
     
+    func showSharePostViewController() {
+        
+    }
 }

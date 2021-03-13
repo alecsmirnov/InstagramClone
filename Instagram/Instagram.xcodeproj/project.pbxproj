@@ -532,13 +532,6 @@
 			path = EditProfileView;
 			sourceTree = "<group>";
 		};
-		845504F125B1C26300715C3B /* TabBar */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = TabBar;
-			sourceTree = "<group>";
-		};
 		845B8C9325B6AB9300FE5ED6 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -713,7 +706,6 @@
 				8454924825C19805005AB7DA /* MainTabBarController.swift */,
 				8445928C25B41DF50028EE6A /* Login */,
 				8445928D25B41E3A0028EE6A /* Registration */,
-				845504F125B1C26300715C3B /* TabBar */,
 				84B2E67225B0507200B27457 /* Home */,
 				84549B7825E8CEA2006CC21D /* Comments */,
 				845464E425DA5C0A00DCD136 /* Search */,

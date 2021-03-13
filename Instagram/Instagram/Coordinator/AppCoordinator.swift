@@ -53,9 +53,8 @@ extension AppCoordinator: AuthCoordinatorDelegate {
 
 private extension AppCoordinator {
     func startAuthFlow() {
-        let authCoordinator = AuthCoordinator(navigationController: navigationController)
+        let authCoordinator = AuthCoordinator(navigationController: navigationController, delegate: self)
         
-        authCoordinator.delegate = self
         authCoordinator.start()
         
         appendChildCoordinator(authCoordinator)
@@ -64,7 +63,6 @@ private extension AppCoordinator {
     func startMainFlow() {
         let mainCoordinator = MainCoordinator(navigationController: navigationController)
         
-        //mainCoordinator.delegate = self
         mainCoordinator.start()
         
         appendChildCoordinator(mainCoordinator)

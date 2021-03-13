@@ -17,13 +17,17 @@ final class NewPostPresenter {
     weak var viewController: INewPostViewController?
     var interactor: INewPostInteractor?
     var router: INewPostRouter?
+    
+    weak var coordinator: NewPostCoordinatorProtocol?
 }
 
 // MARK: - INewPostPresenter
 
 extension NewPostPresenter: INewPostPresenter {
     func didPressCloseButton() {
-        router?.closeNewPostViewController()
+        //router?.closeNewPostViewController()
+        
+        coordinator?.closeNewPostViewController()
     }
     
     func didPressNextButton(with mediaFile: MediaFileType?) {

@@ -7,10 +7,6 @@
 
 import UIKit
 
-protocol TabBarCoordinatorProtocol: AnyObject {
-    func showNewPostViewController()
-}
-
 final class MainCoordinator: Coordinator {
     // MARK: Properties
     
@@ -58,7 +54,7 @@ private extension MainCoordinator {
         mainTabBarController.appendNavigationController(profileCoordinator.navigationController, item: .profile)
         
         mainTabBarController.didSelectPlusTabItem = { [weak self] in
-            let newPostCoordinator = NewPostCoordinator(tabBarController: mainTabBarController)
+            let newPostCoordinator = NewPostCoordinator(presenterController: mainTabBarController, delegate: self)
             
             newPostCoordinator.start()
             
@@ -66,5 +62,13 @@ private extension MainCoordinator {
         }
         
         navigationController.pushViewController(mainTabBarController, animated: true)
+    }
+}
+
+// MARK: - NewPostCoordinatorDelegate
+
+extension MainCoordinator: NewPostCoordinatorDelegate {
+    func newPostCoordinatorDidClose(_ newPostCoordinator: NewPostCoordinator) {
+        removeChildCoordinator(newPostCoordinator)
     }
 }
