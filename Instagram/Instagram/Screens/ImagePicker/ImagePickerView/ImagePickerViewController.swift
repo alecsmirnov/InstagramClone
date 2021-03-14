@@ -17,6 +17,7 @@ protocol ImagePickerViewControllerProtocol: AnyObject {
     
     func insertNewItems(count: Int)
     
+    func showNoImagesHeader()
     func enableNextButton()
     func disableNextButton()
 }
@@ -90,6 +91,10 @@ extension ImagePickerViewController: ImagePickerViewControllerProtocol {
     
     func insertNewItems(count: Int) {
         customView?.insertNewItems(count: count)
+    }
+    
+    func showNoImagesHeader() {
+        customView?.showNoImagesHeader()
     }
     
     func enableNextButton() {

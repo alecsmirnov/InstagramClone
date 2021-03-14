@@ -8,14 +8,27 @@
 import UIKit
 
 final class ImagePickerCollectionViewDataSource: NSObject {
+    // MARK: Properties
+    
     var lastCellPresentedCompletion: (() -> Void)?
     
     var imagesCount: Int {
         return images.count
     }
     
+    var headerViewKind: HeaderViewKind = .image
+    
     private var images: [UIImage] = []
+    
+    // MARK: Constants
+    
+    enum HeaderViewKind {
+        case image
+        case noImages
+    }
 }
+
+// MARK: - Public Methods
 
 extension ImagePickerCollectionViewDataSource {
     func appendImage(_ image: UIImage) {
@@ -65,14 +78,27 @@ extension ImagePickerCollectionViewDataSource: UICollectionViewDataSource {
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
     ) -> UICollectionReusableView {
-        guard let header = collectionView.dequeueReusableSupplementaryView(
-            ofKind: kind,
-            withReuseIdentifier: ImageHeaderView.reuseIdentifier,
-            for: indexPath) as? ImageHeaderView
-        else {
-            return UICollectionReusableView()
+        switch headerViewKind {
+        case .image:
+            guard let header = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: ImageHeaderView.reuseIdentifier,
+                for: indexPath) as? ImageHeaderView
+            else {
+                return UICollectionReusableView()
+            }
+            
+            return header
+        case .noImages:
+            guard let header = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: NoImagesHeaderView.reuseIdentifier,
+                for: indexPath) as? NoImagesHeaderView
+            else {
+                return UICollectionReusableView()
+            }
+            
+            return header
         }
-
-        return header
     }
 }

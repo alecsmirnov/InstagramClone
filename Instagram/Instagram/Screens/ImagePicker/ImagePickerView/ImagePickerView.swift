@@ -16,6 +16,7 @@ protocol ImagePickerViewProtocol: UIView {
     func getHeaderImage() -> UIImage?
     
     func insertNewItems(count: Int)
+    func showNoImagesHeader()
 }
 
 protocol ImagePickerViewOutputProtocol: AnyObject {
@@ -70,7 +71,7 @@ final class ImagePickerView: UIView {
 
 // MARK: - Interface
 
-extension ImagePickerView: ImagePickerViewProtocol {
+extension ImagePickerView: ImagePickerViewProtocol {    
     func setHeaderImage(_ image: UIImage) {
         guard let headerView = getHeaderView() else { return }
         
@@ -104,6 +105,11 @@ extension ImagePickerView: ImagePickerViewProtocol {
             collectionView.reloadData()
         }
     }
+    
+    func showNoImagesHeader() {
+        collectionViewDataSource.headerViewKind = .noImages
+        collectionView.reloadData()
+    }
 }
 
 // MARK: - Private Methods
@@ -130,11 +136,15 @@ private extension ImagePickerView {
         collectionView.backgroundColor = .clear
         collectionView.delaysContentTouches = false
                 
-        collectionView.register(ImageCell.self, forCellWithReuseIdentifier: ImageCell.reuseIdentifier)
         collectionView.register(
             ImageHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: ImageHeaderView.reuseIdentifier)
+        collectionView.register(
+            NoImagesHeaderView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: NoImagesHeaderView.reuseIdentifier)
+        collectionView.register(ImageCell.self, forCellWithReuseIdentifier: ImageCell.reuseIdentifier)
         
         setupCollectionViewDataSource()
         setupCollectionViewDelegate()

@@ -27,6 +27,7 @@ final class ImagePickerPresenter {
 extension ImagePickerPresenter: ImagePickerViewControllerOutputProtocol {
     func viewDidLoad() {
         guard !imagesService.isEmpty else {
+            view?.showNoImagesHeader()
             view?.disableNextButton()
             
             return

@@ -119,6 +119,7 @@
 		845DEFC125FBCB9C00F02D77 /* RegistrationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845DEFC025FBCB9C00F02D77 /* RegistrationService.swift */; };
 		845E446225FDCD1E00198EBD /* ImagePickerCollectionViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845E446125FDCD1E00198EBD /* ImagePickerCollectionViewDelegate.swift */; };
 		845E446625FDCD3400198EBD /* ImagePickerCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845E446525FDCD3400198EBD /* ImagePickerCollectionViewDataSource.swift */; };
+		845E447725FE211A00198EBD /* NoImagesHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845E447625FE211A00198EBD /* NoImagesHeaderView.swift */; };
 		845F68D125D2646B0073FAC8 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F68D025D2646B0073FAC8 /* PostCell.swift */; };
 		8491A81225B46073009EDFC2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8491A81125B46073009EDFC2 /* GoogleService-Info.plist */; };
 		8491A84325B47DF6009EDFC2 /* RegistrationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8491A84225B47DF6009EDFC2 /* RegistrationPresenter.swift */; };
@@ -263,6 +264,7 @@
 		845DEFC025FBCB9C00F02D77 /* RegistrationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationService.swift; sourceTree = "<group>"; };
 		845E446125FDCD1E00198EBD /* ImagePickerCollectionViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerCollectionViewDelegate.swift; sourceTree = "<group>"; };
 		845E446525FDCD3400198EBD /* ImagePickerCollectionViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerCollectionViewDataSource.swift; sourceTree = "<group>"; };
+		845E447625FE211A00198EBD /* NoImagesHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoImagesHeaderView.swift; sourceTree = "<group>"; };
 		845F68D025D2646B0073FAC8 /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
 		8491A81125B46073009EDFC2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8491A84225B47DF6009EDFC2 /* RegistrationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationPresenter.swift; sourceTree = "<group>"; };
@@ -356,7 +358,7 @@
 		84488AC425C2F6BA00173A19 /* ImagePickerView */ = {
 			isa = PBXGroup;
 			children = (
-				845E445C25FDC75200198EBD /* HeaderView */,
+				845E445C25FDC75200198EBD /* HeaderViews */,
 				845ADF3C25FCFDEA003DEC7A /* Cell */,
 				845E446025FDCCF500198EBD /* CollectionView */,
 				84488AB125C2F66E00173A19 /* ImagePickerView.swift */,
@@ -592,12 +594,13 @@
 			path = Coordinators;
 			sourceTree = "<group>";
 		};
-		845E445C25FDC75200198EBD /* HeaderView */ = {
+		845E445C25FDC75200198EBD /* HeaderViews */ = {
 			isa = PBXGroup;
 			children = (
 				8411AF1225CD917A00547628 /* ImageHeaderView.swift */,
+				845E447625FE211A00198EBD /* NoImagesHeaderView.swift */,
 			);
-			path = HeaderView;
+			path = HeaderViews;
 			sourceTree = "<group>";
 		};
 		845E446025FDCCF500198EBD /* CollectionView */ = {
@@ -1059,6 +1062,7 @@
 				845F68D125D2646B0073FAC8 /* PostCell.swift in Sources */,
 				8454138625EF94AC00B0D544 /* FollowersFollowingViewController.swift in Sources */,
 				84B2E65525B0267700B27457 /* SceneDelegate.swift in Sources */,
+				845E447725FE211A00198EBD /* NoImagesHeaderView.swift in Sources */,
 				8454138F25EF94CF00B0D544 /* FollowersFollowingRouter.swift in Sources */,
 				8454138925EF94B800B0D544 /* FollowersFollowingInteractor.swift in Sources */,
 				8459C14325F5299100FFFB36 /* EditProfileUsernameViewController.swift in Sources */,

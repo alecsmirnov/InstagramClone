@@ -21,6 +21,7 @@ final class ImageHeaderView: UICollectionReusableView {
     private let adjustButton = UIButton(type: .system)
     private let scrollView = UIScrollView()
     private let imageView = UIImageView()
+    private let separatorView = UIView()
     
     // MARK: Constants
     
@@ -31,10 +32,6 @@ final class ImageHeaderView: UICollectionReusableView {
     
     private enum Images {
         static let adjust = UIImage(named: "adjust_fill")
-    }
-    
-    private enum Colors {
-        static let scrollViewBackground = UIColor(white: 0.94, alpha: 1)
     }
     
     private enum Constants {
@@ -169,7 +166,6 @@ private extension ImageHeaderView {
         scrollView.alwaysBounceVertical = true
         scrollView.alwaysBounceHorizontal = true
         scrollView.isMultipleTouchEnabled = false
-        scrollView.backgroundColor = Colors.scrollViewBackground
         
         scrollView.delegate = self
     }
