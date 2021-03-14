@@ -7,9 +7,13 @@
 
 import UIKit
 
-protocol NewPostCoordinatorProtocol: AnyObject {
+protocol ImagePickerCoordinatorProtocol: AnyObject {
     func closeNewPostViewController()
     func showSharePostViewController(withImage image: UIImage)
+}
+
+protocol SharePostCoordinatorProtocol: AnyObject {
+    
 }
 
 protocol NewPostCoordinatorDelegate: AnyObject {
@@ -43,17 +47,19 @@ final class NewPostCoordinator: CoordinatorProtocol {
 
 extension NewPostCoordinator {
     func start() {
-        let newPostViewController = ImagePickerAssembly.createImagePickerNavigationController(coordinator: self)
+        let imagePickerNavigationController = ImagePickerAssembly.createImagePickerNavigationController(
+            coordinator: self)
         
-        newPostViewController.modalPresentationStyle = .fullScreen
-
-        presenterController?.present(newPostViewController, animated: true)
+        imagePickerNavigationController.modalPresentationStyle = .fullScreen
+        
+        navigationController = imagePickerNavigationController
+        presenterController?.present(imagePickerNavigationController, animated: true)
     }
 }
 
-// MARK: - NewPostCoordinatorProtocol
+// MARK: - ImagePickerCoordinatorProtocol
 
-extension NewPostCoordinator: NewPostCoordinatorProtocol {
+extension NewPostCoordinator: ImagePickerCoordinatorProtocol {
     func closeNewPostViewController() {
         presenterController?.dismiss(animated: true)
         
@@ -61,6 +67,14 @@ extension NewPostCoordinator: NewPostCoordinatorProtocol {
     }
     
     func showSharePostViewController(withImage image: UIImage) {
+        let sharePostViewController = SharePostAssembly.createSharePostViewController(image: image, coordinator: self)
         
+        navigationController.pushViewController(sharePostViewController, animated: true)
     }
+}
+
+// MARK: - SharePostCoordinatorProtocol
+
+extension NewPostCoordinator: SharePostCoordinatorProtocol {
+    
 }

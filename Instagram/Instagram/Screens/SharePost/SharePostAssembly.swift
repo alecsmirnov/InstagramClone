@@ -8,7 +8,10 @@
 import UIKit
 
 enum SharePostAssembly {
-    static func createSharePostViewController(mediaFile: UIImage) -> SharePostViewController {
+    static func createSharePostViewController(
+        image: UIImage,
+        coordinator: SharePostCoordinatorProtocol? = nil
+    )-> SharePostViewController {
         let viewController = SharePostViewController()
         
         let interactor = SharePostInteractor()
@@ -23,7 +26,7 @@ enum SharePostAssembly {
         presenter.interactor = interactor
         presenter.router = router
         
-        presenter.mediaFile = mediaFile
+        presenter.mediaFile = image
         
         return viewController
     }

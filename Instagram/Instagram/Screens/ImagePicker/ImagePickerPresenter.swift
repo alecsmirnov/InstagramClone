@@ -11,7 +11,7 @@ final class ImagePickerPresenter {
     // MARK: Properties
     
     weak var view: ImagePickerViewControllerProtocol?
-    weak var coordinator: NewPostCoordinatorProtocol?
+    weak var coordinator: ImagePickerCoordinatorProtocol?
     
     private let imagesService = LocalImagesService()
     

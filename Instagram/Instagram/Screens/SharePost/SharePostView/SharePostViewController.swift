@@ -61,7 +61,7 @@ extension SharePostViewController: ISharePostViewController {
 
 private extension SharePostViewController {
     func setupAppearance() {
-        navigationItem.title = SharePostConstants.Constants.title
+        navigationItem.title = "New post"
         
         customizeBackButton()
         setupShareButton()
@@ -77,7 +77,7 @@ private extension SharePostViewController {
     
     func setupShareButton() {
         let shareBarButtonItem = UIBarButtonItem(
-            title: SharePostConstants.Constants.shareButtonTitle,
+            title: "Share",
             style: .plain,
             target: self,
             action: #selector(didPressShareButton))

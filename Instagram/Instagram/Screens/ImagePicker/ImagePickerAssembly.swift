@@ -9,13 +9,13 @@ import UIKit
 
 enum ImagePickerAssembly {
     static func createImagePickerNavigationController(
-        coordinator: NewPostCoordinatorProtocol? = nil
+        coordinator: ImagePickerCoordinatorProtocol? = nil
     ) -> UINavigationController {
         return UINavigationController(rootViewController: createImagePickerViewController(coordinator: coordinator))
     }
     
     private static func createImagePickerViewController(
-        coordinator: NewPostCoordinatorProtocol?
+        coordinator: ImagePickerCoordinatorProtocol?
     ) -> ImagePickerViewController {
         let viewController = ImagePickerViewController()
         let presenter = ImagePickerPresenter()

@@ -22,7 +22,31 @@ final class SharePostView: UIView {
     private var captionTextViewFixedBottomConstraint: NSLayoutConstraint?
     private var captionTextViewScrollableBottomConstraint: NSLayoutConstraint?
     
-    private var keyboardAppearanceListener: KeyboardAppearanceListener?
+    private lazy var keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
+    
+    // MARK: Constants
+    
+    private enum Metrics {
+        static let contentViewVerticalSpace: CGFloat = 16
+        static let contentViewHorizontalSpace: CGFloat = 16
+        
+        static let imageViewTrailingSpace: CGFloat = 8
+        static let imageViewSize: CGFloat = 80
+        static let imageViewBorderWidth: CGFloat = 1
+        
+        static let separatorViewWidth: CGFloat = 1
+        
+        static let captionTextViewFontSize: CGFloat = 16
+    }
+    
+    private enum Colors {
+        static let imageViewBorder = AppConstants.Colors.profileImageBorder
+        static let separatorViewBackground = AppConstants.Colors.separatorViewBackground
+    }
+    
+    private enum Constants {
+        static let layoutUpdateAnimationDuration = 0.2
+    }
     
     // MARK: Subviews
     
@@ -38,7 +62,7 @@ final class SharePostView: UIView {
         
         setupAppearance()
         setupLayout()
-        setupKeyboardHandlers()
+        keyboardAppearanceListener.setupKeyboardObservers()
     }
     
     required init?(coder: NSCoder) {
@@ -58,14 +82,6 @@ extension SharePostView {
     }
 }
 
-// MARK: - Private Methods
-
-private extension SharePostView {
-    private func setupKeyboardHandlers() {
-        keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
-    }
-}
-
 // MARK: - Appearance
 
 private extension SharePostView {
@@ -80,17 +96,19 @@ private extension SharePostView {
     func setupImageViewAppearance() {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.borderColor = SharePostConstants.Colors.imageViewBorder.cgColor
-        imageView.layer.borderWidth = SharePostConstants.Metrics.imageViewBorderWidth
+        imageView.layer.borderColor = Colors.imageViewBorder.cgColor
+        imageView.layer.borderWidth = Metrics.imageViewBorderWidth
     }
     
     func setupCaptionTextViewAppearance() {
-        captionTextView.placeholderText = SharePostConstants.Constants.captionTextViewPlaceholder
+        captionTextView.placeholderText = "Write a caption..."
+        captionTextView.font = .systemFont(ofSize: Metrics.captionTextViewFontSize)
+        
         captionTextView.delegate = self
     }
     
     func setupSeparatorViewAppearance() {
-        separatorView.backgroundColor = SharePostConstants.Colors.separatorViewBackground
+        separatorView.backgroundColor = Colors.separatorViewBackground
     }
 }
 
@@ -120,18 +138,18 @@ private extension SharePostView {
         NSLayoutConstraint.activate([
             contentView.topAnchor.constraint(
                 equalTo: safeAreaLayoutGuide.topAnchor,
-                constant: SharePostConstants.Metrics.contentViewVerticalSpace),
+                constant: Metrics.contentViewVerticalSpace),
             contentView.leadingAnchor.constraint(
                 equalTo: safeAreaLayoutGuide.leadingAnchor,
-                constant: SharePostConstants.Metrics.contentViewHorizontalSpace),
+                constant: Metrics.contentViewHorizontalSpace),
             contentView.trailingAnchor.constraint(
                 equalTo: safeAreaLayoutGuide.trailingAnchor,
-                constant: -SharePostConstants.Metrics.contentViewHorizontalSpace),
+                constant: -Metrics.contentViewHorizontalSpace),
         ])
         
         contentViewBottomConstraint = contentView.bottomAnchor.constraint(
             equalTo: safeAreaLayoutGuide.bottomAnchor,
-            constant: -SharePostConstants.Metrics.contentViewVerticalSpace)
+            constant: -Metrics.contentViewVerticalSpace)
         
         contentViewBottomConstraint?.isActive = true
     }
@@ -144,10 +162,10 @@ private extension SharePostView {
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageView.trailingAnchor.constraint(
                 equalTo: captionTextView.leadingAnchor,
-                constant: -SharePostConstants.Metrics.imageViewTrailingSpace),
+                constant: -Metrics.imageViewTrailingSpace),
             imageView.centerYAnchor.constraint(equalTo: captionTextView.centerYAnchor),
-            imageView.heightAnchor.constraint(equalToConstant: SharePostConstants.Metrics.imageViewSize),
-            imageView.widthAnchor.constraint(equalToConstant: SharePostConstants.Metrics.imageViewSize),
+            imageView.heightAnchor.constraint(equalToConstant: Metrics.imageViewSize),
+            imageView.widthAnchor.constraint(equalToConstant: Metrics.imageViewSize),
         ])
     }
     
@@ -174,32 +192,30 @@ private extension SharePostView {
     }
     
     func updateCaptionTextViewLayout() {
+        UIView.animate(withDuration: Constants.layoutUpdateAnimationDuration) {
+            self.layoutIfNeeded()
+        }
+        
         if contentView.frame.height <= captionTextView.contentSize.height {
             applyCaptionTextViewScrollableLayout()
         } else {
             applyCaptionTextViewFixedLayout()
         }
-        
-        UIView.animate(withDuration: SharePostConstants.Constants.layoutUpdateAnimationDuration) {
-            self.layoutIfNeeded()
-        }
     }
     
     func applyCaptionTextViewFixedLayout() {
-        captionTextView.isScrollEnabled = false
-        
         captionTextViewScrollableBottomConstraint?.isActive = false
         captionTextViewFixedBottomConstraint?.isActive = true
         
+        captionTextView.isScrollEnabled = false
         captionTextView.invalidateIntrinsicContentSize()
     }
     
     func applyCaptionTextViewScrollableLayout() {
-        captionTextView.isScrollEnabled = true
-        
         captionTextViewFixedBottomConstraint?.isActive = false
         captionTextViewScrollableBottomConstraint?.isActive = true
         
+        captionTextView.isScrollEnabled = true
         captionTextView.invalidateIntrinsicContentSize()
     }
     
@@ -209,13 +225,13 @@ private extension SharePostView {
         NSLayoutConstraint.activate([
             separatorView.topAnchor.constraint(
                 greaterThanOrEqualTo: imageView.bottomAnchor,
-                constant: SharePostConstants.Metrics.contentViewVerticalSpace),
+                constant: Metrics.contentViewVerticalSpace),
             separatorView.topAnchor.constraint(
                 greaterThanOrEqualTo: captionTextView.bottomAnchor,
-                constant: SharePostConstants.Metrics.contentViewVerticalSpace),
+                constant: Metrics.contentViewVerticalSpace),
             separatorView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             separatorView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
-            separatorView.heightAnchor.constraint(equalToConstant: SharePostConstants.Metrics.separatorViewWidth),
+            separatorView.heightAnchor.constraint(equalToConstant: Metrics.separatorViewWidth),
         ])
     }
 }
@@ -261,7 +277,6 @@ extension SharePostView: KeyboardAppearanceListenerDelegate {
     
     private func updateContentViewLayout(bottomConstant: CGFloat) {
         contentViewBottomConstraint?.constant += bottomConstant
-        contentView.layoutIfNeeded()
         
         updateCaptionTextViewLayout()
     }
