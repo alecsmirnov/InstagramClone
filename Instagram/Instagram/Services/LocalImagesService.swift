@@ -42,14 +42,36 @@ final class LocalImagesService {
 // MARK: - Public Methods
 
 extension LocalImagesService {
-    func fetchNextImage(
+    func fetchNextImages(
         targetSize: CGSize = PHImageManagerMaximumSize,
-        completion: @escaping (UIImage?) -> Void
+        count: Int,
+        completion: @escaping ([UIImage]?) -> Void
     ) {
-        if currentImageIndex < imagesCount {
-            fetchImage(at: currentImageIndex, targetSize: targetSize, completion: completion)
+        var images: [(image: UIImage, index: Int)] = []
+        let dispatchGroup = DispatchGroup()
         
-            currentImageIndex += 1
+        for _ in 0..<count {
+            let imageIndex = currentImageIndex
+            
+            if imageIndex < imagesCount {
+                dispatchGroup.enter()
+                
+                fetchImage(at: imageIndex, targetSize: targetSize) { image in
+                    if let image = image {
+                        images.append((image, imageIndex))
+                    }
+                    
+                    dispatchGroup.leave()
+                }
+                
+                currentImageIndex += 1
+            }
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            let sortedImages = images.sorted(by: { $0.index < $1.index }).map { $0.image }
+            
+            completion(sortedImages)
         }
     }
     
@@ -71,7 +93,7 @@ extension LocalImagesService {
                 for: asset,
                 targetSize: targetSize,
                 contentMode: .aspectFill,
-                options: self?.imageRequestOptions) { image, _ in                
+                options: self?.imageRequestOptions) { image, _ in
                 if let image = image {
                     DispatchQueue.main.async {
                         completion(image)
@@ -106,7 +128,7 @@ private extension LocalImagesService {
     static func createImageRequestOptions() -> PHImageRequestOptions {
         let imageRequestOptions = PHImageRequestOptions()
         
-        imageRequestOptions.isSynchronous = true
+        imageRequestOptions.isSynchronous = false
         imageRequestOptions.deliveryMode = .highQualityFormat
         
         return imageRequestOptions

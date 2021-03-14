@@ -11,14 +11,11 @@ protocol ImagePickerViewControllerProtocol: AnyObject {
     var imageSize: CGSize { get }
     
     func setHeaderImage(_ image: UIImage)
-    func appendImage(_ image: UIImage)
     func appendImages(_ images: [UIImage])
     
     func getHeaderImage() -> UIImage?
     
-    func insertNewItem()
     func insertNewItems(count: Int)
-    func reloadData()
     
     func enableNextButton()
     func disableNextButton()
@@ -83,10 +80,6 @@ extension ImagePickerViewController: ImagePickerViewControllerProtocol {
         customView?.setHeaderImage(image)
     }
     
-    func appendImage(_ image: UIImage) {
-        customView?.appendImage(image)
-    }
-    
     func appendImages(_ images: [UIImage]) {
         customView?.appendImages(images)
     }
@@ -95,16 +88,8 @@ extension ImagePickerViewController: ImagePickerViewControllerProtocol {
         return customView?.getHeaderImage()
     }
     
-    func insertNewItem() {
-        customView?.insertNewItem()
-    }
-    
     func insertNewItems(count: Int) {
         customView?.insertNewItems(count: count)
-    }
-    
-    func reloadData() {
-        customView?.reloadData()
     }
     
     func enableNextButton() {

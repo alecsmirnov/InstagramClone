@@ -11,14 +11,11 @@ protocol ImagePickerViewProtocol: UIView {
     var cellSize: CGSize { get }
     
     func setHeaderImage(_ image: UIImage)
-    func appendImage(_ image: UIImage)
     func appendImages(_ images: [UIImage])
     
     func getHeaderImage() -> UIImage?
     
-    func insertNewItem()
     func insertNewItems(count: Int)
-    func reloadData()
 }
 
 protocol ImagePickerViewOutputProtocol: AnyObject {
@@ -80,10 +77,6 @@ extension ImagePickerView: ImagePickerViewProtocol {
         headerView.configure(with: image)
     }
     
-    func appendImage(_ image: UIImage) {
-        collectionViewDataSource.appendImage(image)
-    }
-    
     func appendImages(_ images: [UIImage]) {
         collectionViewDataSource.appendImages(images)
     }
@@ -99,40 +92,17 @@ extension ImagePickerView: ImagePickerViewProtocol {
         return croppedImage
     }
     
-    func insertNewItem() {
-        let itemsCount = collectionViewDataSource.imagesCount
-        
-        if 1 < itemsCount {
-            let lastItemIndexPath = IndexPath(row: itemsCount - 1, section: 0)
-            
-            collectionView.insertItems(at: [lastItemIndexPath])
-        } else {
-            collectionView.reloadData()
-        }
-    }
-    
     func insertNewItems(count: Int) {
-        let itemsCount = collectionViewDataSource.imagesCount
+        let itemsCount = collectionViewDataSource.imagesCount - count
         
         if 1 < itemsCount {
-            var indexPaths: [IndexPath] = []
-            
-            let lastRowIndex = itemsCount - 1
-            
-            for i in 0..<count {
-                let indexPath = IndexPath(row: lastRowIndex + i, section: 0)
-                
-                indexPaths.append(indexPath)
-            }
+            let lastRowIndex = itemsCount
+            let indexPaths = (0..<count).map { IndexPath(row: $0 + lastRowIndex, section: 0) }
             
             collectionView.insertItems(at: indexPaths)
         } else {
             collectionView.reloadData()
         }
-    }
-    
-    func reloadData() {
-        collectionView.reloadData()
     }
 }
 

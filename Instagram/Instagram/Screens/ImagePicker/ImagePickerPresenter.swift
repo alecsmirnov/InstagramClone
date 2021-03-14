@@ -8,16 +8,17 @@
 import UIKit
 
 final class ImagePickerPresenter {
+    // MARK: Properties
+    
     weak var view: ImagePickerViewControllerProtocol?
     weak var coordinator: NewPostCoordinatorProtocol?
     
     private let imagesService = LocalImagesService()
     
-    // TODO: Remove
-    private var images: [UIImage] = []
+    // MARK: Constants
     
-    private enum Constants {
-        static let count = 4
+    private enum Requests {
+        static let imagesLimit = 4
     }
 }
 
@@ -37,23 +38,12 @@ extension ImagePickerPresenter: ImagePickerViewControllerOutputProtocol {
     func didRequestImage() {
         guard let imageSize = view?.imageSize else { return }
         
-        imagesService.fetchNextImage(targetSize: imageSize) { [weak self] image in
-            guard let image = image else { return }
-            
-            self?.view?.appendImage(image)
-            self?.view?.insertNewItem()
-            
-            // TODO: Remove
-            //self?.images.append(image)
+        imagesService.fetchNextImages(targetSize: imageSize, count: Requests.imagesLimit) { [weak self] images in
+            guard let images = images else { return }
+
+            self?.view?.appendImages(images)
+            self?.view?.insertNewItems(count: images.count)
         }
-        
-        // TODO: Remove
-//        if images.count == Constants.count {
-//            view?.appendImages(images)
-//            view?.insertNewItems(count: images.count)
-//            
-//            images.removeAll()
-//        }
     }
     
     func didSelectImage(at index: Int) {
