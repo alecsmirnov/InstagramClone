@@ -9,7 +9,7 @@ import UIKit
 
 protocol NewPostCoordinatorProtocol: AnyObject {
     func closeNewPostViewController()
-    func showSharePostViewController()
+    func showSharePostViewController(withImage image: UIImage)
 }
 
 protocol NewPostCoordinatorDelegate: AnyObject {
@@ -43,7 +43,7 @@ final class NewPostCoordinator: CoordinatorProtocol {
 
 extension NewPostCoordinator {
     func start() {
-        let newPostViewController = NewPostAssembly.createNewPostNavigationController(coordinator: self)
+        let newPostViewController = ImagePickerAssembly.createImagePickerNavigationController(coordinator: self)
         
         newPostViewController.modalPresentationStyle = .fullScreen
 
@@ -60,7 +60,7 @@ extension NewPostCoordinator: NewPostCoordinatorProtocol {
         delegate?.newPostCoordinatorDidClose(self)
     }
     
-    func showSharePostViewController() {
+    func showSharePostViewController(withImage image: UIImage) {
         
     }
 }

@@ -1,5 +1,5 @@
 //
-//  NewPostHeaderView.swift
+//  ImageHeaderView.swift
 //  Instagram
 //
 //  Created by Admin on 05.02.2021.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class NewPostHeaderView: UICollectionReusableView {
+final class ImageHeaderView: UICollectionReusableView {
     // MARK: Properties
     
     static var reuseIdentifier: String {
@@ -22,14 +22,35 @@ final class NewPostHeaderView: UICollectionReusableView {
     private let scrollView = UIScrollView()
     private let imageView = UIImageView()
     
-    // MARK: Initialization
+    // MARK: Constants
+    
+    private enum Metrics {
+        static let adjustButtonSpace: CGFloat = 16
+        static let adjustButtonSize: CGFloat = 32
+    }
+    
+    private enum Images {
+        static let adjust = UIImage(named: "adjust_fill")
+    }
+    
+    private enum Colors {
+        static let scrollViewBackground = UIColor(white: 0.94, alpha: 1)
+    }
+    
+    private enum Constants {
+        static let adjustButtonAlpha: CGFloat = 0.7
+        
+        static let scrollViewMaxZoomScale: CGFloat = 10
+    }
+    
+    // MARK: Lifecycle
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         setupAppearance()
         setupLayout()
-        setupActions()
+        setupButtonActions()
     }
     
     required init?(coder: NSCoder) {
@@ -39,9 +60,12 @@ final class NewPostHeaderView: UICollectionReusableView {
 
 // MARK: - Public Methods
 
-extension NewPostHeaderView {
-    func configure(with mediaFile: UIImage) {
-        setImage(mediaFile)
+extension ImageHeaderView {
+    func configure(with image: UIImage) {
+        imageView.image = image
+        
+        setScrollViewContentScale(size: image.size)
+        scrollViewContentToCenter()
     }
     
     func getCroppedImage() -> UIImage? {
@@ -71,25 +95,14 @@ extension NewPostHeaderView {
 
 // MARK: - Private Methods
 
-private extension NewPostHeaderView {
-    func setImage(_ image: UIImage) {
-        imageView.image = image
-        
-        setScrollViewContentScale(size: image.size)
-        scrollViewContentToCenter()
-    }
-
+private extension ImageHeaderView {
     func setScrollViewContentScale(size: CGSize) {
         let horizontalRatio = scrollView.bounds.width / size.width
         let verticalRatio = scrollView.bounds.height / size.height
-
-        let aspectRatioScale = isSizeToFit ?
-            min(horizontalRatio, verticalRatio) :
-            max(horizontalRatio, verticalRatio)
+        let aspectRatioScale = isSizeToFit ? min(horizontalRatio, verticalRatio) : max(horizontalRatio, verticalRatio)
 
         scrollView.minimumZoomScale = aspectRatioScale
-        scrollView.maximumZoomScale = scrollView.minimumZoomScale * NewPostConstants.Constants.scrollViewMaxZoomScale
-
+        scrollView.maximumZoomScale = scrollView.minimumZoomScale * Constants.scrollViewMaxZoomScale
         scrollView.zoomScale = scrollView.minimumZoomScale
         
         scrollView.layoutIfNeeded()
@@ -137,17 +150,15 @@ private extension NewPostHeaderView {
 
 // MARK: - Appearance
 
-private extension NewPostHeaderView {
+private extension ImageHeaderView {
     func setupAppearance() {
         setupAdjustButtonAppearance()
         setupScrollViewAppearance()
     }
     
     func setupAdjustButtonAppearance() {
-        adjustButton.setImage(
-            NewPostConstants.Images.adjustButton?.withRenderingMode(.alwaysOriginal),
-            for: .normal)
-        adjustButton.alpha = NewPostConstants.Constants.adjustButtonAlpha
+        adjustButton.setImage(Images.adjust?.withRenderingMode(.alwaysOriginal), for: .normal)
+        adjustButton.alpha = Constants.adjustButtonAlpha
         adjustButton.contentVerticalAlignment = .fill
         adjustButton.contentHorizontalAlignment = .fill
     }
@@ -158,7 +169,7 @@ private extension NewPostHeaderView {
         scrollView.alwaysBounceVertical = true
         scrollView.alwaysBounceHorizontal = true
         scrollView.isMultipleTouchEnabled = false
-        scrollView.backgroundColor = NewPostConstants.Colors.scrollViewBackground
+        scrollView.backgroundColor = Colors.scrollViewBackground
         
         scrollView.delegate = self
     }
@@ -166,7 +177,7 @@ private extension NewPostHeaderView {
 
 // MARK: - Layout
 
-private extension NewPostHeaderView {
+private extension ImageHeaderView {
     func setupLayout() {
         setupSubviews()
         
@@ -188,12 +199,12 @@ private extension NewPostHeaderView {
         NSLayoutConstraint.activate([
             adjustButton.bottomAnchor.constraint(
                 equalTo: safeAreaLayoutGuide.bottomAnchor,
-                constant: -NewPostConstants.Metrics.adjustButtonSpace),
+                constant: -Metrics.adjustButtonSpace),
             adjustButton.leadingAnchor.constraint(
                 equalTo: safeAreaLayoutGuide.leadingAnchor,
-                constant: NewPostConstants.Metrics.adjustButtonSpace),
-            adjustButton.heightAnchor.constraint(equalToConstant: NewPostConstants.Metrics.adjustButtonSize),
-            adjustButton.widthAnchor.constraint(equalToConstant: NewPostConstants.Metrics.adjustButtonSize),
+                constant: Metrics.adjustButtonSpace),
+            adjustButton.heightAnchor.constraint(equalToConstant: Metrics.adjustButtonSize),
+            adjustButton.widthAnchor.constraint(equalToConstant: Metrics.adjustButtonSize),
         ])
     }
     
@@ -220,14 +231,14 @@ private extension NewPostHeaderView {
     }
 }
 
-// MARK: - Actions
+// MARK: - Button Actions
 
-private extension NewPostHeaderView {
-    func setupActions() {
-        adjustButton.addTarget(self, action: #selector(didPressAdjustButton), for: .touchUpInside)
+private extension ImageHeaderView {
+    func setupButtonActions() {
+        adjustButton.addTarget(self, action: #selector(didTapAdjustButton), for: .touchUpInside)
     }
     
-    @objc func didPressAdjustButton() {
+    @objc func didTapAdjustButton() {
         guard let imageSize = imageView.image?.size else { return }
         
         isSizeToFit.toggle()
@@ -239,7 +250,7 @@ private extension NewPostHeaderView {
 
 // MARK: - UIScrollViewDelegate
 
-extension NewPostHeaderView: UIScrollViewDelegate {
+extension ImageHeaderView: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
     }

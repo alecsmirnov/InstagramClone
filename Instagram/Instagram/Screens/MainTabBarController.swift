@@ -63,7 +63,7 @@ final class MainTabBarController: UITabBarController {
     }
 }
 
-// MARK: - Interface
+// MARK: - Public Methods
 
 extension MainTabBarController {
     func appendNavigationController(_ navigationController: UINavigationController, item: TabBarItem) {

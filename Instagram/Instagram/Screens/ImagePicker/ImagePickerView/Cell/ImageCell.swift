@@ -1,5 +1,5 @@
 //
-//  MediaCell.swift
+//  ImageCell.swift
 //  Instagram
 //
 //  Created by Admin on 29.01.2021.
@@ -7,18 +7,27 @@
 
 import UIKit
 
-final class MediaCell: UICollectionViewCell {
+final class ImageCell: UICollectionViewCell {
     // MARK: Properties
     
     static var reuseIdentifier: String {
         return String(describing: self)
     }
     
+    var image: UIImage? {
+        get {
+            return imageView.image
+        }
+        set {
+            imageView.image = newValue
+        }
+    }
+    
     // MARK: Subviews
     
     private let imageView = UIImageView()
     
-    // MARK: Initialization
+    // MARK: Lifecycle
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -32,22 +41,10 @@ final class MediaCell: UICollectionViewCell {
     }
 }
 
-// MARK: - Public Methods
-
-extension MediaCell {
-    func configure(with mediaFile: UIImage) {
-        imageView.image = mediaFile
-    }
-}
-
 // MARK: - Appearance
 
-private extension MediaCell {
+private extension ImageCell {
     func setupAppearance() {
-        setupImageViewAppearance()
-    }
-    
-    func setupImageViewAppearance() {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
     }
@@ -55,15 +52,11 @@ private extension MediaCell {
 
 // MARK: - Layout
 
-private extension MediaCell {
+private extension ImageCell {
     func setupLayout() {
-        setupSubviews()
+        contentView.addSubview(imageView)
         
         setupImageViewLayout()
-    }
-    
-    func setupSubviews() {
-        contentView.addSubview(imageView)
     }
     
     func setupImageViewLayout() {

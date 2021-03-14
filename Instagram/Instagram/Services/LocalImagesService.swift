@@ -11,11 +11,15 @@ import UIKit
 final class LocalImagesService {
     // MARK: Properties
     
-    private(set) var currentImageIndex = 0
+    var isEmpty: Bool {
+        return imagesCount == 0
+    }
     
     var imagesCount: Int {
         return assets?.count ?? 0
     }
+    
+    private(set) var currentImageIndex = 0
     
     private let imageRequestOptions = LocalImagesService.createImageRequestOptions()
     

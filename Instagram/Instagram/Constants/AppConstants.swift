@@ -18,6 +18,7 @@ enum AppConstants {
     enum Images {
         static let logo = UIImage(named: "instagram_logo_black")
         static let profileDefault = UIImage(named: "profile_default")
+        static let close = UIImage(systemName: "xmark")
     }
     
     enum Colors {
