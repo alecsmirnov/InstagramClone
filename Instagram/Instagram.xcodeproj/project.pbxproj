@@ -612,6 +612,15 @@
 			path = CollectionView;
 			sourceTree = "<group>";
 		};
+		845ECB6625FF2AFE004398BF /* UserServices */ = {
+			isa = PBXGroup;
+			children = (
+				845DEFBB25FBAB4400F02D77 /* LoginService.swift */,
+				845DEFC025FBCB9C00F02D77 /* RegistrationService.swift */,
+			);
+			path = UserServices;
+			sourceTree = "<group>";
+		};
 		8491A80625B43116009EDFC2 /* Constants */ = {
 			isa = PBXGroup;
 			children = (
@@ -625,24 +634,23 @@
 		8491A83525B46BA1009EDFC2 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				8491A83625B46BBD009EDFC2 /* Firebase */,
+				8491A83625B46BBD009EDFC2 /* FirebaseServices */,
+				845ECB6625FF2AFE004398BF /* UserServices */,
 				845B8C9825B6AC8000FE5ED6 /* ValidationService.swift */,
 				845AE88C25C41B04005A1155 /* LocalImagesService.swift */,
 				8459C13425F4D3A300FFFB36 /* ImageCachingService.swift */,
-				845DEFBB25FBAB4400F02D77 /* LoginService.swift */,
-				845DEFC025FBCB9C00F02D77 /* RegistrationService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
 		};
-		8491A83625B46BBD009EDFC2 /* Firebase */ = {
+		8491A83625B46BBD009EDFC2 /* FirebaseServices */ = {
 			isa = PBXGroup;
 			children = (
 				845C284525CAC22A000731B3 /* FirebaseAuthService.swift */,
 				845C284225CABB2D000731B3 /* FirebaseStorageService.swift */,
 				845C284C25CADE16000731B3 /* FirebaseDatabaseService.swift */,
 			);
-			path = Firebase;
+			path = FirebaseServices;
 			sourceTree = "<group>";
 		};
 		8491A83D25B478DE009EDFC2 /* RegistrationView */ = {

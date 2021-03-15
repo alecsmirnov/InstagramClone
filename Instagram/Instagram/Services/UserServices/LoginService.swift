@@ -5,31 +5,29 @@
 //  Created by Admin on 12.03.2021.
 //
 
-protocol LoginServiceProtocol {
-    func checkEmail(_ email: String, completion: @escaping (LoginServiceErrors.Email?) -> Void)
-    func checkPassword(_ password: String, completion: @escaping (LoginServiceErrors.Password?) -> Void)
-    func signIn(withEmail email: String, password: String, completion: @escaping (LoginServiceErrors.SignIn?) -> Void)
-}
-
-enum LoginServiceErrors {
-    enum Email: Error {
+struct LoginService {
+    // MARK: Constants
+    
+    enum EmailError: Error {
         case empty
         case invalid
     }
 
-    enum Password: Error {
+    enum PasswordError: Error {
         case empty
         case invalid(Int)
     }
 
-    enum SignIn: Error {
+    enum SignInError: Error {
         case userNotFound
         case wrongPassword
     }
 }
 
-struct LoginService: LoginServiceProtocol {
-    func checkEmail(_ email: String, completion: @escaping (LoginServiceErrors.Email?) -> Void) {
+// MARK: - Public Methods
+
+extension LoginService {
+    func checkEmail(_ email: String, completion: @escaping (EmailError?) -> Void) {
         guard !email.isEmpty else {
             completion(.empty)
             
@@ -45,7 +43,7 @@ struct LoginService: LoginServiceProtocol {
         completion(nil)
     }
     
-    func checkPassword(_ password: String, completion: @escaping (LoginServiceErrors.Password?) -> Void) {
+    func checkPassword(_ password: String, completion: @escaping (PasswordError?) -> Void) {
         guard !password.isEmpty else {
             completion(.empty)
             
@@ -61,7 +59,7 @@ struct LoginService: LoginServiceProtocol {
         completion(nil)
     }
     
-    func signIn(withEmail email: String, password: String, completion: @escaping (LoginServiceErrors.SignIn?) -> Void) {
+    func signIn(withEmail email: String, password: String, completion: @escaping (SignInError?) -> Void) {
         FirebaseAuthService.signIn(withEmail: email, password: password) { result in
             switch result {
             case .success(let userIdentifier):

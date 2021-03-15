@@ -16,8 +16,6 @@ enum RegistrationAssembly {
         presenter.view = viewController
         presenter.coordinator = coordinator
         
-        presenter.registrationService = RegistrationService()
-        
         return viewController
     }
 }

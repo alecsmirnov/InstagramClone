@@ -9,7 +9,7 @@ final class LoginPresenter {
     weak var view: LoginViewControllerProtocol?
     weak var coordinator: LoginCoordinatorProtocol?
     
-    var loginService: LoginServiceProtocol?
+    private let loginService = LoginService()
     
     private var isEmailChecked = false {
         didSet {
@@ -36,7 +36,7 @@ extension LoginPresenter: LoginViewControllerOutputProtocol {
         view?.disableLogInButton()
         view?.startAnimatingLogInButton()
         
-        loginService?.signIn(withEmail: email, password: password) { [weak self] error in
+        loginService.signIn(withEmail: email, password: password) { [weak self] error in
             if let error = error {
                 self?.view?.stopAnimatingLogInButton()
                 self?.view?.isUserInteractionEnabled = true
@@ -58,7 +58,7 @@ extension LoginPresenter: LoginViewControllerOutputProtocol {
     }
     
     func emailDidChange(_ email: String) {
-        loginService?.checkEmail(email) { [weak self] error in
+        loginService.checkEmail(email) { [weak self] error in
             if let error = error {
                 self?.isEmailChecked = false
                 
@@ -77,7 +77,7 @@ extension LoginPresenter: LoginViewControllerOutputProtocol {
     }
     
     func passwordDidChange(_ password: String) {
-        loginService?.checkPassword(password) { [weak self] error in
+        loginService.checkPassword(password) { [weak self] error in
             if let error = error {
                 self?.isPasswordChecked = false
                 

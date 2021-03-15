@@ -7,33 +7,22 @@
 
 import Foundation
 
-protocol RegistrationServiceProtocol {
-    func checkEmail(_ email: String, completion: @escaping (RegistrationServiceErrors.Email?) -> Void)
-    func checkUsername(_ username: String, completion: @escaping (RegistrationServiceErrors.Username?) -> Void)
-    func checkPassword(_ password: String, completion: @escaping (RegistrationServiceErrors.Password?) -> Void)
-    func signUp(
-        withEmail email: String,
-        fullName: String?,
-        username: String,
-        password: String,
-        profileImageData: Data?,
-        completion: @escaping (RegistrationServiceErrors.SignUp?) -> Void)
-}
-
-enum RegistrationServiceErrors {
-    enum Email: Error {
+struct RegistrationService {
+    // MARK: Constants
+    
+    enum EmailError: Error {
         case empty
         case invalid
         case exist
     }
     
-    enum Username: Error {
+    enum UsernameError: Error {
         case empty
         case invalid
         case exist
     }
 
-    enum Password: Error {
+    enum PasswordError: Error {
         case empty
         case invalid(Int)
     }
@@ -41,8 +30,10 @@ enum RegistrationServiceErrors {
     typealias SignUp = Error
 }
 
-struct RegistrationService: RegistrationServiceProtocol {
-    func checkEmail(_ email: String, completion: @escaping (RegistrationServiceErrors.Email?) -> Void) {
+// MARK: - Public Methods
+
+extension RegistrationService {
+    func checkEmail(_ email: String, completion: @escaping (EmailError?) -> Void) {
         guard !email.isEmpty else {
             completion(.empty)
             
@@ -65,7 +56,7 @@ struct RegistrationService: RegistrationServiceProtocol {
         }
     }
     
-    func checkUsername(_ username: String, completion: @escaping (RegistrationServiceErrors.Username?) -> Void) {
+    func checkUsername(_ username: String, completion: @escaping (UsernameError?) -> Void) {
         guard !username.isEmpty else {
             completion(.empty)
             
@@ -88,7 +79,7 @@ struct RegistrationService: RegistrationServiceProtocol {
         }
     }
     
-    func checkPassword(_ password: String, completion: @escaping (RegistrationServiceErrors.Password?) -> Void) {
+    func checkPassword(_ password: String, completion: @escaping (PasswordError?) -> Void) {
         guard !password.isEmpty else {
             completion(.empty)
             
@@ -110,7 +101,7 @@ struct RegistrationService: RegistrationServiceProtocol {
         username: String,
         password: String,
         profileImageData: Data?,
-        completion: @escaping (RegistrationServiceErrors.SignUp?) -> Void
+        completion: @escaping (SignUp?) -> Void
     ) {
         FirebaseDatabaseService.createUser(
             withEmail: email,

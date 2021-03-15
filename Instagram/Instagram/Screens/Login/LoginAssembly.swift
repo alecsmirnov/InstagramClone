@@ -14,8 +14,6 @@ enum LoginAssembly {
         presenter.view = viewController
         presenter.coordinator = coordinator
         
-        presenter.loginService = LoginService()
-        
         return viewController
     }
 }

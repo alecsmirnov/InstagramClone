@@ -18,7 +18,7 @@ final class ImagePickerPresenter {
     // MARK: Constants
     
     private enum Requests {
-        static let imagesLimit = 4
+        static let imagesLimit = 8
     }
 }
 
