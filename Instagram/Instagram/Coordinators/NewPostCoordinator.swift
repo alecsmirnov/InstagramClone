@@ -8,12 +8,12 @@
 import UIKit
 
 protocol ImagePickerCoordinatorProtocol: AnyObject {
-    func closeNewPostViewController()
+    func closeImagePickerViewController()
     func showSharePostViewController(withImage image: UIImage)
 }
 
 protocol SharePostCoordinatorProtocol: AnyObject {
-    
+    func closeSharePostViewController()
 }
 
 protocol NewPostCoordinatorDelegate: AnyObject {
@@ -55,15 +55,19 @@ extension NewPostCoordinator {
         navigationController = imagePickerNavigationController
         presenterController?.present(imagePickerNavigationController, animated: true)
     }
+    
+    func closePresentedController() {
+        presenterController?.dismiss(animated: true)
+        
+        delegate?.newPostCoordinatorDidClose(self)
+    }
 }
 
 // MARK: - ImagePickerCoordinatorProtocol
 
 extension NewPostCoordinator: ImagePickerCoordinatorProtocol {
-    func closeNewPostViewController() {
-        presenterController?.dismiss(animated: true)
-        
-        delegate?.newPostCoordinatorDidClose(self)
+    func closeImagePickerViewController() {
+        closePresentedController()
     }
     
     func showSharePostViewController(withImage image: UIImage) {
@@ -76,5 +80,7 @@ extension NewPostCoordinator: ImagePickerCoordinatorProtocol {
 // MARK: - SharePostCoordinatorProtocol
 
 extension NewPostCoordinator: SharePostCoordinatorProtocol {
-    
+    func closeSharePostViewController() {
+        closePresentedController()
+    }
 }

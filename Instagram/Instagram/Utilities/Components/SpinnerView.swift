@@ -12,17 +12,17 @@ final class SpinnerView: UIView {
     
     private enum Metrics {
         static let containerViewSize: CGFloat = 60
-        static let containerViewCornerRadius: CGFloat = 4
+        static let containerViewCornerRadius: CGFloat = 10
     }
     
     private enum Colors {
-        static let viewBackground = UIColor(red: 0, green: 0, blue: 0, alpha: 0.65)
-        static let containerViewBackground = UIColor(white: 0.96, alpha: 1)
+        static let viewBackground = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2)
+        static let containerViewBackground = UIColor(white: 0.99, alpha: 1)
     }
     
     private enum Constants {
         static let showAnimationDuration: TimeInterval = 0.2
-        static let hideAnimationDuration: TimeInterval = 0.4
+        static let hideAnimationDuration: TimeInterval = 0.3
     }
     
     // MARK: Subviews

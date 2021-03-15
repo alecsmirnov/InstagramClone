@@ -154,7 +154,6 @@ private extension ImagePickerViewController {
     
     func changeNextButtonStatus(isEnabled: Bool) {
         let nextButton = navigationItem.rightBarButtonItem
-        
         nextButton?.isEnabled = isEnabled
         
         UIView.animate(withDuration: Constants.nextButtonAnimationDuration) {
@@ -165,7 +164,7 @@ private extension ImagePickerViewController {
     }
 }
 
-// MARK: - Actions
+// MARK: - Button Actions
 
 private extension ImagePickerViewController {
     @objc func didTapCloseButton() {

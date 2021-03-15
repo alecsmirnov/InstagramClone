@@ -7,50 +7,41 @@
 
 import UIKit
 
-protocol ISharePostPresenter: AnyObject {
-    func viewDidLoad()
-    
-    func didPressShareButton(withMediaFile mediaFile: UIImage, caption: String?)
-}
-
 final class SharePostPresenter {
     // MARK: Properties
     
-    weak var viewController: ISharePostViewController?
-    var interactor: ISharePostInteractor?
-    var router: ISharePostRouter?
+    weak var view: SharePostViewControllerProtocol?
+    weak var coordinator: SharePostCoordinatorProtocol?
     
-    var mediaFile: UIImage?
+    var image: UIImage?
+    
+    private let sharePostService = SharePostService()
 }
 
 // MARK: - ISharePostPresenter
 
-extension SharePostPresenter: ISharePostPresenter {
+extension SharePostPresenter: SharePostViewControllerOutputProtocol {
     func viewDidLoad() {
-        guard let mediaFile = mediaFile else { return }
+        guard let image = image else { return }
         
-        viewController?.setImage(mediaFile)
+        view?.setImage(image)
     }
     
-    func didPressShareButton(withMediaFile mediaFile: UIImage, caption: String?) {
-        viewController?.showSpinner()
+    func didTapShareButton(withImage image: UIImage, caption: String?) {
+        view?.showLoadingView()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            self.viewController?.hideSpinner()
+        sharePostService.sharePost(withImage: image, caption: caption) { [weak self] error in
+            guard error == nil else {
+                self?.view?.hideLoadingView {
+                    self?.view?.showAlert()
+                }
+
+                return
+            }
+            
+            self?.view?.hideLoadingView()
+            
+            self?.coordinator?.closeSharePostViewController()
         }
-        
-        //interactor?.sharePost(withMediaFile: mediaFile, caption: caption)
-    }
-}
-
-// MARK: - ISharePostInteractorOutput
-
-extension SharePostPresenter: ISharePostInteractorOutput {
-    func sharePostSuccess() {
-        router?.closeSharePostViewController()
-    }
-    
-    func sharePostFailure() {
-        viewController?.hideSpinner()
     }
 }

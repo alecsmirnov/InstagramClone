@@ -7,29 +7,37 @@
 
 import UIKit
 
-protocol ISharePostViewController: AnyObject {
+protocol SharePostViewControllerProtocol: AnyObject {
     func setImage(_ image: UIImage)
     
-    func showSpinner()
-    func hideSpinner()
+    func showLoadingView()
+    func hideLoadingView(completion: (() -> Void)?)
+    
+    func showAlert()
+}
+
+extension SharePostViewControllerProtocol {
+    func hideLoadingView() {
+        hideLoadingView(completion: nil)
+    }
+}
+
+protocol SharePostViewControllerOutputProtocol: AnyObject {
+    func viewDidLoad()
+    
+    func didTapShareButton(withImage image: UIImage, caption: String?)
 }
 
 final class SharePostViewController: CustomViewController<SharePostView> {
     // MARK: Properties
     
-    var presenter: ISharePostPresenter?
+    var output: SharePostViewControllerOutputProtocol?
     
     override var prefersStatusBarHidden: Bool {
         return true
     }
     
-    // MARK: Constants
-    
-    private enum Constants {
-        static let shareButtonAnimationDuration: TimeInterval = 0.4
-        static let shareButtonEnableAlpha: CGFloat = 1
-        static let shareButtonDisableAlpha: CGFloat = 0.8
-    }
+    private lazy var alertController = SimpleAlert(presentationController: self)
     
     // MARK: Subviews
     
@@ -40,32 +48,34 @@ final class SharePostViewController: CustomViewController<SharePostView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        presenter?.viewDidLoad()
-        
         setupAppearance()
+        
+        output?.viewDidLoad()
     }
 }
 
-// MARK: - ISharePostViewController
+// MARK: - SharePostViewController Interface
 
-extension SharePostViewController: ISharePostViewController {
+extension SharePostViewController: SharePostViewControllerProtocol {
     func setImage(_ image: UIImage) {
         customView?.image = image
     }
     
-    func showSpinner() {
+    func showLoadingView() {
         navigationController?.view.addSubview(spinnerView)
         spinnerView.show()
-        
-        changeShareButtonStatus(isEnabled: false)
     }
     
-    func hideSpinner() {
+    func hideLoadingView(completion: (() -> Void)?) {
         spinnerView.hide { [weak self] in
             self?.spinnerView.removeFromSuperview()
+            
+            completion?()
         }
-        
-        changeShareButtonStatus(isEnabled: true)
+    }
+    
+    func showAlert() {
+        alertController.showAlert(title: "Can't share post", message: "Sorry, something goes wrong. Please try again")
     }
 }
 
@@ -81,7 +91,6 @@ private extension SharePostViewController {
     
     func customizeBackButton() {
         let backBarButtonItem = UIBarButtonItem(title: nil, style: .plain, target: nil, action: nil)
-        
         backBarButtonItem.tintColor = .black
         
         navigationController?.navigationBar.topItem?.backBarButtonItem = backBarButtonItem
@@ -92,31 +101,21 @@ private extension SharePostViewController {
             title: "Share",
             style: .plain,
             target: self,
-            action: #selector(didPressShareButton))
+            action: #selector(didTapShareButton))
 
         navigationItem.rightBarButtonItem = shareBarButtonItem
     }
-    
-    func changeShareButtonStatus(isEnabled: Bool) {
-        let shareButton = navigationItem.rightBarButtonItem
-        
-        shareButton?.isEnabled = isEnabled
-        
-        UIView.animate(withDuration: Constants.shareButtonAnimationDuration) {
-            shareButton?.customView?.alpha = isEnabled ?
-                Constants.shareButtonEnableAlpha :
-                Constants.shareButtonDisableAlpha
-        }
-    }
 }
 
-// MARK: - Actions
+// MARK: - Button Actions
 
 private extension SharePostViewController {
-    @objc func didPressShareButton() {
+    @objc func didTapShareButton() {
         guard let image = customView?.image else { return }
         
+        let caption = customView?.caption
+        
         customView?.endEditing(true)
-        presenter?.didPressShareButton(withMediaFile: image, caption: customView?.caption)
+        output?.didTapShareButton(withImage: image, caption: caption)
     }
 }

@@ -59,7 +59,7 @@ extension ImagePickerPresenter: ImagePickerViewControllerOutputProtocol {
     }
     
     func didTapCloseButton() {
-        coordinator?.closeNewPostViewController()
+        coordinator?.closeImagePickerViewController()
     }
     
     func didTapNextButton(withImage image: UIImage) {

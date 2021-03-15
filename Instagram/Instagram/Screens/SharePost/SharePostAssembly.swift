@@ -13,20 +13,13 @@ enum SharePostAssembly {
         coordinator: SharePostCoordinatorProtocol? = nil
     )-> SharePostViewController {
         let viewController = SharePostViewController()
-        
-        let interactor = SharePostInteractor()
         let presenter = SharePostPresenter()
-        let router = SharePostRouter(viewController: viewController)
         
-        viewController.presenter = presenter
+        viewController.output = presenter
+        presenter.view = viewController
+        presenter.coordinator = coordinator
         
-        interactor.presenter = presenter
-        
-        presenter.viewController = viewController
-        presenter.interactor = interactor
-        presenter.router = router
-        
-        presenter.mediaFile = image
+        presenter.image = image
         
         return viewController
     }
