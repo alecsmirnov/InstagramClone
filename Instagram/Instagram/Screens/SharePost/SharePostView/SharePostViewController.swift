@@ -8,7 +8,7 @@
 import UIKit
 
 protocol ISharePostViewController: AnyObject {
-    func setMediaFile(_ mediaFile: UIImage)
+    func setImage(_ image: UIImage)
     
     func showSpinner()
     func hideSpinner()
@@ -23,9 +23,17 @@ final class SharePostViewController: CustomViewController<SharePostView> {
         return true
     }
     
-    // MARK: Child View Controllers
+    // MARK: Constants
     
-    private let spinnerViewController = SpinnerViewController(statusBarHidden: true)
+    private enum Constants {
+        static let shareButtonAnimationDuration: TimeInterval = 0.4
+        static let shareButtonEnableAlpha: CGFloat = 1
+        static let shareButtonDisableAlpha: CGFloat = 0.8
+    }
+    
+    // MARK: Subviews
+    
+    private lazy var spinnerView = SpinnerView()
     
     // MARK: Lifecycle
     
@@ -41,19 +49,23 @@ final class SharePostViewController: CustomViewController<SharePostView> {
 // MARK: - ISharePostViewController
 
 extension SharePostViewController: ISharePostViewController {
-    func setMediaFile(_ mediaFile: UIImage) {
-        customView?.setMediaFile(mediaFile)
+    func setImage(_ image: UIImage) {
+        customView?.image = image
     }
     
     func showSpinner() {
-        navigationController?.add(spinnerViewController)
+        navigationController?.view.addSubview(spinnerView)
+        spinnerView.show()
         
-        spinnerViewController.show()
+        changeShareButtonStatus(isEnabled: false)
     }
     
     func hideSpinner() {
-        spinnerViewController.hide()
-        spinnerViewController.remove()
+        spinnerView.hide { [weak self] in
+            self?.spinnerView.removeFromSuperview()
+        }
+        
+        changeShareButtonStatus(isEnabled: true)
     }
 }
 
@@ -84,6 +96,18 @@ private extension SharePostViewController {
 
         navigationItem.rightBarButtonItem = shareBarButtonItem
     }
+    
+    func changeShareButtonStatus(isEnabled: Bool) {
+        let shareButton = navigationItem.rightBarButtonItem
+        
+        shareButton?.isEnabled = isEnabled
+        
+        UIView.animate(withDuration: Constants.shareButtonAnimationDuration) {
+            shareButton?.customView?.alpha = isEnabled ?
+                Constants.shareButtonEnableAlpha :
+                Constants.shareButtonDisableAlpha
+        }
+    }
 }
 
 // MARK: - Actions
@@ -92,6 +116,7 @@ private extension SharePostViewController {
     @objc func didPressShareButton() {
         guard let image = customView?.image else { return }
         
+        customView?.endEditing(true)
         presenter?.didPressShareButton(withMediaFile: image, caption: customView?.caption)
     }
 }

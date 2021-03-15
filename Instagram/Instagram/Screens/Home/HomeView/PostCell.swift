@@ -156,7 +156,7 @@ final class PostCell: UICollectionViewCell {
 extension PostCell {
     func configure(with userPost: UserPost) {
         if let profileImageURL = userPost.user.profileImageURL {
-            profileImageDataTask = profileImageButton.imageDownload(urlString: profileImageURL)
+            profileImageDataTask = profileImageButton.downloadImage(urlString: profileImageURL)
         }
         
         imageDataTask = imageView.download(urlString: userPost.post.imageURL)

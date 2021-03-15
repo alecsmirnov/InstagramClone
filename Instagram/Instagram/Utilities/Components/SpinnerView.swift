@@ -8,37 +8,32 @@
 import UIKit
 
 final class SpinnerView: UIView {
-    // MARK: Properties
+    // MARK: Constants
     
     private enum Metrics {
         static let containerViewSize: CGFloat = 60
-        static let containerViewCornerRadius: CGFloat = 8
+        static let containerViewCornerRadius: CGFloat = 4
     }
     
     private enum Colors {
         static let viewBackground = UIColor(red: 0, green: 0, blue: 0, alpha: 0.65)
-        static let containerViewBackground = UIColor.white
+        static let containerViewBackground = UIColor(white: 0.96, alpha: 1)
     }
     
     private enum Constants {
-        static let animationDuration = 0.4
+        static let showAnimationDuration: TimeInterval = 0.2
+        static let hideAnimationDuration: TimeInterval = 0.4
     }
     
     // MARK: Subviews
     
     private let containerView = UIView()
     private let activityIndicatorView = UIActivityIndicatorView()
-    
-    override func setNeedsLayout() {
-        super.setNeedsLayout()
 
-        frame = UIScreen.main.bounds
-    }
-
-    // MARK: Initialization
+    // MARK: Lifecycle
     
-    init() {
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         setupAppearance()
         setupLayout()
@@ -47,25 +42,33 @@ final class SpinnerView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func setNeedsLayout() {
+        super.setNeedsLayout()
+
+        frame = UIScreen.main.bounds
+    }
 }
 
 // MARK: - Public Methods
 
 extension SpinnerView {
     func show() {
-        UIView.animate(withDuration: Constants.animationDuration) {
+        UIView.animate(withDuration: Constants.showAnimationDuration) {
             self.alpha = 1
         }
         
         activityIndicatorView.startAnimating()
     }
     
-    func hide() {
-        UIView.animate(withDuration: Constants.animationDuration) {
+    func hide(completion: (() -> Void)? = nil) {
+        UIView.animate(withDuration: Constants.hideAnimationDuration) {
             self.alpha = 0
+        } completion: { _ in
+            self.activityIndicatorView.stopAnimating()
+            
+            completion?()
         }
-        
-        activityIndicatorView.stopAnimating()
     }
 }
 

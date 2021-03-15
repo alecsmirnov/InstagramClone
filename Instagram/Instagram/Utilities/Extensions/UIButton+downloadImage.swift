@@ -1,5 +1,5 @@
 //
-//  UIButton+imageDownload.swift
+//  UIButton+downloadImage.swift
 //  Instagram
 //
 //  Created by Admin on 12.02.2021.
@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIButton {
-    @discardableResult func imageDownload(urlString: String) -> URLSessionDataTask? {
+    @discardableResult func downloadImage(urlString: String) -> URLSessionDataTask? {
         guard let url = URL(string: urlString) else { return nil }
         
         var dataTask: URLSessionDataTask?

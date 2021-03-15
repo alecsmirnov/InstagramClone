@@ -7,16 +7,13 @@
 
 import UIKit
 
+protocol SharePostViewProtocol: UIView {
+    var image: UIImage? { get set }
+    var caption: String? { get }
+}
+
 final class SharePostView: UIView {
     // MARK: Properties
-    
-    var image: UIImage? {
-        return imageView.image
-    }
-    
-    var caption: String? {
-        return captionTextView.text
-    }
     
     private var contentViewBottomConstraint: NSLayoutConstraint?
     private var captionTextViewFixedBottomConstraint: NSLayoutConstraint?
@@ -45,7 +42,7 @@ final class SharePostView: UIView {
     }
     
     private enum Constants {
-        static let layoutUpdateAnimationDuration = 0.2
+        static let layoutUpdateAnimationDuration: TimeInterval = 0.2
     }
     
     // MARK: Subviews
@@ -55,10 +52,10 @@ final class SharePostView: UIView {
     private let captionTextView = PlaceholderTextView()
     private let separatorView = UIView()
     
-    // MARK: Initialization
+    // MARK: Lifecycle
     
-    init() {
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         setupAppearance()
         setupLayout()
@@ -70,15 +67,20 @@ final class SharePostView: UIView {
     }
 }
 
-// MARK: - Public Methods
+// MARK: - Interface
 
-extension SharePostView {
-    func setMediaFile(_ mediaFile: UIImage) {
-        imageView.image = mediaFile
+extension SharePostView: SharePostViewProtocol {
+    var image: UIImage? {
+        get {
+            return imageView.image
+        }
+        set {
+            imageView.image = newValue
+        }
     }
     
-    func disableInteractions() {
-        captionTextView.isEditable = false
+    var caption: String? {
+        return captionTextView.text
     }
 }
 
@@ -150,7 +152,6 @@ private extension SharePostView {
         contentViewBottomConstraint = contentView.bottomAnchor.constraint(
             equalTo: safeAreaLayoutGuide.bottomAnchor,
             constant: -Metrics.contentViewVerticalSpace)
-        
         contentViewBottomConstraint?.isActive = true
     }
     

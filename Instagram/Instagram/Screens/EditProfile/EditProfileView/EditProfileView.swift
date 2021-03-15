@@ -49,7 +49,7 @@ final class EditProfileView: UIView {
             guard let user = user else { return }
             
             if let profileImageURL = user.profileImageURL {
-                profileImageButton.imageDownload(urlString: profileImageURL)
+                profileImageButton.downloadImage(urlString: profileImageURL)
             }
             
             nameTextField.text = user.fullName

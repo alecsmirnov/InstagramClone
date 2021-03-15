@@ -29,13 +29,17 @@ extension SharePostPresenter: ISharePostPresenter {
     func viewDidLoad() {
         guard let mediaFile = mediaFile else { return }
         
-        viewController?.setMediaFile(mediaFile)
+        viewController?.setImage(mediaFile)
     }
     
     func didPressShareButton(withMediaFile mediaFile: UIImage, caption: String?) {
         viewController?.showSpinner()
         
-        interactor?.sharePost(withMediaFile: mediaFile, caption: caption)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            self.viewController?.hideSpinner()
+        }
+        
+        //interactor?.sharePost(withMediaFile: mediaFile, caption: caption)
     }
 }
 
