@@ -7,30 +7,35 @@
 
 import UIKit
 
-protocol SearchViewDelegate: AnyObject {
-    func searchViewDidPullToRefresh(_ searchView: SearchView)
-    func searchViewDidRequestUsers(_ searchView: SearchView)
+protocol SearchViewProtocol: UIView {
+    func appendUsers(_ users: [User])
+    func removeAllUsers()
     
-    func searchView(_ searchView: SearchView, didSelectUser user: User)
+    func insertNewRows(count: Int)
+    func endRefreshing()
+    
+    func setupSearchAppearance()
+    func setupNoResultAppearance()
+    func setupResultAppearance()
+}
+
+protocol SearchViewOutputProtocol: AnyObject {
+    func didPullToRefresh()
+    func didRequestUser()
+    func didSelectUser(_ user: User)
 }
 
 final class SearchView: UIView {
     // MARK: Properties
     
-    weak var delegate: SearchViewDelegate?
-    
-    var state = SearchState.result
+    weak var output: SearchViewOutputProtocol?
     
     private var lastRequestedUserIndex: Int?
-    private var users = [User]()
+    
+    private let collectionViewDataSource = SearchCollectionViewDataSource()
+    private let collectionViewDelegate = SearchCollectionViewDelegate()
     
     // MARK: Constants
-    
-    enum SearchState {
-        case search
-        case noResult
-        case result
-    }
     
     private enum Constants {
         static let collectionViewAnimationDuration: TimeInterval = 0.1
@@ -40,9 +45,9 @@ final class SearchView: UIView {
     
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
     
-    // MARK: Initialization
+    // MARK: Lifecycle
     
-    init() {
+    override init(frame: CGRect) {
         super.init(frame: .zero)
         
         setupAppearance()
@@ -54,31 +59,58 @@ final class SearchView: UIView {
     }
 }
 
-// MARK: - Public Methods
+// MARK: - Interface
 
-extension SearchView {
-    func appendUser(_ user: User) {
-        users.append(user)
+extension SearchView: SearchViewProtocol {
+    func appendUsers(_ users: [User]) {
+        collectionViewDataSource.appendUsers(users)
     }
     
     func removeAllUsers() {
         lastRequestedUserIndex = nil
         
-        users.removeAll()
+        collectionViewDataSource.removeAllUsers()
     }
     
-    func insertNewRow() {
-        if 1 < users.count {
-            let lastItemIndexPath = IndexPath(row: users.count - 1, section: 0)
+    func insertNewRows(count: Int) {
+        let itemsCount = collectionViewDataSource.usersCount - count
+        
+        if 1 < itemsCount {
+            let lastRowIndex = itemsCount
+            let indexPaths = (0..<count).map { IndexPath(row: $0 + lastRowIndex, section: 0) }
             
-            collectionView.insertItems(at: [lastItemIndexPath])
+            collectionView.insertItems(at: indexPaths)
         } else {
             collectionView.reloadData()
         }
-        
-        collectionView.layoutIfNeeded()
     }
     
+    func endRefreshing() {
+        collectionView.refreshControl?.endRefreshing()
+    }
+    
+    func setupSearchAppearance() {
+        collectionViewDataSource.state = .search
+        
+        reloadData()
+    }
+    
+    func setupNoResultAppearance() {
+        collectionViewDataSource.state = .noResult
+        
+        reloadData()
+    }
+    
+    func setupResultAppearance() {
+        collectionViewDataSource.state = .result
+        
+        reloadData()
+    }
+}
+
+// MARK: - Private Methods
+
+private extension SearchView {
     func reloadData() {
         UIView.transition(
             with: collectionView,
@@ -88,10 +120,6 @@ extension SearchView {
         }
         
         collectionView.layoutIfNeeded()
-    }
-    
-    func endRefreshing() {
-        collectionView.refreshControl?.endRefreshing()
     }
 }
 
@@ -109,18 +137,18 @@ private extension SearchView {
         collectionView.delaysContentTouches = false
         collectionView.keyboardDismissMode = .onDrag
         
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        
         collectionView.register(SearchCell.self, forCellWithReuseIdentifier: SearchCell.reuseIdentifier)
         collectionView.register(UserCell.self, forCellWithReuseIdentifier: UserCell.reuseIdentifier)
         
         collectionView.refreshControl = UIRefreshControl()
         collectionView.refreshControl?.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+        
+        setupCollectionViewDataSource()
+        setupCollectionViewDelegate()
     }
     
     @objc func didPullToRefresh() {
-        delegate?.searchViewDidPullToRefresh(self)
+        output?.didPullToRefresh()
     }
 }
 
@@ -161,67 +189,34 @@ private extension SearchView {
     }
 }
 
-// MARK: - UICollectionViewDataSource
+// MARK: - CollectionViewDataSource
 
-extension SearchView: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch state {
-        case .search, .noResult:
-            return 1
-        case .result:
-            return users.count
-        }
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        switch state {
-        case .search, .noResult:
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: SearchCell.reuseIdentifier,
-                for: indexPath) as? SearchCell
-            else {
-                return UICollectionViewCell()
-            }
-
-            if state == .search {
-                cell.showSearchMessage()
-            } else {
-                cell.showNoResultMessage()
-            }
-
-            return cell
-        case .result:
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: UserCell.reuseIdentifier,
-                for: indexPath) as? UserCell
-            else {
-                return UICollectionViewCell()
-            }
-            
-            if indexPath.row == users.count - 1 && (lastRequestedUserIndex ?? -1) < indexPath.row {
-                lastRequestedUserIndex = indexPath.row
-
-                delegate?.searchViewDidRequestUsers(self)
-            }
-
-            cell.configure(with: users[indexPath.row])
-
-            return cell
+private extension SearchView {
+    func setupCollectionViewDataSource() {
+        collectionView.dataSource = collectionViewDataSource
+        
+        collectionViewDataSource.lastCellPresentedCompletion = { [weak self] in
+            self?.output?.didRequestUser()
         }
     }
 }
 
-// MARK: - UICollectionViewDelegate
+// MARK: - CollectionViewDelegate
 
-extension SearchView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard state == .result else { return }
+private extension SearchView {
+    func setupCollectionViewDelegate() {
+        collectionView.delegate = collectionViewDelegate
         
-        let user = users[indexPath.row]
+        collectionViewDelegate.selectCellAtIndexCompletion = { [weak self] index in
+            self?.selectCell(at: index)
+        }
+    }
+    
+    func selectCell(at index: Int) {
+        guard collectionViewDataSource.state == .result else { return }
         
-        delegate?.searchView(self, didSelectUser: user)
+        if let user = collectionViewDataSource.getUser(at: index) {
+            output?.didSelectUser(user)
+        }
     }
 }

@@ -43,9 +43,7 @@
 		845455FB25BDAC460007C9A2 /* KeyboardAppearanceListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455FA25BDAC460007C9A2 /* KeyboardAppearanceListener.swift */; };
 		845464E725DA5C6D00DCD136 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464E625DA5C6D00DCD136 /* SearchView.swift */; };
 		845464EA25DA5C7E00DCD136 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464E925DA5C7E00DCD136 /* SearchViewController.swift */; };
-		845464ED25DA5CC000DCD136 /* SearchInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464EC25DA5CC000DCD136 /* SearchInteractor.swift */; };
 		845464F025DA5CCD00DCD136 /* SearchPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464EF25DA5CCD00DCD136 /* SearchPresenter.swift */; };
-		845464F325DA5CD900DCD136 /* SearchRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464F225DA5CD900DCD136 /* SearchRouter.swift */; };
 		845464F625DA5CE500DCD136 /* SearchAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464F525DA5CE500DCD136 /* SearchAssembly.swift */; };
 		845464F925DA660A00DCD136 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845464F825DA660A00DCD136 /* UserCell.swift */; };
 		8454924925C19805005AB7DA /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454924825C19805005AB7DA /* MainTabBarController.swift */; };
@@ -116,6 +114,9 @@
 		845E446625FDCD3400198EBD /* ImagePickerCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845E446525FDCD3400198EBD /* ImagePickerCollectionViewDataSource.swift */; };
 		845E447725FE211A00198EBD /* NoImagesHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845E447625FE211A00198EBD /* NoImagesHeaderView.swift */; };
 		845ECB6F25FF4296004398BF /* SharePostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845ECB6E25FF4296004398BF /* SharePostService.swift */; };
+		845ECB7725FF55E1004398BF /* SearchCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845ECB7625FF55E1004398BF /* SearchCollectionViewDataSource.swift */; };
+		845ECB7A25FF55EF004398BF /* SearchCollectionViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845ECB7925FF55EF004398BF /* SearchCollectionViewDelegate.swift */; };
+		845ECB7D25FF6BB8004398BF /* SearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845ECB7C25FF6BB8004398BF /* SearchService.swift */; };
 		845F68D125D2646B0073FAC8 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F68D025D2646B0073FAC8 /* PostCell.swift */; };
 		8491A81225B46073009EDFC2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8491A81125B46073009EDFC2 /* GoogleService-Info.plist */; };
 		8491A84325B47DF6009EDFC2 /* RegistrationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8491A84225B47DF6009EDFC2 /* RegistrationPresenter.swift */; };
@@ -184,9 +185,7 @@
 		845455FA25BDAC460007C9A2 /* KeyboardAppearanceListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAppearanceListener.swift; sourceTree = "<group>"; };
 		845464E625DA5C6D00DCD136 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		845464E925DA5C7E00DCD136 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
-		845464EC25DA5CC000DCD136 /* SearchInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchInteractor.swift; sourceTree = "<group>"; };
 		845464EF25DA5CCD00DCD136 /* SearchPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPresenter.swift; sourceTree = "<group>"; };
-		845464F225DA5CD900DCD136 /* SearchRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchRouter.swift; sourceTree = "<group>"; };
 		845464F525DA5CE500DCD136 /* SearchAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchAssembly.swift; sourceTree = "<group>"; };
 		845464F825DA660A00DCD136 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		8454924825C19805005AB7DA /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
@@ -257,6 +256,9 @@
 		845E446525FDCD3400198EBD /* ImagePickerCollectionViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerCollectionViewDataSource.swift; sourceTree = "<group>"; };
 		845E447625FE211A00198EBD /* NoImagesHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoImagesHeaderView.swift; sourceTree = "<group>"; };
 		845ECB6E25FF4296004398BF /* SharePostService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostService.swift; sourceTree = "<group>"; };
+		845ECB7625FF55E1004398BF /* SearchCollectionViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCollectionViewDataSource.swift; sourceTree = "<group>"; };
+		845ECB7925FF55EF004398BF /* SearchCollectionViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCollectionViewDelegate.swift; sourceTree = "<group>"; };
+		845ECB7C25FF6BB8004398BF /* SearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchService.swift; sourceTree = "<group>"; };
 		845F68D025D2646B0073FAC8 /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
 		8491A81125B46073009EDFC2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8491A84225B47DF6009EDFC2 /* RegistrationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationPresenter.swift; sourceTree = "<group>"; };
@@ -411,9 +413,7 @@
 			isa = PBXGroup;
 			children = (
 				845464E525DA5C5400DCD136 /* SearchView */,
-				845464EC25DA5CC000DCD136 /* SearchInteractor.swift */,
 				845464EF25DA5CCD00DCD136 /* SearchPresenter.swift */,
-				845464F225DA5CD900DCD136 /* SearchRouter.swift */,
 				845464F525DA5CE500DCD136 /* SearchAssembly.swift */,
 			);
 			path = Search;
@@ -422,8 +422,8 @@
 		845464E525DA5C5400DCD136 /* SearchView */ = {
 			isa = PBXGroup;
 			children = (
-				845464F825DA660A00DCD136 /* UserCell.swift */,
-				845AD41925DD3716007A84AC /* SearchCell.swift */,
+				845ECB7325FF4B83004398BF /* Cells */,
+				845ECB7525FF55AC004398BF /* CollectionView */,
 				845464E625DA5C6D00DCD136 /* SearchView.swift */,
 				845464E925DA5C7E00DCD136 /* SearchViewController.swift */,
 			);
@@ -600,8 +600,27 @@
 				845DEFBB25FBAB4400F02D77 /* LoginService.swift */,
 				845DEFC025FBCB9C00F02D77 /* RegistrationService.swift */,
 				845ECB6E25FF4296004398BF /* SharePostService.swift */,
+				845ECB7C25FF6BB8004398BF /* SearchService.swift */,
 			);
 			path = UserServices;
+			sourceTree = "<group>";
+		};
+		845ECB7325FF4B83004398BF /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				845464F825DA660A00DCD136 /* UserCell.swift */,
+				845AD41925DD3716007A84AC /* SearchCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		845ECB7525FF55AC004398BF /* CollectionView */ = {
+			isa = PBXGroup;
+			children = (
+				845ECB7625FF55E1004398BF /* SearchCollectionViewDataSource.swift */,
+				845ECB7925FF55EF004398BF /* SearchCollectionViewDelegate.swift */,
+			);
+			path = CollectionView;
 			sourceTree = "<group>";
 		};
 		8491A80625B43116009EDFC2 /* Constants */ = {
@@ -955,13 +974,16 @@
 				8453273E25F9EC2700B39D6D /* SpinnerButton.swift in Sources */,
 				8454F27F25F389B6006C5A0E /* EditProfileViewController.swift in Sources */,
 				845ADF3225FCD7CA003DEC7A /* NewPostCoordinator.swift in Sources */,
+				845ECB7D25FF6BB8004398BF /* SearchService.swift in Sources */,
 				845C5E0225CC2733002A2E16 /* SpinnerView.swift in Sources */,
 				845C284625CAC22A000731B3 /* FirebaseAuthService.swift in Sources */,
 				84B2E65325B0267700B27457 /* AppDelegate.swift in Sources */,
 				84488AB625C2F67E00173A19 /* ImagePickerViewController.swift in Sources */,
 				8453276625FA273500B39D6D /* UITextField+style.swift in Sources */,
 				845DEFAA25FB554A00F02D77 /* AppCoordinator.swift in Sources */,
+				845ECB7725FF55E1004398BF /* SearchCollectionViewDataSource.swift in Sources */,
 				8454D0E425F5FD6700DD27DD /* EditProfileBioRouter.swift in Sources */,
+				845ECB7A25FF55EF004398BF /* SearchCollectionViewDelegate.swift in Sources */,
 				8445929625B425210028EE6A /* CustomViewController.swift in Sources */,
 				84E660A325B955200036AB9F /* ProfileInteractor.swift in Sources */,
 				8454137C25EF5E1900B0D544 /* UserStats.swift in Sources */,
@@ -977,7 +999,6 @@
 				84F9694125D14E9D0004D838 /* UIImageView+realImageRect.swift in Sources */,
 				8454D0EB25F635FD00DD27DD /* EditProfileUsernameInteractor.swift in Sources */,
 				84549B8E25E8DB6E006CC21D /* CommentCell.swift in Sources */,
-				845464F325DA5CD900DCD136 /* SearchRouter.swift in Sources */,
 				845CC20025C7ECE20051372D /* SharePostViewController.swift in Sources */,
 				84E6612825B9BC8A0036AB9F /* ProfileHeaderView.swift in Sources */,
 				8453275925FA1B0F00B39D6D /* UIButton+twoPartTitle.swift in Sources */,
@@ -1050,7 +1071,6 @@
 				8454138F25EF94CF00B0D544 /* FollowersFollowingRouter.swift in Sources */,
 				8454138925EF94B800B0D544 /* FollowersFollowingInteractor.swift in Sources */,
 				8459C14325F5299100FFFB36 /* EditProfileUsernameViewController.swift in Sources */,
-				845464ED25DA5CC000DCD136 /* SearchInteractor.swift in Sources */,
 				8454F28825F389E6006C5A0E /* EditProfileRouter.swift in Sources */,
 				845DEFB125FB603100F02D77 /* AuthCoordinator.swift in Sources */,
 				845ADF2F25FCD7AB003DEC7A /* ProfileCoordinator.swift in Sources */,

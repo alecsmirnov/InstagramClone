@@ -29,7 +29,7 @@ final class SearchCell: UICollectionViewCell {
     
     private let label = UILabel()
     
-    // MARK: Initialization
+    // MARK: Lifecycle
     
     override init(frame: CGRect) {
         super.init(frame: frame)

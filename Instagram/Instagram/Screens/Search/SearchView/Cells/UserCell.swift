@@ -29,7 +29,7 @@ final class UserCell: UICollectionViewCell {
     }
     
     private enum Colors {
-        static let profileImageViewBorder = UIColor.systemGray5
+        static let profileImageViewBorder = AppConstants.Colors.profileImageBorder
     }
     
     // MARK: Subviews
@@ -42,15 +42,6 @@ final class UserCell: UICollectionViewCell {
     
     // MARK: Lifecycle
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        
-        profileImageDataTask?.cancel()
-        profileImageView.image = nil
-    }
-    
-    // MARK: Initialization
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -60,6 +51,13 @@ final class UserCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        profileImageDataTask?.cancel()
+        profileImageView.image = nil
     }
 }
 

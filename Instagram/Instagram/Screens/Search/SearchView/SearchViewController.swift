@@ -7,12 +7,11 @@
 
 import UIKit
 
-protocol ISearchViewController: AnyObject {
-    func appendUser(_ user: User)
+protocol SearchViewControllerProtocol: AnyObject {
+    func appendUsers(_ users: [User])
     func removeAllUsers()
     
-    func insertNewRow()
-    func reloadData()
+    func insertNewRows(count: Int)
     func endRefreshing()
     
     func setupSearchAppearance()
@@ -20,10 +19,18 @@ protocol ISearchViewController: AnyObject {
     func setupResultAppearance()
 }
 
+protocol SearchViewControllerOutputProtocol: AnyObject {
+    func didPullToRefresh()
+    func didRequestUsers()
+    
+    func didSearchUser(by username: String)
+    func didSelectUser(_ user: User)
+}
+
 final class SearchViewController: CustomViewController<SearchView>  {
     // MARK: Properties
     
-    var presenter: ISearchPresenter?
+    var output: SearchViewControllerOutputProtocol?
     
     // MARK: Constants
     
@@ -44,7 +51,7 @@ final class SearchViewController: CustomViewController<SearchView>  {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        customView?.delegate = self
+        customView?.output = self
         searchBar.delegate = self
         
         setupSearchBarAppearance()
@@ -62,6 +69,54 @@ final class SearchViewController: CustomViewController<SearchView>  {
         
         searchBar.isHidden = true
         searchBar.resignFirstResponder()
+    }
+}
+
+// MARK: - SearchViewController Interface
+
+extension SearchViewController: SearchViewControllerProtocol {
+    func appendUsers(_ users: [User]) {
+        customView?.appendUsers(users)
+    }
+    
+    func removeAllUsers() {
+        customView?.removeAllUsers()
+    }
+    
+    func insertNewRows(count: Int) {
+        customView?.insertNewRows(count: count)
+    }
+    
+    func endRefreshing() {
+        customView?.endRefreshing()
+    }
+    
+    func setupSearchAppearance() {
+        customView?.setupSearchAppearance()
+    }
+    
+    func setupNoResultAppearance() {
+        customView?.setupNoResultAppearance()
+    }
+    
+    func setupResultAppearance() {
+        customView?.setupResultAppearance()
+    }
+}
+
+// MARK: - SearchView Output
+
+extension SearchViewController: SearchViewOutputProtocol {
+    func didPullToRefresh() {
+        output?.didPullToRefresh()
+    }
+    
+    func didRequestUser() {
+        output?.didRequestUsers()
+    }
+    
+    func didSelectUser(_ user: User) {
+        output?.didSelectUser(user)
     }
 }
 
@@ -99,57 +154,6 @@ private extension SearchViewController {
     }
 }
 
-// MARK: - ISearchViewController
-
-extension SearchViewController: ISearchViewController {
-    func appendUser(_ user: User) {
-        customView?.appendUser(user)
-    }
-    
-    func removeAllUsers() {
-        customView?.removeAllUsers()
-    }
-    
-    func insertNewRow() {
-        customView?.insertNewRow()
-    }
-    
-    func reloadData() {
-        customView?.reloadData()
-    }
-    
-    func endRefreshing() {
-        customView?.endRefreshing()
-    }
-    
-    func setupSearchAppearance() {
-        customView?.state = .search
-    }
-    
-    func setupNoResultAppearance() {
-        customView?.state = .noResult
-    }
-    
-    func setupResultAppearance() {
-        customView?.state = .result
-    }
-}
-
-// MARK: - SearchViewDelegate
-
-extension SearchViewController: SearchViewDelegate {
-    func searchViewDidPullToRefresh(_ searchView: SearchView) {
-        presenter?.didPullToRefresh()
-    }
-    
-    func searchViewDidRequestUsers(_ searchView: SearchView) {
-        presenter?.didRequestUsers()
-    }
-    
-    func searchView(_ searchView: SearchView, didSelectUser user: User) {
-        presenter?.didSelectUser(user)
-    }
-}
 
 // MARK: - UISearchBarDelegate
 
@@ -164,8 +168,8 @@ extension SearchViewController: UISearchBarDelegate {
     }
     
     @objc func didStartTyping(_ searchBar: UISearchBar) {
-        if let username = searchBar.text {
-            presenter?.didSearchUser(with: username)
-        }
+        guard let username = searchBar.text else { return }
+        
+        output?.didSearchUser(by: username)
     }
 }

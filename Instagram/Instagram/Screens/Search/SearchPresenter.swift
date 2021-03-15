@@ -5,80 +5,102 @@
 //  Created by Admin on 15.02.2021.
 //
 
-protocol ISearchPresenter: AnyObject {
-    func didPullToRefresh()
-    func didRequestUsers()
-    
-    func didSearchUser(with username: String)
-    func didSelectUser(_ user: User)
-}
-
 final class SearchPresenter {
-    weak var viewController: ISearchViewController?
-    var interactor: ISearchInteractor?
-    var router: ISearchRouter?
+    // MARK: Properties
     
-    private var isRefreshing = false
+    weak var view: SearchViewControllerProtocol?
+    weak var coordinator: SearchCoordinatorProtocol?
+    
+    private let searchService = SearchService(usersLimitPerFetch: Requests.usersLimit)
+    
+    // MARK: Constants
+    
+    private enum Requests {
+        static let usersLimit: UInt = 8
+    }
 }
 
-// MARK: - ISearchPresenter
+// MARK: - SearchView Output
 
-extension SearchPresenter: ISearchPresenter {
+extension SearchPresenter: SearchViewControllerOutputProtocol {
     func didPullToRefresh() {
-        isRefreshing = true
+        guard !searchService.lastUsernameSearchIsEmpty else {
+            view?.endRefreshing()
+            
+            return
+        }
         
-        interactor?.refreshUsers()
+        view?.removeAllUsers()
+        view?.setupResultAppearance()
+        
+        searchService.refreshUsers { [weak self] result in
+            switch result {
+            case .success(let users):
+                self?.view?.endRefreshing()
+                self?.applyUsersResult(users)
+            case .failure(_):
+                break
+            }
+        }
     }
     
     func didRequestUsers() {
-        interactor?.requestUsers()
+        searchService.requestNextUsers { [weak self] result in
+            switch result {
+            case .success(let users):
+                self?.appendUsers(users)
+            case .failure(_):
+                break
+            }
+        }
     }
     
-    func didSearchUser(with username: String) {
-        viewController?.removeAllUsers()
-        viewController?.setupResultAppearance()
+    func didSearchUser(by username: String) {
+        view?.removeAllUsers()
         
-        if !username.isEmpty {
-            viewController?.setupSearchAppearance()
+        if username.isEmpty {
+            view?.setupResultAppearance()
             
-            interactor?.fetchUsers(by: username)
+            searchService.clearLastUsernameSearch()
+        } else {
+            view?.setupSearchAppearance()
+            
+            searchService.searchUsers(by: username) { [weak self] result in
+                switch result {
+                case .success(let users):
+                    self?.applyUsersResult(users)
+                case .failure(_):
+                    break
+                }
+            }
         }
-        
-        viewController?.reloadData()
     }
     
     func didSelectUser(_ user: User) {
-        router?.showProfileViewController(user: user)
+        coordinator?.showProfileViewController(user: user)
     }
 }
 
-// MARK: - ISearchInteractorOutput
+// MARK: - Private Methods
 
-extension SearchPresenter: ISearchInteractorOutput {
-    func fetchUsersSuccess(_ users: [User]) {
-        if isRefreshing {
-            isRefreshing = false
-
-            viewController?.endRefreshing()
-            viewController?.removeAllUsers()
-            viewController?.reloadData()
+private extension SearchPresenter {
+    func applyUsersResult(_ users: [User]) {
+        guard !users.isEmpty else {
+            view?.setupNoResultAppearance()
+            
+            searchService.clearLastUsernameSearch()
+            
+            return
         }
         
-        viewController?.setupResultAppearance()
-        
-        users.reversed().forEach { user in
-            viewController?.appendUser(user)
-        }
-        
-        viewController?.reloadData()
+        appendUsers(users)
     }
     
-    func fetchUsersNoResult() {
-        viewController?.setupNoResultAppearance()
-        viewController?.reloadData()
-    }
-    
-    func fetchUsersFailure() {
+    func appendUsers(_ users: [User]) {
+        guard !users.isEmpty else { return }
         
+        view?.setupResultAppearance()
+        view?.appendUsers(users)
+        view?.insertNewRows(count: users.count)
     }
 }

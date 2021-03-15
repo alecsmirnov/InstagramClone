@@ -8,18 +8,11 @@
 enum SearchAssembly {
     static func createSearchViewController(coordinator: SearchCoordinatorProtocol? = nil) -> SearchViewController {
         let viewController = SearchViewController()
-        
-        let interactor = SearchInteractor()
         let presenter = SearchPresenter()
-        let router = SearchRouter(viewController: viewController)
         
-        viewController.presenter = presenter
-        
-        interactor.presenter = presenter
-        
-        presenter.viewController = viewController
-        presenter.interactor = interactor
-        presenter.router = router
+        viewController.output = presenter
+        presenter.view = viewController
+        presenter.coordinator = coordinator
         
         return viewController
     }

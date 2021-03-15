@@ -8,7 +8,7 @@
 import UIKit
 
 protocol SearchCoordinatorProtocol: AnyObject {
-    
+    func showProfileViewController(user: User)
 }
 
 final class SearchCoordinator: CoordinatorProtocol {
@@ -41,5 +41,7 @@ extension SearchCoordinator {
 // MARK: - SearchCoordinatorProtocol
 
 extension SearchCoordinator: SearchCoordinatorProtocol {
-    
+    func showProfileViewController(user: User) {
+        
+    }
 }
