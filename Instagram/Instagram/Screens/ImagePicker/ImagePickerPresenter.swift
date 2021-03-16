@@ -13,44 +13,39 @@ final class ImagePickerPresenter {
     weak var view: ImagePickerViewControllerProtocol?
     weak var coordinator: ImagePickerCoordinatorProtocol?
     
-    private let imagesService = LocalImagesService()
-    
-    // MARK: Constants
-    
-    private enum Requests {
-        static let imagesLimit = 8
-    }
+    var imagesService: LocalImagesServiceProtocol?
 }
 
 // MARK: - ImagePickerView Output
 
 extension ImagePickerPresenter: ImagePickerViewControllerOutputProtocol {
     func viewDidLoad() {
-        guard !imagesService.isEmpty else {
+        guard !(imagesService?.isEmpty ?? true) else {
             view?.showNoImagesHeader()
             view?.disableNextButton()
             
             return
         }
         
-        didRequestImage()
+        guard let imageSize = view?.imageSize else { return }
+        
+        imagesService?.fetchImagesDescendingByDate(targetSize: imageSize) { [weak self] images in
+            self?.appendImages(images)
+        }
     }
     
     func didRequestImage() {
         guard let imageSize = view?.imageSize else { return }
         
-        imagesService.fetchNextImages(targetSize: imageSize, count: Requests.imagesLimit) { [weak self] images in
-            guard let images = images else { return }
-
-            self?.view?.appendImages(images)
-            self?.view?.insertNewItems(count: images.count)
+        imagesService?.requestNextImages(targetSize: imageSize) { [weak self] images in
+            self?.appendImages(images)
         }
     }
     
     func didSelectImage(at index: Int) {
         view?.disableNextButton()
         
-        imagesService.fetchImage(at: index) { [weak self] image in
+        imagesService?.getMaximumSizeImage(at: index) { [weak self] image in
             guard let image = image else { return }
             
             self?.view?.setHeaderImage(image)
@@ -64,5 +59,16 @@ extension ImagePickerPresenter: ImagePickerViewControllerOutputProtocol {
     
     func didTapNextButton(withImage image: UIImage) {
         coordinator?.showSharePostViewController(withImage: image)
+    }
+}
+
+// MARK: - Private Methods
+
+private extension ImagePickerPresenter {
+    func appendImages(_ images: [UIImage]?) {
+        guard let images = images else { return }
+
+        view?.appendImages(images)
+        view?.insertNewItems(count: images.count)
     }
 }

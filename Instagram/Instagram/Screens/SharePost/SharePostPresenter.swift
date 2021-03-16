@@ -13,12 +13,12 @@ final class SharePostPresenter {
     weak var view: SharePostViewControllerProtocol?
     weak var coordinator: SharePostCoordinatorProtocol?
     
-    var image: UIImage?
+    var sharePostService: SharePostServiceProtocol?
     
-    private let sharePostService = SharePostService()
+    var image: UIImage?
 }
 
-// MARK: - ISharePostPresenter
+// MARK: - SharePostView Output
 
 extension SharePostPresenter: SharePostViewControllerOutputProtocol {
     func viewDidLoad() {
@@ -30,7 +30,9 @@ extension SharePostPresenter: SharePostViewControllerOutputProtocol {
     func didTapShareButton(withImage image: UIImage, caption: String?) {
         view?.showLoadingView()
         
-        sharePostService.sharePost(withImage: image, caption: caption) { [weak self] error in
+        let croppedImage = image.instagramCrop() ?? image
+        
+        sharePostService?.sharePost(withImage: croppedImage, caption: caption) { [weak self] error in
             guard error == nil else {
                 self?.view?.hideLoadingView {
                     self?.view?.showAlert()

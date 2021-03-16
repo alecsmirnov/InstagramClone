@@ -1,33 +1,12 @@
 //
-//  LoginServiceProtocol.swift
+//  LoginService.swift
 //  Instagram
 //
 //  Created by Admin on 12.03.2021.
 //
 
-struct LoginService {
-    // MARK: Constants
-    
-    enum EmailError: Error {
-        case empty
-        case invalid
-    }
-
-    enum PasswordError: Error {
-        case empty
-        case invalid(Int)
-    }
-
-    enum SignInError: Error {
-        case userNotFound
-        case wrongPassword
-    }
-}
-
-// MARK: - Public Methods
-
-extension LoginService {
-    func checkEmail(_ email: String, completion: @escaping (EmailError?) -> Void) {
+final class LoginService: LoginServiceProtocol {
+    func checkEmail(_ email: String, completion: @escaping (LoginServiceResult.CheckEmail?) -> Void) {
         guard !email.isEmpty else {
             completion(.empty)
             
@@ -43,7 +22,7 @@ extension LoginService {
         completion(nil)
     }
     
-    func checkPassword(_ password: String, completion: @escaping (PasswordError?) -> Void) {
+    func checkPassword(_ password: String, completion: @escaping (LoginServiceResult.CheckPassword?) -> Void) {
         guard !password.isEmpty else {
             completion(.empty)
             
@@ -59,7 +38,7 @@ extension LoginService {
         completion(nil)
     }
     
-    func signIn(withEmail email: String, password: String, completion: @escaping (SignInError?) -> Void) {
+    func signIn(withEmail email: String, password: String, completion: @escaping (LoginServiceResult.SignIn?) -> Void) {
         FirebaseAuthService.signIn(withEmail: email, password: password) { result in
             switch result {
             case .success(let userIdentifier):

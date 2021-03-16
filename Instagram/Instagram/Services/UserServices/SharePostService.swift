@@ -7,29 +7,24 @@
 
 import UIKit
 
-struct SharePostService {
+final class SharePostService {
     private enum Constants {
-        static let defaultCompressionQuality: CGFloat = 0.75
+        static let imageCompressionQuality: CGFloat = 0.75
     }
 }
 
 // MARK: - Public Methods
 
-extension SharePostService {
-    func sharePost(
-        withImage image: UIImage,
-        caption: String?,
-        imageCompressionQuality: CGFloat = Constants.defaultCompressionQuality,
-        completion: @escaping (Error?) -> Void
-    ) {
-        guard let userIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
+extension SharePostService: SharePostServiceProtocol {
+    func sharePost(withImage image: UIImage, caption: String?, completion: @escaping (Error?) -> Void) {
+        guard
+            let userIdentifier = FirebaseAuthService.currentUserIdentifier,
+            let imageData = image.jpegData(compressionQuality: Constants.imageCompressionQuality)
+        else {
+            return
+        }
         
-        let croppedImage = image.instagramCrop() ?? image
-        
-        guard let imageData = croppedImage.jpegData(compressionQuality: imageCompressionQuality) else { return }
-        
-        let imageAspectRatio = croppedImage.size.width / croppedImage.size.height
-        let caption = (caption?.isEmpty ?? true) ? nil : caption
+        let imageAspectRatio = image.size.width / image.size.height
         
         FirebaseDatabaseService.sharePost(
             userIdentifier: userIdentifier,

@@ -7,33 +7,8 @@
 
 import Foundation
 
-struct RegistrationService {
-    // MARK: Constants
-    
-    enum EmailError: Error {
-        case empty
-        case invalid
-        case exist
-    }
-    
-    enum UsernameError: Error {
-        case empty
-        case invalid
-        case exist
-    }
-
-    enum PasswordError: Error {
-        case empty
-        case invalid(Int)
-    }
-
-    typealias SignUp = Error
-}
-
-// MARK: - Public Methods
-
-extension RegistrationService {
-    func checkEmail(_ email: String, completion: @escaping (EmailError?) -> Void) {
+final class RegistrationService: RegistrationServiceProtocol {
+    func checkEmail(_ email: String, completion: @escaping (RegistrationServiceResult.CheckEmail?) -> Void) {
         guard !email.isEmpty else {
             completion(.empty)
             
@@ -56,7 +31,7 @@ extension RegistrationService {
         }
     }
     
-    func checkUsername(_ username: String, completion: @escaping (UsernameError?) -> Void) {
+    func checkUsername(_ username: String, completion: @escaping (RegistrationServiceResult.CheckUsername?) -> Void) {
         guard !username.isEmpty else {
             completion(.empty)
             
@@ -79,7 +54,7 @@ extension RegistrationService {
         }
     }
     
-    func checkPassword(_ password: String, completion: @escaping (PasswordError?) -> Void) {
+    func checkPassword(_ password: String, completion: @escaping (RegistrationServiceResult.CheckPassword?) -> Void) {
         guard !password.isEmpty else {
             completion(.empty)
             
@@ -101,7 +76,7 @@ extension RegistrationService {
         username: String,
         password: String,
         profileImageData: Data?,
-        completion: @escaping (SignUp?) -> Void
+        completion: @escaping (RegistrationServiceResult.SignUp?) -> Void
     ) {
         FirebaseDatabaseService.createUser(
             withEmail: email,

@@ -24,6 +24,8 @@ enum ImagePickerAssembly {
         presenter.view = viewController
         presenter.coordinator = coordinator
         
+        presenter.imagesService = LocalImagesService()
+        
         return viewController
     }
 }

@@ -14,6 +14,8 @@ enum SearchAssembly {
         presenter.view = viewController
         presenter.coordinator = coordinator
         
+        presenter.searchService = SearchService()
+        
         return viewController
     }
 }

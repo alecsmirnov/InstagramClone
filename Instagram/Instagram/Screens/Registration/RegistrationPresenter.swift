@@ -11,7 +11,7 @@ final class RegistrationPresenter {
     weak var view: RegistrationViewControllerProtocol?
     weak var coordinator: RegistrationCoordinatorProtocol?
     
-    private let registrationService = RegistrationService()
+    var registrationService: RegistrationServiceProtocol?
     
     private var isEmailChecked = false {
         didSet {
@@ -40,7 +40,7 @@ extension RegistrationPresenter: RegistrationViewControllerOutputProtocol {
     }
     
     func emailDidChange(_ email: String) {
-        registrationService.checkEmail(email) { [weak self] error in
+        registrationService?.checkEmail(email) { [weak self] error in
             if let error = error {
                 self?.isEmailChecked = false
                 
@@ -61,7 +61,7 @@ extension RegistrationPresenter: RegistrationViewControllerOutputProtocol {
     }
     
     func usernameDidChange(_ username: String) {
-        registrationService.checkUsername(username) { [weak self] error in
+        registrationService?.checkUsername(username) { [weak self] error in
             if let error = error {
                 self?.isUsernameChecked = false
                 
@@ -82,7 +82,7 @@ extension RegistrationPresenter: RegistrationViewControllerOutputProtocol {
     }
     
     func passwordDidChange(_ password: String) {
-        registrationService.checkPassword(password) { [weak self] error in
+        registrationService?.checkPassword(password) { [weak self] error in
             if let error = error {
                 self?.isPasswordChecked = false
                 
@@ -117,7 +117,7 @@ extension RegistrationPresenter: RegistrationViewControllerOutputProtocol {
             height: imageSize,
             contentMode: .aspectFill).jpegData(compressionQuality: 1)
         
-        registrationService.signUp(
+        registrationService?.signUp(
             withEmail: email,
             fullName: fullName,
             username: username,

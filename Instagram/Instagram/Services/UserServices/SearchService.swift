@@ -8,25 +8,23 @@
 final class SearchService {
     // MARK: Properties
     
-    var lastUsernameSearchIsEmpty: Bool {
-        return lastUsernameSearch == nil
+    var previousSearchExist: Bool {
+        return lastUsernameSearch != nil
     }
-    
-    private var usersLimit: UInt
     
     private var lastUsernameSearch: String?
     private var lastRequestedUsername: String?
     
-    // MARK: Initialization
+    // MARK: Constants
     
-    init(usersLimitPerFetch: UInt) {
-        usersLimit = usersLimitPerFetch
+    private enum Requests {
+        static let usersLimit: UInt = 8
     }
 }
 
 // MARK: - Public Methods
 
-extension SearchService {
+extension SearchService: SearchServiceProtocol {
     func searchUsers(by username: String, completion: @escaping (Result<[User], Error>) -> Void) {
         FirebaseDatabaseService.isUsernamePrefixExist(username) { [weak self] result in
             switch result {
@@ -39,9 +37,9 @@ extension SearchService {
                 
                 self?.lastUsernameSearch = username
                 
-                guard let usersLimit = self?.usersLimit else { return }
-                
-                FirebaseDatabaseService.fetchUsersFromBegin(startAtUsername: username, limit: usersLimit) { result in
+                FirebaseDatabaseService.fetchUsersFromBegin(
+                    startAtUsername: username,
+                    limit: Requests.usersLimit) { result in
                     switch result {
                     case .success(let users):
                         self?.lastRequestedUsername = users.last?.username
@@ -67,7 +65,7 @@ extension SearchService {
         FirebaseDatabaseService.fetchUsersFromBegin(
             startAtUsername: lastRequestedUsername,
             dropFirst: true,
-            limit: usersLimit + 1) { [weak self] result in
+            limit: Requests.usersLimit + 1) { [weak self] result in
             switch result {
             case .success(let users):
                 self?.lastRequestedUsername = users.last?.username
@@ -83,17 +81,13 @@ extension SearchService {
         }
     }
     
-    func refreshUsers(completion: @escaping (Result<[User], Error>) -> Void) {
+    func refreshPreviousSearch(completion: @escaping (Result<[User], Error>) -> Void) {
         guard let lastUsernameSearch = lastUsernameSearch else { return }
         
         searchUsers(by: lastUsernameSearch, completion: completion)
     }
     
-    func getLastUsernameSearch() -> String? {
-        return lastUsernameSearch
-    }
-    
-    func clearLastUsernameSearch() {
+    func clearPreviousSearch() {
         lastUsernameSearch = nil
     }
 }

@@ -11,20 +11,14 @@ final class SearchPresenter {
     weak var view: SearchViewControllerProtocol?
     weak var coordinator: SearchCoordinatorProtocol?
     
-    private let searchService = SearchService(usersLimitPerFetch: Requests.usersLimit)
-    
-    // MARK: Constants
-    
-    private enum Requests {
-        static let usersLimit: UInt = 8
-    }
+    var searchService: SearchServiceProtocol?
 }
 
 // MARK: - SearchView Output
 
 extension SearchPresenter: SearchViewControllerOutputProtocol {
     func didPullToRefresh() {
-        guard !searchService.lastUsernameSearchIsEmpty else {
+        guard searchService?.previousSearchExist ?? false else {
             view?.endRefreshing()
             
             return
@@ -33,7 +27,7 @@ extension SearchPresenter: SearchViewControllerOutputProtocol {
         view?.removeAllUsers()
         view?.setupResultAppearance()
         
-        searchService.refreshUsers { [weak self] result in
+        searchService?.refreshPreviousSearch { [weak self] result in
             switch result {
             case .success(let users):
                 self?.view?.endRefreshing()
@@ -45,7 +39,7 @@ extension SearchPresenter: SearchViewControllerOutputProtocol {
     }
     
     func didRequestUsers() {
-        searchService.requestNextUsers { [weak self] result in
+        searchService?.requestNextUsers { [weak self] result in
             switch result {
             case .success(let users):
                 self?.appendUsers(users)
@@ -61,11 +55,11 @@ extension SearchPresenter: SearchViewControllerOutputProtocol {
         if username.isEmpty {
             view?.setupResultAppearance()
             
-            searchService.clearLastUsernameSearch()
+            searchService?.clearPreviousSearch()
         } else {
             view?.setupSearchAppearance()
             
-            searchService.searchUsers(by: username) { [weak self] result in
+            searchService?.searchUsers(by: username) { [weak self] result in
                 switch result {
                 case .success(let users):
                     self?.applyUsersResult(users)
@@ -88,7 +82,7 @@ private extension SearchPresenter {
         guard !users.isEmpty else {
             view?.setupNoResultAppearance()
             
-            searchService.clearLastUsernameSearch()
+            searchService?.clearPreviousSearch()
             
             return
         }

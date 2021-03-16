@@ -19,6 +19,8 @@ enum SharePostAssembly {
         presenter.view = viewController
         presenter.coordinator = coordinator
         
+        presenter.sharePostService = SharePostService()
+        
         presenter.image = image
         
         return viewController

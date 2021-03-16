@@ -15,13 +15,13 @@ final class LocalImagesService {
         return imagesCount == 0
     }
     
-    var imagesCount: Int {
+    private var imagesCount: Int {
         return assets?.count ?? 0
     }
     
-    private(set) var currentImageIndex = 0
+    private var currentImageIndex = 0
     
-    private let imageRequestOptions = LocalImagesService.createImageRequestOptions()
+    private lazy var imageRequestOptions = LocalImagesService.createImageRequestOptions()
     
     private var assets: PHFetchResult<PHAsset>?
     private let cachingImageManager = PHCachingImageManager()
@@ -32,7 +32,11 @@ final class LocalImagesService {
         static let creationDate = "creationDate"
     }
     
-    // MARK: Lifecycle
+    private enum Requests {
+        static let imagesLimit = 8
+    }
+    
+    // MARK: Initialization
     
     init() {
         fetchImagesAssets()
@@ -41,22 +45,22 @@ final class LocalImagesService {
 
 // MARK: - Public Methods
 
-extension LocalImagesService {
-    func fetchNextImages(
-        targetSize: CGSize = PHImageManagerMaximumSize,
-        count: Int,
-        completion: @escaping ([UIImage]?) -> Void
-    ) {
+extension LocalImagesService: LocalImagesServiceProtocol {
+    func fetchImagesDescendingByDate(targetSize: CGSize, completion: @escaping ([UIImage]?) -> Void) {
+        requestNextImages(targetSize: targetSize, completion: completion)
+    }
+    
+    func requestNextImages(targetSize: CGSize, completion: @escaping ([UIImage]?) -> Void) {
         var images: [(image: UIImage, index: Int)] = []
         let dispatchGroup = DispatchGroup()
         
-        for _ in 0..<count {
+        for _ in 0..<Requests.imagesLimit {
             let imageIndex = currentImageIndex
             
             if imageIndex < imagesCount {
                 dispatchGroup.enter()
                 
-                fetchImage(at: imageIndex, targetSize: targetSize) { image in
+                getImage(at: imageIndex, targetSize: targetSize) { image in
                     if let image = image {
                         images.append((image, imageIndex))
                     }
@@ -75,11 +79,7 @@ extension LocalImagesService {
         }
     }
     
-    func fetchImage(
-        at index: Int,
-        targetSize: CGSize = PHImageManagerMaximumSize,
-        completion: @escaping (UIImage?) -> Void
-    ) {
+    func getImage(at index: Int, targetSize: CGSize, completion: @escaping (UIImage?) -> Void) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let asset = self?.assets?.object(at: index) else {
                 DispatchQueue.main.async {
@@ -109,8 +109,8 @@ extension LocalImagesService {
         }
     }
     
-    func resetCurrentImageIndex() {
-        currentImageIndex = 0
+    func getMaximumSizeImage(at index: Int, completion: @escaping (UIImage?) -> Void) {
+        getImage(at: index, targetSize: PHImageManagerMaximumSize, completion: completion)
     }
 }
 
