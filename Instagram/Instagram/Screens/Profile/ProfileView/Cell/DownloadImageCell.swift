@@ -1,5 +1,5 @@
 //
-//  ProfilePostCell.swift
+//  DownloadImageCell.swift
 //  Instagram
 //
 //  Created by Admin on 05.02.2021.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ProfilePostCell: UICollectionViewCell {
+final class DownloadImageCell: UICollectionViewCell {
     // MARK: Properties
     
     static var reuseIdentifier: String {
@@ -22,15 +22,6 @@ final class ProfilePostCell: UICollectionViewCell {
     
     // MARK: Lifecycle
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        
-        imageDataTask?.cancel()
-        imageView.image = nil
-    }
-    
-    // MARK: Initialization
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -41,19 +32,26 @@ final class ProfilePostCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        imageDataTask?.cancel()
+        imageView.image = nil
+    }
 }
 
 // MARK: - Public Methods
 
-extension ProfilePostCell {
-    func configure(with post: Post) {
-        imageDataTask = imageView.download(urlString: post.imageURL)
+extension DownloadImageCell {
+    func configure(with urlString: String) {
+        imageDataTask = imageView.download(urlString: urlString)
     }
 }
 
 // MARK: - Appearance
 
-private extension ProfilePostCell {
+private extension DownloadImageCell {
     func setupAppearance() {
         setupImageViewAppearance()
     }
@@ -66,7 +64,7 @@ private extension ProfilePostCell {
 
 // MARK: - Layout
 
-private extension ProfilePostCell {
+private extension DownloadImageCell {
     func setupLayout() {
         setupSubviews()
         

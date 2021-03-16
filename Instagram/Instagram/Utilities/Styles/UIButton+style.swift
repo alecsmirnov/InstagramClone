@@ -14,6 +14,18 @@ extension UIButton {
         titleLabel?.font = .boldSystemFont(ofSize: fontSize)
         backgroundColor = AppConstants.Colors.roundedButtonMainBackground
         layer.cornerRadius = AppConstants.Metrics.roundedButtonCornerRadius
+        layer.borderColor = AppConstants.Colors.roundedButtonMainBorder.cgColor
+        layer.borderWidth = 0
+    }
+    
+    func additionalStyle(title: String, fontSize: CGFloat) {
+        setTitle(title, for: .normal)
+        setTitleColor(AppConstants.Colors.roundedButtonExtraTitle, for: .normal)
+        titleLabel?.font = .boldSystemFont(ofSize: fontSize)
+        backgroundColor = AppConstants.Colors.roundedButtonAdditionalBackground
+        layer.cornerRadius = AppConstants.Metrics.roundedButtonCornerRadius
+        layer.borderColor = AppConstants.Colors.roundedButtonAdditionalBorder.cgColor
+        layer.borderWidth = AppConstants.Metrics.roundedButtonBorderWidth
     }
     
     func extraStyle(firstTitle: String, secondTitle: String) {

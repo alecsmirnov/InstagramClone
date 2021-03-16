@@ -7,12 +7,12 @@
 
 import UIKit
 
-protocol ProfileHeaderViewDelegate: AnyObject {
-    func profileHeaderViewDidPressFollowersButton(_ view: ProfileHeaderView)
-    func profileHeaderViewDidPressFollowingButton(_ view: ProfileHeaderView)
-    func profileHeaderViewDidPressEditFollowButton(_ view: ProfileHeaderView)
-    func profileHeaderViewDidPressGridButton(_ view: ProfileHeaderView)
-    func profileHeaderViewDidPressBookmarkButton(_ view: ProfileHeaderView)
+protocol ProfileHeaderViewOutputProtocol: AnyObject {
+    func didTapFollowersButton()
+    func didTapFollowingButton()
+    func didTapEditFollowButton()
+    func didTapGridButton()
+    func didTapBookmarkButton()
 }
 
 final class ProfileHeaderView: UICollectionReusableView {
@@ -22,28 +22,30 @@ final class ProfileHeaderView: UICollectionReusableView {
         return String(describing: self)
     }
     
-    weak var delegate: ProfileHeaderViewDelegate?
+    weak var output: ProfileHeaderViewOutputProtocol?
+    
+    private var bioLabelTopConstraint: NSLayoutConstraint?
+    private var websiteLabelTopConstraint: NSLayoutConstraint?
+    private var separatorViewTopConstraint: NSLayoutConstraint?
     
     // MARK: Constants
     
     private enum Metrics {
+        static let profileImageViewSize: CGFloat = AppConstants.Metrics.profileImageMediumSize
+        static let profileImageViewBorderWidth: CGFloat = AppConstants.Metrics.profileImageBorderWidth
+        
         static let profileInfoVerticalSpace: CGFloat = 16
         static let profileInfoHorizontalSpace: CGFloat = 18
         
-        static let profileImageViewSize: CGFloat = 80
-        static let profileImageViewBorderWidth: CGFloat = 0.6
-        
-        static let editFollowButtonCornerRadius: CGFloat = 4
-        static let editFollowButtonBorderWidth: CGFloat = 0.5
         static let editFollowButtonFont: CGFloat = 15
         
-        static let separatorViewWidth: CGFloat = 0.6
+        static let separatorViewWidth: CGFloat = 1
         static let bottomSeparatorViewBottomSpace: CGFloat = 1
         
         static let toolbarStackViewHeight: CGFloat = 44
         
-        static let bioTopInset: CGFloat = 2
-        static let websiteTopInset: CGFloat = 4
+        static let bioLabelTopSpace: CGFloat = 2
+        static let websiteLabelTopSpace: CGFloat = 4
         
         static let userStatsCountersFontSize: CGFloat = 17
         static let userStatsTitlesFontSize: CGFloat = 15
@@ -53,36 +55,18 @@ final class ProfileHeaderView: UICollectionReusableView {
         static let websiteFontSize: CGFloat = 16
     }
     
-    private enum UserStatsStackViewTitles {
-        static let posts = "posts"
-        static let followers = "followers"
-        static let following = "following"
-    }
-    
-    private enum EditFollowButtonTitles {
-        static let edit = "Edit Profile"
-        static let follow = "Follow"
-        static let unfollow = "Unfollow"
-    }
-    
-    private enum ToolbarStackViewImages {
+    private enum Images {
         static let grid = UIImage(systemName: "squareshape.split.3x3")
         static let bookmark = UIImage(systemName: "bookmark")
     }
     
     private enum Colors {
-        static let profileImageViewBorder = UIColor.lightGray
-        static let userStatsStackViewTitle = UIColor.systemGray
-        static let editFollowButtonBorder = UIColor.lightGray
-        static let editFollowButtonFollowStyleBackground = UIColor(red: 0.25, green: 0.36, blue: 0.9, alpha: 1)
+        static let profileImageViewBorder = AppConstants.Colors.profileImageBorder
+        static let separatorViewBackground = AppConstants.Colors.separatorViewBackground
         
-        static let separatorView = UIColor.lightGray
+        static let userStatsStackViewTitle = UIColor.systemGray
         
         static let toolbarStackViewButtonTint = UIColor(white: 0, alpha: 0.4)
-    }
-    
-    private enum Constants {
-        static let editFollowButtonAnimationDuration: TimeInterval = 0.4
     }
     
     // MARK: Subviews
@@ -90,16 +74,15 @@ final class ProfileHeaderView: UICollectionReusableView {
     private let profileImageView = UIImageView()
     
     private let userStatsStackView = UIStackView()
-    private let postsButton = TwoPartsButton()
-    private let followersButton = TwoPartsButton()
-    private let followingButton = TwoPartsButton()
+    private let postsButton = UIButton(type: .custom)
+    private let followersButton = UIButton(type: .custom)
+    private let followingButton = UIButton(type: .custom)
     
     private let editFollowButton = UIButton(type: .system)
     
-    private let userInfoStackView = UIStackView()
     private let fullNameLabel = UILabel()
-    private let bioTextView = SelfSizedTextView()
-    private let websiteTextView = SelfSizedTextView()
+    private let bioLabel = UILabel()
+    private let websiteLabel = UILabel()
     
     private let separatorView = UIView()
     
@@ -109,14 +92,14 @@ final class ProfileHeaderView: UICollectionReusableView {
     
     private let bottomSeparatorView = UIView()
     
-    // MARK: Initialization
+    // MARK: Lifecycle
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         setupAppearance()
         setupLayout()
-        setupActions()
+        setupButtonActions()
     }
     
     required init?(coder: NSCoder) {
@@ -129,46 +112,39 @@ final class ProfileHeaderView: UICollectionReusableView {
 extension ProfileHeaderView {
     func setUser(_ user: User) {
         fullNameLabel.text = user.fullName
+        bioLabel.text = user.bio
+        websiteLabel.text = user.website
+        
+        bioLabelTopConstraint?.constant = (user.bio == nil) ? 0 : Metrics.bioLabelTopSpace
+        websiteLabelTopConstraint?.constant = (user.website == nil) ? 0 : Metrics.websiteLabelTopSpace
+        
+        if user.fullName != nil || user.bio != nil || user.website != nil {
+            separatorViewTopConstraint?.constant = Metrics.profileInfoVerticalSpace
+        } else {
+            separatorViewTopConstraint?.constant = 0
+        }
         
         if let profileImageURL = user.profileImageURL {
             profileImageView.download(urlString: profileImageURL)
         }
-        
-        bioTextView.text = user.bio
-        websiteTextView.text = user.website
     }
     
     func setUserStats(_ userStats: UserStats) {
-        postsButton.firstPartText = userStats.posts.description
-        followersButton.firstPartText = userStats.followers.description
-        followingButton.firstPartText = userStats.following.description
+        setPostsButtonTitle(count: userStats.posts)
+        setFollowersButtonTitle(count: userStats.followers)
+        setFollowingButtonTitle(count: userStats.following)
     }
     
     func setupEditFollowButtonEditStyle() {
-        UIView.animate(withDuration: Constants.editFollowButtonAnimationDuration) { [self] in
-            editFollowButton.setTitle(EditFollowButtonTitles.edit, for: .normal)
-            editFollowButton.setTitleColor(.black, for: .normal)
-            editFollowButton.backgroundColor = .clear
-            editFollowButton.layer.borderColor = Colors.editFollowButtonBorder.cgColor
-        }
+        editFollowButton.additionalStyle(title: "Edit Profile", fontSize: Metrics.editFollowButtonFont)
     }
     
     func setupEditFollowButtonFollowStyle() {
-        UIView.animate(withDuration: Constants.editFollowButtonAnimationDuration) { [self] in
-            editFollowButton.setTitle(EditFollowButtonTitles.follow, for: .normal)
-            editFollowButton.setTitleColor(.white, for: .normal)
-            editFollowButton.backgroundColor = Colors.editFollowButtonFollowStyleBackground
-            editFollowButton.layer.borderColor = UIColor.clear.cgColor
-        }
+        editFollowButton.mainStyle(title: "Follow", fontSize: Metrics.editFollowButtonFont)
     }
     
     func setupEditFollowButtonUnfollowStyle() {
-        UIView.animate(withDuration: Constants.editFollowButtonAnimationDuration) { [self] in
-            editFollowButton.setTitle(EditFollowButtonTitles.unfollow, for: .normal)
-            editFollowButton.setTitleColor(.black, for: .normal)
-            editFollowButton.backgroundColor = .clear
-            editFollowButton.layer.borderColor = Colors.editFollowButtonBorder.cgColor
-        }
+        editFollowButton.additionalStyle(title: "Unfollow", fontSize: Metrics.editFollowButtonFont)
     }
 }
 
@@ -178,15 +154,14 @@ private extension ProfileHeaderView {
     func setupAppearance() {
         setupProfileImageViewAppearance()
         setupUserStatsStackViewAppearance()
+        setupPostsButtonAppearance()
+        setupFollowersButtonAppearance()
+        setupFollowingButtonAppearance()
         setupEditFollowButtonAppearance()
-        
-        setupUserInfoStackViewAppearance()
         setupFullNameLabelAppearance()
-        setupBioTextViewAppearance()
-        setupWebsiteTextViewAppearance()
-        
-        setupSeparatorViewAppearance()
-        
+        setupBioLabelAppearance()
+        setupWebsiteLabelAppearance()
+        setupSeparatorsViewAppearance()
         setupToolbarStackViewAppearance()
         setupGridButtonAppearance()
         setupBookmarkButtonAppearance()
@@ -202,76 +177,51 @@ private extension ProfileHeaderView {
     func setupUserStatsStackViewAppearance() {
         userStatsStackView.axis = .horizontal
         userStatsStackView.distribution = .fillEqually
-        
+    }
+    
+    func setupPostsButtonAppearance() {
+        postsButton.titleLabel?.textAlignment = .center
+        postsButton.titleLabel?.numberOfLines = 2
         postsButton.isUserInteractionEnabled = false
         
-        postsButton.titleLabel?.textAlignment = .center
+        setPostsButtonTitle(count: 0)
+    }
+    
+    func setupFollowersButtonAppearance() {
         followersButton.titleLabel?.textAlignment = .center
-        followingButton.titleLabel?.textAlignment = .center
-        
-        postsButton.titleLabel?.numberOfLines = 2
         followersButton.titleLabel?.numberOfLines = 2
+        
+        setFollowersButtonTitle(count: 0)
+    }
+    
+    func setupFollowingButtonAppearance() {
+        followingButton.titleLabel?.textAlignment = .center
         followingButton.titleLabel?.numberOfLines = 2
         
-        postsButton.firstPartText = "0"
-        followersButton.firstPartText = "0"
-        followingButton.firstPartText = "0"
-        
-        postsButton.firstPartFont = .boldSystemFont(ofSize: Metrics.userStatsCountersFontSize)
-        followersButton.firstPartFont = .boldSystemFont(ofSize: Metrics.userStatsCountersFontSize)
-        followingButton.firstPartFont = .boldSystemFont(ofSize: Metrics.userStatsCountersFontSize)
-        
-        postsButton.secondPartColor = Colors.userStatsStackViewTitle
-        followersButton.secondPartColor = Colors.userStatsStackViewTitle
-        followingButton.secondPartColor = Colors.userStatsStackViewTitle
-
-        postsButton.secondPartText = UserStatsStackViewTitles.posts
-        followersButton.secondPartText = UserStatsStackViewTitles.followers
-        followingButton.secondPartText = UserStatsStackViewTitles.following
-        
-        postsButton.secondPartFont = .systemFont(ofSize: Metrics.userStatsTitlesFontSize)
-        followersButton.secondPartFont = .systemFont(ofSize: Metrics.userStatsTitlesFontSize)
-        followingButton.secondPartFont = .systemFont(ofSize: Metrics.userStatsTitlesFontSize)
-        
-        postsButton.divider = "\n"
-        followersButton.divider = "\n"
-        followingButton.divider = "\n"
+        setFollowingButtonTitle(count: 0)
     }
     
     func setupEditFollowButtonAppearance() {
-        editFollowButton.backgroundColor = .clear
-        editFollowButton.titleLabel?.font = .boldSystemFont(ofSize: Metrics.editFollowButtonFont)
-        editFollowButton.layer.cornerRadius = Metrics.editFollowButtonCornerRadius
-        editFollowButton.layer.borderWidth = Metrics.editFollowButtonBorderWidth
-        editFollowButton.layer.borderColor = Colors.editFollowButtonBorder.cgColor
-    }
-    
-    func setupUserInfoStackViewAppearance() {
-        userInfoStackView.axis = .vertical
+        editFollowButton.additionalStyle(title: "", fontSize: Metrics.editFollowButtonFont)
     }
     
     func setupFullNameLabelAppearance() {
         fullNameLabel.font = .boldSystemFont(ofSize: Metrics.fullNameFontSize)
     }
     
-    func setupBioTextViewAppearance() {
-        bioTextView.textContainerInset = UIEdgeInsets(top: Metrics.bioTopInset, left: 0, bottom: 0, right: 0)
-        bioTextView.font = .systemFont(ofSize: Metrics.bioFontSize)
-        bioTextView.dataDetectorTypes = .all
+    func setupBioLabelAppearance() {
+        bioLabel.font = .systemFont(ofSize: Metrics.bioFontSize)
+        bioLabel.numberOfLines = 0
     }
     
-    func setupWebsiteTextViewAppearance() {
-        websiteTextView.textContainerInset = UIEdgeInsets(top: Metrics.websiteTopInset, left: 0, bottom: 0, right: 0)
-        websiteTextView.font = .systemFont(ofSize: Metrics.websiteFontSize)
-        websiteTextView.textColor = .link
-        websiteTextView.dataDetectorTypes = .link
-        websiteTextView.isUserInteractionEnabled = true
-        websiteTextView.isSelectable = true
+    func setupWebsiteLabelAppearance() {
+        websiteLabel.font = .systemFont(ofSize: Metrics.websiteFontSize)
+        websiteLabel.textColor = .link
     }
     
-    func setupSeparatorViewAppearance() {
-        separatorView.backgroundColor = Colors.separatorView
-        bottomSeparatorView.backgroundColor = Colors.separatorView
+    func setupSeparatorsViewAppearance() {
+        separatorView.backgroundColor = Colors.separatorViewBackground
+        bottomSeparatorView.backgroundColor = Colors.separatorViewBackground
     }
     
     func setupToolbarStackViewAppearance() {
@@ -280,31 +230,40 @@ private extension ProfileHeaderView {
     }
     
     func setupGridButtonAppearance() {
-        gridButton.setImage(ToolbarStackViewImages.grid, for: .normal)
+        gridButton.setImage(Images.grid, for: .normal)
         gridButton.tintColor = .black
-        
-        gridButton.addTarget(self, action: #selector(didPressGridButton), for: .touchUpInside)
-    }
-    
-    @objc func didPressGridButton() {
-        gridButton.tintColor = .black
-        bookmarkButton.tintColor = Colors.toolbarStackViewButtonTint
-        
-        delegate?.profileHeaderViewDidPressGridButton(self)
     }
     
     func setupBookmarkButtonAppearance() {
-        bookmarkButton.setImage(ToolbarStackViewImages.bookmark, for: .normal)
+        bookmarkButton.setImage(Images.bookmark, for: .normal)
         bookmarkButton.tintColor = Colors.toolbarStackViewButtonTint
-        
-        bookmarkButton.addTarget(self, action: #selector(didPressBookmarkButton), for: .touchUpInside)
+    }
+}
+
+// MARK: - Appearance Helpers
+
+private extension ProfileHeaderView {
+    func setPostsButtonTitle(count: Int) {
+        setUserStatsButtonAppearance(postsButton, count: count, text: "posts")
     }
     
-    @objc func didPressBookmarkButton() {
-        bookmarkButton.tintColor = .black
-        gridButton.tintColor = Colors.toolbarStackViewButtonTint
-        
-        delegate?.profileHeaderViewDidPressBookmarkButton(self)
+    func setFollowersButtonTitle(count: Int) {
+        setUserStatsButtonAppearance(followersButton, count: count, text: "followers")
+    }
+    
+    func setFollowingButtonTitle(count: Int) {
+        setUserStatsButtonAppearance(followingButton, count: count, text: "following")
+    }
+    
+    func setUserStatsButtonAppearance(_ button: UIButton, count: Int, text: String) {
+        button.twoPartTitle(
+            firstPartText: String(count),
+            firstPartFont: .boldSystemFont(ofSize: Metrics.userStatsCountersFontSize),
+            firstPartColor: .black,
+            secondPartText: text,
+            secondPartFont: .systemFont(ofSize: Metrics.userStatsTitlesFontSize),
+            secondPartColor: Colors.userStatsStackViewTitle,
+            partDivider: "\n")
     }
 }
 
@@ -317,7 +276,9 @@ private extension ProfileHeaderView {
         setupProfileImageViewLayout()
         setupUserStatsStackViewLayout()
         setupEditFollowButtonLayout()
-        setupUserInfoStackViewLayout()
+        setupFullNameLabelLayout()
+        setupBioLabelLayout()
+        setupWebsiteLabelLayout()
         setupSeparatorViewLayout()
         setupToolbarStackViewLayout()
         setupBottomSeparatorViewLayout()
@@ -327,7 +288,9 @@ private extension ProfileHeaderView {
         addSubview(profileImageView)
         addSubview(userStatsStackView)
         addSubview(editFollowButton)
-        addSubview(userInfoStackView)
+        addSubview(fullNameLabel)
+        addSubview(bioLabel)
+        addSubview(websiteLabel)
         addSubview(separatorView)
         addSubview(toolbarStackView)
         addSubview(bottomSeparatorView)
@@ -335,10 +298,6 @@ private extension ProfileHeaderView {
         userStatsStackView.addArrangedSubview(postsButton)
         userStatsStackView.addArrangedSubview(followersButton)
         userStatsStackView.addArrangedSubview(followingButton)
-        
-        userInfoStackView.addArrangedSubview(fullNameLabel)
-        userInfoStackView.addArrangedSubview(bioTextView)
-        userInfoStackView.addArrangedSubview(websiteTextView)
         
         toolbarStackView.addArrangedSubview(gridButton)
         toolbarStackView.addArrangedSubview(bookmarkButton)
@@ -384,29 +343,53 @@ private extension ProfileHeaderView {
         ])
     }
     
-    func setupUserInfoStackViewLayout() {
-        userInfoStackView.translatesAutoresizingMaskIntoConstraints = false
+    func setupFullNameLabelLayout() {
+        fullNameLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            userInfoStackView.topAnchor.constraint(
+            fullNameLabel.topAnchor.constraint(
                 equalTo: profileImageView.bottomAnchor,
                 constant: Metrics.profileInfoVerticalSpace),
-            userInfoStackView.leadingAnchor.constraint(equalTo: profileImageView.leadingAnchor),
-            userInfoStackView.trailingAnchor.constraint(equalTo: editFollowButton.trailingAnchor),
+            fullNameLabel.leadingAnchor.constraint(equalTo: profileImageView.leadingAnchor),
+            fullNameLabel.trailingAnchor.constraint(equalTo: editFollowButton.trailingAnchor),
         ])
+    }
+    
+    func setupBioLabelLayout() {
+        bioLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            bioLabel.leadingAnchor.constraint(equalTo: fullNameLabel.leadingAnchor),
+            bioLabel.trailingAnchor.constraint(equalTo: fullNameLabel.trailingAnchor),
+        ])
+        
+        bioLabelTopConstraint = bioLabel.topAnchor.constraint(equalTo: fullNameLabel.bottomAnchor)
+        bioLabelTopConstraint?.isActive = true
+    }
+    
+    func setupWebsiteLabelLayout() {
+        websiteLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            websiteLabel.leadingAnchor.constraint(equalTo: fullNameLabel.leadingAnchor),
+            websiteLabel.trailingAnchor.constraint(equalTo: fullNameLabel.trailingAnchor),
+        ])
+        
+        websiteLabelTopConstraint = websiteLabel.topAnchor.constraint(equalTo: bioLabel.bottomAnchor)
+        websiteLabelTopConstraint?.isActive = true
     }
     
     func setupSeparatorViewLayout() {
         separatorView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            separatorView.topAnchor.constraint(
-                equalTo: userInfoStackView.bottomAnchor,
-                constant: Metrics.profileInfoVerticalSpace),
             separatorView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             separatorView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
             separatorView.heightAnchor.constraint(equalToConstant: Metrics.separatorViewWidth),
         ])
+        
+        separatorViewTopConstraint = separatorView.topAnchor.constraint(equalTo: websiteLabel.bottomAnchor)
+        separatorViewTopConstraint?.isActive = true
     }
     
     func setupToolbarStackViewLayout() {
@@ -439,25 +422,40 @@ private extension ProfileHeaderView {
     }
 }
 
-// MARK: - Actions
+// MARK: - Button Actions
 
 private extension ProfileHeaderView {
-    func setupActions() {
-        followersButton.addTarget(self, action: #selector(didSelectFollowersButton), for: .touchUpInside)
-        followingButton.addTarget(self, action: #selector(didSelectFollowingButton), for: .touchUpInside)
+    func setupButtonActions() {
+        followersButton.addTarget(self, action: #selector(didTapFollowersButton), for: .touchUpInside)
+        followingButton.addTarget(self, action: #selector(didTapFollowingButton), for: .touchUpInside)
+        editFollowButton.addTarget(self, action: #selector(didTapEditFollowButton), for: .touchUpInside)
+        gridButton.addTarget(self, action: #selector(didTapGridButton), for: .touchUpInside)
+        bookmarkButton.addTarget(self, action: #selector(didTapBookmarkButton), for: .touchUpInside)
+    }
+    
+    @objc func didTapFollowersButton() {
+        output?.didTapFollowersButton()
+    }
+    
+    @objc func didTapFollowingButton() {
+        output?.didTapFollowingButton()
+    }
+    
+    @objc func didTapEditFollowButton() {
+        output?.didTapEditFollowButton()
+    }
+    
+    @objc func didTapGridButton() {
+        gridButton.tintColor = .black
+        bookmarkButton.tintColor = Colors.toolbarStackViewButtonTint
         
-        editFollowButton.addTarget(self, action: #selector(didSelectEditFollowButton), for: .touchUpInside)
+        output?.didTapGridButton()
     }
-    
-    @objc func didSelectFollowersButton() {
-        delegate?.profileHeaderViewDidPressFollowersButton(self)
-    }
-    
-    @objc func didSelectFollowingButton() {
-        delegate?.profileHeaderViewDidPressFollowingButton(self)
-    }
-    
-    @objc func didSelectEditFollowButton() {
-        delegate?.profileHeaderViewDidPressEditFollowButton(self)
+
+    @objc func didTapBookmarkButton() {
+        bookmarkButton.tintColor = .black
+        gridButton.tintColor = Colors.toolbarStackViewButtonTint
+        
+        output?.didTapBookmarkButton()
     }
 }

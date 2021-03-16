@@ -119,7 +119,7 @@ private extension ProfileView {
             ProfileHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: ProfileHeaderView.reuseIdentifier)
-        collectionView.register(ProfilePostCell.self, forCellWithReuseIdentifier: ProfilePostCell.reuseIdentifier)
+        collectionView.register(DownloadImageCell.self, forCellWithReuseIdentifier: DownloadImageCell.reuseIdentifier)
     }
 }
 
@@ -189,8 +189,8 @@ extension ProfileView: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: ProfilePostCell.reuseIdentifier,
-            for: indexPath) as? ProfilePostCell
+            withReuseIdentifier: DownloadImageCell.reuseIdentifier,
+            for: indexPath) as? DownloadImageCell
         else {
             return UICollectionViewCell()
         }
@@ -199,7 +199,9 @@ extension ProfileView: UICollectionViewDataSource {
             delegate?.profileViewDidRequestPosts(self)
         }
         
-        cell.configure(with: posts[indexPath.row])
+        let urlString = posts[indexPath.row].imageURL
+        
+        cell.configure(with: urlString)
         
         return cell
     }
@@ -217,7 +219,7 @@ extension ProfileView: UICollectionViewDataSource {
             return UICollectionReusableView()
         }
         
-        header.delegate = self
+        header.output = self
         
         if let user = user {
             header.setUser(user)
@@ -254,16 +256,16 @@ extension ProfileView: UICollectionViewDelegate {
 
 // MARK: - ProfileHeaderViewDelegate
 
-extension ProfileView: ProfileHeaderViewDelegate {
-    func profileHeaderViewDidPressFollowersButton(_ profileView: ProfileHeaderView) {
+extension ProfileView: ProfileHeaderViewOutputProtocol {
+    func didTapFollowersButton() {
         delegate?.profileViewDidPressFollowersButton(self)
     }
     
-    func profileHeaderViewDidPressFollowingButton(_ profileView: ProfileHeaderView) {
+    func didTapFollowingButton() {
         delegate?.profileViewDidPressFollowingButton(self)
     }
     
-    func profileHeaderViewDidPressEditFollowButton(_ profileView: ProfileHeaderView) {
+    func didTapEditFollowButton() {
         switch editFollowButtonState {
         case .edit:
             delegate?.profileViewDidPressEditButton(self)
@@ -276,11 +278,11 @@ extension ProfileView: ProfileHeaderViewDelegate {
         }
     }
     
-    func profileHeaderViewDidPressGridButton(_ view: ProfileHeaderView) {
+    func didTapGridButton() {
         delegate?.profileViewDidPressGridButton(self)
     }
     
-    func profileHeaderViewDidPressBookmarkButton(_ view: ProfileHeaderView) {
+    func didTapBookmarkButton() {
         delegate?.profileViewDidPressBookmarkButton(self)
     }
 }

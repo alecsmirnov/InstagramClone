@@ -152,7 +152,7 @@ extension ProfilePresenter: IProfileInteractorOutput {
         self.user = user
         
         viewController?.setUser(user)
-        viewController?.reloadData()
+        //viewController?.reloadData()
         
         if let identifier = user.identifier {
             interactor?.observeUser(identifier: identifier)
@@ -170,7 +170,7 @@ extension ProfilePresenter: IProfileInteractorOutput {
         self.user = user
         
         viewController?.setUser(user)
-        viewController?.reloadData()
+        //viewController?.reloadData()
     }
     
     func fetchUserFailure() {
