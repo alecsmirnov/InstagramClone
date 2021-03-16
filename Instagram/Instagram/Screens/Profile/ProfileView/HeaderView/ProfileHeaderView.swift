@@ -10,7 +10,9 @@ import UIKit
 protocol ProfileHeaderViewOutputProtocol: AnyObject {
     func didTapFollowersButton()
     func didTapFollowingButton()
-    func didTapEditFollowButton()
+    func didTapEditButton()
+    func didTapFollowButton()
+    func didTapUnfollowButton()
     func didTapGridButton()
     func didTapBookmarkButton()
 }
@@ -24,11 +26,33 @@ final class ProfileHeaderView: UICollectionReusableView {
     
     weak var output: ProfileHeaderViewOutputProtocol?
     
+    var editFollowButtonState: EditFollowButtonState = .none {
+        didSet {
+            switch editFollowButtonState {
+            case .edit:
+                editFollowButton.additionalStyle(title: "Edit Profile", fontSize: Metrics.editFollowButtonFont)
+            case .follow:
+                editFollowButton.mainStyle(title: "Follow", fontSize: Metrics.editFollowButtonFont)
+            case .unfollow:
+                editFollowButton.additionalStyle(title: "Unfollow", fontSize: Metrics.editFollowButtonFont)
+            case .none:
+                break
+            }
+        }
+    }
+    
     private var bioLabelTopConstraint: NSLayoutConstraint?
     private var websiteLabelTopConstraint: NSLayoutConstraint?
     private var separatorViewTopConstraint: NSLayoutConstraint?
     
     // MARK: Constants
+    
+    enum EditFollowButtonState {
+        case edit
+        case follow
+        case unfollow
+        case none
+    }
     
     private enum Metrics {
         static let profileImageViewSize: CGFloat = AppConstants.Metrics.profileImageMediumSize
@@ -39,7 +63,7 @@ final class ProfileHeaderView: UICollectionReusableView {
         
         static let editFollowButtonFont: CGFloat = 15
         
-        static let separatorViewWidth: CGFloat = 1
+        static let separatorViewWidth: CGFloat = 0.6
         static let bottomSeparatorViewBottomSpace: CGFloat = 1
         
         static let toolbarStackViewHeight: CGFloat = 44
@@ -62,11 +86,10 @@ final class ProfileHeaderView: UICollectionReusableView {
     
     private enum Colors {
         static let profileImageViewBorder = AppConstants.Colors.profileImageBorder
-        static let separatorViewBackground = AppConstants.Colors.separatorViewBackground
+        static let separatorViewBackground = UIColor.systemGray3
         
         static let userStatsStackViewTitle = UIColor.systemGray
-        
-        static let toolbarStackViewButtonTint = UIColor(white: 0, alpha: 0.4)
+        static let toolbarStackViewButtonTint = separatorViewBackground
     }
     
     // MARK: Subviews
@@ -133,18 +156,6 @@ extension ProfileHeaderView {
         setPostsButtonTitle(count: userStats.posts)
         setFollowersButtonTitle(count: userStats.followers)
         setFollowingButtonTitle(count: userStats.following)
-    }
-    
-    func setupEditFollowButtonEditStyle() {
-        editFollowButton.additionalStyle(title: "Edit Profile", fontSize: Metrics.editFollowButtonFont)
-    }
-    
-    func setupEditFollowButtonFollowStyle() {
-        editFollowButton.mainStyle(title: "Follow", fontSize: Metrics.editFollowButtonFont)
-    }
-    
-    func setupEditFollowButtonUnfollowStyle() {
-        editFollowButton.additionalStyle(title: "Unfollow", fontSize: Metrics.editFollowButtonFont)
     }
 }
 
@@ -442,7 +453,16 @@ private extension ProfileHeaderView {
     }
     
     @objc func didTapEditFollowButton() {
-        output?.didTapEditFollowButton()
+        switch editFollowButtonState {
+        case .edit:
+            output?.didTapEditButton()
+        case .follow:
+            output?.didTapFollowButton()
+        case .unfollow:
+            output?.didTapUnfollowButton()
+        case .none:
+            break
+        }
     }
     
     @objc func didTapGridButton() {

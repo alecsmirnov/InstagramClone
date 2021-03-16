@@ -7,27 +7,10 @@
 
 import NotificationCenter
 
-protocol IProfilePresenter: AnyObject {
-    func viewDidLoad()
-    
-    func didRequestPosts()
-    
-    func didPressFollowersButton()
-    func didPressFollowingButton()
-    
-    func didPressEditButton()
-    func didPressFollowButton()
-    func didPressUnfollowButton()
-    func didPressGridButton()
-    func didPressBookmarkButton()
-    
-    func didPressMenuButton()
-}
-
 final class ProfilePresenter {
     // MARK: Properties
     
-    weak var viewController: IProfileViewController?
+    weak var viewController: ProfileViewControllerProtocol?
     var interactor: IProfileInteractor?
     var router: IProfileRouter?
     
@@ -49,7 +32,7 @@ final class ProfilePresenter {
 
 // MARK: - IProfilePresenter
 
-extension ProfilePresenter: IProfilePresenter {
+extension ProfilePresenter: ProfileViewControllerOutputProtocol {
     func viewDidLoad() {
         if let user = user, let identifier = user.identifier {
             if interactor?.isCurrentUser(identifier: identifier) ?? true {
@@ -61,7 +44,7 @@ extension ProfilePresenter: IProfilePresenter {
             }
             
             viewController?.setUser(user)
-            viewController?.reloadData()
+            //viewController?.reloadData()
             
             interactor?.observeUser(identifier: identifier)
             interactor?.fetchObserveUserStats(identifier: identifier)
@@ -84,37 +67,37 @@ extension ProfilePresenter: IProfilePresenter {
         }
     }
     
-    func didPressFollowersButton() {
+    func didTapFollowersButton() {
         guard let user = user, let userStats = userStats else { return }
         
         router?.showFollowersViewController(user: user, userStats: userStats)
     }
     
-    func didPressFollowingButton() {
+    func didTapFollowingButton() {
         guard let user = user, let userStats = userStats else { return }
         
         router?.showFollowingViewController(user: user, userStats: userStats)
     }
     
-    func didPressEditButton() {
+    func didTapEditButton() {
         guard let user = user else { return }
         
         router?.showEditProfileViewController(user: user)
     }
     
-    func didPressFollowButton() {
+    func didTapFollowButton() {
         guard let identifier = user?.identifier else { return }
         
         interactor?.followUser(identifier: identifier)
     }
     
-    func didPressUnfollowButton() {
+    func didTapUnfollowButton() {
         guard let identifier = user?.identifier else { return }
         
         interactor?.unfollowUser(identifier: identifier)
     }
     
-    func didPressGridButton() {
+    func didTapGridButton() {
         guard let identifier = user?.identifier else { return }
         
         isUsersPosts = true
@@ -125,7 +108,7 @@ extension ProfilePresenter: IProfilePresenter {
         interactor?.fetchPosts(identifier: identifier)
     }
     
-    func didPressBookmarkButton() {
+    func didTapBookmarkButton() {
         guard let identifier = user?.identifier else { return }
         
         isUsersPosts = false
@@ -136,7 +119,7 @@ extension ProfilePresenter: IProfilePresenter {
         interactor?.fetchBookmarkedPosts(identifier: identifier)
     }
     
-    func didPressMenuButton() {
+    func didTapMenuButton() {
         // TODO: move to Menu module
         
         interactor?.signOut()
@@ -152,6 +135,7 @@ extension ProfilePresenter: IProfileInteractorOutput {
         self.user = user
         
         viewController?.setUser(user)
+        viewController?.showEditButton()
         //viewController?.reloadData()
         
         if let identifier = user.identifier {
@@ -181,7 +165,7 @@ extension ProfilePresenter: IProfileInteractorOutput {
         self.userStats = userStats
         
         viewController?.setUserStats(userStats)
-        viewController?.reloadData()
+        //viewController?.reloadData()
     }
     
     func fetchUserStatsFailure() {
@@ -191,11 +175,8 @@ extension ProfilePresenter: IProfileInteractorOutput {
     func fetchPostsSuccess(_ posts: [Post]) {
         guard isUsersPosts else { return }
         
-        posts.reversed().forEach { post in
-            viewController?.appendLastPost(post)
-        }
-        
-        viewController?.reloadData()
+        viewController?.appendPosts(posts.reversed())
+        viewController?.insertNewLastItems(count: posts.count)
     }
     
     func fetchPostsFailure() {
@@ -204,7 +185,7 @@ extension ProfilePresenter: IProfileInteractorOutput {
     
     func observePostsSuccess(_ post: Post) {
         viewController?.appendFirstPost(post)
-        viewController?.reloadData()
+        viewController?.insertNewFirstItem()
     }
     
     func observePostsFailure() {
@@ -214,11 +195,12 @@ extension ProfilePresenter: IProfileInteractorOutput {
     func fetchBookmarkedPostsSuccess(_ posts: [Post]) {
         guard !isUsersPosts else { return }
         
-        posts.reversed().forEach { post in
-            viewController?.appendLastPost(post)
-        }
+        print("bookmarks")
         
-        viewController?.reloadData()
+        print(posts.count)
+        
+        viewController?.appendPosts(posts.reversed())
+        viewController?.insertNewLastItems(count: posts.count)
     }
     
     func fetchBookmarkedPostsFailure() {
@@ -231,8 +213,6 @@ extension ProfilePresenter: IProfileInteractorOutput {
         } else {
             viewController?.showFollowButton()
         }
-        
-        viewController?.reloadData()
     }
     
     func isFollowingUserFailure() {
@@ -241,7 +221,6 @@ extension ProfilePresenter: IProfileInteractorOutput {
     
     func followUserSuccess() {
         viewController?.showUnfollowButton()
-        viewController?.reloadData()
         
         sendFollowUserNotification()
     }
@@ -252,7 +231,6 @@ extension ProfilePresenter: IProfileInteractorOutput {
     
     func unfollowUserSuccess() {
         viewController?.showFollowButton()
-        viewController?.reloadData()
         
         sendUnfollowUserNotification()
     }

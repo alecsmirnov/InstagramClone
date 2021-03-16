@@ -105,6 +105,8 @@
 		845CF2A626006AC0002FA650 /* SharePostServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CF2A526006AC0002FA650 /* SharePostServiceProtocol.swift */; };
 		845CF2A926006AD7002FA650 /* SearchServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CF2A826006AD7002FA650 /* SearchServiceProtocol.swift */; };
 		845CF2AC260071A9002FA650 /* LocalImagesServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CF2AB260071A9002FA650 /* LocalImagesServiceProtocol.swift */; };
+		845CF2B82600A1D4002FA650 /* ProfileCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CF2B72600A1D4002FA650 /* ProfileCollectionViewDataSource.swift */; };
+		845CF2C02600B763002FA650 /* ProfileCollectionViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CF2BF2600B763002FA650 /* ProfileCollectionViewDelegate.swift */; };
 		845D0B9925D6AA9000AD3122 /* UserPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845D0B9825D6AA9000AD3122 /* UserPost.swift */; };
 		845D0B9C25D6BB9000AD3122 /* UIButton+downloadImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845D0B9B25D6BB9000AD3122 /* UIButton+downloadImage.swift */; };
 		845DEFAA25FB554A00F02D77 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845DEFA925FB554A00F02D77 /* AppCoordinator.swift */; };
@@ -250,6 +252,8 @@
 		845CF2A526006AC0002FA650 /* SharePostServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostServiceProtocol.swift; sourceTree = "<group>"; };
 		845CF2A826006AD7002FA650 /* SearchServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchServiceProtocol.swift; sourceTree = "<group>"; };
 		845CF2AB260071A9002FA650 /* LocalImagesServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalImagesServiceProtocol.swift; sourceTree = "<group>"; };
+		845CF2B72600A1D4002FA650 /* ProfileCollectionViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCollectionViewDataSource.swift; sourceTree = "<group>"; };
+		845CF2BF2600B763002FA650 /* ProfileCollectionViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCollectionViewDelegate.swift; sourceTree = "<group>"; };
 		845D0B9825D6AA9000AD3122 /* UserPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPost.swift; sourceTree = "<group>"; };
 		845D0B9B25D6BB9000AD3122 /* UIButton+downloadImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+downloadImage.swift"; sourceTree = "<group>"; };
 		845DEFA925FB554A00F02D77 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
@@ -596,6 +600,8 @@
 		845CF2B326007C75002FA650 /* CollectionView */ = {
 			isa = PBXGroup;
 			children = (
+				845CF2B72600A1D4002FA650 /* ProfileCollectionViewDataSource.swift */,
+				845CF2BF2600B763002FA650 /* ProfileCollectionViewDelegate.swift */,
 			);
 			path = CollectionView;
 			sourceTree = "<group>";
@@ -1093,6 +1099,7 @@
 				845455E825BD89BD0007C9A2 /* LoginViewController.swift in Sources */,
 				84549BA425BEC7AE007D24E2 /* SimpleAlert.swift in Sources */,
 				84F9694525D14FA10004D838 /* UIImage+crop.swift in Sources */,
+				845CF2B82600A1D4002FA650 /* ProfileCollectionViewDataSource.swift in Sources */,
 				8453275E25FA25A100B39D6D /* UIButton+style.swift in Sources */,
 				8451111F25DFBD9F008A13E5 /* Date+timeAgo.swift in Sources */,
 				8454138C25EF94C400B0D544 /* FollowersFollowingPresenter.swift in Sources */,
@@ -1124,6 +1131,7 @@
 				845DEFBC25FBAB4400F02D77 /* LoginService.swift in Sources */,
 				845455D525BD44460007C9A2 /* UserPrivateInfo.swift in Sources */,
 				84FE47DA25B8230E0048F5AA /* UIImage+resize.swift in Sources */,
+				845CF2C02600B763002FA650 /* ProfileCollectionViewDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,13 +7,15 @@
 
 import UIKit
 
-protocol IProfileViewController: AnyObject {
+protocol ProfileViewControllerProtocol: AnyObject {
     func setUser(_ user: User)
     func setUserStats(_ userStats: UserStats)
     func appendFirstPost(_ post: Post)
-    func appendLastPost(_ post: Post)
+    func appendPosts(_ posts: [Post])
     func removeAllPosts()
     
+    func insertNewFirstItem()
+    func insertNewLastItems(count: Int)
     func reloadData()
     
     func showEditButton()
@@ -21,27 +23,43 @@ protocol IProfileViewController: AnyObject {
     func showUnfollowButton()
 }
 
+protocol ProfileViewControllerOutputProtocol: AnyObject {
+    func viewDidLoad()
+    
+    func didRequestPosts()
+    
+    func didTapFollowersButton()
+    func didTapFollowingButton()
+    func didTapEditButton()
+    func didTapFollowButton()
+    func didTapUnfollowButton()
+    func didTapGridButton()
+    func didTapBookmarkButton()
+    
+    func didTapMenuButton()
+}
+
 final class ProfileViewController: CustomViewController<ProfileView> {
     // MARK: Properties
     
-    var presenter: IProfilePresenter?
+    var output: ProfileViewControllerOutputProtocol?
     
     // MARK: Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        customView?.delegate = self
-        
-        presenter?.viewDidLoad()
+        customView?.output = self
         
         setupAppearance()
+        
+        output?.viewDidLoad()
     }
 }
 
-// MARK: - IProfileViewController
+// MARK: - ProfileViewController Interface
 
-extension ProfileViewController: IProfileViewController {
+extension ProfileViewController: ProfileViewControllerProtocol {
     func setUser(_ user: User) {
         navigationItem.title = user.username
         
@@ -56,12 +74,20 @@ extension ProfileViewController: IProfileViewController {
         customView?.appendFirstPost(post)
     }
     
-    func appendLastPost(_ post: Post) {
-        customView?.appendLastPost(post)
+    func appendPosts(_ posts: [Post]) {
+        customView?.appendPosts(posts)
     }
     
     func removeAllPosts() {
         customView?.removeAllPosts()
+    }
+    
+    func insertNewFirstItem() {
+        customView?.insertNewFirstItem()
+    }
+    
+    func insertNewLastItems(count: Int) {
+        customView?.insertNewLastItems(count: count)
     }
     
     func reloadData() {
@@ -69,15 +95,55 @@ extension ProfileViewController: IProfileViewController {
     }
     
     func showEditButton() {
-        customView?.editFollowButtonState = .edit
+        customView?.showEditButton()
     }
     
     func showFollowButton() {
-        customView?.editFollowButtonState = .follow
+        customView?.showFollowButton()
     }
     
     func showUnfollowButton() {
-        customView?.editFollowButtonState = .unfollow
+        customView?.showUnfollowButton()
+    }
+}
+
+// MARK: - ProfileView Output
+
+extension ProfileViewController: ProfileViewOutputProtocol {
+    func didRequestPosts() {
+        output?.didRequestPosts()
+    }
+    
+    func didTapFollowersButton() {
+        output?.didTapFollowersButton()
+    }
+    
+    func didTapFollowingButton() {
+        output?.didTapFollowingButton()
+    }
+    
+    func didTapEditButton() {
+        output?.didTapEditButton()
+    }
+    
+    func didTapFollowButton() {
+        output?.didTapFollowButton()
+    }
+    
+    func didTapUnfollowButton() {
+        output?.didTapUnfollowButton()
+    }
+    
+    func didTapGridButton() {
+        output?.didTapGridButton()
+    }
+    
+    func didTapBookmarkButton() {
+        output?.didTapBookmarkButton()
+    }
+    
+    func didSelectPost(_ post: Post) {
+        
     }
 }
 
@@ -91,7 +157,6 @@ private extension ProfileViewController {
     
     func customizeBackButton() {
         let backBarButtonItem = UIBarButtonItem(title: nil, style: .plain, target: nil, action: nil)
-        
         backBarButtonItem.tintColor = .black
         
         navigationController?.navigationBar.topItem?.backBarButtonItem = backBarButtonItem
@@ -103,52 +168,16 @@ private extension ProfileViewController {
             image: UIImage(systemName: "xmark")?.withRenderingMode(.alwaysOriginal),
             style: .plain,
             target: self,
-            action: #selector(didPressMenuButton))
+            action: #selector(didTapMenuButton))
         
         navigationItem.rightBarButtonItem = menuBarButtonItem
     }
-    
-    @objc func didPressMenuButton() {
-        presenter?.didPressMenuButton()
-    }
 }
 
-// MARK: - ProfileViewDelegate
+// MARK: - Button Actions
 
-extension ProfileViewController: ProfileViewDelegate {
-    func profileViewDidRequestPosts(_ profileView: ProfileView) {
-        presenter?.didRequestPosts()
-    }
-    
-    func profileViewDidPressFollowersButton(_ profileView: ProfileView) {
-        presenter?.didPressFollowersButton()
-    }
-    
-    func profileViewDidPressFollowingButton(_ profileView: ProfileView) {
-        presenter?.didPressFollowingButton()
-    }
-    
-    func profileViewDidPressEditButton(_ profileView: ProfileView) {
-        presenter?.didPressEditButton()
-    }
-    
-    func profileViewDidPressFollowButton(_ profileView: ProfileView) {
-        presenter?.didPressFollowButton()
-    }
-    
-    func profileViewDidPressUnfollowButton(_ profileView: ProfileView) {        
-        presenter?.didPressUnfollowButton()
-    }
-    
-    func profileViewDidPressGridButton(_ profileView: ProfileView) {
-        presenter?.didPressGridButton()
-    }
-    
-    func profileViewDidPressBookmarkButton(_ profileView: ProfileView) {
-        presenter?.didPressBookmarkButton()
-    }
-    
-    func profileView(_ profileView: ProfileView, didSelectPost post: Post) {
-        
+private extension ProfileViewController {
+    @objc func didTapMenuButton() {
+        output?.didTapMenuButton()
     }
 }

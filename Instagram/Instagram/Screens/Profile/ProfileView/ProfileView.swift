@@ -7,41 +7,46 @@
 
 import UIKit
 
-protocol ProfileViewDelegate: AnyObject {
-    func profileViewDidRequestPosts(_ profileView: ProfileView)
+protocol ProfileViewProtocol: UIView {
+    func setUser(_ user: User)
+    func setUserStats(_ userStats: UserStats)
     
-    func profileViewDidPressFollowersButton(_ profileView: ProfileView)
-    func profileViewDidPressFollowingButton(_ profileView: ProfileView)
+    func appendFirstPost(_ post: Post)
+    func appendPosts(_ posts: [Post])
+    func removeAllPosts()
     
-    func profileViewDidPressEditButton( _ profileView: ProfileView)
-    func profileViewDidPressFollowButton(_ profileView: ProfileView)
-    func profileViewDidPressUnfollowButton( _ profileView: ProfileView)
+    func insertNewFirstItem()
+    func insertNewLastItems(count: Int)
+    func reloadData()
     
-    func profileViewDidPressGridButton(_ profileView: ProfileView)
-    func profileViewDidPressBookmarkButton(_ profileView: ProfileView)
+    func showEditButton()
+    func showFollowButton()
+    func showUnfollowButton()
+}
+
+protocol ProfileViewOutputProtocol: AnyObject {
+    func didRequestPosts()
     
-    func profileView(_ profileView: ProfileView, didSelectPost post: Post)
+    func didTapFollowersButton()
+    func didTapFollowingButton()
+    func didTapEditButton()
+    func didTapFollowButton()
+    func didTapUnfollowButton()
+    func didTapGridButton()
+    func didTapBookmarkButton()
+    
+    func didSelectPost(_ post: Post)
 }
 
 final class ProfileView: UIView {
     // MARK: Properties
     
-    weak var delegate: ProfileViewDelegate?
+    weak var output: ProfileViewOutputProtocol?
     
-    var editFollowButtonState = EditFollowButtonState.none
-    
-    private var user: User?
-    private var userStats: UserStats?
-    private var posts = [Post]()
+    private let collectionViewDataSource = ProfileCollectionViewDataSource()
+    private let collectionViewDelegate = ProfileCollectionViewDelegate()
     
     // MARK: Constants
-    
-    enum EditFollowButtonState {
-        case edit
-        case follow
-        case unfollow
-        case none
-    }
     
     private enum Metrics {
         static let gridCellSpace: CGFloat = 1.2
@@ -49,13 +54,15 @@ final class ProfileView: UIView {
     
     private enum Constants {
         static let columnsCount = 3
+        
+        static let reloadDataAnimationDuration: TimeInterval = 0.15
     }
     
     // MARK: Subviews
     
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
     
-    // MARK: Initialization
+    // MARK: Lifecycle
     
     init() {
         super.init(frame: .zero)
@@ -69,33 +76,98 @@ final class ProfileView: UIView {
     }
 }
 
-// MARK: - Public Methods
+// MARK: - Interface
 
-extension ProfileView {
+extension ProfileView: ProfileViewProtocol {
     func setUser(_ user: User) {
-        self.user = user
+        guard let headerView = getHeaderView() else {
+            collectionViewDataSource.setInitialUser(user)
+            
+            return
+        }
+        
+        headerView.setUser(user)
     }
     
     func setUserStats(_ userStats: UserStats) {
-        self.userStats = userStats
+        guard let headerView = getHeaderView() else {
+            collectionViewDataSource.setInitialUserStats(userStats)
+            
+            return
+        }
+        
+        headerView.setUserStats(userStats)
     }
     
     func appendFirstPost(_ post: Post) {
-        posts.insert(post, at: 0)
+        collectionViewDataSource.insertFirstPost(post)
     }
     
-    func appendLastPost(_ post: Post) {
-        posts.append(post)
+    func appendPosts(_ posts: [Post]) {
+        collectionViewDataSource.appendPosts(posts)
     }
     
     func removeAllPosts() {
-        posts.removeAll()
+        collectionViewDataSource.removeAllPosts()
+    }
+    
+    func insertNewFirstItem() {
+        if 1 < collectionViewDataSource.postsCount {
+            collectionView.insertItems(at: [IndexPath(row: 0, section: 0)])
+        } else {
+            collectionView.reloadData()
+        }
+    }
+    
+    func insertNewLastItems(count: Int) {
+        let itemsCount = collectionViewDataSource.postsCount - count
+        
+        if 1 < itemsCount {
+            let lastRowIndex = itemsCount
+            let indexPaths = (0..<count).map { IndexPath(row: $0 + lastRowIndex, section: 0) }
+            
+            collectionView.insertItems(at: indexPaths)
+        } else {
+            collectionView.reloadData()
+        }
     }
     
     func reloadData() {
-        UIView.transition(with: collectionView, duration: 0.15, options: [.transitionCrossDissolve]) {
+        UIView.transition(
+            with: collectionView,
+            duration: Constants.reloadDataAnimationDuration,
+            options: [.transitionCrossDissolve]) {
             self.collectionView.reloadData()
         }
+    }
+    
+    func showEditButton() {
+        guard let headerView = getHeaderView() else { return }
+        
+        headerView.editFollowButtonState = .edit
+    }
+
+    func showFollowButton() {
+        guard let headerView = getHeaderView() else { return }
+        
+        headerView.editFollowButtonState = .follow
+    }
+
+    func showUnfollowButton() {
+        guard let headerView = getHeaderView() else { return }
+        
+        headerView.editFollowButtonState = .unfollow
+    }
+}
+
+// MARK: - Private Methods
+
+private extension ProfileView {
+    func getHeaderView() -> ProfileHeaderView? {
+        let headerView = collectionView.visibleSupplementaryViews(
+            ofKind: UICollectionView.elementKindSectionHeader).first as? ProfileHeaderView
+        
+        return headerView
     }
 }
 
@@ -112,14 +184,14 @@ private extension ProfileView {
         collectionView.backgroundColor = .clear
         collectionView.delaysContentTouches = false
         
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        
         collectionView.register(
             ProfileHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: ProfileHeaderView.reuseIdentifier)
         collectionView.register(DownloadImageCell.self, forCellWithReuseIdentifier: DownloadImageCell.reuseIdentifier)
+        
+        setupCollectionViewDataSource()
+        setupCollectionViewDelegate()
     }
 }
 
@@ -130,7 +202,6 @@ private extension ProfileView {
         setupSubviews()
         
         setupCollectionViewLayout()
-        setupCollectionViewGridLayout()
     }
     
     func setupSubviews() {
@@ -146,9 +217,11 @@ private extension ProfileView {
             collectionView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
         ])
+        
+        collectionView.collectionViewLayout = ProfileView.createCollectionViewCompositionalLayout()
     }
     
-    func setupCollectionViewGridLayout() {
+    static func createCollectionViewCompositionalLayout() -> UICollectionViewCompositionalLayout {
         let itemLayoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
             heightDimension: .fractionalWidth(1 / CGFloat(Constants.columnsCount)))
@@ -173,116 +246,68 @@ private extension ProfileView {
         
         section.boundarySupplementaryItems = [sectionHeader]
         
-        collectionView.collectionViewLayout = UICollectionViewCompositionalLayout(section: section)
+        return UICollectionViewCompositionalLayout(section: section)
     }
 }
 
-// MARK: - UICollectionViewDataSource
+// MARK: - CollectionViewDataSource
 
-extension ProfileView: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return posts.count
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: DownloadImageCell.reuseIdentifier,
-            for: indexPath) as? DownloadImageCell
-        else {
-            return UICollectionViewCell()
+private extension ProfileView {
+    func setupCollectionViewDataSource() {
+        collectionView.dataSource = collectionViewDataSource
+        
+        collectionViewDataSource.lastCellPresentedCompletion = { [weak self] in
+            self?.output?.didRequestPosts()
         }
-        
-        if indexPath.row == posts.count - 1 {
-            delegate?.profileViewDidRequestPosts(self)
-        }
-        
-        let urlString = posts[indexPath.row].imageURL
-        
-        cell.configure(with: urlString)
-        
-        return cell
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        viewForSupplementaryElementOfKind kind: String,
-        at indexPath: IndexPath
-    ) -> UICollectionReusableView {        
-        guard let header = collectionView.dequeueReusableSupplementaryView(
-            ofKind: kind,
-            withReuseIdentifier: ProfileHeaderView.reuseIdentifier,
-            for: indexPath) as? ProfileHeaderView
-        else {
-            return UICollectionReusableView()
-        }
-        
-        header.output = self
-        
-        if let user = user {
-            header.setUser(user)
-        }
-        
-        if let userStats = userStats {
-            header.setUserStats(userStats)
-        }
-        
-        switch editFollowButtonState {
-        case .edit:
-            header.setupEditFollowButtonEditStyle()
-        case .follow:
-            header.setupEditFollowButtonFollowStyle()
-        case .unfollow:
-            header.setupEditFollowButtonUnfollowStyle()
-        case .none:
-            break
-        }
-        
-        return header
     }
 }
 
-// MARK: - UICollectionViewDelegate
+// MARK: - CollectionViewDelegate
 
-extension ProfileView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let post = posts[indexPath.row]
+private extension ProfileView {
+    func setupCollectionViewDelegate() {
+        collectionView.delegate = collectionViewDelegate
         
-        delegate?.profileView(self, didSelectPost: post)
+        collectionViewDelegate.selectCellAtIndexCompletion = { [weak self] index in
+            guard let post = self?.collectionViewDataSource.getPost(at: index) else { return }
+            
+            self?.output?.didSelectPost(post)
+        }
+        
+        collectionViewDelegate.willDisplayHeaderViewCompletion = { [weak self] headerView in
+            headerView.output = self
+        }
     }
 }
 
-// MARK: - ProfileHeaderViewDelegate
+// MARK: - ProfileHeaderView Output
 
 extension ProfileView: ProfileHeaderViewOutputProtocol {
     func didTapFollowersButton() {
-        delegate?.profileViewDidPressFollowersButton(self)
+        output?.didTapFollowersButton()
     }
     
     func didTapFollowingButton() {
-        delegate?.profileViewDidPressFollowingButton(self)
+        output?.didTapFollowingButton()
     }
     
-    func didTapEditFollowButton() {
-        switch editFollowButtonState {
-        case .edit:
-            delegate?.profileViewDidPressEditButton(self)
-        case .follow:
-            delegate?.profileViewDidPressFollowButton(self)
-        case .unfollow:
-            delegate?.profileViewDidPressUnfollowButton(self)
-        case .none:
-            break
-        }
+    func didTapEditButton() {
+        output?.didTapEditButton()
+    }
+    
+    func didTapFollowButton() {
+        output?.didTapFollowButton()
+    }
+    
+    func didTapUnfollowButton() {
+        output?.didTapUnfollowButton()
     }
     
     func didTapGridButton() {
-        delegate?.profileViewDidPressGridButton(self)
+        output?.didTapGridButton()
     }
     
     func didTapBookmarkButton() {
-        delegate?.profileViewDidPressBookmarkButton(self)
+        output?.didTapBookmarkButton()
     }
 }

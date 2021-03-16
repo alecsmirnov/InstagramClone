@@ -68,6 +68,8 @@ final class ProfileInteractor {
     
     weak var presenter: IProfileInteractorOutput?
     
+    private var lastRequestedCaption: String?
+    
     private var lastRequestedPostTimestamp: TimeInterval?
     private var userObserver: FirebaseObserver?
     private var userStatsObservers: [FirebaseObserver]?
@@ -150,7 +152,9 @@ extension ProfileInteractor: IProfileInteractor {
             case .success(let posts):
                 lastRequestedPostTimestamp = posts.first?.timestamp
                 
-                presenter?.fetchPostsSuccess(posts)
+                if !posts.isEmpty {
+                    presenter?.fetchPostsSuccess(posts)
+                }
             case .failure(let error):
                 presenter?.fetchPostsFailure()
 
@@ -161,6 +165,8 @@ extension ProfileInteractor: IProfileInteractor {
     
     func requestPosts(identifier: String) {
         guard let lastRequestedPostTimestamp = lastRequestedPostTimestamp else { return }
+        
+        self.lastRequestedPostTimestamp = nil
         
         FirebaseDatabaseService.fetchPostsFromEnd(
             userIdentifier: identifier,
@@ -212,7 +218,9 @@ extension ProfileInteractor: IProfileInteractor {
             case .success(let posts):
                 lastRequestedPostTimestamp = posts.first?.timestamp
                 
-                presenter?.fetchBookmarkedPostsSuccess(posts)
+                if !posts.isEmpty {
+                    presenter?.fetchBookmarkedPostsSuccess(posts)
+                }
             case .failure(let error):
                 presenter?.fetchBookmarkedPostsFailure()
 

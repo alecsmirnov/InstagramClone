@@ -16,7 +16,7 @@ enum ProfileAssembly {
         let presenter = ProfilePresenter()
         let router = ProfileRouter(viewController: viewController)
         
-        viewController.presenter = presenter
+        viewController.output = presenter
         
         interactor.presenter = presenter
         
