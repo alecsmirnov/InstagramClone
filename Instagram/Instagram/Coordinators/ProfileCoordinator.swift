@@ -8,7 +8,10 @@
 import UIKit
 
 protocol ProfileCoordinatorProtocol: AnyObject {
-    
+    func showFollowersViewController(user: User, followersCount: Int)
+    func showFollowingViewController(user: User, followingCount: Int)
+    func showEditProfileViewController(user: User)
+    func showMenuViewController()
 }
 
 final class ProfileCoordinator: CoordinatorProtocol {
@@ -19,6 +22,8 @@ final class ProfileCoordinator: CoordinatorProtocol {
     var navigationController: UINavigationController
     var childCoordinators: [CoordinatorProtocol] = []
     
+    private weak var presenterController: UIViewController?
+    
     // MARK: Lifecycle
     
     init(navigationController: UINavigationController) {
@@ -27,6 +32,12 @@ final class ProfileCoordinator: CoordinatorProtocol {
     
     convenience init() {
         self.init(navigationController: UINavigationController())
+    }
+    
+    convenience init(presenterController: UIViewController?) {
+        self.init()
+        
+        self.presenterController = presenterController
     }
 }
 
@@ -43,5 +54,31 @@ extension ProfileCoordinator {
 // MARK: - ProfileCoordinatorProtocol
 
 extension ProfileCoordinator: ProfileCoordinatorProtocol {
+    func showFollowersViewController(user: User, followersCount: Int) {
+        let followersViewController = FollowersFollowingAssembly.createFollowersViewController(
+            user: user,
+            followersCount: followersCount)
+        
+        navigationController.pushViewController(followersViewController, animated: true)
+    }
     
+    func showFollowingViewController(user: User, followingCount: Int) {
+        let followingViewController = FollowersFollowingAssembly.createFollowingViewController(
+            user: user,
+            followingCount: followingCount)
+        
+        navigationController.pushViewController(followingViewController, animated: true)
+    }
+    
+    func showEditProfileViewController(user: User) {
+        let editProfileViewController = EditProfileAssembly.createEditProfileNavigationViewController(user: user)
+        
+        editProfileViewController.modalPresentationStyle = .fullScreen
+        
+        presenterController?.present(editProfileViewController, animated: true)
+    }
+    
+    func showMenuViewController() {
+        
+    }
 }

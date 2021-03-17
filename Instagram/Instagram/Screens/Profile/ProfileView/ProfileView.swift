@@ -236,6 +236,8 @@ private extension ProfileView {
         
         let section = NSCollectionLayoutSection(group: group)
         
+        // Dynamic header causes a problem with the calculation of cell sizes,
+        // which causes multiple calls to the cellForItemAt method. I don't know how to fix that :(
         let headerLayoutSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
             heightDimension: .estimated(44))

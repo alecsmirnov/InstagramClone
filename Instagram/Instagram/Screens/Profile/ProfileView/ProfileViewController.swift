@@ -35,6 +35,7 @@ protocol ProfileViewControllerOutputProtocol: AnyObject {
     func didTapUnfollowButton()
     func didTapGridButton()
     func didTapBookmarkButton()
+    func didSelectPost(_ post: Post)
     
     func didTapMenuButton()
 }
@@ -43,6 +44,12 @@ final class ProfileViewController: CustomViewController<ProfileView> {
     // MARK: Properties
     
     var output: ProfileViewControllerOutputProtocol?
+    
+    // MARK: Constants
+    
+    private enum Images {
+        static let menu = UIImage(named: "gear")
+    }
     
     // MARK: Lifecycle
     
@@ -143,7 +150,7 @@ extension ProfileViewController: ProfileViewOutputProtocol {
     }
     
     func didSelectPost(_ post: Post) {
-        
+        output?.didSelectPost(post)
     }
 }
 
@@ -164,8 +171,7 @@ private extension ProfileViewController {
     
     func setupMenuButton() {
         let menuBarButtonItem = UIBarButtonItem(
-            //image: UIImage(named: "gear")?.withRenderingMode(.alwaysOriginal),
-            image: UIImage(systemName: "xmark")?.withRenderingMode(.alwaysOriginal),
+            image: Images.menu?.withRenderingMode(.alwaysOriginal),
             style: .plain,
             target: self,
             action: #selector(didTapMenuButton))

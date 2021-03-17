@@ -32,9 +32,11 @@ extension MainCoordinator {
 
 private extension MainCoordinator {
     func showMainTabBarController() {
+        let mainTabBarController = MainTabBarController()
+        
         let homeCoordinator = HomeCoordinator()
         let searchCoordinator = SearchCoordinator()
-        let profileCoordinator = ProfileCoordinator()
+        let profileCoordinator = ProfileCoordinator(presenterController: mainTabBarController)
         
         homeCoordinator.start()
         searchCoordinator.start()
@@ -43,8 +45,6 @@ private extension MainCoordinator {
         appendChildCoordinator(homeCoordinator)
         appendChildCoordinator(searchCoordinator)
         appendChildCoordinator(profileCoordinator)
-        
-        let mainTabBarController = MainTabBarController()
         
         mainTabBarController.appendNavigationController(homeCoordinator.navigationController, item: .home)
         mainTabBarController.appendNavigationController(searchCoordinator.navigationController, item: .search)

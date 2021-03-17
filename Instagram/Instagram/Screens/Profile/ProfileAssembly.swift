@@ -11,18 +11,13 @@ enum ProfileAssembly {
         coordinator: ProfileCoordinatorProtocol? = nil
     ) -> ProfileViewController {
         let viewController = ProfileViewController()
-        
-        let interactor = ProfileInteractor()
         let presenter = ProfilePresenter()
-        let router = ProfileRouter(viewController: viewController)
         
         viewController.output = presenter
+        presenter.view = viewController
+        presenter.coordinator = coordinator
         
-        interactor.presenter = presenter
-        
-        presenter.viewController = viewController
-        presenter.interactor = interactor
-        presenter.router = router
+        presenter.profileService = ProfileService()
         
         presenter.user = user
         

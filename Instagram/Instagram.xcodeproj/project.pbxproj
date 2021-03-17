@@ -96,6 +96,8 @@
 		845C284625CAC22A000731B3 /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C284525CAC22A000731B3 /* FirebaseAuthService.swift */; };
 		845C284D25CADE16000731B3 /* FirebaseDatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C284C25CADE16000731B3 /* FirebaseDatabaseService.swift */; };
 		845C5E0225CC2733002A2E16 /* SpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845C5E0125CC2733002A2E16 /* SpinnerView.swift */; };
+		845CBB2A2601F31B007B40E9 /* ProfileServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CBB292601F31B007B40E9 /* ProfileServiceProtocol.swift */; };
+		845CBB2D2601F538007B40E9 /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CBB2C2601F538007B40E9 /* ProfileService.swift */; };
 		845CC1FC25C7ECB70051372D /* SharePostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC1FB25C7ECB70051372D /* SharePostView.swift */; };
 		845CC20025C7ECE20051372D /* SharePostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC1FF25C7ECE20051372D /* SharePostViewController.swift */; };
 		845CC20825C7ED370051372D /* SharePostPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CC20725C7ED370051372D /* SharePostPresenter.swift */; };
@@ -138,9 +140,7 @@
 		84B2E68925B0513C00B27457 /* HomeAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B2E68825B0513C00B27457 /* HomeAssembly.swift */; };
 		84E6609C25B955050036AB9F /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E6609B25B955050036AB9F /* ProfileViewController.swift */; };
 		84E660A025B955120036AB9F /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E6609F25B955120036AB9F /* ProfileView.swift */; };
-		84E660A325B955200036AB9F /* ProfileInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E660A225B955200036AB9F /* ProfileInteractor.swift */; };
 		84E660A625B9552D0036AB9F /* ProfilePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E660A525B9552D0036AB9F /* ProfilePresenter.swift */; };
-		84E660A925B955390036AB9F /* ProfileRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E660A825B955390036AB9F /* ProfileRouter.swift */; };
 		84E660AC25B955460036AB9F /* ProfileAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E660AB25B955460036AB9F /* ProfileAssembly.swift */; };
 		84E6610825B9936E0036AB9F /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E6610725B9936E0036AB9F /* User.swift */; };
 		84E6612825B9BC8A0036AB9F /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E6612725B9BC8A0036AB9F /* ProfileHeaderView.swift */; };
@@ -243,6 +243,8 @@
 		845C284525CAC22A000731B3 /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
 		845C284C25CADE16000731B3 /* FirebaseDatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDatabaseService.swift; sourceTree = "<group>"; };
 		845C5E0125CC2733002A2E16 /* SpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerView.swift; sourceTree = "<group>"; };
+		845CBB292601F31B007B40E9 /* ProfileServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileServiceProtocol.swift; sourceTree = "<group>"; };
+		845CBB2C2601F538007B40E9 /* ProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		845CC1FB25C7ECB70051372D /* SharePostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostView.swift; sourceTree = "<group>"; };
 		845CC1FF25C7ECE20051372D /* SharePostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostViewController.swift; sourceTree = "<group>"; };
 		845CC20725C7ED370051372D /* SharePostPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePostPresenter.swift; sourceTree = "<group>"; };
@@ -287,9 +289,7 @@
 		84B2E68825B0513C00B27457 /* HomeAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeAssembly.swift; sourceTree = "<group>"; };
 		84E6609B25B955050036AB9F /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		84E6609F25B955120036AB9F /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
-		84E660A225B955200036AB9F /* ProfileInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileInteractor.swift; sourceTree = "<group>"; };
 		84E660A525B9552D0036AB9F /* ProfilePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePresenter.swift; sourceTree = "<group>"; };
-		84E660A825B955390036AB9F /* ProfileRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRouter.swift; sourceTree = "<group>"; };
 		84E660AB25B955460036AB9F /* ProfileAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAssembly.swift; sourceTree = "<group>"; };
 		84E6610725B9936E0036AB9F /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		84E6612725B9BC8A0036AB9F /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
@@ -577,6 +577,7 @@
 				845CF2A526006AC0002FA650 /* SharePostServiceProtocol.swift */,
 				845CF2A826006AD7002FA650 /* SearchServiceProtocol.swift */,
 				845CF2AB260071A9002FA650 /* LocalImagesServiceProtocol.swift */,
+				845CBB292601F31B007B40E9 /* ProfileServiceProtocol.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -648,6 +649,7 @@
 				845ECB6E25FF4296004398BF /* SharePostService.swift */,
 				845ECB7C25FF6BB8004398BF /* SearchService.swift */,
 				845AE88C25C41B04005A1155 /* LocalImagesService.swift */,
+				845CBB2C2601F538007B40E9 /* ProfileService.swift */,
 			);
 			path = UserServices;
 			sourceTree = "<group>";
@@ -828,9 +830,7 @@
 			isa = PBXGroup;
 			children = (
 				84E6609A25B954E80036AB9F /* ProfileView */,
-				84E660A225B955200036AB9F /* ProfileInteractor.swift */,
 				84E660A525B9552D0036AB9F /* ProfilePresenter.swift */,
-				84E660A825B955390036AB9F /* ProfileRouter.swift */,
 				84E660AB25B955460036AB9F /* ProfileAssembly.swift */,
 			);
 			path = Profile;
@@ -1034,7 +1034,6 @@
 				8454D0E425F5FD6700DD27DD /* EditProfileBioRouter.swift in Sources */,
 				845ECB7A25FF55EF004398BF /* SearchCollectionViewDelegate.swift in Sources */,
 				8445929625B425210028EE6A /* CustomViewController.swift in Sources */,
-				84E660A325B955200036AB9F /* ProfileInteractor.swift in Sources */,
 				8454137C25EF5E1900B0D544 /* UserStats.swift in Sources */,
 				845D0B9C25D6BB9000AD3122 /* UIButton+downloadImage.swift in Sources */,
 				84E6609C25B955050036AB9F /* ProfileViewController.swift in Sources */,
@@ -1063,9 +1062,9 @@
 				845E446625FDCD3400198EBD /* ImagePickerCollectionViewDataSource.swift in Sources */,
 				84B2E67B25B050CE00B27457 /* HomePresenter.swift in Sources */,
 				845464EA25DA5C7E00DCD136 /* SearchViewController.swift in Sources */,
+				845CBB2D2601F538007B40E9 /* ProfileService.swift in Sources */,
 				8454DCAE25ECAA92006DB3E2 /* FeedPost.swift in Sources */,
 				845464F025DA5CCD00DCD136 /* SearchPresenter.swift in Sources */,
-				84E660A925B955390036AB9F /* ProfileRouter.swift in Sources */,
 				845ECB6F25FF4296004398BF /* SharePostService.swift in Sources */,
 				845455FB25BDAC460007C9A2 /* KeyboardAppearanceListener.swift in Sources */,
 				845BB22125C94B3200B01721 /* PlaceholderTextView.swift in Sources */,
@@ -1085,6 +1084,7 @@
 				845CF29C260068A5002FA650 /* LoginServiceProtocol.swift in Sources */,
 				845ADF2925FCD779003DEC7A /* HomeCoordinator.swift in Sources */,
 				84549B7B25E8CED9006CC21D /* CommentsView.swift in Sources */,
+				845CBB2A2601F31B007B40E9 /* ProfileServiceProtocol.swift in Sources */,
 				845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */,
 				84E6610825B9936E0036AB9F /* User.swift in Sources */,
 				84488AC225C2F6B400173A19 /* ImagePickerAssembly.swift in Sources */,

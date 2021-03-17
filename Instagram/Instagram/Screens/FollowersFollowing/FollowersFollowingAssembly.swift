@@ -18,7 +18,7 @@ enum FollowUnfollowRemoveButtonState {
 }
 
 enum FollowersFollowingAssembly {    
-    static func createFollowersViewController(user: User, userStats: UserStats) -> FollowersFollowingViewController {
+    static func createFollowersViewController(user: User, followersCount: Int) -> FollowersFollowingViewController {
         let viewController = FollowersFollowingViewController()
         
         let interactor = FollowersFollowingInteractor()
@@ -35,12 +35,12 @@ enum FollowersFollowingAssembly {
         
         presenter.userIdentifier = user.identifier
         presenter.displayMode = .followers
-        presenter.usersCount = userStats.followers
+        presenter.usersCount = followersCount
         
         return viewController
     }
     
-    static func createFollowingViewController(user: User, userStats: UserStats) -> FollowersFollowingViewController {
+    static func createFollowingViewController(user: User, followingCount: Int) -> FollowersFollowingViewController {
         let viewController = FollowersFollowingViewController()
         
         let interactor = FollowersFollowingInteractor()
@@ -57,7 +57,7 @@ enum FollowersFollowingAssembly {
         
         presenter.userIdentifier = user.identifier
         presenter.displayMode = .following
-        presenter.usersCount = userStats.following
+        presenter.usersCount = followingCount
         
         return viewController
     }

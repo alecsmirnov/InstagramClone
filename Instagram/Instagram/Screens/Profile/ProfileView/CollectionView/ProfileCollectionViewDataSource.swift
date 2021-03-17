@@ -76,10 +76,7 @@ extension ProfileCollectionViewDataSource: UICollectionViewDataSource {
         
         cell.configure(with: posts[indexPath.row].imageURL)
         
-        print(indexPath.row)
-        
         if indexPath.row == posts.count - 1 {
-            print("******* request *********")
             lastCellPresentedCompletion?()
         }
         

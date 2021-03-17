@@ -10,233 +10,186 @@ import NotificationCenter
 final class ProfilePresenter {
     // MARK: Properties
     
-    weak var viewController: ProfileViewControllerProtocol?
-    var interactor: IProfileInteractor?
-    var router: IProfileRouter?
+    weak var view: ProfileViewControllerProtocol?
+    weak var coordinator: ProfileCoordinatorProtocol?
+    
+    var profileService: ProfileServiceProtocol?
     
     var user: User?
-    var userStats: UserStats?
     
-    private var isUsersPosts = true
+    private var followersCount = 0
+    private var followingCount = 0
     
-    // MARK: Initialization
+    private var postDisplay: PostDisplay = .userPosts
+    
+    // MARK: Constants
+    
+    private enum PostDisplay {
+        case userPosts
+        case bookmarks
+    }
+    
+    // MARK: Lifecycle
     
     deinit {
-        interactor?.removeUserObserver()
-        interactor?.removeUserStatsObserver()
-        interactor?.removePostsObserver()
-        
         removeFollowUnfollowNotifications()
     }
 }
 
-// MARK: - IProfilePresenter
+// MARK: - ProfileView Output
 
 extension ProfilePresenter: ProfileViewControllerOutputProtocol {
     func viewDidLoad() {
-        if let user = user, let identifier = user.identifier {
-            if interactor?.isCurrentUser(identifier: identifier) ?? true {
-                viewController?.showEditButton()
+        if let user = user, let userIdentifier = user.identifier {
+            view?.setUser(user)
+            
+            if profileService?.isCurrentUser(userIdentifier: userIdentifier) ?? true {
+                view?.showEditButton()
             } else {
-                interactor?.isFollowingUser(identifier: identifier)
+                profileService?.isFollowingUser(userIdentifier: userIdentifier) { [weak self] isFollowing in
+                    isFollowing ? self?.view?.showUnfollowButton() : self?.view?.showFollowButton()
+                }
                 
                 setupFollowUnfollowNotifications()
             }
             
-            viewController?.setUser(user)
-            //viewController?.reloadData()
-            
-            interactor?.observeUser(identifier: identifier)
-            interactor?.fetchObserveUserStats(identifier: identifier)
-            interactor?.fetchPosts(identifier: identifier)
-            interactor?.observePosts()
+            initUserProfile(userIdentifier: userIdentifier)
         } else {
-            viewController?.showEditButton()
+            view?.showEditButton()
             
-            interactor?.fetchCurrentUser()
+            profileService?.fetchCurrentUser() { [weak self] user in
+                self?.user = user
+                
+                self?.view?.setUser(user)
+                self?.view?.showEditButton()
+                
+                if let userIdentifier = user.identifier {
+                    self?.initUserProfile(userIdentifier: userIdentifier)
+                }
+            }
         }
     }
     
     func didRequestPosts() {
-        guard let identifier = user?.identifier else { return }
+        guard let userIdentifier = user?.identifier else { return }
         
-        if isUsersPosts {
-            interactor?.requestPosts(identifier: identifier)
-        } else {
-            interactor?.requestBookmarkedPosts(identifier: identifier)
+        switch postDisplay {
+        case .userPosts:
+            profileService?.requestPosts(userIdentifier: userIdentifier) { [weak self] posts in
+                self?.appendPosts(posts)
+            }
+        case .bookmarks:
+            profileService?.requestBookmarkedPosts(userIdentifier: userIdentifier) { [weak self] posts in
+                self?.appendPosts(posts)
+            }
         }
     }
     
     func didTapFollowersButton() {
-        guard let user = user, let userStats = userStats else { return }
+        guard let user = user else { return }
         
-        router?.showFollowersViewController(user: user, userStats: userStats)
+        coordinator?.showFollowersViewController(user: user, followersCount: followersCount)
     }
     
     func didTapFollowingButton() {
-        guard let user = user, let userStats = userStats else { return }
+        guard let user = user else { return }
         
-        router?.showFollowingViewController(user: user, userStats: userStats)
+        coordinator?.showFollowingViewController(user: user, followingCount: followingCount)
     }
     
     func didTapEditButton() {
         guard let user = user else { return }
         
-        router?.showEditProfileViewController(user: user)
+        coordinator?.showEditProfileViewController(user: user)
     }
     
     func didTapFollowButton() {
-        guard let identifier = user?.identifier else { return }
+        guard let userIdentifier = user?.identifier else { return }
         
-        interactor?.followUser(identifier: identifier)
+        profileService?.followUser(userIdentifier: userIdentifier) { [weak self] in
+            self?.view?.showUnfollowButton()
+            
+            self?.sendFollowUserNotification()
+        }
     }
     
     func didTapUnfollowButton() {
-        guard let identifier = user?.identifier else { return }
+        guard let userIdentifier = user?.identifier else { return }
         
-        interactor?.unfollowUser(identifier: identifier)
+        profileService?.unfollowUser(userIdentifier: userIdentifier) { [weak self] in
+            self?.view?.showFollowButton()
+            
+            self?.sendUnfollowUserNotification()
+        }
     }
     
     func didTapGridButton() {
-        guard let identifier = user?.identifier else { return }
-        
-        isUsersPosts = true
-        
-        viewController?.removeAllPosts()
-        viewController?.reloadData()
-        
-        interactor?.fetchPosts(identifier: identifier)
+        changePostDisplay(.userPosts)
     }
     
     func didTapBookmarkButton() {
-        guard let identifier = user?.identifier else { return }
-        
-        isUsersPosts = false
-        
-        viewController?.removeAllPosts()
-        viewController?.reloadData()
-        
-        interactor?.fetchBookmarkedPosts(identifier: identifier)
+        changePostDisplay(.bookmarks)
+    }
+    
+    func didSelectPost(_ post: Post) {
+        // TODO: Detail post screen
     }
     
     func didTapMenuButton() {
-        // TODO: move to Menu module
-        
-        interactor?.signOut()
-        
-        router?.showLoginViewController()
+        coordinator?.showMenuViewController()
     }
 }
 
-// MARK: - IProfileInteractorOutput
+// MARK: - Private Methods
 
-extension ProfilePresenter: IProfileInteractorOutput {
-    func fetchCurrentUserSuccess(_ user: User) {
-        self.user = user
+private extension ProfilePresenter {
+    func initUserProfile(userIdentifier: String) {
+        profileService?.observeUserChanges(userIdentifier: userIdentifier) { [weak self] user in
+            self?.user = user
+            
+            self?.view?.setUser(user)
+        }
         
-        viewController?.setUser(user)
-        viewController?.showEditButton()
-        //viewController?.reloadData()
+        profileService?.fetchObserveUserStats(userIdentifier: userIdentifier) { [weak self] userStats in
+            self?.followersCount = userStats.followers
+            self?.followingCount = userStats.following
+            
+            self?.view?.setUserStats(userStats)
+        }
         
-        if let identifier = user.identifier {
-            interactor?.observeUser(identifier: identifier)
-            interactor?.fetchObserveUserStats(identifier: identifier)
-            interactor?.fetchPosts(identifier: identifier)
-            interactor?.observePosts()
+        profileService?.fetchPostsDescendingByDate(userIdentifier: userIdentifier) { [weak self] posts in
+            self?.appendPosts(posts)
+        }
+        
+        profileService?.observeNewPosts(userIdentifier: userIdentifier) { [weak self] post in
+            self?.view?.appendFirstPost(post)
+            self?.view?.insertNewFirstItem()
         }
     }
     
-    func fetchCurrentUserFailure() {
-        
+    func appendPosts(_ posts: [Post]) {
+        view?.appendPosts(posts.reversed())
+        view?.insertNewLastItems(count: posts.count)
     }
     
-    func fetchUserSuccess(_ user: User) {
-        self.user = user
+    private func changePostDisplay(_ postDisplay: PostDisplay) {
+        guard let userIdentifier = user?.identifier else { return }
         
-        viewController?.setUser(user)
-        //viewController?.reloadData()
-    }
-    
-    func fetchUserFailure() {
+        self.postDisplay = postDisplay
         
-    }
-    
-    func fetchUserStatsSuccess(_ userStats: UserStats) {
-        self.userStats = userStats
+        view?.removeAllPosts()
+        view?.reloadData()
         
-        viewController?.setUserStats(userStats)
-        //viewController?.reloadData()
-    }
-    
-    func fetchUserStatsFailure() {
-        
-    }
-    
-    func fetchPostsSuccess(_ posts: [Post]) {
-        guard isUsersPosts else { return }
-        
-        viewController?.appendPosts(posts.reversed())
-        viewController?.insertNewLastItems(count: posts.count)
-    }
-    
-    func fetchPostsFailure() {
-        
-    }
-    
-    func observePostsSuccess(_ post: Post) {
-        viewController?.appendFirstPost(post)
-        viewController?.insertNewFirstItem()
-    }
-    
-    func observePostsFailure() {
-        
-    }
-    
-    func fetchBookmarkedPostsSuccess(_ posts: [Post]) {
-        guard !isUsersPosts else { return }
-        
-        print("bookmarks")
-        
-        print(posts.count)
-        
-        viewController?.appendPosts(posts.reversed())
-        viewController?.insertNewLastItems(count: posts.count)
-    }
-    
-    func fetchBookmarkedPostsFailure() {
-        
-    }
-    
-    func isFollowingUserSuccess(_ isFollowing: Bool) {
-        if isFollowing {
-            viewController?.showUnfollowButton()
-        } else {
-            viewController?.showFollowButton()
+        switch postDisplay {
+        case .userPosts:
+            profileService?.fetchPostsDescendingByDate(userIdentifier: userIdentifier) { [weak self] posts in
+                self?.appendPosts(posts)
+            }
+        case .bookmarks:
+            profileService?.fetchBookmarkedPostsDescendingByDate(userIdentifier: userIdentifier) { [weak self] posts in
+                self?.appendPosts(posts)
+            }
         }
-    }
-    
-    func isFollowingUserFailure() {
-        
-    }
-    
-    func followUserSuccess() {
-        viewController?.showUnfollowButton()
-        
-        sendFollowUserNotification()
-    }
-    
-    func followUserFailure() {
-        
-    }
-    
-    func unfollowUserSuccess() {
-        viewController?.showFollowButton()
-        
-        sendUnfollowUserNotification()
-    }
-    
-    func unfollowUserFailure() {
-        
     }
 }
 
@@ -250,8 +203,8 @@ private extension ProfilePresenter {
             queue: nil) { [weak self] notification in
             guard let object = notification.object as? Self, object !== self else { return }
             
-            self?.viewController?.showUnfollowButton()
-            self?.viewController?.reloadData()
+            self?.view?.showUnfollowButton()
+            self?.view?.reloadData()
         }
         
         NotificationCenter.default.addObserver(
@@ -260,8 +213,8 @@ private extension ProfilePresenter {
             queue: nil) { [weak self] notification in
             guard let object = notification.object as? Self, object !== self else { return }
             
-            self?.viewController?.showFollowButton()
-            self?.viewController?.reloadData()
+            self?.view?.showFollowButton()
+            self?.view?.reloadData()
         }
     }
     
