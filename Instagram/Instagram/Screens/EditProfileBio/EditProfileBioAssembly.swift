@@ -10,9 +10,13 @@ import UIKit
 enum EditProfileBioAssembly {
     static func createEditProfileBioNavigationViewController(
         bio: String?,
-        delegate: EditProfileBioPresenterDelegate
+        delegate: EditProfileBioPresenterDelegate,
+        coordinator: EditProfileBioCoordinatorProtocol? = nil
     ) -> UINavigationController {
-        let editProfileBioViewController = createEditProfileBioViewController(bio: bio, delegate: delegate)
+        let editProfileBioViewController = createEditProfileBioViewController(
+            bio: bio,
+            delegate: delegate,
+            coordinator: coordinator)
         let navigationController = UINavigationController(rootViewController: editProfileBioViewController)
         
         return navigationController
@@ -20,20 +24,19 @@ enum EditProfileBioAssembly {
     
     private static func createEditProfileBioViewController(
         bio: String?,
-        delegate: EditProfileBioPresenterDelegate
+        delegate: EditProfileBioPresenterDelegate,
+        coordinator: EditProfileBioCoordinatorProtocol?
     ) -> EditProfileBioViewController {
         let viewController = EditProfileBioViewController()
-        
         let presenter = EditProfileBioPresenter()
-        let router = EditProfileBioRouter(viewController: viewController)
         
-        viewController.presenter = presenter
+        viewController.output = presenter
+        presenter.view = viewController
+        presenter.coordinator = coordinator
         
-        presenter.viewController = viewController
-        presenter.router = router
+        presenter.delegate = delegate
         
         presenter.bio = bio
-        presenter.delegate = delegate
         
         return viewController
     }

@@ -7,26 +7,57 @@
 
 import UIKit
 
-protocol IEditProfileBioViewController: AnyObject {
+protocol EditProfileBioViewControllerProtocol: AnyObject {
     func setBio(_ bio: String?)
     func setCharacterLimit(_ limit: Int)
 }
 
-final class EditProfileBioViewController: CustomViewController<EditProfileBioView> {
-    // MARK: - Properties
+protocol EditProfileBioViewControllerOutputProtocol: AnyObject {
+    func viewDidLoad()
     
-    var presenter: IEditProfileBioPresenter?
+    func didTapCloseButton()
+    func didTapEditButton(withBio bio: String?)
+}
+
+final class EditProfileBioViewController: CustomViewController<EditProfileBioView> {
+    // MARK: Properties
+    
+    var output: EditProfileBioViewControllerOutputProtocol?
     
     // MARK: Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        customView?.delegate = self
+        customView?.output = self
         
-        presenter?.viewDidLoad()
+        output?.viewDidLoad()
         
         setupAppearance()
+    }
+}
+
+// MARK: - EditProfileBioViewController Interface
+
+extension EditProfileBioViewController: EditProfileBioViewControllerProtocol {
+    func setBio(_ bio: String?) {
+        customView?.bio = bio
+    }
+    
+    func setCharacterLimit(_ limit: Int) {
+        customView?.characterLimit = limit
+    }
+}
+
+// MARK: - EditProfileBioView Output
+
+extension EditProfileBioViewController: EditProfileBioViewOutputProtocol {
+    func characterLimitReached() {
+        navigationItem.rightBarButtonItem?.isEnabled = false
+    }
+    
+    func characterLimitResets() {
+        navigationItem.rightBarButtonItem?.isEnabled = true
     }
 }
 
@@ -42,53 +73,33 @@ private extension EditProfileBioViewController {
     
     func setupCloseButton() {
         let closeBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "xmark")?.withRenderingMode(.alwaysOriginal),
+            image: EditProfileConstants.Images.close,
             style: .plain,
             target: self,
-            action: #selector(didPressCloseButton))
+            action: #selector(didTapCloseButton))
 
         navigationItem.leftBarButtonItem = closeBarButtonItem
     }
     
-    @objc func didPressCloseButton() {
-        presenter?.didPressCloseButton()
-    }
-    
     func setupEditButton() {
         let editBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "checkmark"),
+            image: EditProfileConstants.Images.edit,
             style: .plain,
             target: self,
-            action: #selector(didPressEditButton))
+            action: #selector(didTapEditButton))
 
         navigationItem.rightBarButtonItem = editBarButtonItem
     }
-    
-    @objc func didPressEditButton() {
-        presenter?.didPressEditButton(with: customView?.bio)
-    }
 }
 
-// MARK: - IEditProfileBioViewController
+// MARK: - Actions
 
-extension EditProfileBioViewController: IEditProfileBioViewController {
-    func setBio(_ bio: String?) {
-        customView?.bio = bio
+private extension EditProfileBioViewController {
+    @objc func didTapCloseButton() {
+        output?.didTapCloseButton()
     }
     
-    func setCharacterLimit(_ limit: Int) {
-        customView?.characterLimit = limit
-    }
-}
-
-// MARK: - EditProfileBioViewDelegate
-
-extension EditProfileBioViewController: EditProfileBioViewDelegate {
-    func editProfileBioViewEnableEditButton(_ editProfileBioView: EditProfileBioView) {
-        navigationItem.rightBarButtonItem?.isEnabled = true
-    }
-    
-    func editProfileBioViewDisableEditButton(_ editProfileBioView: EditProfileBioView) {
-        navigationItem.rightBarButtonItem?.isEnabled = false
+    @objc func didTapEditButton() {
+        output?.didTapEditButton(withBio: customView?.bio)
     }
 }

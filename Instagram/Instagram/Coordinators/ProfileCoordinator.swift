@@ -125,7 +125,8 @@ extension ProfileCoordinator: EditProfileCoordinatorProtocol {
     func showEditProfileBioViewController(bio: String?, delegate: EditProfileBioPresenterDelegate) {
         let editProfileBioNavigationController = EditProfileBioAssembly.createEditProfileBioNavigationViewController(
             bio: bio,
-            delegate: delegate)
+            delegate: delegate,
+            coordinator: self)
         
         editProfileBioNavigationController.modalPresentationStyle = .fullScreen
         editProfileBioNavigationController.modalTransitionStyle = .crossDissolve

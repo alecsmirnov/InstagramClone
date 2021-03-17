@@ -7,37 +7,41 @@
 
 import UIKit
 
-protocol EditProfileBioViewDelegate: AnyObject {
-    func editProfileBioViewEnableEditButton(_ editProfileBioView: EditProfileBioView)
-    func editProfileBioViewDisableEditButton(_ editProfileBioView: EditProfileBioView)
+protocol EditProfileBioViewProtocol: UIView {
+    var bio: String? { get set }
+    var characterLimit: Int { get set }
 }
 
-final class EditProfileBioView: UIView {
+protocol EditProfileBioViewOutputProtocol: AnyObject {
+    func characterLimitReached()
+    func characterLimitResets()
+}
+
+final class EditProfileBioView: UIView, EditProfileBioViewProtocol {
     // MARK: Properties
     
-    weak var delegate: EditProfileBioViewDelegate?
+    weak var output: EditProfileBioViewOutputProtocol?
     
     var bio: String? {
         get {
             return bioTextView.text
         }
         set {
-            guard let bio = newValue else { return }
-            
-            bioTextView.text = String(bio)
-            characterCounterLabel.text = String(bio.count)
+            bioTextView.text = newValue
+            characterCounterLabel.text = String(newValue?.count ?? 0)
         }
     }
     
-    var characterLimit = Int.max
+    var characterLimit: Int = .max
     
+    // Fix view layout glitch when calling layoutIfNeeded() when calling becomeFirstResponder()
     private var isBecomeFirstResponder = false
     
     private var characterCounterLabelFixedTopConstraint: NSLayoutConstraint?
     private var characterCounterLabelScrollableTopConstraint: NSLayoutConstraint?
     private var contentViewBottomConstraint: NSLayoutConstraint?
     
-    private var keyboardAppearanceListener: KeyboardAppearanceListener?
+    private lazy var keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
     
     // MARK: Constants
     
@@ -63,16 +67,15 @@ final class EditProfileBioView: UIView {
     private let separatorView = UIView()
     private let characterCounterLabel = UILabel()
     
-    // MARK: Initialization
+    // MARK: Lifecycle
     
-    init() {
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         setupAppearance()
         setupLayout()
-        setupGestures()
-        
-        keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
+        setupEndEditingGesture()
+        keyboardAppearanceListener.setupKeyboardObservers()
     }
     
     required init?(coder: NSCoder) {
@@ -226,20 +229,6 @@ private extension EditProfileBioView {
     }
 }
 
-// MARK: - Gestures
-
-private extension EditProfileBioView {
-    func setupGestures() {
-//        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-//        
-//        addGestureRecognizer(tapGestureRecognizer)
-    }
-    
-//    @objc func dismissKeyboard() {
-//        endEditing(true)
-//    }
-}
-
 // MARK: - UITextViewDelegate
 
 extension EditProfileBioView: UITextViewDelegate {
@@ -248,9 +237,9 @@ extension EditProfileBioView: UITextViewDelegate {
         updateCharacterCounterLabelAppearance(count: textView.text.count)
         
         if textView.text.count < characterLimit {
-            delegate?.editProfileBioViewEnableEditButton(self)
+            output?.characterLimitResets()
         } else {
-            delegate?.editProfileBioViewDisableEditButton(self)
+            output?.characterLimitReached()
         }
     }
 }

@@ -59,7 +59,6 @@
 		8454C5FF25EA2242000C44FD /* UserComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C5FE25EA2242000C44FD /* UserComment.swift */; };
 		8454D0DB25F5DFA000DD27DD /* EditProfileBioPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D0DA25F5DFA000DD27DD /* EditProfileBioPresenter.swift */; };
 		8454D0E125F5FCCC00DD27DD /* EditProfileBioAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D0E025F5FCCC00DD27DD /* EditProfileBioAssembly.swift */; };
-		8454D0E425F5FD6700DD27DD /* EditProfileBioRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D0E325F5FD6700DD27DD /* EditProfileBioRouter.swift */; };
 		8454D0EE25F6360D00DD27DD /* EditProfileUsernamePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D0ED25F6360D00DD27DD /* EditProfileUsernamePresenter.swift */; };
 		8454D0F425F6362000DD27DD /* EditProfileUsernameAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D0F325F6362000DD27DD /* EditProfileUsernameAssembly.swift */; };
 		8454D0F725F658DC00DD27DD /* TimeoutAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454D0F625F658DC00DD27DD /* TimeoutAlert.swift */; };
@@ -206,7 +205,6 @@
 		8454C5FE25EA2242000C44FD /* UserComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserComment.swift; sourceTree = "<group>"; };
 		8454D0DA25F5DFA000DD27DD /* EditProfileBioPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileBioPresenter.swift; sourceTree = "<group>"; };
 		8454D0E025F5FCCC00DD27DD /* EditProfileBioAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileBioAssembly.swift; sourceTree = "<group>"; };
-		8454D0E325F5FD6700DD27DD /* EditProfileBioRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileBioRouter.swift; sourceTree = "<group>"; };
 		8454D0ED25F6360D00DD27DD /* EditProfileUsernamePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileUsernamePresenter.swift; sourceTree = "<group>"; };
 		8454D0F325F6362000DD27DD /* EditProfileUsernameAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileUsernameAssembly.swift; sourceTree = "<group>"; };
 		8454D0F625F658DC00DD27DD /* TimeoutAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutAlert.swift; sourceTree = "<group>"; };
@@ -465,7 +463,6 @@
 			children = (
 				8454D0DF25F5FBC500DD27DD /* EditProfileBioView */,
 				8454D0DA25F5DFA000DD27DD /* EditProfileBioPresenter.swift */,
-				8454D0E325F5FD6700DD27DD /* EditProfileBioRouter.swift */,
 				8454D0E025F5FCCC00DD27DD /* EditProfileBioAssembly.swift */,
 			);
 			path = EditProfileBio;
@@ -1032,7 +1029,6 @@
 				845DEFAA25FB554A00F02D77 /* AppCoordinator.swift in Sources */,
 				845ECB7725FF55E1004398BF /* SearchCollectionViewDataSource.swift in Sources */,
 				845CF2A926006AD7002FA650 /* SearchServiceProtocol.swift in Sources */,
-				8454D0E425F5FD6700DD27DD /* EditProfileBioRouter.swift in Sources */,
 				845ECB7A25FF55EF004398BF /* SearchCollectionViewDelegate.swift in Sources */,
 				8445929625B425210028EE6A /* CustomViewController.swift in Sources */,
 				8454137C25EF5E1900B0D544 /* UserStats.swift in Sources */,
