@@ -8,7 +8,7 @@
 import UIKit
 
 final class EditProfilePresenter {
-    weak var viewController: EditProfileViewControllerProtocol?
+    weak var view: EditProfileViewControllerProtocol?
     weak var coordinator: EditProfileCoordinatorProtocol?
     
     var editProfileService: EditProfileServiceProtocol?
@@ -25,7 +25,7 @@ extension EditProfilePresenter: EditProfileViewControllerOutputProtocol {
         guard let user = user else { return }
         
         currentUsername = user.username
-        viewController?.setUser(user)
+        view?.setUser(user)
     }
     
     func didTapCloseButton() {
@@ -41,7 +41,7 @@ extension EditProfilePresenter: EditProfileViewControllerOutputProtocol {
     ) {
         guard let currentUsername = currentUsername else { return }
         
-        viewController?.showLoadingView()
+        view?.showLoadingView()
         
         editProfileService?.updateUser(
             currentUsername: currentUsername,
@@ -50,14 +50,14 @@ extension EditProfilePresenter: EditProfileViewControllerOutputProtocol {
             website: website,
             bio: bio,
             profileImage: profileImage) { [weak self] result in
-            self?.viewController?.hideLoadingView {
+            self?.view?.hideLoadingView {
                 switch result {
                 case .usernameExist:
-                    self?.viewController?.showAlreadyInUseUsernameAlert()
+                    self?.view?.showAlreadyInUseUsernameAlert()
                 case .success:
                     self?.coordinator?.closeEditProfileViewController()
                 case .failure:
-                    self?.viewController?.showUnknownAlert()
+                    self?.view?.showUnknownAlert()
                 }
             }
         }
@@ -104,7 +104,7 @@ extension EditProfilePresenter: EditProfileUsernamePresenterDelegate {
         
         self.user = newUser
         
-        viewController?.setUser(newUser)
+        view?.setUser(newUser)
     }
 }
 
@@ -115,7 +115,7 @@ extension EditProfilePresenter: EditProfileBioPresenterDelegate {
         user?.bio = bio
         
         if let user = user {
-            viewController?.setUser(user)
+            view?.setUser(user)
         }
     }
 }

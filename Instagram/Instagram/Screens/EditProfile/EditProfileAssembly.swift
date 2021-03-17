@@ -26,7 +26,7 @@ enum EditProfileAssembly {
         let presenter = EditProfilePresenter()
         
         viewController.output = presenter
-        presenter.viewController = viewController
+        presenter.view = viewController
         presenter.coordinator = coordinator
         
         presenter.editProfileService = EditProfileService()

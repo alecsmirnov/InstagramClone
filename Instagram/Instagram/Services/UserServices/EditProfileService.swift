@@ -64,6 +64,33 @@ final class EditProfileService: EditProfileServiceProtocol {
     }
 }
 
+// MARK: - EditProfileUsernameServiceProtocol
+
+extension EditProfileService: EditProfileUsernameServiceProtocol {
+    func checkUsername(_ username: String, completion: @escaping (EditProfileUsernameServiceResult) -> Void) {
+        guard !username.isEmpty else {
+            completion(.isEmptyUsername)
+            
+            return
+        }
+        
+        guard ValidationService.isValidUsername(username) else {
+            completion(.invalidUsername)
+            
+            return
+        }
+        
+        FirebaseDatabaseService.isUsernameExist(username) { result in
+            switch result {
+            case .success(let isUsernameExist):
+                completion(isUsernameExist ? .usernameExist : .validUsername)
+            case .failure(let error):
+                print("Failed to fetch username status: \(error.localizedDescription)")
+            }
+        }
+    }
+}
+
 // MARK: - Private Methods
 
 private extension EditProfileService {

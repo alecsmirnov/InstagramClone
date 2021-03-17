@@ -42,11 +42,6 @@ final class EditProfileViewController: CustomViewController<EditProfileView> {
     
     // MARK: Constants
     
-    private enum Images {
-        static let close = UIImage(systemName: "xmark")?.withRenderingMode(.alwaysOriginal)
-        static let edit = UIImage(systemName: "checkmark")
-    }
-    
     private enum Constants {
         static let alertTimeout: TimeInterval = 0.5
     }
@@ -125,7 +120,7 @@ private extension EditProfileViewController {
     
     func setupCloseButton() {
         let closeBarButtonItem = UIBarButtonItem(
-            image: Images.close,
+            image: EditProfileConstants.Images.close,
             style: .plain,
             target: self,
             action: #selector(didTapCloseButton))
@@ -135,7 +130,7 @@ private extension EditProfileViewController {
     
     func setupEditButton() {
         let editBarButtonItem = UIBarButtonItem(
-            image: Images.edit,
+            image: EditProfileConstants.Images.edit,
             style: .plain,
             target: self,
             action: #selector(didTapEditButton))

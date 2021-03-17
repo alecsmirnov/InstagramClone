@@ -5,14 +5,6 @@
 //  Created by Admin on 08.03.2021.
 //
 
-protocol IEditProfileUsernamePresenter: AnyObject {
-    func viewDidLoad()
-    
-    func didPressCloseButton()
-    func didPressEditButton(with username: String)
-    func didChangeUsername(_ username: String)
-}
-
 protocol EditProfileUsernamePresenterDelegate: AnyObject {
     func editProfileUsernamePresenter(
         _ editProfileUsernamePresenter: EditProfileUsernamePresenter,
@@ -20,67 +12,63 @@ protocol EditProfileUsernamePresenterDelegate: AnyObject {
 }
 
 final class EditProfileUsernamePresenter {
-    weak var viewController: IEditProfileUsernameViewController?
-    var interactor: IEditProfileUsernameInteractor?
-    var router: IEditProfileUsernameRouter?
+    weak var view: EditProfileUsernameViewControllerProtocol?
+    weak var coordinator: EditProfileUsernameCoordinatorProtocol?
+    
+    weak var delegate: EditProfileUsernamePresenterDelegate?
+    
+    var editProfileUsernameService: EditProfileUsernameServiceProtocol?
     
     var username: String?
     var currentUsername: String?
-    weak var delegate: EditProfileUsernamePresenterDelegate?
 }
 
-// MARK: - IEditProfileUsernamePresenter
+// MARK: - EditProfileUsernameView Output
 
-extension EditProfileUsernamePresenter: IEditProfileUsernamePresenter {
+extension EditProfileUsernamePresenter: EditProfileUsernameViewControllerOutputProtocol {
     func viewDidLoad() {
-        guard let username = username else { return }
-        
-        viewController?.setUsername(username)
-    }
-    
-    func didPressCloseButton() {
-        router?.closeEditProfileUsernameViewController()
-    }
-    
-    func didPressEditButton(with username: String) {
-        delegate?.editProfileUsernamePresenter(self, didChangeUsername: username)
-        
-        router?.closeEditProfileUsernameViewController()
-    }
-    
-    func didChangeUsername(_ username: String) {
-        guard username != currentUsername else {
-            viewController?.enableEditButton()
+        guard let username = username, !username.isEmpty else {
+            view?.disableEditButton()
             
             return
         }
         
-        viewController?.showActivityIndicator()
-        viewController?.disableEditButton()
+        view?.setUsername(username)
+    }
+    
+    func didTapCloseButton() {
+        coordinator?.closeEditProfileUsernameViewController()
+    }
+    
+    func didTapEditButton(withUsername username: String) {
+        delegate?.editProfileUsernamePresenter(self, didChangeUsername: username)
         
-        interactor?.checkUsername(username)
-    }
-}
-
-// MARK: - IEditProfileUsernameInteractorOutput
-
-extension EditProfileUsernamePresenter: IEditProfileUsernameInteractorOutput {
-    func isValidUsername() {
-        viewController?.hideActivityIndicator()
-        viewController?.enableEditButton()
+        coordinator?.closeEditProfileUsernameViewController()
     }
     
-    func isInvalidUsername() {
-        viewController?.hideActivityIndicator()
-        viewController?.showInvalidUsernameAlert()
-    }
-    
-    func isUserWithUsernameExist() {
-        viewController?.hideActivityIndicator()
-        viewController?.showAlreadyInUseUsernameAlert()
-    }
-    
-    func isEmptyUsername() {
-        viewController?.hideActivityIndicator()
+    func didChangeUsername(_ username: String) {
+        guard username != currentUsername else {
+            view?.enableEditButton()
+            
+            return
+        }
+        
+        view?.showActivityIndicator()
+        view?.disableEditButton()
+        
+        editProfileUsernameService?.checkUsername(username) { [weak self] result in
+            self?.view?.hideActivityIndicator()
+            
+            switch result {
+            case .validUsername:
+                self?.view?.enableEditButton()
+            case .invalidUsername:
+                self?.view?.showInvalidUsernameAlert()
+            case .usernameExist:
+                self?.view?.showAlreadyInUseUsernameAlert()
+            case .isEmptyUsername:
+                break
+            }
+        }
     }
 }

@@ -11,12 +11,14 @@ enum EditProfileUsernameAssembly {
     static func createEditProfileUsernameNavigationViewController(
         username: String,
         currentUsername: String,
-        delegate: EditProfileUsernamePresenterDelegate
+        delegate: EditProfileUsernamePresenterDelegate,
+        coordinator: EditProfileUsernameCoordinatorProtocol? = nil
     ) -> UINavigationController {
         let editProfileUsernameViewController = createEditProfileUsernameViewController(
             username: username,
             currentUsername: currentUsername,
-            delegate: delegate)
+            delegate: delegate,
+            coordinator: coordinator)
         let navigationController = UINavigationController(rootViewController: editProfileUsernameViewController)
         
         return navigationController
@@ -25,25 +27,22 @@ enum EditProfileUsernameAssembly {
     private static func createEditProfileUsernameViewController(
         username: String,
         currentUsername: String,
-        delegate: EditProfileUsernamePresenterDelegate
+        delegate: EditProfileUsernamePresenterDelegate,
+        coordinator: EditProfileUsernameCoordinatorProtocol?
     ) -> EditProfileUsernameViewController {
         let viewController = EditProfileUsernameViewController()
-        
-        let interactor = EditProfileUsernameInteractor()
         let presenter = EditProfileUsernamePresenter()
-        let router = EditProfileUsernameRouter(viewController: viewController)
         
-        viewController.presenter = presenter
+        viewController.output = presenter
+        presenter.view = viewController
+        presenter.coordinator = coordinator
         
-        interactor.presenter = presenter
+        presenter.delegate = delegate
         
-        presenter.viewController = viewController
-        presenter.interactor = interactor
-        presenter.router = router
+        presenter.editProfileUsernameService = EditProfileService()
         
         presenter.username = username
         presenter.currentUsername = currentUsername
-        presenter.delegate = delegate
         
         return viewController
     }

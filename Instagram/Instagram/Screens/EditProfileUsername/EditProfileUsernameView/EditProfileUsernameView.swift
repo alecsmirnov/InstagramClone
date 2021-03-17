@@ -7,25 +7,21 @@
 
 import UIKit
 
-protocol EditProfileUsernameProtocol: UIView {
+protocol EditProfileUsernameViewProtocol: UIView {
     var username: String? { get set }
     
     func showActivityIndicator()
     func hideActivityIndicator()
 }
 
-protocol EditProfileUsernameViewDelegate: AnyObject {
-    func editProfileUsernameViewEnableEditButton(_ editProfileUsernameView: EditProfileUsernameView)
-    func editProfileUsernameViewDisableEditButton(_ editProfileUsernameView: EditProfileUsernameView)
-    func editProfileUsernameView(
-        _ editProfileUsernameView: EditProfileUsernameView,
-        usernameDidChange username: String?)
+protocol EditProfileUsernameViewOutputProtocol: AnyObject {
+    func usernameDidChange(_ username: String?)
 }
 
 final class EditProfileUsernameView: UIView {
     // MARK: Properties
     
-    weak var delegate: EditProfileUsernameViewDelegate?
+    weak var output: EditProfileUsernameViewOutputProtocol?
     
     // MARK: Constants
     
@@ -57,6 +53,7 @@ final class EditProfileUsernameView: UIView {
         
         setupAppearance()
         setupLayout()
+        setupActions()
         setupEndEditingGesture()
     }
     
@@ -67,7 +64,7 @@ final class EditProfileUsernameView: UIView {
 
 // MARK: - Interface
 
-extension EditProfileUsernameView: EditProfileUsernameProtocol {
+extension EditProfileUsernameView: EditProfileUsernameViewProtocol {
     var username: String? {
         get {
             return usernameTextField.text
@@ -102,21 +99,6 @@ private extension EditProfileUsernameView {
         usernameTextField.autocorrectionType = .no
         usernameTextField.autocapitalizationType = .none
         usernameTextField.becomeFirstResponder()
-        
-        usernameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-    }
-    
-    @objc func textFieldDidChange(_ textField: UITextField) {
-        NSObject.cancelPreviousPerformRequests(
-            withTarget: self,
-            selector: #selector(didStartTyping(_:)),
-            object: textField)
-        
-        perform(#selector(didStartTyping(_:)), with: textField, afterDelay: Constants.textInputDelay)
-    }
-    
-    @objc func didStartTyping(_ textField: UITextField) {
-        delegate?.editProfileUsernameView(self, usernameDidChange: textField.text)
     }
     
     func setupActivityIndicatorViewAppearance() {
@@ -190,5 +172,26 @@ private extension EditProfileUsernameView {
                 constant: -Metrics.separatorViewHorizontalSpace),
             separatorView.heightAnchor.constraint(equalToConstant: Metrics.separatorViewHeight),
         ])
+    }
+}
+
+// MARK: - Actions
+
+private extension EditProfileUsernameView {
+    func setupActions() {
+        usernameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+    }
+    
+    @objc func textFieldDidChange(_ textField: UITextField) {
+        NSObject.cancelPreviousPerformRequests(
+            withTarget: self,
+            selector: #selector(didStartTyping(_:)),
+            object: textField)
+        
+        perform(#selector(didStartTyping(_:)), with: textField, afterDelay: Constants.textInputDelay)
+    }
+    
+    @objc func didStartTyping(_ textField: UITextField) {
+        output?.usernameDidChange(textField.text)
     }
 }

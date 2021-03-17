@@ -23,6 +23,14 @@ protocol EditProfileCoordinatorProtocol: AnyObject {
     func closeEditProfileViewController()
 }
 
+protocol EditProfileUsernameCoordinatorProtocol: AnyObject {
+    func closeEditProfileUsernameViewController()
+}
+
+protocol EditProfileBioCoordinatorProtocol: AnyObject {
+    func closeEditProfileBioViewController()
+}
+
 final class ProfileCoordinator: CoordinatorProtocol {
     // MARK: Properties
     
@@ -105,7 +113,8 @@ extension ProfileCoordinator: EditProfileCoordinatorProtocol {
         let navigationViewController = EditProfileUsernameAssembly.createEditProfileUsernameNavigationViewController(
             username: username,
             currentUsername: currentUsername,
-            delegate: delegate)
+            delegate: delegate,
+            coordinator: self)
         
         navigationViewController.modalPresentationStyle = .fullScreen
         navigationViewController.modalTransitionStyle = .crossDissolve
@@ -126,5 +135,21 @@ extension ProfileCoordinator: EditProfileCoordinatorProtocol {
     
     func closeEditProfileViewController() {
         presenterController?.dismiss(animated: true)
+    }
+}
+
+// MARK: - EditProfileUsernameCoordinatorProtocol
+
+extension ProfileCoordinator: EditProfileUsernameCoordinatorProtocol {
+    func closeEditProfileUsernameViewController() {
+        presenterController?.presentedViewController?.dismiss(animated: true)
+    }
+}
+
+// MARK: - EditProfileBioCoordinatorProtocol
+
+extension ProfileCoordinator: EditProfileBioCoordinatorProtocol {
+    func closeEditProfileBioViewController() {
+        presenterController?.presentedViewController?.dismiss(animated: true)
     }
 }
