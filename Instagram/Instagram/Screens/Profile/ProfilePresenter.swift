@@ -204,7 +204,6 @@ private extension ProfilePresenter {
             guard let object = notification.object as? Self, object !== self else { return }
             
             self?.view?.showUnfollowButton()
-            self?.view?.reloadData()
         }
         
         NotificationCenter.default.addObserver(
@@ -214,7 +213,6 @@ private extension ProfilePresenter {
             guard let object = notification.object as? Self, object !== self else { return }
             
             self?.view?.showFollowButton()
-            self?.view?.reloadData()
         }
     }
     

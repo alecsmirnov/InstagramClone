@@ -7,46 +7,32 @@
 
 import UIKit
 
-protocol IEditProfilePresenter: AnyObject {
-    func viewDidLoad()
-    
-    func didPressCloseButton()
-    func didPressEditButton(
-        fullName: String?,
-        username: String,
-        website: String?,
-        bio: String?,
-        profileImage: UIImage?)
-    func didPressUsernameTextField()
-    func didPressBioTextField()
-}
-
 final class EditProfilePresenter {
-    weak var viewController: IEditProfileViewController?
-    var interactor: IEditProfileInteractor?
-    var router: IEditProfileRouter?
+    weak var viewController: EditProfileViewControllerProtocol?
+    weak var coordinator: EditProfileCoordinatorProtocol?
+    
+    var editProfileService: EditProfileServiceProtocol?
     
     var user: User?
     
     private var currentUsername: String?
 }
 
-// MARK: - IEditProfilePresenter
+// MARK: - EditProfileView Output
 
-extension EditProfilePresenter: IEditProfilePresenter {
+extension EditProfilePresenter: EditProfileViewControllerOutputProtocol {
     func viewDidLoad() {
         guard let user = user else { return }
         
         currentUsername = user.username
-        
         viewController?.setUser(user)
     }
     
-    func didPressCloseButton() {
-        router?.closeEditProfileViewController()
+    func didTapCloseButton() {
+        coordinator?.closeEditProfileViewController()
     }
     
-    func didPressEditButton(
+    func didTapEditButton(
         fullName: String?,
         username: String,
         website: String?,
@@ -55,46 +41,46 @@ extension EditProfilePresenter: IEditProfilePresenter {
     ) {
         guard let currentUsername = currentUsername else { return }
         
-        // TODO: update indicator
+        viewController?.showLoadingView()
         
-        interactor?.updateUser(
+        editProfileService?.updateUser(
             currentUsername: currentUsername,
             fullName: fullName,
             username: username,
             website: website,
             bio: bio,
-            profileImage: profileImage)
+            profileImage: profileImage) { [weak self] result in
+            self?.viewController?.hideLoadingView {
+                switch result {
+                case .usernameExist:
+                    self?.viewController?.showAlreadyInUseUsernameAlert()
+                case .success:
+                    self?.coordinator?.closeEditProfileViewController()
+                case .failure:
+                    self?.viewController?.showUnknownAlert()
+                }
+            }
+        }
     }
     
-    func didPressUsernameTextField() {
-        guard let username = user?.username, let currentUsername = currentUsername else { return }
+    func didTapUsernameTextField() {
+        guard
+            let username = user?.username,
+            let currentUsername = currentUsername
+        else {
+            return
+        }
         
-        router?.showEditProfileUsernameViewController(
+        coordinator?.showEditProfileUsernameViewController(
             username: username,
             currentUsername: currentUsername,
             delegate: self)
     }
     
-    func didPressBioTextField() {
-        guard let user = user else { return }
-        
-        router?.showEditProfileBioViewController(bio: user.bio, delegate: self)
-    }
-}
-
-// MARK: - IEditProfileInteractorOutput
-
-extension EditProfilePresenter: IEditProfileInteractorOutput {
-    func userWithUsernameExist() {
-        viewController?.showAlreadyInUseUsernameAlert()
-    }
-    
-    func updateUserSuccess() {
-        router?.closeEditProfileViewController()
-    }
-    
-    func updateUserFailure() {
-        
+    func didTapBioTextField() {
+        if let bio = user?.bio {
+            coordinator?.showEditProfileBioViewController(bio: bio, delegate: self)
+        }
     }
 }
 
@@ -128,8 +114,8 @@ extension EditProfilePresenter: EditProfileBioPresenterDelegate {
     func editProfileBioPresenter(_ editProfileBioPresenter: EditProfileBioPresenter, didChangeBio bio: String?) {
         user?.bio = bio
         
-        guard let user = user else { return }
-        
-        viewController?.setUser(user)
+        if let user = user {
+            viewController?.setUser(user)
+        }
     }
 }

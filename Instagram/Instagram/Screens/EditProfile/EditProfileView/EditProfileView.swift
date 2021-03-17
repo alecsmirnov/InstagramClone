@@ -12,20 +12,48 @@ protocol EditProfileViewDelegate: AnyObject {
     func editProfileViewDidPressBioTextField(_ editProfileView: EditProfileView)
 }
 
+protocol EditProfileViewProtocol: UIView {
+    var user: User? { get set }
+    var profileImage: UIImage? { get set }
+    var name: String? { get }
+    var username: String? { get }
+    var website: String? { get }
+    var bio: String? { get }
+}
+
+protocol EditProfileViewOutputProtocol: AnyObject {
+    func didTapProfileImageButton()
+    func didTapUsernameTextField()
+    func didTapBioTextField()
+}
+
 final class EditProfileView: UIView {
     // MARK: Properties
     
-    weak var delegate: EditProfileViewDelegate? {
+    weak var output: EditProfileViewOutputProtocol?
+    
+    var user: User? {
         didSet {
-            guard let presentationController = delegate as? UIViewController else { return }
+            guard let user = user else { return }
             
-            imagePicker = ImagePicker(presentationController: presentationController, delegate: self)
-            keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
+            if let profileImageURL = user.profileImageURL {
+                profileImageButton.downloadImage(urlString: profileImageURL)
+            }
+            
+            nameTextField.text = user.fullName
+            usernameTextField.text = user.username
+            websiteTextField.text = user.website
+            bioTextField.text = user.bio
         }
     }
     
     var profileImage: UIImage? {
-        return profileImageButton.image(for: .normal)
+        get {
+            return profileImageButton.image(for: .normal)
+        }
+        set {
+            profileImageButton.setImage(newValue?.withRenderingMode(.alwaysOriginal), for: .normal)
+        }
     }
     
     var name: String? {
@@ -44,23 +72,7 @@ final class EditProfileView: UIView {
         return bioTextField.text
     }
     
-    var user: User? {
-        didSet {
-            guard let user = user else { return }
-            
-            if let profileImageURL = user.profileImageURL {
-                profileImageButton.downloadImage(urlString: profileImageURL)
-            }
-            
-            nameTextField.text = user.fullName
-            usernameTextField.text = user.username
-            websiteTextField.text = user.website
-            bioTextField.text = user.bio
-        }
-    }
-    
-    private var imagePicker: ImagePicker?
-    private var keyboardAppearanceListener: KeyboardAppearanceListener?
+    private lazy var keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
     
     // MARK: Constants
     
@@ -88,17 +100,16 @@ final class EditProfileView: UIView {
     private let websiteTextField = MaterialTextField()
     private let bioTextField = MaterialTextField()
     
-    private let errorLabel = UILabel()
-    private let counterLabel = UILabel()
+    // MARK: Lifecycle
     
-    // MARK: Initialization
-    
-    init() {
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         setupAppearance()
         setupLayout()
-        setupGestures()
+        setupActions()
+        setupEndEditingGesture()
+        keyboardAppearanceListener.setupKeyboardObservers()
     }
     
     required init?(coder: NSCoder) {
@@ -127,18 +138,10 @@ private extension EditProfileView {
     
     func setupProfileImageButtonAppearance() {
         profileImageButton.largeProfileImageStyle()
-        
-        profileImageButton.addTarget(self, action: #selector(didPressProfileImageButton), for: .touchUpInside)
     }
     
     func setupChangeProfileImageButtonAppearance() {
         changeProfileImageButton.setTitle("Change profile photo", for: .normal)
-        
-        changeProfileImageButton.addTarget(self, action: #selector(didPressProfileImageButton), for: .touchUpInside)
-    }
-    
-    @objc func didPressProfileImageButton() {
-        imagePicker?.takePhoto()
     }
     
     func setupNameTextFieldAppearance() {
@@ -149,14 +152,6 @@ private extension EditProfileView {
     func setupUsernameTextFieldAppearance() {
         usernameTextField.placeholder = "Username"
         usernameTextField.font = .systemFont(ofSize: Metrics.textFieldFontSize)
-        
-        usernameTextField.addTarget(self, action: #selector(didPressUsernameTextField), for: .touchDown)
-    }
-    
-    @objc func didPressUsernameTextField() {
-        endEditing(true)
-        
-        delegate?.editProfileViewDidPressUsernameTextField(self)
     }
     
     func setupWebsiteTextFieldAppearance() {
@@ -168,14 +163,6 @@ private extension EditProfileView {
     func setupBioTextFieldAppearance() {
         bioTextField.placeholder = "Bio"
         bioTextField.font = .systemFont(ofSize: Metrics.textFieldFontSize)
-        
-        bioTextField.addTarget(self, action: #selector(didPressBioTextField), for: .touchDown)
-    }
-    
-    @objc func didPressBioTextField() {
-        endEditing(true)
-        
-        delegate?.editProfileViewDidPressBioTextField(self)
     }
 }
 
@@ -320,25 +307,31 @@ private extension EditProfileView {
     }
 }
 
-// MARK: - Gestures
+// MARK: - Button and TextField Actions
 
 private extension EditProfileView {
-    func setupGestures() {
-//        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-//        
-//        addGestureRecognizer(tapGestureRecognizer)
+    func setupActions() {
+        profileImageButton.addTarget(self, action: #selector(didTapProfileImageButton), for: .touchUpInside)
+        changeProfileImageButton.addTarget(self, action: #selector(didTapProfileImageButton), for: .touchUpInside)
+        
+        usernameTextField.addTarget(self, action: #selector(didTapUsernameTextField), for: .touchDown)
+        bioTextField.addTarget(self, action: #selector(didTapBioTextField), for: .touchDown)
     }
     
-//    @objc func dismissKeyboard() {
-//        endEditing(true)
-//    }
-}
-
-// MARK: - ImagePickerDelegate
-
-extension EditProfileView: ImagePickerDelegate {
-    func imagePicker(_ imagePicker: ImagePicker, didSelectImage image: UIImage?) {
-        profileImageButton.setImage(image?.withRenderingMode(.alwaysOriginal), for: .normal)
+    @objc func didTapProfileImageButton() {
+        output?.didTapProfileImageButton()
+    }
+    
+    @objc func didTapUsernameTextField() {
+        endEditing(true)
+        
+        output?.didTapUsernameTextField()
+    }
+    
+    @objc func didTapBioTextField() {
+        endEditing(true)
+        
+        output?.didTapBioTextField()
     }
 }
 
@@ -356,8 +349,10 @@ extension EditProfileView: KeyboardAppearanceListenerDelegate {
             return
         }
         
-        scrollView.contentInset.bottom = keyboardSize.cgRectValue.height
-        scrollView.verticalScrollIndicatorInsets.bottom = scrollView.contentInset.bottom
+        let keyboardHeight = keyboardSize.cgRectValue.height
+        
+        scrollView.contentInset.bottom = keyboardHeight
+        scrollView.verticalScrollIndicatorInsets.bottom = keyboardHeight
     }
     
     func keyboardAppearanceListener(
@@ -365,6 +360,6 @@ extension EditProfileView: KeyboardAppearanceListenerDelegate {
         keyboardWillHideWith notification: Notification
     ) {
         scrollView.contentInset.bottom = 0
-        scrollView.verticalScrollIndicatorInsets.bottom = scrollView.contentInset.bottom
+        scrollView.verticalScrollIndicatorInsets.bottom = 0
     }
 }

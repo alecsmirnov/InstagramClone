@@ -111,18 +111,12 @@ extension RegistrationPresenter: RegistrationViewControllerOutputProtocol {
         view?.disableSignUpButton()
         view?.startAnimatingSignUpButton()
         
-        let imageSize = LoginRegistrationConstants.Metrics.profileImageButtonSize
-        let profileImageData = profileImage?.resize(
-            withWidth: imageSize,
-            height: imageSize,
-            contentMode: .aspectFill).jpegData(compressionQuality: 1)
-        
         registrationService?.signUp(
             withEmail: email,
             fullName: fullName,
             username: username,
             password: password,
-            profileImageData: profileImageData) { [weak self] error in
+            profileImage: profileImage) { [weak self] error in
             guard error == nil else {
                 self?.view?.showUnknownSignUpAlert()
                 

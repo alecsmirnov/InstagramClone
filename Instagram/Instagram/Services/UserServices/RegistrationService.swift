@@ -5,7 +5,7 @@
 //  Created by Admin on 12.03.2021.
 //
 
-import Foundation
+import UIKit
 
 final class RegistrationService: RegistrationServiceProtocol {
     func checkEmail(_ email: String, completion: @escaping (RegistrationServiceResult.CheckEmail?) -> Void) {
@@ -75,9 +75,15 @@ final class RegistrationService: RegistrationServiceProtocol {
         fullName: String?,
         username: String,
         password: String,
-        profileImageData: Data?,
+        profileImage: UIImage?,
         completion: @escaping (RegistrationServiceResult.SignUp?) -> Void
     ) {
+        let imageSize = LoginRegistrationConstants.Metrics.profileImageButtonSize
+        let profileImageData = profileImage?.resize(
+            withWidth: imageSize,
+            height: imageSize,
+            contentMode: .aspectFill).jpegData(compressionQuality: 1)
+        
         FirebaseDatabaseService.createUser(
             withEmail: email,
             fullName: fullName,

@@ -7,6 +7,13 @@
 
 import UIKit
 
+protocol EditProfileUsernameProtocol: UIView {
+    var username: String? { get set }
+    
+    func showActivityIndicator()
+    func hideActivityIndicator()
+}
+
 protocol EditProfileUsernameViewDelegate: AnyObject {
     func editProfileUsernameViewEnableEditButton(_ editProfileUsernameView: EditProfileUsernameView)
     func editProfileUsernameViewDisableEditButton(_ editProfileUsernameView: EditProfileUsernameView)
@@ -19,17 +26,6 @@ final class EditProfileUsernameView: UIView {
     // MARK: Properties
     
     weak var delegate: EditProfileUsernameViewDelegate?
-    
-    var username: String? {
-        get {
-            return usernameTextField.text
-        }
-        set {
-            guard let username = newValue else { return }
-            
-            usernameTextField.text = String(username)
-        }
-    }
     
     // MARK: Constants
     
@@ -54,14 +50,14 @@ final class EditProfileUsernameView: UIView {
     private let activityIndicatorView = UIActivityIndicatorView()
     private let separatorView = UIView()
     
-    // MARK: Initialization
+    // MARK: Lifecycle
     
-    init() {
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         setupAppearance()
         setupLayout()
-        setupGestures()
+        setupEndEditingGesture()
     }
     
     required init?(coder: NSCoder) {
@@ -69,9 +65,18 @@ final class EditProfileUsernameView: UIView {
     }
 }
 
-// MARK: - Public Methods
+// MARK: - Interface
 
-extension EditProfileUsernameView {
+extension EditProfileUsernameView: EditProfileUsernameProtocol {
+    var username: String? {
+        get {
+            return usernameTextField.text
+        }
+        set {
+            usernameTextField.text = newValue
+        }
+    }
+    
     func showActivityIndicator() {
         activityIndicatorView.startAnimating()
     }
@@ -186,18 +191,4 @@ private extension EditProfileUsernameView {
             separatorView.heightAnchor.constraint(equalToConstant: Metrics.separatorViewHeight),
         ])
     }
-}
-
-// MARK: - Gestures
-
-private extension EditProfileUsernameView {
-    func setupGestures() {
-//        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-//        
-//        addGestureRecognizer(tapGestureRecognizer)
-    }
-    
-//    @objc func dismissKeyboard() {
-//        endEditing(true)
-//    }
 }

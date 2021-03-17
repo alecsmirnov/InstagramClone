@@ -14,6 +14,15 @@ protocol ProfileCoordinatorProtocol: AnyObject {
     func showMenuViewController()
 }
 
+protocol EditProfileCoordinatorProtocol: AnyObject {
+    func showEditProfileUsernameViewController(
+        username: String,
+        currentUsername: String,
+        delegate: EditProfileUsernamePresenterDelegate)
+    func showEditProfileBioViewController(bio: String?, delegate: EditProfileBioPresenterDelegate)
+    func closeEditProfileViewController()
+}
+
 final class ProfileCoordinator: CoordinatorProtocol {
     // MARK: Properties
     
@@ -71,7 +80,9 @@ extension ProfileCoordinator: ProfileCoordinatorProtocol {
     }
     
     func showEditProfileViewController(user: User) {
-        let editProfileViewController = EditProfileAssembly.createEditProfileNavigationViewController(user: user)
+        let editProfileViewController = EditProfileAssembly.createEditProfileNavigationViewController(
+            user: user,
+            coordinator: self)
         
         editProfileViewController.modalPresentationStyle = .fullScreen
         
@@ -80,5 +91,40 @@ extension ProfileCoordinator: ProfileCoordinatorProtocol {
     
     func showMenuViewController() {
         
+    }
+}
+
+// MARK: - EditProfileCoordinatorProtocol
+
+extension ProfileCoordinator: EditProfileCoordinatorProtocol {
+    func showEditProfileUsernameViewController(
+        username: String,
+        currentUsername: String,
+        delegate: EditProfileUsernamePresenterDelegate
+    ) {
+        let navigationViewController = EditProfileUsernameAssembly.createEditProfileUsernameNavigationViewController(
+            username: username,
+            currentUsername: currentUsername,
+            delegate: delegate)
+        
+        navigationViewController.modalPresentationStyle = .fullScreen
+        navigationViewController.modalTransitionStyle = .crossDissolve
+        
+        presenterController?.presentedViewController?.present(navigationViewController, animated: true)
+    }
+    
+    func showEditProfileBioViewController(bio: String?, delegate: EditProfileBioPresenterDelegate) {
+        let editProfileBioNavigationController = EditProfileBioAssembly.createEditProfileBioNavigationViewController(
+            bio: bio,
+            delegate: delegate)
+        
+        editProfileBioNavigationController.modalPresentationStyle = .fullScreen
+        editProfileBioNavigationController.modalTransitionStyle = .crossDissolve
+        
+        presenterController?.presentedViewController?.present(editProfileBioNavigationController, animated: true)
+    }
+    
+    func closeEditProfileViewController() {
+        presenterController?.dismiss(animated: true)
     }
 }

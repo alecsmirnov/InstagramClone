@@ -64,8 +64,8 @@ final class ProfileView: UIView {
     
     // MARK: Lifecycle
     
-    init() {
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         setupAppearance()
         setupLayout()

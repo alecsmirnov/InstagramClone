@@ -5,7 +5,7 @@
 //  Created by Admin on 16.03.2021.
 //
 
-import Foundation
+import UIKit
 
 protocol RegistrationServiceProtocol: AnyObject {
     func checkEmail(_ email: String, completion: @escaping (RegistrationServiceResult.CheckEmail?) -> Void)
@@ -16,7 +16,7 @@ protocol RegistrationServiceProtocol: AnyObject {
         fullName: String?,
         username: String,
         password: String,
-        profileImageData: Data?,
+        profileImage: UIImage?,
         completion: @escaping (RegistrationServiceResult.SignUp?) -> Void)
 }
 
