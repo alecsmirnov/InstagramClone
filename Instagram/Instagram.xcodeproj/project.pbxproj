@@ -28,9 +28,7 @@
 		8454137C25EF5E1900B0D544 /* UserStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454137B25EF5E1900B0D544 /* UserStats.swift */; };
 		8454138225EF949C00B0D544 /* FollowersFollowingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454138125EF949C00B0D544 /* FollowersFollowingView.swift */; };
 		8454138625EF94AC00B0D544 /* FollowersFollowingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454138525EF94AC00B0D544 /* FollowersFollowingViewController.swift */; };
-		8454138925EF94B800B0D544 /* FollowersFollowingInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454138825EF94B800B0D544 /* FollowersFollowingInteractor.swift */; };
 		8454138C25EF94C400B0D544 /* FollowersFollowingPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454138B25EF94C400B0D544 /* FollowersFollowingPresenter.swift */; };
-		8454138F25EF94CF00B0D544 /* FollowersFollowingRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454138E25EF94CF00B0D544 /* FollowersFollowingRouter.swift */; };
 		8454139225EF94DB00B0D544 /* FollowersFollowingAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454139125EF94DB00B0D544 /* FollowersFollowingAssembly.swift */; };
 		8454139525EFA03400B0D544 /* UserFollowerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454139425EFA03400B0D544 /* UserFollowerCell.swift */; };
 		84541E7525CD14E700E0DA81 /* DownloadImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84541E7425CD14E700E0DA81 /* DownloadImageCell.swift */; };
@@ -79,6 +77,8 @@
 		845AD41A25DD3716007A84AC /* SearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AD41925DD3716007A84AC /* SearchCell.swift */; };
 		845AD9CF260376AE00BAB903 /* FollowersFollowingCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AD9CE260376AE00BAB903 /* FollowersFollowingCollectionViewDataSource.swift */; };
 		845AD9D226037C2A00BAB903 /* FollowersFollowingCollectionViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AD9D126037C2A00BAB903 /* FollowersFollowingCollectionViewDelegate.swift */; };
+		845AD9D526038DAC00BAB903 /* FollowersFollowingServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AD9D426038DAC00BAB903 /* FollowersFollowingServiceProtocol.swift */; };
+		845AD9D826038E8900BAB903 /* FollowersFollowingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AD9D726038E8900BAB903 /* FollowersFollowingService.swift */; };
 		845ADF2925FCD779003DEC7A /* HomeCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845ADF2825FCD779003DEC7A /* HomeCoordinator.swift */; };
 		845ADF2C25FCD790003DEC7A /* SearchCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845ADF2B25FCD790003DEC7A /* SearchCoordinator.swift */; };
 		845ADF2F25FCD7AB003DEC7A /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845ADF2E25FCD7AB003DEC7A /* ProfileCoordinator.swift */; };
@@ -176,9 +176,7 @@
 		8454137B25EF5E1900B0D544 /* UserStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStats.swift; sourceTree = "<group>"; };
 		8454138125EF949C00B0D544 /* FollowersFollowingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingView.swift; sourceTree = "<group>"; };
 		8454138525EF94AC00B0D544 /* FollowersFollowingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingViewController.swift; sourceTree = "<group>"; };
-		8454138825EF94B800B0D544 /* FollowersFollowingInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingInteractor.swift; sourceTree = "<group>"; };
 		8454138B25EF94C400B0D544 /* FollowersFollowingPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingPresenter.swift; sourceTree = "<group>"; };
-		8454138E25EF94CF00B0D544 /* FollowersFollowingRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingRouter.swift; sourceTree = "<group>"; };
 		8454139125EF94DB00B0D544 /* FollowersFollowingAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingAssembly.swift; sourceTree = "<group>"; };
 		8454139425EFA03400B0D544 /* UserFollowerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFollowerCell.swift; sourceTree = "<group>"; };
 		84541E7425CD14E700E0DA81 /* DownloadImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadImageCell.swift; sourceTree = "<group>"; };
@@ -227,6 +225,8 @@
 		845AD41925DD3716007A84AC /* SearchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCell.swift; sourceTree = "<group>"; };
 		845AD9CE260376AE00BAB903 /* FollowersFollowingCollectionViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingCollectionViewDataSource.swift; sourceTree = "<group>"; };
 		845AD9D126037C2A00BAB903 /* FollowersFollowingCollectionViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingCollectionViewDelegate.swift; sourceTree = "<group>"; };
+		845AD9D426038DAC00BAB903 /* FollowersFollowingServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingServiceProtocol.swift; sourceTree = "<group>"; };
+		845AD9D726038E8900BAB903 /* FollowersFollowingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingService.swift; sourceTree = "<group>"; };
 		845ADF2825FCD779003DEC7A /* HomeCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCoordinator.swift; sourceTree = "<group>"; };
 		845ADF2B25FCD790003DEC7A /* SearchCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCoordinator.swift; sourceTree = "<group>"; };
 		845ADF2E25FCD7AB003DEC7A /* ProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinator.swift; sourceTree = "<group>"; };
@@ -392,9 +392,7 @@
 			isa = PBXGroup;
 			children = (
 				8454138025EF947C00B0D544 /* FollowersFollowingView */,
-				8454138825EF94B800B0D544 /* FollowersFollowingInteractor.swift */,
 				8454138B25EF94C400B0D544 /* FollowersFollowingPresenter.swift */,
-				8454138E25EF94CF00B0D544 /* FollowersFollowingRouter.swift */,
 				8454139125EF94DB00B0D544 /* FollowersFollowingAssembly.swift */,
 			);
 			path = FollowersFollowing;
@@ -595,6 +593,7 @@
 				845CBB292601F31B007B40E9 /* ProfileServiceProtocol.swift */,
 				845CBB3C2602198F007B40E9 /* EditProfileServiceProtocol.swift */,
 				845CBB45260231C9007B40E9 /* EditProfileUsernameServiceProtocol.swift */,
+				845AD9D426038DAC00BAB903 /* FollowersFollowingServiceProtocol.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -668,6 +667,7 @@
 				845AE88C25C41B04005A1155 /* LocalImagesService.swift */,
 				845CBB2C2601F538007B40E9 /* ProfileService.swift */,
 				845CBB3726021862007B40E9 /* EditProfileService.swift */,
+				845AD9D726038E8900BAB903 /* FollowersFollowingService.swift */,
 			);
 			path = UserServices;
 			sourceTree = "<group>";
@@ -1094,6 +1094,7 @@
 				845CF2AC260071A9002FA650 /* LocalImagesServiceProtocol.swift in Sources */,
 				845CC20F25C7ED580051372D /* SharePostAssembly.swift in Sources */,
 				84488AB225C2F66E00173A19 /* ImagePickerView.swift in Sources */,
+				845AD9D826038E8900BAB903 /* FollowersFollowingService.swift in Sources */,
 				845E446225FDCD1E00198EBD /* ImagePickerCollectionViewDelegate.swift in Sources */,
 				8453276325FA26A500B39D6D /* UILabel+style.swift in Sources */,
 				8454D0F725F658DC00DD27DD /* TimeoutAlert.swift in Sources */,
@@ -1139,8 +1140,6 @@
 				8454138625EF94AC00B0D544 /* FollowersFollowingViewController.swift in Sources */,
 				84B2E65525B0267700B27457 /* SceneDelegate.swift in Sources */,
 				845E447725FE211A00198EBD /* NoImagesHeaderView.swift in Sources */,
-				8454138F25EF94CF00B0D544 /* FollowersFollowingRouter.swift in Sources */,
-				8454138925EF94B800B0D544 /* FollowersFollowingInteractor.swift in Sources */,
 				8459C14325F5299100FFFB36 /* EditProfileUsernameViewController.swift in Sources */,
 				845DEFB125FB603100F02D77 /* AuthCoordinator.swift in Sources */,
 				845CBB4226022A87007B40E9 /* EditProfileConstants.swift in Sources */,
@@ -1152,6 +1151,7 @@
 				845455D525BD44460007C9A2 /* UserPrivateInfo.swift in Sources */,
 				84FE47DA25B8230E0048F5AA /* UIImage+resize.swift in Sources */,
 				845CF2C02600B763002FA650 /* ProfileCollectionViewDelegate.swift in Sources */,
+				845AD9D526038DAC00BAB903 /* FollowersFollowingServiceProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

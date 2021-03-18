@@ -14,6 +14,10 @@ protocol ProfileCoordinatorProtocol: AnyObject {
     func showMenuViewController()
 }
 
+protocol ProfileCoordinatorDelegate: AnyObject {
+    func profileCoordinatorDidFinishWork(_ profileCoordinator: ProfileCoordinator)
+}
+
 protocol EditProfileCoordinatorProtocol: AnyObject {
     func showEditProfileUsernameViewController(
         username: String,
@@ -31,6 +35,10 @@ protocol EditProfileBioCoordinatorProtocol: AnyObject {
     func closeEditProfileBioViewController()
 }
 
+protocol FollowersFollowingCoordinatorProtocol: AnyObject {
+    func showProfileViewController(user: User)
+}
+
 final class ProfileCoordinator: CoordinatorProtocol {
     // MARK: Properties
     
@@ -40,6 +48,7 @@ final class ProfileCoordinator: CoordinatorProtocol {
     var childCoordinators: [CoordinatorProtocol] = []
     
     private weak var presenterController: UIViewController?
+    private weak var delegate: ProfileCoordinatorDelegate?
     
     // MARK: Lifecycle
     
@@ -51,10 +60,11 @@ final class ProfileCoordinator: CoordinatorProtocol {
         self.init(navigationController: UINavigationController())
     }
     
-    convenience init(presenterController: UIViewController?) {
+    convenience init(presenterController: UIViewController?, delegate: ProfileCoordinatorDelegate?) {
         self.init()
         
         self.presenterController = presenterController
+        self.delegate = delegate
     }
 }
 
@@ -68,13 +78,22 @@ extension ProfileCoordinator {
     }
 }
 
+// MARK: - ProfileCoordinatorDelegate
+
+extension ProfileCoordinator: ProfileCoordinatorDelegate {
+    func profileCoordinatorDidFinishWork(_ profileCoordinator: ProfileCoordinator) {
+        removeChildCoordinator(profileCoordinator)
+    }
+}
+
 // MARK: - ProfileCoordinatorProtocol
 
 extension ProfileCoordinator: ProfileCoordinatorProtocol {
     func showFollowersViewController(user: User, followersCount: Int) {
         let followersViewController = FollowersFollowingAssembly.createFollowersViewController(
             user: user,
-            followersCount: followersCount)
+            followersCount: followersCount,
+            coordinator: self)
         
         navigationController.pushViewController(followersViewController, animated: true)
     }
@@ -82,7 +101,8 @@ extension ProfileCoordinator: ProfileCoordinatorProtocol {
     func showFollowingViewController(user: User, followingCount: Int) {
         let followingViewController = FollowersFollowingAssembly.createFollowingViewController(
             user: user,
-            followingCount: followingCount)
+            followingCount: followingCount,
+            coordinator: self)
         
         navigationController.pushViewController(followingViewController, animated: true)
     }
@@ -152,5 +172,21 @@ extension ProfileCoordinator: EditProfileUsernameCoordinatorProtocol {
 extension ProfileCoordinator: EditProfileBioCoordinatorProtocol {
     func closeEditProfileBioViewController() {
         presenterController?.presentedViewController?.dismiss(animated: true)
+    }
+}
+
+// MARK: - FollowersFollowingCoordinatorProtocol
+
+extension ProfileCoordinator: FollowersFollowingCoordinatorProtocol {
+    func showProfileViewController(user: User) {
+        print("open new profile")
+        
+        let profileCoordinator = ProfileCoordinator(navigationController: navigationController)//ProfileCoordinator(presenterController: presenterController, delegate: self)
+        
+        profileCoordinator.user = user
+        
+        profileCoordinator.start()
+        
+        appendChildCoordinator(profileCoordinator)
     }
 }

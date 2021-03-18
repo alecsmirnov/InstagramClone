@@ -1,54 +1,14 @@
 //
-//  FollowersFollowingInteractor.swift
+//  FollowersFollowingService.swift
 //  Instagram
 //
-//  Created by Admin on 03.03.2021.
+//  Created by Admin on 18.03.2021.
 //
 
-protocol IFollowersFollowingInteractor: AnyObject {
-    func fetchFollowers(userIdentifier: String)
-    func requestFollowers(userIdentifier: String)
-    
-    func fetchFollowing(userIdentifier: String)
-    func requestFollowing(userIdentifier: String)
-    
-    func fetchFollowersCount(userIdentifier: String)
-    func fetchFollowingsCount(userIdentifier: String)
-    
-    func isCurrentUser(identifier: String) -> Bool
-    
-    func followUser(identifier: String, at index: Int)
-    func unfollowUser(identifier: String, at index: Int)
-    func removeUserFromFollowers(identifier: String, at index: Int)
-}
+import Foundation
 
-protocol IFollowersFollowingInteractorOutput: AnyObject {
-    func fetchFollowersSuccess(_ users: [User])
-    func fetchFollowersFailure()
-    
-    func fetchFollowingSuccess(_ users: [User])
-    func fetchFollowingFailure()
-    
-    func fetchFollowersCountSuccess(_ usersCount: Int)
-    func fetchFollowersCountFailure()
-    
-    func fetchFollowingsCountSuccess(_ usersCount: Int)
-    func fetchFollowingsCountFailure()
-    
-    func followUserSuccess(at index: Int)
-    func followUserFailure(at index: Int)
-    
-    func unfollowUserSuccess(at index: Int)
-    func unfollowUserFailure(at index: Int)
-    
-    func removeUserFromFollowersSuccess(at index: Int)
-    func removeUserFromFollowersFailure(at index: Int)
-}
-
-final class FollowersFollowingInteractor {
+final class FollowersFollowingService {
     // MARK: Properties
-    
-    weak var presenter: IFollowersFollowingInteractorOutput?
     
     private var lastRequestedUserIdentifier: String?
     
@@ -59,30 +19,26 @@ final class FollowersFollowingInteractor {
     }
 }
 
-// MARK: - IFollowersFollowingInteractor
-
-extension FollowersFollowingInteractor: IFollowersFollowingInteractor {
-    func fetchFollowers(userIdentifier: String) {
+extension FollowersFollowingService: FollowersFollowingServiceProtocol {
+    func fetchFollowers(userIdentifier: String, completion: @escaping ([User]) -> Void) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
         FirebaseDatabaseService.fetchFollowersWithKindFromBegin(
             currentUserIdentifier: currentUserIdentifier,
             userIdentifier: userIdentifier,
-            limit: Requests.usersLimit) { [self] result in
+            limit: Requests.usersLimit) { [weak self] result in
             switch result {
             case .success(let users):
-                lastRequestedUserIdentifier = users.last?.identifier
+                self?.lastRequestedUserIdentifier = users.last?.identifier
                 
-                presenter?.fetchFollowersSuccess(users)
+                completion(users)
             case .failure(let error):
-                presenter?.fetchFollowersFailure()
-                
                 print("Failed to fetch followers: \(error.localizedDescription)")
             }
         }
     }
     
-    func requestFollowers(userIdentifier: String) {
+    func requestFollowers(userIdentifier: String, completion: @escaping ([User]) -> Void) {
         guard
             let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier,
             let lastRequestedUserIdentifier = lastRequestedUserIdentifier
@@ -95,43 +51,39 @@ extension FollowersFollowingInteractor: IFollowersFollowingInteractor {
             userIdentifier: userIdentifier,
             startAtUserIdentifier: lastRequestedUserIdentifier,
             dropFirst: true,
-            limit: Requests.usersLimit + 1) { [self] result in
+            limit: Requests.usersLimit + 1) { [weak self] result in
             switch result {
             case .success(let users):
-                self.lastRequestedUserIdentifier = users.last?.identifier
+                self?.lastRequestedUserIdentifier = users.last?.identifier
                 
                 if !users.isEmpty {
-                    presenter?.fetchFollowersSuccess(users)
+                    completion(users)
                 }
-            case .failure(let error):
-                presenter?.fetchFollowersFailure()
-                
+            case .failure(let error):                
                 print("Failed to fetch followers: \(error.localizedDescription)")
             }
         }
     }
     
-    func fetchFollowing(userIdentifier: String) {
+    func fetchFollowing(userIdentifier: String, completion: @escaping ([User]) -> Void) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
         FirebaseDatabaseService.fetchFollowingWithKindFromBegin(
             currentUserIdentifier: currentUserIdentifier,
             userIdentifier: userIdentifier,
-            limit: Requests.usersLimit) { [self] result in
+            limit: Requests.usersLimit) { [weak self] result in
             switch result {
             case .success(let users):
-                lastRequestedUserIdentifier = users.last?.identifier
+                self?.lastRequestedUserIdentifier = users.last?.identifier
                 
-                presenter?.fetchFollowingSuccess(users)
+                completion(users)
             case .failure(let error):
-                presenter?.fetchFollowingFailure()
-                
                 print("Failed to fetch following: \(error.localizedDescription)")
             }
         }
     }
     
-    func requestFollowing(userIdentifier: String) {
+    func requestFollowing(userIdentifier: String, completion: @escaping ([User]) -> Void) {
         guard
             let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier,
             let lastRequestedUserIdentifier = lastRequestedUserIdentifier
@@ -144,43 +96,37 @@ extension FollowersFollowingInteractor: IFollowersFollowingInteractor {
             userIdentifier: userIdentifier,
             startAtUserIdentifier: lastRequestedUserIdentifier,
             dropFirst: true,
-            limit: Requests.usersLimit + 1) { [self] result in
+            limit: Requests.usersLimit + 1) { [weak self] result in
             switch result {
             case .success(let users):
-                self.lastRequestedUserIdentifier = users.last?.identifier
+                self?.lastRequestedUserIdentifier = users.last?.identifier
                 
                 if !users.isEmpty {
-                    presenter?.fetchFollowingSuccess(users)
+                    completion(users)
                 }
-            case .failure(let error):
-                presenter?.fetchFollowingFailure()
-                
+            case .failure(let error):                
                 print("Failed to fetch followings: \(error.localizedDescription)")
             }
         }
     }
     
-    func fetchFollowersCount(userIdentifier: String) {
-        FirebaseDatabaseService.fetchUserFollowersCount(userIdentifier: userIdentifier) { [self] result in
+    func fetchFollowersCount(userIdentifier: String, completion: @escaping (Int) -> Void) {
+        FirebaseDatabaseService.fetchUserFollowersCount(userIdentifier: userIdentifier) { result in
             switch result {
             case .success(let usersCount):
-                presenter?.fetchFollowersCountSuccess(usersCount)
+                completion(usersCount)
             case .failure(let error):
-                presenter?.fetchFollowersCountFailure()
-                
                 print("Failed to fetch followers count: \(error.localizedDescription)")
             }
         }
     }
     
-    func fetchFollowingsCount(userIdentifier: String) {
-        FirebaseDatabaseService.fetchUserFollowingCount(userIdentifier: userIdentifier) { [self] result in
+    func fetchFollowingsCount(userIdentifier: String, completion: @escaping (Int) -> Void) {
+        FirebaseDatabaseService.fetchUserFollowingCount(userIdentifier: userIdentifier) { result in
             switch result {
             case .success(let usersCount):
-                presenter?.fetchFollowingsCountSuccess(usersCount)
-            case .failure(let error):
-                presenter?.fetchFollowingsCountFailure()
-                
+                completion(usersCount)
+            case .failure(let error):                
                 print("Failed to fetch followings count: \(error.localizedDescription)")
             }
         }
@@ -192,50 +138,44 @@ extension FollowersFollowingInteractor: IFollowersFollowingInteractor {
         return identifier == currentUserIdentifier
     }
     
-    func followUser(identifier: String, at index: Int) {
+    func followUser(identifier: String, at index: Int, completion: @escaping () -> Void) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
         FirebaseDatabaseService.followUserAndFeed(
             currentUserIdentifier: currentUserIdentifier,
-            followingUserIdentifier: identifier) { [self] error in
+            followingUserIdentifier: identifier) { error in
             if let error = error {
-                presenter?.followUserFailure(at: index)
-                
                 print("Failed to follow user at index \(index): \(error.localizedDescription)")
             } else {
-                presenter?.followUserSuccess(at: index)
+                completion()
             }
         }
     }
     
-    func unfollowUser(identifier: String, at index: Int) {
+    func unfollowUser(identifier: String, at index: Int, completion: @escaping () -> Void) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
         FirebaseDatabaseService.unfollowUserAndFeed(
             currentUserIdentifier: currentUserIdentifier,
-            followingUserIdentifier: identifier) { [self] error in
+            followingUserIdentifier: identifier) { error in
             if let error = error {
-                presenter?.unfollowUserFailure(at: index)
-                
                 print("Failed to unfollow user at index \(index): \(error.localizedDescription)")
             } else {
-                presenter?.unfollowUserSuccess(at: index)
+                completion()
             }
         }
     }
     
-    func removeUserFromFollowers(identifier: String, at index: Int) {
+    func removeUserFromFollowers(identifier: String, at index: Int, completion: @escaping () -> Void) {
         guard let currentUserIdentifier = FirebaseAuthService.currentUserIdentifier else { return }
         
         FirebaseDatabaseService.unfollowUserAndFeed(
             currentUserIdentifier: identifier,
-            followingUserIdentifier: currentUserIdentifier) { [self] error in
+            followingUserIdentifier: currentUserIdentifier) { error in
             if let error = error {
-                presenter?.removeUserFromFollowersFailure(at: index)
-                
                 print("Failed to remove user from followers at index \(index): \(error.localizedDescription)")
             } else {
-                presenter?.removeUserFromFollowersSuccess(at: index)
+                completion()
             }
         }
     }

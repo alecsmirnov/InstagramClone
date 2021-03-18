@@ -8,14 +8,14 @@
 final class FollowersFollowingPresenter {
     // MARK: Properties
     
-    weak var viewController: FollowersFollowingViewControllerProtocol?
-    var interactor: IFollowersFollowingInteractor?
-    var router: IFollowersFollowingRouter?
+    weak var view: FollowersFollowingViewControllerProtocol?
+    weak var coordinator: FollowersFollowingCoordinatorProtocol?
+    
+    var followersFollowingService: FollowersFollowingServiceProtocol?
     
     var userIdentifier: String?
     var usersCount = 0
     
-    private var isRefreshing = false
     private var displayMode: FollowersFollowingViewDisplayMode
     
     // MARK: Constants
@@ -38,7 +38,7 @@ extension FollowersFollowingPresenter: FollowersFollowingViewControllerOutputPro
     func viewDidLoad() {
         guard
             let userIdentifier = userIdentifier,
-            let isCurrentUser = interactor?.isCurrentUser(identifier: userIdentifier)
+            let isCurrentUser = followersFollowingService?.isCurrentUser(identifier: userIdentifier)
         else {
             return
         }
@@ -48,34 +48,50 @@ extension FollowersFollowingPresenter: FollowersFollowingViewControllerOutputPro
         if isCurrentUser {
             switch displayMode {
             case .followers:
-                viewController?.setupFollowersAppearance()
+                view?.setupFollowersAppearance()
             case .following:
-                viewController?.setupFollowingAppearance()
+                view?.setupFollowingAppearance()
             }
         } else {
-            viewController?.setupUsersAppearance()
+            view?.setupUsersAppearance()
         }
         
         switch displayMode {
         case .followers:
-            interactor?.fetchFollowers(userIdentifier: userIdentifier)
+            followersFollowingService?.fetchFollowers(userIdentifier: userIdentifier) { [weak self] users in
+                self?.appendUsers(users)
+            }
         case .following:
-            interactor?.fetchFollowing(userIdentifier: userIdentifier)
+            followersFollowingService?.fetchFollowing(userIdentifier: userIdentifier) { [weak self] users in
+                self?.appendUsers(users)
+            }
         }
     }
     
     func didPullToRefresh() {
         guard let userIdentifier = userIdentifier else { return }
         
-        isRefreshing = true
-        
         switch displayMode {
         case .followers:
-            interactor?.fetchFollowers(userIdentifier: userIdentifier)
-            interactor?.fetchFollowersCount(userIdentifier: userIdentifier)
+            followersFollowingService?.fetchFollowers(userIdentifier: userIdentifier) { [weak self] users in
+                self?.appendUsersAfterRefresh(users)
+            }
+            
+            followersFollowingService?.fetchFollowersCount(userIdentifier: userIdentifier) { [weak self] usersCount in
+                self?.usersCount = usersCount
+                
+                self?.updateTitle()
+            }
         case .following:
-            interactor?.fetchFollowing(userIdentifier: userIdentifier)
-            interactor?.fetchFollowingsCount(userIdentifier: userIdentifier)
+            followersFollowingService?.fetchFollowing(userIdentifier: userIdentifier) { [weak self] users in
+                self?.appendUsersAfterRefresh(users)
+            }
+            
+            followersFollowingService?.fetchFollowingsCount(userIdentifier: userIdentifier) { [weak self] usersCount in
+                self?.usersCount = usersCount
+                
+                self?.updateTitle()
+            }
         }
     }
     
@@ -84,124 +100,70 @@ extension FollowersFollowingPresenter: FollowersFollowingViewControllerOutputPro
         
         switch displayMode {
         case .followers:
-            interactor?.requestFollowers(userIdentifier: userIdentifier)
+            followersFollowingService?.requestFollowers(userIdentifier: userIdentifier) { [weak self] users in
+                self?.appendUsers(users)
+            }
         case .following:
-            interactor?.requestFollowing(userIdentifier: userIdentifier)
+            followersFollowingService?.requestFollowing(userIdentifier: userIdentifier) { [weak self] users in
+                self?.appendUsers(users)
+            }
         }
     }
     
     func didSelectUser(_ user: User) {
-        router?.showProfileViewController(user: user)
+        coordinator?.showProfileViewController(user: user)
     }
     
     func didTapFollowButton(at index: Int, for user: User) {
         guard let userIdentifier = user.identifier else { return }
         
-        interactor?.followUser(identifier: userIdentifier, at: index)
+        followersFollowingService?.followUser(identifier: userIdentifier, at: index) { [weak self] in
+            self?.followUser(at: index)
+        }
     }
     
     func didTapUnfollowButton(at index: Int, for user: User) {
         guard let userIdentifier = user.identifier else { return }
         
-        interactor?.unfollowUser(identifier: userIdentifier, at: index)
+        followersFollowingService?.unfollowUser(identifier: userIdentifier, at: index) { [weak self] in
+            self?.unfollowUser(at: index)
+        }
     }
     
     func didTapRemoveButton(at index: Int, for user: User) {
         guard let userIdentifier = user.identifier else { return }
         
-        interactor?.removeUserFromFollowers(identifier: userIdentifier, at: index)
-    }
-}
-
-// MARK: - IFollowersFollowingInteractorOutput
-
-extension FollowersFollowingPresenter: IFollowersFollowingInteractorOutput {
-    func fetchFollowersSuccess(_ users: [User]) {
-        fetchSuccess(displayMode: .followers, users: users)
-    }
-    
-    func fetchFollowersFailure() {
-        
-    }
-    
-    func fetchFollowingSuccess(_ users: [User]) {        
-        fetchSuccess(displayMode: .following, users: users)
-    }
-    
-    func fetchFollowingFailure() {
-        
-    }
-    
-    func fetchFollowersCountSuccess(_ usersCount: Int) {
-        self.usersCount = usersCount
-        
-        updateTitle()
-    }
-    
-    func fetchFollowersCountFailure() {
-        
-    }
-    
-    func fetchFollowingsCountSuccess(_ usersCount: Int) {
-        self.usersCount = usersCount
-        
-        updateTitle()
-    }
-    
-    func fetchFollowingsCountFailure() {
-        
-    }
-    
-    func followUserSuccess(at index: Int) {
-        followUser(at: index)
-    }
-    
-    func followUserFailure(at index: Int) {
-        
-    }
-    
-    func unfollowUserSuccess(at index: Int) {
-        unfollowUser(at: index)
-    }
-    
-    func unfollowUserFailure(at index: Int) {
-        
-    }
-    
-    func removeUserFromFollowersSuccess(at index: Int) {
-        removeUser(at: index)
-    }
-    
-    func removeUserFromFollowersFailure(at index: Int) {
-        
+        followersFollowingService?.removeUserFromFollowers(identifier: userIdentifier, at: index) { [weak self] in
+            self?.removeUser(at: index)
+        }
     }
 }
 
 // MARK: - Private Methods
 
 private extension FollowersFollowingPresenter {
-    func fetchSuccess(displayMode: FollowersFollowingViewDisplayMode, users: [User]) {
-        if isRefreshing {
-            isRefreshing = false
-
-            viewController?.endRefreshing()
-            viewController?.removeAllUsers()
-            viewController?.reloadData()
-        }
+    func appendUsersAfterRefresh(_ users: [User]) {
+        view?.endRefreshing()
+        view?.removeAllUsers()
+        view?.reloadData()
         
-        viewController?.appendUsers(users)
-        viewController?.insertNewRows(count: users.count)
+        appendUsers(users)
+    }
+    
+    func appendUsers(_ users: [User]) {
+        view?.appendUsers(users)
+        view?.insertNewRows(count: users.count)
     }
     
     func followUser(at index: Int) {
         guard
             let userIdentifier = userIdentifier,
-            let isCurrentUser = interactor?.isCurrentUser(identifier: userIdentifier)
+            let isCurrentUser = followersFollowingService?.isCurrentUser(identifier: userIdentifier)
         else {
             return
         }
         
-        viewController?.setupUnfollowButton(at: index)
+        view?.setupUnfollowButton(at: index)
         
         if isCurrentUser {
             usersCount += 1
@@ -212,12 +174,12 @@ private extension FollowersFollowingPresenter {
     func unfollowUser(at index: Int) {
         guard
             let userIdentifier = userIdentifier,
-            let isCurrentUser = interactor?.isCurrentUser(identifier: userIdentifier)
+            let isCurrentUser = followersFollowingService?.isCurrentUser(identifier: userIdentifier)
         else {
             return
         }
         
-        viewController?.setupFollowButton(at: index)
+        view?.setupFollowButton(at: index)
         
         if isCurrentUser {
             usersCount -= 1
@@ -228,12 +190,12 @@ private extension FollowersFollowingPresenter {
     func removeUser(at index: Int) {
         guard
             let userIdentifier = userIdentifier,
-            let isCurrentUser = interactor?.isCurrentUser(identifier: userIdentifier)
+            let isCurrentUser = followersFollowingService?.isCurrentUser(identifier: userIdentifier)
         else {
             return
         }
         
-        viewController?.setupNoButton(at: index)
+        view?.setupNoButton(at: index)
         
         if isCurrentUser {
             usersCount -= 1
@@ -251,6 +213,6 @@ private extension FollowersFollowingPresenter {
             titleText = "following"
         }
         
-        viewController?.setTitle(text: titleText, usersCount: usersCount)
+        view?.setTitle(text: titleText, usersCount: usersCount)
     }
 }

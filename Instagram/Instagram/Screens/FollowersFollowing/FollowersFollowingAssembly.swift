@@ -6,20 +6,19 @@
 //
 
 enum FollowersFollowingAssembly {    
-    static func createFollowersViewController(user: User, followersCount: Int) -> FollowersFollowingViewController {
+    static func createFollowersViewController(
+        user: User,
+        followersCount: Int,
+        coordinator: FollowersFollowingCoordinatorProtocol? = nil
+    ) -> FollowersFollowingViewController {
         let viewController = FollowersFollowingViewController()
-        
-        let interactor = FollowersFollowingInteractor()
         let presenter = FollowersFollowingPresenter(displayMode: .followers)
-        let router = FollowersFollowingRouter(viewController: viewController)
         
         viewController.output = presenter
+        presenter.view = viewController
+        presenter.coordinator = coordinator
         
-        interactor.presenter = presenter
-        
-        presenter.viewController = viewController
-        presenter.interactor = interactor
-        presenter.router = router
+        presenter.followersFollowingService = FollowersFollowingService()
         
         presenter.userIdentifier = user.identifier
         presenter.usersCount = followersCount
@@ -27,20 +26,19 @@ enum FollowersFollowingAssembly {
         return viewController
     }
     
-    static func createFollowingViewController(user: User, followingCount: Int) -> FollowersFollowingViewController {
+    static func createFollowingViewController(
+        user: User,
+        followingCount: Int,
+        coordinator: FollowersFollowingCoordinatorProtocol? = nil
+    ) -> FollowersFollowingViewController {
         let viewController = FollowersFollowingViewController()
-        
-        let interactor = FollowersFollowingInteractor()
         let presenter = FollowersFollowingPresenter(displayMode: .following)
-        let router = FollowersFollowingRouter(viewController: viewController)
         
         viewController.output = presenter
+        presenter.view = viewController
+        presenter.coordinator = coordinator
         
-        interactor.presenter = presenter
-        
-        presenter.viewController = viewController
-        presenter.interactor = interactor
-        presenter.router = router
+        presenter.followersFollowingService = FollowersFollowingService()
         
         presenter.userIdentifier = user.identifier
         presenter.usersCount = followingCount
