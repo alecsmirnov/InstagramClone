@@ -1,5 +1,5 @@
 //
-//  FollowersFollowingCell.swift
+//  UserFollowerCell.swift
 //  Instagram
 //
 //  Created by Admin on 03.03.2021.
@@ -8,12 +8,12 @@
 import UIKit
 
 protocol FollowersFollowingCellDelegate: AnyObject {
-    func followersFollowingCellDidPressFollowButton(_ followersFollowingCell: FollowersFollowingCell)
-    func followersFollowingCellDidPressUnfollowButton(_ followersFollowingCell: FollowersFollowingCell)
-    func followersFollowingCellDidPressRemoveButton(_ followersFollowingCell: FollowersFollowingCell)
+    func followersFollowingCellDidTapFollowButton(_ followersFollowingCell: UserFollowerCell)
+    func followersFollowingCellDidTapUnfollowButton(_ followersFollowingCell: UserFollowerCell)
+    func followersFollowingCellDidTapRemoveButton(_ followersFollowingCell: UserFollowerCell)
 }
 
-final class FollowersFollowingCell: UICollectionViewCell {
+final class UserFollowerCell: UICollectionViewCell {
     // MARK: Properties
     
     static var reuseIdentifier: String {
@@ -22,7 +22,23 @@ final class FollowersFollowingCell: UICollectionViewCell {
     
     weak var delegate: FollowersFollowingCellDelegate?
     
-    private var followUnfollowRemoveButtonState = FollowUnfollowRemoveButtonState.none
+    var followUnfollowRemoveButtonState: FollowUnfollowRemoveButtonState = .none {
+        didSet {
+            switch followUnfollowRemoveButtonState {
+            case .follow:
+                activateFollowUnfollowRemoveButtonLayout()
+                setupFollowButtonAppearance()
+            case .unfollow:
+                activateFollowUnfollowRemoveButtonLayout()
+                setupUnfollowButtonAppearance()
+            case .remove:
+                activateFollowUnfollowRemoveButtonLayout()
+                setupRemoveButtonAppearance()
+            case .none:
+                deactivateFollowUnfollowRemoveButtonLayout()
+            }
+        }
+    }
     
     private var stackViewLeadingConstraint: NSLayoutConstraint?
     private var followUnfollowRemoveButtonConstraints = [NSLayoutConstraint]()
@@ -30,6 +46,13 @@ final class FollowersFollowingCell: UICollectionViewCell {
     private var profileImageDataTask: URLSessionDataTask?
     
     // MARK: Constants
+    
+    enum FollowUnfollowRemoveButtonState {
+        case follow
+        case unfollow
+        case remove
+        case none
+    }
     
     private enum Metrics {
         static let profileImageViewSize: CGFloat = 50
@@ -63,31 +86,61 @@ final class FollowersFollowingCell: UICollectionViewCell {
     
     // MARK: Lifecycle
     
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        setupAppearance()
+        setupLayout()
+        setupButtonActions()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         
         profileImageDataTask?.cancel()
         profileImageView.image = nil
     }
-    
-    // MARK: Initialization
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        setupAppearance()
-        setupLayout()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }
 
 // MARK: - Public Methods
 
-extension FollowersFollowingCell {
-    func configure(with user: User, buttonState: FollowUnfollowRemoveButtonState = .none) {
+extension UserFollowerCell {
+    func configureFollower(with user: User) {
+        configure(with: user)
+        
+        followUnfollowRemoveButtonState = .remove
+    }
+    
+    func configureFollowing(with user: User) {
+        configure(with: user)
+        
+        followUnfollowRemoveButtonState = .unfollow
+    }
+    
+    func configureUser(with user: User) {
+        configure(with: user)
+        
+        guard let userKind = user.kind else { return }
+        
+        switch userKind {
+        case .following:
+            followUnfollowRemoveButtonState = .unfollow
+        case .notFollowing:
+            followUnfollowRemoveButtonState = .follow
+        case .current:
+            followUnfollowRemoveButtonState = .none
+        }
+    }
+}
+
+// MARK: - Private Methods
+
+private extension UserFollowerCell {
+    func configure(with user: User) {
         if let profileImageURL = user.profileImageURL {
             profileImageDataTask = profileImageView.download(urlString: profileImageURL)
         }
@@ -96,36 +149,15 @@ extension FollowersFollowingCell {
         fullNameLabel.text = user.fullName
         
         fullNameLabel.isHidden = (user.fullName == nil)
-        
-        changeButtonState(buttonState)
-    }
-    
-    func changeButtonState(_ buttonState: FollowUnfollowRemoveButtonState) {
-        followUnfollowRemoveButtonState = buttonState
-        
-        switch followUnfollowRemoveButtonState {
-        case .follow:
-            activateFollowUnfollowRemoveButtonLayout()
-            setupFollowUnfollowRemoveButtonFollowStyle(title: "Follow")
-        case .unfollow:
-            activateFollowUnfollowRemoveButtonLayout()
-            setupFollowUnfollowRemoveButtonUnfollowRemoveStyle(title: "Unfollow")
-        case .remove:
-            activateFollowUnfollowRemoveButtonLayout()
-            setupFollowUnfollowRemoveButtonUnfollowRemoveStyle(title: "Remove")
-        case .none:
-            deactivateFollowUnfollowRemoveButtonLayout()
-        }
     }
 }
 
 // MARK: - Appearance
 
-private extension FollowersFollowingCell {
+private extension UserFollowerCell {
     func setupAppearance() {
         setupProfileImageViewAppearance()
         setupStackViewAppearance()
-        setupFollowUnfollowRemoveButtonAppearance()
     }
     
     func setupProfileImageViewAppearance() {
@@ -145,59 +177,22 @@ private extension FollowersFollowingCell {
         fullNameLabel.textColor = .systemGray
     }
     
-    func setupFollowUnfollowRemoveButtonAppearance() {
-        followUnfollowRemoveButton.setTitleColor(.black, for: .normal)
-        followUnfollowRemoveButton.titleLabel?.font = .boldSystemFont(ofSize: Metrics.followUnfollowRemoveButtonFont)
-        followUnfollowRemoveButton.layer.cornerRadius = Metrics.followUnfollowRemoveButtonCornerRadius
-        followUnfollowRemoveButton.layer.borderWidth = Metrics.followUnfollowRemoveButtonBorderWidth
-        followUnfollowRemoveButton.layer.borderColor = Colors.unfollowRemoveButtonBorder.cgColor
-        followUnfollowRemoveButton.contentEdgeInsets = UIEdgeInsets(
-            top: Metrics.followUnfollowRemoveButtonEdgeInset - 2,
-            left: Metrics.followUnfollowRemoveButtonEdgeInset,
-            bottom: Metrics.followUnfollowRemoveButtonEdgeInset - 2,
-            right: Metrics.followUnfollowRemoveButtonEdgeInset)
-        
-        followUnfollowRemoveButton.addTarget(
-            self,
-            action: #selector(didPressFollowUnfollowRemoveButton),
-            for: .touchUpInside)
+    func setupRemoveButtonAppearance() {
+        followUnfollowRemoveButton.additionalStyle(title: "Remove", fontSize: Metrics.followUnfollowRemoveButtonFont)
     }
     
-    @objc func didPressFollowUnfollowRemoveButton() {
-        switch followUnfollowRemoveButtonState {
-        case .follow:
-            delegate?.followersFollowingCellDidPressFollowButton(self)
-        case .unfollow:
-            delegate?.followersFollowingCellDidPressUnfollowButton(self)
-        case .remove:
-            delegate?.followersFollowingCellDidPressRemoveButton(self)
-        case .none:
-            break
-        }
+    func setupFollowButtonAppearance() {
+        followUnfollowRemoveButton.mainStyle(title: "Follow", fontSize: Metrics.followUnfollowRemoveButtonFont)
     }
     
-    func setupFollowUnfollowRemoveButtonFollowStyle(title: String) {
-        //UIView.animate(withDuration: 0.2) { [self] in
-            followUnfollowRemoveButton.setTitle(title, for: .normal)
-            followUnfollowRemoveButton.setTitleColor(.white, for: .normal)
-            followUnfollowRemoveButton.backgroundColor = UIColor(red: 0.25, green: 0.36, blue: 0.9, alpha: 1)
-            followUnfollowRemoveButton.layer.borderColor = UIColor.clear.cgColor
-        //}
-    }
-    
-    func setupFollowUnfollowRemoveButtonUnfollowRemoveStyle(title: String) {
-        //UIView.animate(withDuration: 0.2) { [self] in
-            followUnfollowRemoveButton.setTitle(title, for: .normal)
-            followUnfollowRemoveButton.setTitleColor(.black, for: .normal)
-            followUnfollowRemoveButton.backgroundColor = .clear
-            followUnfollowRemoveButton.layer.borderColor = UIColor.lightGray.cgColor
-        //}
+    func setupUnfollowButtonAppearance() {
+        followUnfollowRemoveButton.additionalStyle(title: "Unfollow", fontSize: Metrics.followUnfollowRemoveButtonFont)
     }
 }
 
 // MARK: - Layout
 
-private extension FollowersFollowingCell {
+private extension UserFollowerCell {
     func setupLayout() {
         setupSubviews()
         
@@ -280,5 +275,29 @@ private extension FollowersFollowingCell {
         followUnfollowRemoveButton.removeFromSuperview()
         
         stackViewLeadingConstraint?.isActive = true
+    }
+}
+
+// MARK: - Button Actions
+
+private extension UserFollowerCell {
+    func setupButtonActions() {
+        followUnfollowRemoveButton.addTarget(
+            self,
+            action: #selector(didTapFollowUnfollowRemoveButton),
+            for: .touchUpInside)
+    }
+    
+    @objc func didTapFollowUnfollowRemoveButton() {
+        switch followUnfollowRemoveButtonState {
+        case .follow:
+            delegate?.followersFollowingCellDidTapFollowButton(self)
+        case .unfollow:
+            delegate?.followersFollowingCellDidTapUnfollowButton(self)
+        case .remove:
+            delegate?.followersFollowingCellDidTapRemoveButton(self)
+        case .none:
+            break
+        }
     }
 }

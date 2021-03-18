@@ -5,39 +5,56 @@
 //  Created by Admin on 03.03.2021.
 //
 
-protocol IFollowersFollowingPresenter: AnyObject {
-    func viewDidLoad()
-    
-    func didPullToRefresh()
-    func didRequestUsers()
-    
-    func didSelectUser(_ user: User)
-    func didPressFollowButton(at index: Int, user: User)
-    func didPressUnfollowButton(at index: Int, user: User)
-    func didPressRemoveButton(at index: Int, user: User)
-}
-
 final class FollowersFollowingPresenter {
     // MARK: Properties
     
-    weak var viewController: IFollowersFollowingViewController?
+    weak var viewController: FollowersFollowingViewControllerProtocol?
     var interactor: IFollowersFollowingInteractor?
     var router: IFollowersFollowingRouter?
     
     var userIdentifier: String?
-    var displayMode = FollowersFollowingDisplayMode.followers
     var usersCount = 0
     
     private var isRefreshing = false
+    private var displayMode: FollowersFollowingViewDisplayMode
+    
+    // MARK: Constants
+    
+    enum FollowersFollowingViewDisplayMode {
+        case followers
+        case following
+    }
+    
+    // MARK: Lifecycle
+    
+    init(displayMode: FollowersFollowingViewDisplayMode) {
+        self.displayMode = displayMode
+    }
 }
 
-// MARK: - IFollowersFollowingPresenter
+// MARK: - FollowersFollowingView Output
 
-extension FollowersFollowingPresenter: IFollowersFollowingPresenter {
+extension FollowersFollowingPresenter: FollowersFollowingViewControllerOutputProtocol {
     func viewDidLoad() {
-        guard let userIdentifier = userIdentifier else { return }
+        guard
+            let userIdentifier = userIdentifier,
+            let isCurrentUser = interactor?.isCurrentUser(identifier: userIdentifier)
+        else {
+            return
+        }
         
-        viewController?.setDisplayMode(displayMode, usersCount: usersCount)
+        updateTitle()
+        
+        if isCurrentUser {
+            switch displayMode {
+            case .followers:
+                viewController?.setupFollowersAppearance()
+            case .following:
+                viewController?.setupFollowingAppearance()
+            }
+        } else {
+            viewController?.setupUsersAppearance()
+        }
         
         switch displayMode {
         case .followers:
@@ -77,19 +94,19 @@ extension FollowersFollowingPresenter: IFollowersFollowingPresenter {
         router?.showProfileViewController(user: user)
     }
     
-    func didPressFollowButton(at index: Int, user: User) {
+    func didTapFollowButton(at index: Int, for user: User) {
         guard let userIdentifier = user.identifier else { return }
         
         interactor?.followUser(identifier: userIdentifier, at: index)
     }
     
-    func didPressUnfollowButton(at index: Int, user: User) {
+    func didTapUnfollowButton(at index: Int, for user: User) {
         guard let userIdentifier = user.identifier else { return }
         
         interactor?.unfollowUser(identifier: userIdentifier, at: index)
     }
     
-    func didPressRemoveButton(at index: Int, user: User) {
+    func didTapRemoveButton(at index: Int, for user: User) {
         guard let userIdentifier = user.identifier else { return }
         
         interactor?.removeUserFromFollowers(identifier: userIdentifier, at: index)
@@ -118,7 +135,7 @@ extension FollowersFollowingPresenter: IFollowersFollowingInteractorOutput {
     func fetchFollowersCountSuccess(_ usersCount: Int) {
         self.usersCount = usersCount
         
-        viewController?.setDisplayMode(displayMode, usersCount: usersCount)
+        updateTitle()
     }
     
     func fetchFollowersCountFailure() {
@@ -128,7 +145,7 @@ extension FollowersFollowingPresenter: IFollowersFollowingInteractorOutput {
     func fetchFollowingsCountSuccess(_ usersCount: Int) {
         self.usersCount = usersCount
         
-        viewController?.setDisplayMode(displayMode, usersCount: usersCount)
+        updateTitle()
     }
     
     func fetchFollowingsCountFailure() {
@@ -136,7 +153,7 @@ extension FollowersFollowingPresenter: IFollowersFollowingInteractorOutput {
     }
     
     func followUserSuccess(at index: Int) {
-        updateUser(state: .unfollow, at: index)
+        followUser(at: index)
     }
     
     func followUserFailure(at index: Int) {
@@ -144,7 +161,7 @@ extension FollowersFollowingPresenter: IFollowersFollowingInteractorOutput {
     }
     
     func unfollowUserSuccess(at index: Int) {
-        updateUser(state: .follow, at: index)
+        unfollowUser(at: index)
     }
     
     func unfollowUserFailure(at index: Int) {
@@ -152,7 +169,7 @@ extension FollowersFollowingPresenter: IFollowersFollowingInteractorOutput {
     }
     
     func removeUserFromFollowersSuccess(at index: Int) {
-        updateUser(state: .none, at: index)
+        removeUser(at: index)
     }
     
     func removeUserFromFollowersFailure(at index: Int) {
@@ -163,14 +180,7 @@ extension FollowersFollowingPresenter: IFollowersFollowingInteractorOutput {
 // MARK: - Private Methods
 
 private extension FollowersFollowingPresenter {
-    func fetchSuccess(displayMode: FollowersFollowingDisplayMode, users: [User]) {
-        guard
-            let userIdentifier = userIdentifier,
-            let isCurrentUser = interactor?.isCurrentUser(identifier: userIdentifier)
-        else {
-            return
-        }
-        
+    func fetchSuccess(displayMode: FollowersFollowingViewDisplayMode, users: [User]) {
         if isRefreshing {
             isRefreshing = false
 
@@ -179,37 +189,11 @@ private extension FollowersFollowingPresenter {
             viewController?.reloadData()
         }
         
-        if isCurrentUser {
-            let buttonState: FollowUnfollowRemoveButtonState = (displayMode == .followers) ? .remove : .unfollow
-            
-            users.forEach { user in
-                viewController?.appendUser(user, buttonState: buttonState)
-            }
-        } else {
-            users.forEach { user in
-                guard let userKind = user.kind else { return }
-                
-                switch userKind {
-                case .following:
-                    viewController?.appendUser(user, buttonState: .unfollow)
-                case .notFollowing:
-                    viewController?.appendUser(user, buttonState: .follow)
-                case .current:
-                    viewController?.appendUser(user, buttonState: .none)
-                }
-            }
-        }
-        
-        viewController?.reloadData()
+        viewController?.appendUsers(users)
+        viewController?.insertNewRows(count: users.count)
     }
     
-    func updateUser(state: FollowUnfollowRemoveButtonState, at index: Int) {
-        viewController?.changeButtonState(state, at: index)
-        
-        updateDisplayModeAfterUserChange(state: state)
-    }
-    
-    func updateDisplayModeAfterUserChange(state: FollowUnfollowRemoveButtonState) {
+    func followUser(at index: Int) {
         guard
             let userIdentifier = userIdentifier,
             let isCurrentUser = interactor?.isCurrentUser(identifier: userIdentifier)
@@ -217,17 +201,56 @@ private extension FollowersFollowingPresenter {
             return
         }
         
+        viewController?.setupUnfollowButton(at: index)
+        
         if isCurrentUser {
-            switch state {
-            case .follow, .none:
-                usersCount -= 1
-            case .unfollow:
-                usersCount += 1
-            case .remove:
-                break
-            }
-            
-            viewController?.setDisplayMode(displayMode, usersCount: usersCount)
+            usersCount += 1
+            updateTitle()
         }
+    }
+    
+    func unfollowUser(at index: Int) {
+        guard
+            let userIdentifier = userIdentifier,
+            let isCurrentUser = interactor?.isCurrentUser(identifier: userIdentifier)
+        else {
+            return
+        }
+        
+        viewController?.setupFollowButton(at: index)
+        
+        if isCurrentUser {
+            usersCount -= 1
+            updateTitle()
+        }
+    }
+    
+    func removeUser(at index: Int) {
+        guard
+            let userIdentifier = userIdentifier,
+            let isCurrentUser = interactor?.isCurrentUser(identifier: userIdentifier)
+        else {
+            return
+        }
+        
+        viewController?.setupNoButton(at: index)
+        
+        if isCurrentUser {
+            usersCount -= 1
+            updateTitle()
+        }
+    }
+    
+    func updateTitle() {
+        var titleText: String
+        
+        switch displayMode {
+        case .followers:
+            titleText = "followers"
+        case .following:
+            titleText = "following"
+        }
+        
+        viewController?.setTitle(text: titleText, usersCount: usersCount)
     }
 }

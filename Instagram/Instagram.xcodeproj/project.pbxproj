@@ -32,7 +32,7 @@
 		8454138C25EF94C400B0D544 /* FollowersFollowingPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454138B25EF94C400B0D544 /* FollowersFollowingPresenter.swift */; };
 		8454138F25EF94CF00B0D544 /* FollowersFollowingRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454138E25EF94CF00B0D544 /* FollowersFollowingRouter.swift */; };
 		8454139225EF94DB00B0D544 /* FollowersFollowingAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454139125EF94DB00B0D544 /* FollowersFollowingAssembly.swift */; };
-		8454139525EFA03400B0D544 /* FollowersFollowingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454139425EFA03400B0D544 /* FollowersFollowingCell.swift */; };
+		8454139525EFA03400B0D544 /* UserFollowerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454139425EFA03400B0D544 /* UserFollowerCell.swift */; };
 		84541E7525CD14E700E0DA81 /* DownloadImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84541E7425CD14E700E0DA81 /* DownloadImageCell.swift */; };
 		845455D525BD44460007C9A2 /* UserPrivateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455D425BD44460007C9A2 /* UserPrivateInfo.swift */; };
 		845455E525BD894A0007C9A2 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845455E425BD894A0007C9A2 /* LoginView.swift */; };
@@ -77,6 +77,8 @@
 		8459C14925F52D9F00FFFB36 /* EditProfileBioViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8459C14825F52D9F00FFFB36 /* EditProfileBioViewController.swift */; };
 		845A1D3E25BAB50700F4004B /* UIImageView+download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A1D3D25BAB50700F4004B /* UIImageView+download.swift */; };
 		845AD41A25DD3716007A84AC /* SearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AD41925DD3716007A84AC /* SearchCell.swift */; };
+		845AD9CF260376AE00BAB903 /* FollowersFollowingCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AD9CE260376AE00BAB903 /* FollowersFollowingCollectionViewDataSource.swift */; };
+		845AD9D226037C2A00BAB903 /* FollowersFollowingCollectionViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AD9D126037C2A00BAB903 /* FollowersFollowingCollectionViewDelegate.swift */; };
 		845ADF2925FCD779003DEC7A /* HomeCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845ADF2825FCD779003DEC7A /* HomeCoordinator.swift */; };
 		845ADF2C25FCD790003DEC7A /* SearchCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845ADF2B25FCD790003DEC7A /* SearchCoordinator.swift */; };
 		845ADF2F25FCD7AB003DEC7A /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845ADF2E25FCD7AB003DEC7A /* ProfileCoordinator.swift */; };
@@ -178,7 +180,7 @@
 		8454138B25EF94C400B0D544 /* FollowersFollowingPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingPresenter.swift; sourceTree = "<group>"; };
 		8454138E25EF94CF00B0D544 /* FollowersFollowingRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingRouter.swift; sourceTree = "<group>"; };
 		8454139125EF94DB00B0D544 /* FollowersFollowingAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingAssembly.swift; sourceTree = "<group>"; };
-		8454139425EFA03400B0D544 /* FollowersFollowingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingCell.swift; sourceTree = "<group>"; };
+		8454139425EFA03400B0D544 /* UserFollowerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFollowerCell.swift; sourceTree = "<group>"; };
 		84541E7425CD14E700E0DA81 /* DownloadImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadImageCell.swift; sourceTree = "<group>"; };
 		845455D425BD44460007C9A2 /* UserPrivateInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPrivateInfo.swift; sourceTree = "<group>"; };
 		845455E425BD894A0007C9A2 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
@@ -223,6 +225,8 @@
 		8459C14825F52D9F00FFFB36 /* EditProfileBioViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileBioViewController.swift; sourceTree = "<group>"; };
 		845A1D3D25BAB50700F4004B /* UIImageView+download.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+download.swift"; sourceTree = "<group>"; };
 		845AD41925DD3716007A84AC /* SearchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCell.swift; sourceTree = "<group>"; };
+		845AD9CE260376AE00BAB903 /* FollowersFollowingCollectionViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingCollectionViewDataSource.swift; sourceTree = "<group>"; };
+		845AD9D126037C2A00BAB903 /* FollowersFollowingCollectionViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersFollowingCollectionViewDelegate.swift; sourceTree = "<group>"; };
 		845ADF2825FCD779003DEC7A /* HomeCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCoordinator.swift; sourceTree = "<group>"; };
 		845ADF2B25FCD790003DEC7A /* SearchCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCoordinator.swift; sourceTree = "<group>"; };
 		845ADF2E25FCD7AB003DEC7A /* ProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinator.swift; sourceTree = "<group>"; };
@@ -399,7 +403,8 @@
 		8454138025EF947C00B0D544 /* FollowersFollowingView */ = {
 			isa = PBXGroup;
 			children = (
-				8454139425EFA03400B0D544 /* FollowersFollowingCell.swift */,
+				845AD9CB2603713500BAB903 /* Cell */,
+				845AD9CD2603768D00BAB903 /* CollectionView */,
 				8454138125EF949C00B0D544 /* FollowersFollowingView.swift */,
 				8454138525EF94AC00B0D544 /* FollowersFollowingViewController.swift */,
 			);
@@ -513,6 +518,23 @@
 				8454F27E25F389B6006C5A0E /* EditProfileViewController.swift */,
 			);
 			path = EditProfileView;
+			sourceTree = "<group>";
+		};
+		845AD9CB2603713500BAB903 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				8454139425EFA03400B0D544 /* UserFollowerCell.swift */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		845AD9CD2603768D00BAB903 /* CollectionView */ = {
+			isa = PBXGroup;
+			children = (
+				845AD9CE260376AE00BAB903 /* FollowersFollowingCollectionViewDataSource.swift */,
+				845AD9D126037C2A00BAB903 /* FollowersFollowingCollectionViewDelegate.swift */,
+			);
+			path = CollectionView;
 			sourceTree = "<group>";
 		};
 		845ADF3A25FCFBE0003DEC7A /* Protocol */ = {
@@ -1044,6 +1066,7 @@
 				84F9694125D14E9D0004D838 /* UIImageView+realImageRect.swift in Sources */,
 				84549B8E25E8DB6E006CC21D /* CommentCell.swift in Sources */,
 				845CC20025C7ECE20051372D /* SharePostViewController.swift in Sources */,
+				845AD9CF260376AE00BAB903 /* FollowersFollowingCollectionViewDataSource.swift in Sources */,
 				84E6612825B9BC8A0036AB9F /* ProfileHeaderView.swift in Sources */,
 				8453275925FA1B0F00B39D6D /* UIButton+twoPartTitle.swift in Sources */,
 				845B8C9925B6AC8000FE5ED6 /* ValidationService.swift in Sources */,
@@ -1058,6 +1081,7 @@
 				8454E52E25D3E765003A89E7 /* UIImage+instagramCrop.swift in Sources */,
 				845E446625FDCD3400198EBD /* ImagePickerCollectionViewDataSource.swift in Sources */,
 				84B2E67B25B050CE00B27457 /* HomePresenter.swift in Sources */,
+				845AD9D226037C2A00BAB903 /* FollowersFollowingCollectionViewDelegate.swift in Sources */,
 				845464EA25DA5C7E00DCD136 /* SearchViewController.swift in Sources */,
 				845CBB2D2601F538007B40E9 /* ProfileService.swift in Sources */,
 				8454DCAE25ECAA92006DB3E2 /* FeedPost.swift in Sources */,
@@ -1087,7 +1111,7 @@
 				84488AC225C2F6B400173A19 /* ImagePickerAssembly.swift in Sources */,
 				8453276C25FA318700B39D6D /* UIView+setupEndEditingGesture.swift in Sources */,
 				8454139225EF94DB00B0D544 /* FollowersFollowingAssembly.swift in Sources */,
-				8454139525EFA03400B0D544 /* FollowersFollowingCell.swift in Sources */,
+				8454139525EFA03400B0D544 /* UserFollowerCell.swift in Sources */,
 				845DEFB925FB890500F02D77 /* MainCoordinator.swift in Sources */,
 				84E660A025B955120036AB9F /* ProfileView.swift in Sources */,
 				845ADF2C25FCD790003DEC7A /* SearchCoordinator.swift in Sources */,

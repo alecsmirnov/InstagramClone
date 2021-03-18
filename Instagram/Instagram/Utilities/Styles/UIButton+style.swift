@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIButton {
-    func mainStyle(title: String, fontSize: CGFloat) {
+    func mainStyle(title: String, fontSize: CGFloat = UIFont.buttonFontSize) {
         setTitle(title, for: .normal)
         setTitleColor(AppConstants.Colors.roundedButtonMainTitle, for: .normal)
         titleLabel?.font = .boldSystemFont(ofSize: fontSize)
@@ -18,7 +18,7 @@ extension UIButton {
         layer.borderWidth = 0
     }
     
-    func additionalStyle(title: String, fontSize: CGFloat) {
+    func additionalStyle(title: String, fontSize: CGFloat = UIFont.buttonFontSize) {
         setTitle(title, for: .normal)
         setTitleColor(AppConstants.Colors.roundedButtonExtraTitle, for: .normal)
         titleLabel?.font = .boldSystemFont(ofSize: fontSize)
