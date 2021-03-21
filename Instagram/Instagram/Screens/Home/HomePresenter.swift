@@ -5,148 +5,91 @@
 //  Created by Admin on 14.01.2021.
 //
 
-protocol IHomePresenter: AnyObject {
-    func viewDidLoad()
-    
-    func didPullToRefresh()
-    func didRequestPosts()
-    
-    func didSelectUser(_ user: User)
-    func didPressLikeButton(at index: Int, userPost: UserPost)
-    func didPressUnlikeButton(at index: Int, userPost: UserPost)
-    func didSelectUserPostComment(_ userPost: UserPost)
-    func didPressAddToBookmarksButton(at index: Int, userPost: UserPost)
-    func didPressRemoveFromBookmarksButton(at index: Int, userPost: UserPost)
-}
-
 final class HomePresenter {
-    // MARK: Properties
-    
-    weak var viewController: IHomeViewController?
-    var interactor: IHomeInteractor?
-    var router: IHomeRouter?
-    
-    private var isRefreshing = false
-    
+    weak var view: HomeViewControllerProtocol?
     weak var coordinator: HomeCoordinatorProtocol?
     
-    // MARK: Initialization
-    
-    deinit {
-        interactor?.removeUserFeedObserver()
-    }
+    var feedService: FeedServiceProtocol?
 }
 
-// MARK: - IHomePresenter
+// MARK: - HomeView Output
 
-extension HomePresenter: IHomePresenter {
+extension HomePresenter: HomeViewControllerOutputProtocol {
     func viewDidLoad() {
-        interactor?.fetchUserPosts()
-        interactor?.observeUserFeed()
+        feedService?.fetchUserPostsDescendingByDate() { [weak self] userPosts in
+            guard !userPosts.isEmpty else { return }
+            
+            self?.appendUserPosts(userPosts)
+        }
+        
+        observeUserFeed()
     }
     
     func didPullToRefresh() {
-        isRefreshing = true
+        feedService?.fetchUserPostsDescendingByDate() { [weak self] userPosts in
+            self?.view?.endRefreshing()
+            self?.view?.removeAllUserPosts()
+            self?.view?.reloadData()
+            
+            if !userPosts.isEmpty {
+                self?.appendUserPosts(userPosts)
+            }
+        }
         
-        interactor?.fetchUserPosts()
-        interactor?.observeUserFeed()
+        observeUserFeed()
     }
     
     func didRequestPosts() {
-        interactor?.requestUserPosts()
+        feedService?.requestUserPosts() { [weak self] userPosts in
+            self?.appendUserPosts(userPosts)
+        }
     }
     
     func didSelectUser(_ user: User) {
-        router?.showProfileViewController(user: user)
+        coordinator?.showProfileViewController(user: user)
     }
     
-    func didPressLikeButton(at index: Int, userPost: UserPost) {
-        interactor?.likePost(userPost, at: index)
+    func didTapLikeButton(at index: Int, userPost: UserPost) {
+        feedService?.likePost(userPost, at: index) { [weak self] in
+            self?.view?.showUnlikeButton(at: index)
+        }
     }
     
-    func didPressUnlikeButton(at index: Int, userPost: UserPost) {
-        interactor?.unlikePost(userPost, at: index)
+    func didTapUnlikeButton(at index: Int, userPost: UserPost) {
+        feedService?.unlikePost(userPost, at: index) { [weak self] in
+            self?.view?.showLikeButton(at: index)
+        }
     }
     
-    func didSelectUserPostComment(_ userPost: UserPost) {
-        router?.showCommentsViewController(userPost: userPost)
+    func didTapCommentButton(userPost: UserPost) {
+        coordinator?.showCommentsViewController(userPost: userPost)
     }
     
-    func didPressAddToBookmarksButton(at index: Int, userPost: UserPost) {
-        interactor?.addPostToBookmarks(userPost, at: index)
+    func didTapAddToBookmarksButton(at index: Int, userPost: UserPost) {
+        feedService?.addPostToBookmarks(userPost, at: index) { [weak self] in
+            self?.view?.showBookmarkButton(at: index)
+        }
     }
     
-    func didPressRemoveFromBookmarksButton(at index: Int, userPost: UserPost) {
-        interactor?.removePostFromBookmarks(userPost, at: index)
+    func didTapRemoveFromBookmarksButton(at index: Int, userPost: UserPost) {
+        feedService?.removePostFromBookmarks(userPost, at: index) { [weak self] in
+            self?.view?.showNotBookmarkButton(at: index)
+        }
     }
 }
 
-// MARK: - IHomeInteractorOutput
+// MARK: - Private Methods
 
-extension HomePresenter: IHomeInteractorOutput {
-    func fetchUserPostSuccess(_ userPosts: [UserPost]) {
-        if isRefreshing {
-            isRefreshing = false
-
-            viewController?.endRefreshing()
-            viewController?.removeAllUserPosts()
-            viewController?.reloadData()
+private extension HomePresenter {
+    func appendUserPosts(_ userPosts: [UserPost]) {
+        view?.appendUsersPosts(userPosts.reversed())
+        view?.insertNewRows(count: userPosts.count)
+    }
+    
+    func observeUserFeed() {
+        feedService?.observeUserFeed() { [weak self] userPost in
+            self?.view?.appendFirstUserPost(userPost)
+            self?.view?.insertFirstRow()
         }
-        
-        userPosts.reversed().forEach { userPost in
-            viewController?.appendLastUserPost(userPost)
-            viewController?.insertLastRow()
-        }
-    }
-    
-    func fetchUserPostNoResult() {
-        isRefreshing = false
-        
-        viewController?.endRefreshing()
-    }
-    
-    func fetchUserPostFailure() {
-        fetchUserPostNoResult()
-    }
-    
-    func observeUserFeedSuccess(_ userPost: UserPost) {
-        viewController?.appendFirstUserPost(userPost)
-        viewController?.insertFirstRow()
-    }
-    
-    func observeUserFeedFailure() {
-        
-    }
-    
-    func likePostSuccess(at index: Int) {
-        viewController?.showUnlikeButton(at: index)
-    }
-    
-    func likePostFailure(at index: Int) {
-        
-    }
-    
-    func unlikePostSuccess(at index: Int) {
-        viewController?.showLikeButton(at: index)
-    }
-    
-    func unlikePostFailure(at index: Int) {
-        
-    }
-    
-    func addPostToBookmarksSuccess(at index: Int) {
-        viewController?.showBookmarkButton(at: index)
-    }
-    
-    func addPostToBookmarksFailure(at index: Int) {
-        
-    }
-    
-    func removePostFromBookmarksSuccess(at index: Int) {
-        viewController?.showNotBookmarkButton(at: index)
-    }
-    
-    func removePostFromBookmarksFailure(at index: Int) {
-        
     }
 }

@@ -1,51 +1,14 @@
 //
-//  HomeInteractor.swift
+//  FeedService.swift
 //  Instagram
 //
-//  Created by Admin on 14.01.2021.
+//  Created by Admin on 21.03.2021.
 //
 
 import Foundation
 
-protocol IHomeInteractor: AnyObject {
-    func fetchUserPosts()
-    func requestUserPosts()
-    
-    func observeUserFeed()
-    func removeUserFeedObserver()
-    
-    func likePost(_ userPost: UserPost, at index: Int)
-    func unlikePost(_ userPost: UserPost, at index: Int)
-    
-    func addPostToBookmarks(_ userPost: UserPost, at index: Int)
-    func removePostFromBookmarks(_ userPost: UserPost, at index: Int)
-}
-
-protocol IHomeInteractorOutput: AnyObject {
-    func fetchUserPostSuccess(_ userPosts: [UserPost])
-    func fetchUserPostNoResult()
-    func fetchUserPostFailure()
-    
-    func observeUserFeedSuccess(_ userPost: UserPost)
-    func observeUserFeedFailure()
-    
-    func likePostSuccess(at index: Int)
-    func likePostFailure(at index: Int)
-    
-    func unlikePostSuccess(at index: Int)
-    func unlikePostFailure(at index: Int)
-    
-    func addPostToBookmarksSuccess(at index: Int)
-    func addPostToBookmarksFailure(at index: Int)
-    
-    func removePostFromBookmarksSuccess(at index: Int)
-    func removePostFromBookmarksFailure(at index: Int)
-}
-
-final class HomeInteractor {
+final class FeedService {
     // MARK: Properties
-    
-    weak var presenter: IHomeInteractorOutput?
     
     private var lastRequestedPostTimestamp: TimeInterval?
     private var userFeedObserver: FirebaseObserver?
@@ -53,21 +16,27 @@ final class HomeInteractor {
     // MARK: Constants
     
     private enum Requests {
-        static let postLimit: UInt = 1
+        static let postLimit: UInt = 2
+    }
+    
+    // MARK: Lifecycle
+    
+    deinit {
+        removeUserFeedObserver()
     }
 }
 
-// MARK: - IHomeInteractor
+// MARK: - FeedServiceProtocol
 
-extension HomeInteractor: IHomeInteractor {
-    func fetchUserPosts() {
+extension FeedService: FeedServiceProtocol {
+    func fetchUserPostsDescendingByDate(completion: @escaping ([UserPost]) -> Void) {
         guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
         
-        FirebaseDatabaseService.isUserFeedExist(userIdentifier: identifier) { [self] result in
+        FirebaseDatabaseService.isUserFeedExist(userIdentifier: identifier) { [weak self] result in
             switch result {
             case .success(let isFeedExist):
                 guard isFeedExist else {
-                    presenter?.fetchUserPostNoResult()
+                    completion([])
 
                     return
                 }
@@ -77,24 +46,20 @@ extension HomeInteractor: IHomeInteractor {
                     limit: Requests.postLimit) { result in
                     switch result {
                     case .success(let userPosts):
-                        lastRequestedPostTimestamp = userPosts.first?.post.timestamp
+                        self?.lastRequestedPostTimestamp = userPosts.first?.post.timestamp
                         
-                        presenter?.fetchUserPostSuccess(userPosts)
+                        completion(userPosts)
                     case .failure(let error):
-                        presenter?.fetchUserPostFailure()
-
                         print("Failed to fetch users posts: \(error.localizedDescription)")
                     }
                 }
             case .failure(let error):
-                presenter?.fetchUserPostFailure()
-
                 print("Failed to check existed user feed: \(error.localizedDescription)")
             }
         }
     }
     
-    func requestUserPosts() {
+    func requestUserPosts(completion: @escaping ([UserPost]) -> Void) {
         guard
             let identifier = FirebaseAuthService.currentUserIdentifier,
             let lastRequestedPostTimestamp = lastRequestedPostTimestamp
@@ -108,34 +73,30 @@ extension HomeInteractor: IHomeInteractor {
             userIdentifier: identifier,
             endAtTimestamp: lastRequestedPostTimestamp,
             dropLast: true,
-            limit: Requests.postLimit + 1) { [self] result in
+            limit: Requests.postLimit + 1) { [weak self] result in
             switch result {
             case .success(let userPosts):
-                self.lastRequestedPostTimestamp = userPosts.first?.post.timestamp
+                self?.lastRequestedPostTimestamp = userPosts.first?.post.timestamp
                 
                 if !userPosts.isEmpty {
-                    presenter?.fetchUserPostSuccess(userPosts)
+                    completion(userPosts)
                 }
             case .failure(let error):
-                presenter?.fetchUserPostFailure()
-
                 print("Failed to request users posts: \(error.localizedDescription)")
             }
         }
     }
     
-    func observeUserFeed() {
+    func observeUserFeed(completion: @escaping (UserPost) -> Void) {
         guard let identifier = FirebaseAuthService.currentUserIdentifier else { return }
         
         removeUserFeedObserver()
         
-        userFeedObserver = FirebaseDatabaseService.observeUserFeedPosts(userIdentifier: identifier) { [self] result in
+        userFeedObserver = FirebaseDatabaseService.observeUserFeedPosts(userIdentifier: identifier) { result in
             switch result {
             case .success(let userPost):
-                presenter?.observeUserFeedSuccess(userPost)
+                completion(userPost)
             case .failure(let error):
-                presenter?.observeUserFeedFailure()
-
                 print("Failed to fetch observed users posts: \(error.localizedDescription)")
             }
         }
@@ -146,7 +107,7 @@ extension HomeInteractor: IHomeInteractor {
         userFeedObserver = nil
     }
     
-    func likePost(_ userPost: UserPost, at index: Int) {
+    func likePost(_ userPost: UserPost, at index: Int, completion: @escaping () -> Void) {
         guard
             let postOwnerIdentifier = userPost.postOwnerIdentifier,
             let postIdentifier = userPost.postIdentifier,
@@ -158,20 +119,16 @@ extension HomeInteractor: IHomeInteractor {
         FirebaseDatabaseService.likePost(
             userIdentifier: userIdentifier,
             postOwnerIdentifier: postOwnerIdentifier,
-            postIdentifier: postIdentifier) { [self] error in
+            postIdentifier: postIdentifier) { error in
             if let error = error {
-                presenter?.likePostFailure(at: index)
-                
                 print("Failed to like post at index \(index): \(error.localizedDescription)")
             } else {
-                presenter?.likePostSuccess(at: index)
-                
-                print("Post at index \(index) successfully liked")
+                completion()
             }
         }
     }
     
-    func unlikePost(_ userPost: UserPost, at index: Int) {
+    func unlikePost(_ userPost: UserPost, at index: Int, completion: @escaping () -> Void) {
         guard
             let postOwnerIdentifier = userPost.postOwnerIdentifier,
             let postIdentifier = userPost.postIdentifier,
@@ -183,20 +140,16 @@ extension HomeInteractor: IHomeInteractor {
         FirebaseDatabaseService.unlikePost(
             userIdentifier: userIdentifier,
             postOwnerIdentifier: postOwnerIdentifier,
-            postIdentifier: postIdentifier) { [self] error in
+            postIdentifier: postIdentifier) { error in
             if let error = error {
-                presenter?.unlikePostFailure(at: index)
-                
                 print("Failed to unlike post at index \(index): \(error.localizedDescription)")
             } else {
-                presenter?.unlikePostSuccess(at: index)
-                
-                print("Post at index \(index) successfully unliked")
+                completion()
             }
         }
     }
     
-    func addPostToBookmarks(_ userPost: UserPost, at index: Int) {
+    func addPostToBookmarks(_ userPost: UserPost, at index: Int, completion: @escaping () -> Void) {
         guard
             let postOwnerIdentifier = userPost.postOwnerIdentifier,
             let postIdentifier = userPost.postIdentifier,
@@ -211,20 +164,16 @@ extension HomeInteractor: IHomeInteractor {
             userIdentifier: userIdentifier,
             postOwnerIdentifier: postOwnerIdentifier,
             postIdentifier: postIdentifier,
-            timestamp: postTimestamp) { [self] error in
+            timestamp: postTimestamp) { error in
             if let error = error {
-                presenter?.addPostToBookmarksFailure(at: index)
-                
                 print("Failed to add post at index \(index) to bookmarks: \(error.localizedDescription)")
             } else {
-                presenter?.addPostToBookmarksSuccess(at: index)
-                
-                print("Post at index \(index) successfully added to bookmarks")
+                completion()
             }
         }
     }
     
-    func removePostFromBookmarks(_ userPost: UserPost, at index: Int) {
+    func removePostFromBookmarks(_ userPost: UserPost, at index: Int, completion: @escaping () -> Void) {
         guard
             let postIdentifier = userPost.postIdentifier,
             let userIdentifier = FirebaseAuthService.currentUserIdentifier
@@ -234,15 +183,11 @@ extension HomeInteractor: IHomeInteractor {
         
         FirebaseDatabaseService.removePostFromBookmarks(
             userIdentifier: userIdentifier,
-            postIdentifier: postIdentifier) { [self] error in
+            postIdentifier: postIdentifier) { error in
             if let error = error {
-                presenter?.removePostFromBookmarksFailure(at: index)
-                
                 print("Failed to remove post at index \(index) from bookmarks: \(error.localizedDescription)")
             } else {
-                presenter?.removePostFromBookmarksSuccess(at: index)
-                
-                print("Post at index \(index) successfully removed from bookmarks")
+                completion()
             }
         }
     }

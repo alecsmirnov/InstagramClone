@@ -5,77 +5,63 @@
 //  Created by Admin on 26.02.2021.
 //
 
-protocol ICommentsPresenter: AnyObject {
-    func viewDidLoad()
-    
-    func didRequestUserComments()
-    
-    func didSelectUser(_ user: User)
-    func didPressSendButton(commentText: String)
-}
-
 final class CommentsPresenter {
-    // MARK: Properties
+    weak var view: CommentsViewControllerProtocol?
+    weak var coordinator: CommentsCoordinatorProtocol?
     
-    weak var viewController: ICommentsViewController?
-    var interactor: ICommentsInteractor?
-    var router: ICommentsRouter?
+    var commentsService: CommentsServiceProtocol?
     
     var userPost: UserPost?
 }
 
-// MARK: - ICommentsPresenter
+// MARK: - CommentsView Output
 
-extension CommentsPresenter: ICommentsPresenter {
+extension CommentsPresenter: CommentsViewControllerOutputProtocol {
     func viewDidLoad() {
         if let postOwnerComment = userPost?.userComment {
-            viewController?.appendUserComment(postOwnerComment)
-            viewController?.reloadData()
+            appendUserComment(postOwnerComment)
         }
         
         if let userPost = userPost {
-            interactor?.fetchUserComments(userPost: userPost)
+            commentsService?.fetchUserComments(userPost: userPost) { [weak self] userComments in
+                self?.appendUserComments(userComments)
+            }
         }
     }
     
     func didRequestUserComments() {
         guard let userPost = userPost else { return }
         
-        interactor?.requestUserComments(userPost: userPost)
-    }
-    
-    func didSelectUser(_ user: User) {
-        router?.showProfileViewController(user: user)
-    }
-    
-    func didPressSendButton(commentText: String) {
-        guard let userPost = userPost else { return }
-        
-        interactor?.sendComment(userPost: userPost, text: commentText)
-    }
-}
-
-// MARK: - ICommentsInteractorOutput
-
-extension CommentsPresenter: ICommentsInteractorOutput {
-    func sendCommentSuccess() {
-        guard let userPost = userPost else { return }
-        
-        interactor?.fetchSentUserComment(userPost: userPost)
-    }
-    
-    func sendCommentFailure() {
-        
-    }
-    
-    func fetchUserCommentsSuccess(_ userComments: [UserComment]) {
-        userComments.forEach { userComment in
-            viewController?.appendUserComment(userComment)
-            viewController?.insertNewRow()
+        commentsService?.requestUserComments(userPost: userPost) { [weak self] userComments in
+            self?.appendUserComments(userComments)
         }
     }
     
-    func fetchUserCommentsFailure() {
+    func didSelectUser(_ user: User) {
+        coordinator?.showProfileViewController(user: user)
+    }
+    
+    func didTapSendButton(withText text: String) {
+        guard let userPost = userPost else { return }
         
+        commentsService?.sendComment(userPost: userPost, text: text) { [weak self] in
+            self?.commentsService?.fetchSentUserComment(userPost: userPost) { userComment in
+                self?.appendUserComment(userComment)
+            }
+        }
+    }
+}
+
+// MARK: - Private Methods
+
+extension CommentsPresenter {
+    func appendUserComment(_ userComment: UserComment) {
+        view?.appendUsersComments([userComment])
+        view?.insertNewRows(count: 1)
+    }
+    
+    func appendUserComments(_ userComments: [UserComment]) {
+        view?.appendUsersComments(userComments)
+        view?.insertNewRows(count: userComments.count)
     }
 }

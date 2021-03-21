@@ -29,4 +29,3 @@ extension FollowersFollowingCollectionViewDelegate: UICollectionViewDelegate {
         willDisplayCellAtIndexCompletion?(cell, indexPath.row)
     }
 }
-

@@ -8,20 +8,13 @@
 enum HomeAssembly {
     static func createHomeViewController(coordinator: HomeCoordinatorProtocol? = nil) -> HomeViewController {
         let viewController = HomeViewController()
-        
-        let interactor = HomeInteractor()
         let presenter = HomePresenter()
-        let router = HomeRouter(viewController: viewController)
         
-        viewController.presenter = presenter
-        
-        interactor.presenter = presenter
-        
-        presenter.viewController = viewController
-        presenter.interactor = interactor
-        presenter.router = router
-        
+        viewController.output = presenter
+        presenter.view = viewController
         presenter.coordinator = coordinator
+        
+        presenter.feedService = FeedService()
         
         return viewController
     }

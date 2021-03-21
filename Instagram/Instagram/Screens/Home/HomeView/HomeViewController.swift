@@ -7,15 +7,14 @@
 
 import UIKit
 
-protocol IHomeViewController: AnyObject {
+protocol HomeViewControllerProtocol: AnyObject {
     func appendFirstUserPost(_ userPost: UserPost)
-    func appendLastUserPost(_ userPost: UserPost)
+    func appendUsersPosts(_ usersPosts: [UserPost])
     func removeAllUserPosts()
     
     func insertFirstRow()
-    func insertLastRow()
+    func insertNewRows(count: Int)
     func reloadData()
-    
     func endRefreshing()
     
     func showLikeButton(at index: Int)
@@ -25,21 +24,41 @@ protocol IHomeViewController: AnyObject {
     func showBookmarkButton(at index: Int)
 }
 
+protocol HomeViewControllerOutputProtocol: AnyObject {
+    func viewDidLoad()
+    
+    func didPullToRefresh()
+    func didRequestPosts()
+    
+    func didSelectUser(_ user: User)
+    func didTapLikeButton(at index: Int, userPost: UserPost)
+    func didTapUnlikeButton(at index: Int, userPost: UserPost)
+    func didTapCommentButton(userPost: UserPost)
+    func didTapAddToBookmarksButton(at index: Int, userPost: UserPost)
+    func didTapRemoveFromBookmarksButton(at index: Int, userPost: UserPost)
+}
+
 final class HomeViewController: CustomViewController<HomeView> {
     // MARK: Properties
     
-    var presenter: IHomePresenter?
+    var output: HomeViewControllerOutputProtocol?
+    
+    // MARK: Constants
+    
+    private enum Images {
+        static let logo = AppConstants.Images.logoMini
+    }
     
     // MARK: Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        customView?.delegate = self
-        
-        presenter?.viewDidLoad()
+        customView?.output = self
         
         setupNavigationItemTitle()
+        
+        output?.viewDidLoad()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -55,23 +74,23 @@ final class HomeViewController: CustomViewController<HomeView> {
     }
 }
 
-// MARK: - IHomeViewController
+// MARK: - HomeViewController Interface
 
-extension HomeViewController: IHomeViewController {    
+extension HomeViewController: HomeViewControllerProtocol {
     func appendFirstUserPost(_ userPost: UserPost) {
         customView?.appendFirstUserPost(userPost)
     }
     
-    func appendLastUserPost(_ userPost: UserPost) {
-        customView?.appendLastUserPost(userPost)
+    func appendUsersPosts(_ usersPosts: [UserPost]) {
+        customView?.appendUsersPosts(usersPosts)
     }
     
     func insertFirstRow() {
         customView?.insertFirstRow()
     }
     
-    func insertLastRow() {
-        customView?.insertLastRow()
+    func insertNewRows(count: Int) {
+        customView?.insertNewRows(count: count)
     }
     
     func removeAllUserPosts() {
@@ -103,46 +122,46 @@ extension HomeViewController: IHomeViewController {
     }
 }
 
+// MARK: - HomeView Output
+
+extension HomeViewController: HomeViewOutputProtocol {
+    func didPullToRefresh() {
+        output?.didPullToRefresh()
+    }
+    
+    func didRequestPosts() {
+        output?.didRequestPosts()
+    }
+    
+    func didSelectUser(_ user: User) {
+        output?.didSelectUser(user)
+    }
+    
+    func didTapLikeButton(at index: Int, userPost: UserPost) {
+        output?.didTapLikeButton(at: index, userPost: userPost)
+    }
+    
+    func didTapUnlikeButton(at index: Int, userPost: UserPost) {
+        output?.didTapUnlikeButton(at: index, userPost: userPost)
+    }
+    
+    func didTapCommentButton(userPost: UserPost) {
+        output?.didTapCommentButton(userPost: userPost)
+    }
+    
+    func didTapAddToBookmarksButton(at index: Int, userPost: UserPost) {
+        output?.didTapAddToBookmarksButton(at: index, userPost: userPost)
+    }
+    
+    func didTapRemoveFromBookmarksButton(at index: Int, userPost: UserPost) {
+        output?.didTapRemoveFromBookmarksButton(at: index, userPost: userPost)
+    }
+}
+
 // MARK: - Appearance
 
 private extension HomeViewController {
     func setupNavigationItemTitle() {
-        navigationItem.titleView = UIImageView(image: UIImage(named: "instagram_logo_black_mini"))
-    }
-}
-
-// MARK: - HomeViewDelegate
-
-extension HomeViewController: HomeViewDelegate {
-    func homeViewDidPullToRefresh(_ homeView: HomeView) {
-        presenter?.didPullToRefresh()
-    }
-    
-    func homeViewDidRequestPosts(_ homeView: HomeView) {
-        presenter?.didRequestPosts()
-    }
-    
-    func homeView(_ homeView: HomeView, didSelectUser user: User) {
-        presenter?.didSelectUser(user)
-    }
-    
-    func homeView(_ homeView: HomeView, didPressLikeButtonAt index: Int, userPost: UserPost) {
-        presenter?.didPressLikeButton(at: index, userPost: userPost)
-    }
-    
-    func homeView(_ homeView: HomeView, didPressUnlikeButtonAt index: Int, userPost: UserPost) {
-        presenter?.didPressUnlikeButton(at: index, userPost: userPost)
-    }
-    
-    func homeView(_ homeView: HomeView, didPressCommentButton userPost: UserPost) {
-        presenter?.didSelectUserPostComment(userPost)
-    }
-    
-    func homeView(_ homeView: HomeView, didPressAddToBookmarksButtonAt index: Int, userPost: UserPost) {
-        presenter?.didPressAddToBookmarksButton(at: index, userPost: userPost)
-    }
-    
-    func homeView(_ homeView: HomeView, didPressRemoveFromBookmarksButtonAt index: Int, userPost: UserPost) {
-        presenter?.didPressRemoveFromBookmarksButton(at: index, userPost: userPost)
+        navigationItem.titleView = UIImageView(image: Images.logo)
     }
 }

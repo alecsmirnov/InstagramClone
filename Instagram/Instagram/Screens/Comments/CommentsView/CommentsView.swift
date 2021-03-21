@@ -7,20 +7,22 @@
 
 import UIKit
 
-protocol CommentsViewDelegate: AnyObject {
-    func commentsViewDidRequestPosts(_ commentsView: CommentsView)
+protocol CommentsViewProtocol: UIView {
+    func appendUsersComments(_ usersComments: [UserComment])
+    func insertNewRows(count: Int)
+}
+
+protocol CommentsViewOutputProtocol: AnyObject {
+    func didRequestUserComments()
     
-    func commentsView(_ commentsView: CommentsView, didSelectUser user: User)
-    func commentsView(_ commentsView: CommentsView, didPressSendButton commentText: String)
+    func didSelectUser(_ user: User)
+    func didTapSendButton(withText text: String)
 }
 
 final class CommentsView: UIView {
     // MARK: Properties
     
-    weak var delegate: CommentsViewDelegate?
-    
-    private var lastRequestedPostIndex: Int?
-    private var usersComments = [UserComment]()
+    weak var output: CommentsViewOutputProtocol?
     
     private var collectionViewHeightMinInitialized = false
     private var collectionViewHeightMin: CGFloat = 0
@@ -29,7 +31,10 @@ final class CommentsView: UIView {
     private var containerViewBottomConstraint: NSLayoutConstraint?
     private var containerViewHeightConstraint: NSLayoutConstraint?
     
-    private var keyboardAppearanceListener: KeyboardAppearanceListener?
+    private let collectionViewDataSource = CommentsCollectionViewDataSource()
+    private let collectionViewDelegate = CommentsCollectionViewDelegate()
+    
+    private lazy var keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
     
     // MARK: Constants
     
@@ -55,20 +60,15 @@ final class CommentsView: UIView {
     private let commentTextView = PlaceholderTextView()
     private let sendButton = UIButton(type: .system)
     
-    // MARK: Initialization
+    // MARK: Lifecycle
     
-    init() {
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         setupAppearance()
         setupLayout()
-        setupGestures()
-        
-        keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
-        
-        // Need In inputAccessoryView
-        // TODO: Later
-        //collectionView.keyboardDismissMode = .interactive
+        setupButtonActions()
+        keyboardAppearanceListener.setupKeyboardObservers()
     }
     
     required init?(coder: NSCoder) {
@@ -76,25 +76,24 @@ final class CommentsView: UIView {
     }
 }
 
-// MARK: - Public Methods
+// MARK: - Interface
 
-extension CommentsView {
-    func appendUserComment(_ userComment: UserComment) {
-        usersComments.append(userComment)
+extension CommentsView: CommentsViewProtocol {
+    func appendUsersComments(_ usersComments: [UserComment]) {
+        collectionViewDataSource.appendUsersComments(usersComments)
     }
     
-    func insertNewRow() {
-        if 1 < usersComments.count {
-            let lastItemIndexPath = IndexPath(row: usersComments.count - 1, section: 0)
+    func insertNewRows(count: Int) {
+        let itemsCount = collectionViewDataSource.usersCommentsCount - count
+        
+        if 1 < itemsCount {
+            let lastRowIndex = itemsCount
+            let indexPaths = (0..<count).map { IndexPath(row: $0 + lastRowIndex, section: 0) }
             
-            collectionView.insertItems(at: [lastItemIndexPath])
+            collectionView.insertItems(at: indexPaths)
         } else {
             collectionView.reloadData()
         }
-    }
-    
-    func reloadData() {
-        collectionView.reloadData()
     }
 }
 
@@ -114,10 +113,10 @@ private extension CommentsView {
         collectionView.backgroundColor = .clear
         collectionView.delaysContentTouches = false
         
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        
         collectionView.register(CommentCell.self, forCellWithReuseIdentifier: CommentCell.reuseIdentifier)
+        
+        setupCollectionViewDataSource()
+        setupCollectionViewDelegate()
     }
     
     func setupSeparatorViewAppearance() {
@@ -134,17 +133,6 @@ private extension CommentsView {
     func setupSendButtonAppearance() {
         sendButton.setTitle("Send", for: .normal)
         sendButton.isEnabled = false
-        
-        sendButton.addTarget(self, action: #selector(didPressSendButton), for: .touchUpInside)
-    }
-    
-    @objc func didPressSendButton() {
-        guard let text = commentTextView.text else { return }
-        
-        commentTextView.text = nil
-        sendButton.isEnabled = false
-        
-        delegate?.commentsView(self, didPressSendButton: text)
     }
 }
 
@@ -271,70 +259,53 @@ private extension CommentsView {
     }
 }
 
-// MARK: - Gestures
+// MARK: - Button Actions
 
 private extension CommentsView {
-    func setupGestures() {
-//        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-//        
-//        tapGestureRecognizer.cancelsTouchesInView = false
-//        
-//        addGestureRecognizer(tapGestureRecognizer)
+    func setupButtonActions() {
+        sendButton.addTarget(self, action: #selector(didTapSendButton), for: .touchUpInside)
     }
     
-//    @objc func dismissKeyboard() {
-//        endEditing(true)
-//    }
+    @objc func didTapSendButton() {
+        guard let text = commentTextView.text else { return }
+        
+        commentTextView.text = nil
+        sendButton.isEnabled = false
+        
+        output?.didTapSendButton(withText: text)
+    }
 }
 
-// MARK: - UICollectionViewDataSource
+// MARK: - CollectionViewDataSource
 
-extension CommentsView: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return usersComments.count
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: CommentCell.reuseIdentifier,
-            for: indexPath) as? CommentCell
-        else {
-            return UICollectionViewCell()
-        }
+private extension CommentsView {
+    func setupCollectionViewDataSource() {
+        collectionView.dataSource = collectionViewDataSource
         
-        if indexPath.row == usersComments.count - 1 && (lastRequestedPostIndex ?? -1) < indexPath.row {
-            lastRequestedPostIndex = indexPath.row
+        collectionViewDataSource.lastCellPresentedCompletion = { [weak self] in
+            self?.output?.didRequestUserComments()
+        }
+    }
+}
+
+// MARK: - CollectionViewDelegate
+
+private extension CommentsView {
+    func setupCollectionViewDelegate() {
+        collectionView.delegate = collectionViewDelegate
+        
+        collectionViewDelegate.selectCellAtIndexCompletion = { [weak self] index in
+            guard let user = self?.collectionViewDataSource.getUserComment(at: index)?.user else { return }
             
-            delegate?.commentsViewDidRequestPosts(self)
+            self?.output?.didSelectUser(user)
         }
         
-        cell.configure(with: usersComments[indexPath.row])
-        
-        return cell
-    }
-}
-
-// MARK: - UICollectionViewDelegate
-
-extension CommentsView: UICollectionViewDelegate {
-    func collectionView(
-        _ collectionView: UICollectionView,
-        didEndDisplaying cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath
-    ) {
-        guard !collectionViewHeightMinInitialized, indexPath.row == 0 else { return }
-        
-        collectionViewHeightMin = cell.bounds.height
-        collectionViewHeightMinInitialized = true
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let user = usersComments[indexPath.row].user
-        
-        delegate?.commentsView(self, didSelectUser: user)
+        collectionViewDelegate.didEndDisplayingCellCompletion = { [weak self] cell, index in
+            guard !(self?.collectionViewHeightMinInitialized ?? false), index == 0 else { return }
+            
+            self?.collectionViewHeightMin = cell.bounds.height
+            self?.collectionViewHeightMinInitialized = true
+        }
     }
 }
 

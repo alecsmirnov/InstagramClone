@@ -7,28 +7,35 @@
 
 import UIKit
 
-protocol ICommentsViewController: AnyObject {
-    func appendUserComment(_ userComment: UserComment)
+protocol CommentsViewControllerProtocol: AnyObject {
+    func appendUsersComments(_ usersComments: [UserComment])
+    func insertNewRows(count: Int)
+}
+
+protocol CommentsViewControllerOutputProtocol: AnyObject {
+    func viewDidLoad()
     
-    func insertNewRow()
-    func reloadData()
+    func didRequestUserComments()
+    
+    func didSelectUser(_ user: User)
+    func didTapSendButton(withText text: String)
 }
 
 final class CommentsViewController: CustomViewController<CommentsView> {
     // MARK: Properties
     
-    var presenter: ICommentsPresenter?
+    var output: CommentsViewControllerOutputProtocol?
     
     // MARK: Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        customView?.delegate = self
-        
-        presenter?.viewDidLoad()
+        customView?.output = self
         
         setupAppearance()
+        
+        output?.viewDidLoad()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -44,19 +51,31 @@ final class CommentsViewController: CustomViewController<CommentsView> {
     }
 }
 
-// MARK: - ICommentsViewController
+// MARK: - CommentsViewController Interface
 
-extension CommentsViewController: ICommentsViewController {
-    func appendUserComment(_ userComment: UserComment) {
-        customView?.appendUserComment(userComment)
+extension CommentsViewController: CommentsViewControllerProtocol {
+    func appendUsersComments(_ usersComments: [UserComment]) {
+        customView?.appendUsersComments(usersComments)
     }
     
-    func insertNewRow() {
-        customView?.insertNewRow()
+    func insertNewRows(count: Int) {
+        customView?.insertNewRows(count: count)
+    }
+}
+
+// MARK: - CommentsView Output
+
+extension CommentsViewController: CommentsViewOutputProtocol{
+    func didRequestUserComments() {
+        output?.didRequestUserComments()
     }
     
-    func reloadData() {
-        customView?.reloadData()
+    func didSelectUser(_ user: User) {
+        output?.didSelectUser(user)
+    }
+    
+    func didTapSendButton(withText text: String) {
+        output?.didTapSendButton(withText: text)
     }
 }
 
@@ -67,7 +86,6 @@ private extension CommentsViewController {
         navigationItem.title = "Comments"
         
         customizeBackButton()
-        setupSendButton()
     }
     
     func customizeBackButton() {
@@ -76,35 +94,5 @@ private extension CommentsViewController {
         backBarButtonItem.tintColor = .black
         
         navigationController?.navigationBar.topItem?.backBarButtonItem = backBarButtonItem
-    }
-    
-    func setupSendButton() {
-        let sendBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "paperplane"),
-            style: .plain,
-            target: self,
-            action: nil)
-        
-        sendBarButtonItem.tintColor = .darkGray
-        
-        navigationItem.rightBarButtonItem = sendBarButtonItem
-        
-        navigationItem.rightBarButtonItem?.isEnabled = false
-    }
-}
-
-// MARK: - CommentsViewDelegate
-
-extension CommentsViewController: CommentsViewDelegate {
-    func commentsViewDidRequestPosts(_ commentsView: CommentsView) {
-        presenter?.didRequestUserComments()
-    }
-    
-    func commentsView(_ commentsView: CommentsView, didSelectUser user: User) {
-        presenter?.didSelectUser(user)
-    }
-    
-    func commentsView(_ commentsView: CommentsView, didPressSendButton commentText: String) {
-        presenter?.didPressSendButton(commentText: commentText)
     }
 }

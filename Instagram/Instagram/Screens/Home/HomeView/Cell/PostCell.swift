@@ -8,15 +8,15 @@
 import UIKit
 
 protocol PostCellDelegate: AnyObject {
-    func postCellDidPressProfileImageButton(_ postCell: PostCell)
-    func postCellDidPressOptionsButton(_ postCell: PostCell)
+    func postCellDidTapProfileImageButton(_ postCell: PostCell)
+    func postCellDidTapOptionsButton(_ postCell: PostCell)
     
-    func postCellDidPressLikeButton(_ postCell: PostCell)
-    func postCellDidPressUnlikeButton(_ postCell: PostCell)
-    func postCellDidPressCommentButton(_ postCell: PostCell)
-    func postCellDidPressSendButton(_ postCell: PostCell)
-    func postCellDidPressBookmarkButton(_ postCell: PostCell)
-    func postCellDidPressNotBookmarkButton(_ postCell: PostCell)
+    func postCellDidTapLikeButton(_ postCell: PostCell)
+    func postCellDidTapUnlikeButton(_ postCell: PostCell)
+    func postCellDidTapCommentButton(_ postCell: PostCell)
+    func postCellDidTapSendButton(_ postCell: PostCell)
+    func postCellDidTapBookmarkButton(_ postCell: PostCell)
+    func postCellDidTapNotBookmarkButton(_ postCell: PostCell)
 }
 
 final class PostCell: UICollectionViewCell {
@@ -93,7 +93,7 @@ final class PostCell: UICollectionViewCell {
         static let options = UIImage(systemName: "ellipsis")
         static let like = UIImage(systemName: "heart")
         static let likeFill = UIImage(systemName: "heart.fill")
-        static let comment = UIImage(systemName: "bubble.right")
+        static let comment = AppConstants.Images.comment
         static let send = UIImage(systemName: "paperplane")
         static let bookmarked = UIImage(systemName: "bookmark")
         static let notBookmarked = UIImage(systemName: "bookmark.fill")
@@ -121,6 +121,22 @@ final class PostCell: UICollectionViewCell {
     
     // MARK: Lifecycle
     
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        setupAppearance()
+        setupLayout()
+        setupButtonActions()
+        
+        // Currently not used :(
+        sendButton.alpha = 0
+        optionsButton.alpha = 0
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         
@@ -131,23 +147,6 @@ final class PostCell: UICollectionViewCell {
         imageView.image = nil
         
         captionLabel.attributedText = nil
-    }
-    
-    // MARK: Initialization
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        setupAppearance()
-        setupLayout()
-        setupActions()
-        
-        sendButton.isEnabled = false
-        sendButton.tintColor = .darkGray
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -499,49 +498,48 @@ private extension PostCell {
     }
 }
 
-// MARK: - Actions
+// MARK: - Button Actions
 
 private extension PostCell {
-    func setupActions() {
-        profileImageButton.addTarget(self, action: #selector(didPressProfileImageButton), for: .touchUpInside)
-        usernameButton.addTarget(self, action: #selector(didPressProfileImageButton), for: .touchUpInside)
-        optionsButton.addTarget(self, action: #selector(didPressOptionsButton), for: .touchUpInside)
-        
-        likeButton.addTarget(self, action: #selector(didPressLikeButton), for: .touchUpInside)
-        commentButton.addTarget(self, action: #selector(didPressCommentButton), for: .touchUpInside)
-        sendButton.addTarget(self, action: #selector(didPressSendButton), for: .touchUpInside)
-        bookmarkButton.addTarget(self, action: #selector(didPressBookmarkButton), for: .touchUpInside)
+    func setupButtonActions() {
+        profileImageButton.addTarget(self, action: #selector(didTapProfileImageButton), for: .touchUpInside)
+        usernameButton.addTarget(self, action: #selector(didTapProfileImageButton), for: .touchUpInside)
+        optionsButton.addTarget(self, action: #selector(didTapOptionsButton), for: .touchUpInside)
+        likeButton.addTarget(self, action: #selector(didTapLikeButton), for: .touchUpInside)
+        commentButton.addTarget(self, action: #selector(didTapCommentButton), for: .touchUpInside)
+        sendButton.addTarget(self, action: #selector(didTapSendButton), for: .touchUpInside)
+        bookmarkButton.addTarget(self, action: #selector(didTapBookmarkButton), for: .touchUpInside)
     }
     
-    @objc func didPressProfileImageButton() {
-        delegate?.postCellDidPressProfileImageButton(self)
+    @objc func didTapProfileImageButton() {
+        delegate?.postCellDidTapProfileImageButton(self)
     }
     
-    @objc func didPressOptionsButton() {
-        delegate?.postCellDidPressOptionsButton(self)
+    @objc func didTapOptionsButton() {
+        delegate?.postCellDidTapOptionsButton(self)
     }
     
-    @objc func didPressLikeButton() {
+    @objc func didTapLikeButton() {
         if isLiked {
-            delegate?.postCellDidPressUnlikeButton(self)
+            delegate?.postCellDidTapUnlikeButton(self)
         } else {
-            delegate?.postCellDidPressLikeButton(self)
+            delegate?.postCellDidTapLikeButton(self)
         }
     }
     
-    @objc func didPressCommentButton() {
-        delegate?.postCellDidPressCommentButton(self)
+    @objc func didTapCommentButton() {
+        delegate?.postCellDidTapCommentButton(self)
     }
     
-    @objc func didPressSendButton() {
-        delegate?.postCellDidPressSendButton(self)
+    @objc func didTapSendButton() {
+        delegate?.postCellDidTapSendButton(self)
     }
     
-    @objc func didPressBookmarkButton() {
+    @objc func didTapBookmarkButton() {
         if isBookmarked {
-            delegate?.postCellDidPressNotBookmarkButton(self)
+            delegate?.postCellDidTapNotBookmarkButton(self)
         } else {
-            delegate?.postCellDidPressBookmarkButton(self)
+            delegate?.postCellDidTapBookmarkButton(self)
         }
     }
 }

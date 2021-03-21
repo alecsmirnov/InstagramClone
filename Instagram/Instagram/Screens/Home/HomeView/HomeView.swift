@@ -7,38 +7,53 @@
 
 import UIKit
 
-protocol HomeViewDelegate: AnyObject {
-    func homeViewDidPullToRefresh(_ homeView: HomeView)
-    func homeViewDidRequestPosts(_ homeView: HomeView)
+protocol HomeViewProtocol: UIView {
+    func appendFirstUserPost(_ userPost: UserPost)
+    func appendUsersPosts(_ usersPosts: [UserPost])
+    func removeAllUserPosts()
     
-    func homeView(_ homeView: HomeView, didSelectUser user: User)
-    func homeView(_ homeView: HomeView, didPressLikeButtonAt index: Int, userPost: UserPost)
-    func homeView(_ homeView: HomeView, didPressUnlikeButtonAt index: Int, userPost: UserPost)
-    func homeView(_ homeView: HomeView, didPressCommentButton userPost: UserPost)
-    func homeView(_ homeView: HomeView, didPressAddToBookmarksButtonAt index: Int, userPost: UserPost)
-    func homeView(_ homeView: HomeView, didPressRemoveFromBookmarksButtonAt index: Int, userPost: UserPost)
+    func insertFirstRow()
+    func insertNewRows(count: Int)
+    func reloadData()
+    func endRefreshing()
+    
+    func showLikeButton(at index: Int)
+    func showUnlikeButton(at index: Int)
+    func showNotBookmarkButton(at index: Int)
+    func showBookmarkButton(at index: Int)
+}
+
+protocol HomeViewOutputProtocol: AnyObject {
+    func didPullToRefresh()
+    func didRequestPosts()
+    
+    func didSelectUser(_ user: User)
+    func didTapLikeButton(at index: Int, userPost: UserPost)
+    func didTapUnlikeButton(at index: Int, userPost: UserPost)
+    func didTapCommentButton(userPost: UserPost)
+    func didTapAddToBookmarksButton(at index: Int, userPost: UserPost)
+    func didTapRemoveFromBookmarksButton(at index: Int, userPost: UserPost)
 }
 
 final class HomeView: UIView {
     // MARK: Properties
     
-    weak var delegate: HomeViewDelegate?
+    weak var output: HomeViewOutputProtocol?
     
-    private var lastRequestedPostIndex: Int?
-    private var userPosts = [UserPost]()
+    private let collectionViewDataSource = HomeCollectionViewDataSource()
+    private let collectionViewDelegate = HomeCollectionViewDelegate()
     
     // MARK: Subviews
     
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
     
-    // MARK: Initialization
+    // MARK: Lifecycle
     
-    init() {
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         setupAppearance()
         setupLayout()
-        setupActions()
     }
     
     required init?(coder: NSCoder) {
@@ -46,33 +61,50 @@ final class HomeView: UIView {
     }
 }
 
-// MARK: - Public Methods
+// MARK: - Interface
 
-extension HomeView {    
+extension HomeView: HomeViewProtocol {
     func appendFirstUserPost(_ userPost: UserPost) {
-        userPosts.insert(userPost, at: 0)
+        collectionViewDataSource.appendFirstUserPost(userPost)
     }
     
-    func appendLastUserPost(_ userPost: UserPost) {
-        userPosts.append(userPost)
+    func appendUsersPosts(_ usersPosts: [UserPost]) {
+        collectionViewDataSource.appendUsersPosts(usersPosts)
     }
     
     func removeAllUserPosts() {
-        lastRequestedPostIndex = nil
-        
-        userPosts.removeAll()
+        collectionViewDataSource.removeAllUsersPosts()
     }
     
     func insertFirstRow() {
-        insertRow(at: 0)
+        if 1 < collectionViewDataSource.usersPostsCount {
+            let lastItemIndexPath = IndexPath(row: 0, section: 0)
+            
+            collectionView.insertItems(at: [lastItemIndexPath])
+        } else {
+            collectionView.reloadData()
+        }
     }
     
-    func insertLastRow() {
-        insertRow(at: userPosts.count - 1)
+    func insertNewRows(count: Int) {
+        let itemsCount = collectionViewDataSource.usersPostsCount - count
+        
+        if 1 < itemsCount {
+            let lastRowIndex = itemsCount
+            let indexPaths = (0..<count).map { IndexPath(row: $0 + lastRowIndex, section: 0) }
+            
+            collectionView.insertItems(at: indexPaths)
+        } else {
+            collectionView.reloadData()
+        }
     }
     
     func reloadData() {
         collectionView.reloadData()
+    }
+    
+    func endRefreshing() {
+        collectionView.refreshControl?.endRefreshing()
     }
     
     func showLikeButton(at index: Int) {
@@ -98,25 +130,11 @@ extension HomeView {
         
         post?.isBookmarked = true
     }
-    
-    func endRefreshing() {
-        collectionView.refreshControl?.endRefreshing()
-    }
 }
 
 // MARK: - Private Methods
 
 private extension HomeView {
-    func insertRow(at index: Int) {
-        if 1 < userPosts.count {
-            let lastItemIndexPath = IndexPath(row: index, section: 0)
-            
-            collectionView.insertItems(at: [lastItemIndexPath])
-        } else {
-            collectionView.reloadData()
-        }
-    }
-    
     func postForItem(at index: Int) -> PostCell? {
         let indexPath = IndexPath(row: index, section: 0)
         let cell = collectionView.cellForItem(at: indexPath) as? PostCell
@@ -139,9 +157,17 @@ private extension HomeView {
         collectionView.delaysContentTouches = false
         collectionView.isPrefetchingEnabled = false
         
-        collectionView.dataSource = self
-        
         collectionView.register(PostCell.self, forCellWithReuseIdentifier: PostCell.reuseIdentifier)
+        
+        setupCollectionViewDataSource()
+        setupCollectionViewDelegate()
+        
+        collectionView.refreshControl = UIRefreshControl()
+        collectionView.refreshControl?.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+    }
+    
+    @objc func didPullToRefresh() {
+        output?.didPullToRefresh()
     }
 }
 
@@ -182,108 +208,104 @@ private extension HomeView {
     }
 }
 
-// MARK: - Actions
+// MARK: - CollectionViewDataSource
 
 private extension HomeView {
-    func setupActions() {
-        collectionView.refreshControl = UIRefreshControl()
-        collectionView.refreshControl?.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
-    }
-    
-    @objc func didPullToRefresh() {
-        delegate?.homeViewDidPullToRefresh(self)
+    func setupCollectionViewDataSource() {
+        collectionView.dataSource = collectionViewDataSource
+        
+        collectionViewDataSource.lastCellPresentedCompletion = { [weak self] in
+            self?.output?.didRequestPosts()
+        }
     }
 }
 
-// MARK: - UICollectionViewDataSource
+// MARK: - CollectionViewDelegate
 
-extension HomeView: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return userPosts.count
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: PostCell.reuseIdentifier,
-            for: indexPath) as? PostCell
-        else {
-            return UICollectionViewCell()
+private extension HomeView {
+    func setupCollectionViewDelegate() {
+        collectionView.delegate = collectionViewDelegate
+        
+        collectionViewDelegate.willDisplayCellAtIndexCompletion = { [weak self] cell, _  in
+            cell.delegate = self
         }
-        
-        // Check for multiple function calls (show hidden cells) and
-        // and the size of dynamic cell, which the collectionView defines as 44 (strange bug...)
-        if indexPath.row == userPosts.count - 1 && (lastRequestedPostIndex ?? -1) < indexPath.row {
-            lastRequestedPostIndex = indexPath.row
-
-            delegate?.homeViewDidRequestPosts(self)
-        }
-        
-        cell.delegate = self
-        cell.configure(with: userPosts[indexPath.row])
-        
-        return cell
     }
 }
 
 // MARK: - PostCellDelegate
 
 extension HomeView: PostCellDelegate {
-    func postCellDidPressProfileImageButton(_ postCell: PostCell) {
-        guard let indexPath = collectionView.indexPath(for: postCell) else { return }
+    func postCellDidTapProfileImageButton(_ postCell: PostCell) {
+        guard
+            let indexPath = collectionView.indexPath(for: postCell),
+            let user = collectionViewDataSource.getUserPost(at: indexPath.row)?.user
+        else {
+            return
+        }
         
-        let user = userPosts[indexPath.row].user
-        
-        delegate?.homeView(self, didSelectUser: user)
+        output?.didSelectUser(user)
     }
     
-    func postCellDidPressOptionsButton(_ postCell: PostCell) {
-        
-    }
-    
-    func postCellDidPressLikeButton(_ postCell: PostCell) {
-        guard let indexPath = collectionView.indexPath(for: postCell) else { return }
-        
-        let userPost = userPosts[indexPath.row]
-        
-        delegate?.homeView(self, didPressLikeButtonAt: indexPath.row, userPost: userPost)
-    }
-    
-    func postCellDidPressUnlikeButton(_ postCell: PostCell) {
-        guard let indexPath = collectionView.indexPath(for: postCell) else { return }
-        
-        let userPost = userPosts[indexPath.row]
-        
-        delegate?.homeView(self, didPressUnlikeButtonAt: indexPath.row, userPost: userPost)
-    }
-    
-    func postCellDidPressCommentButton(_ postCell: PostCell) {
-        guard let indexPath = collectionView.indexPath(for: postCell) else { return }
-        
-        let userPost = userPosts[indexPath.row]
-        
-        delegate?.homeView(self, didPressCommentButton: userPost)
-    }
-    
-    func postCellDidPressSendButton(_ postCell: PostCell) {
+    func postCellDidTapOptionsButton(_ postCell: PostCell) {
         
     }
     
-    func postCellDidPressBookmarkButton(_ postCell: PostCell) {
-        guard let indexPath = collectionView.indexPath(for: postCell) else { return }
+    func postCellDidTapLikeButton(_ postCell: PostCell) {
+        guard
+            let indexPath = collectionView.indexPath(for: postCell),
+            let userPost = collectionViewDataSource.getUserPost(at: indexPath.row)
+        else {
+            return
+        }
         
-        let userPost = userPosts[indexPath.row]
-        
-        delegate?.homeView(self, didPressAddToBookmarksButtonAt: indexPath.row, userPost: userPost)
+        output?.didTapLikeButton(at: indexPath.row, userPost: userPost)
     }
     
-    func postCellDidPressNotBookmarkButton(_ postCell: PostCell) {
-        guard let indexPath = collectionView.indexPath(for: postCell) else { return }
+    func postCellDidTapUnlikeButton(_ postCell: PostCell) {
+        guard
+            let indexPath = collectionView.indexPath(for: postCell),
+            let userPost = collectionViewDataSource.getUserPost(at: indexPath.row)
+        else {
+            return
+        }
         
-        let userPost = userPosts[indexPath.row]
+        output?.didTapUnlikeButton(at: indexPath.row, userPost: userPost)
+    }
+    
+    func postCellDidTapCommentButton(_ postCell: PostCell) {
+        guard
+            let indexPath = collectionView.indexPath(for: postCell),
+            let userPost = collectionViewDataSource.getUserPost(at: indexPath.row)
+        else {
+            return
+        }
         
-        delegate?.homeView(self, didPressRemoveFromBookmarksButtonAt: indexPath.row, userPost: userPost)
+        output?.didTapCommentButton(userPost: userPost)
+    }
+    
+    func postCellDidTapSendButton(_ postCell: PostCell) {
+        
+    }
+    
+    func postCellDidTapBookmarkButton(_ postCell: PostCell) {
+        guard
+            let indexPath = collectionView.indexPath(for: postCell),
+            let userPost = collectionViewDataSource.getUserPost(at: indexPath.row)
+        else {
+            return
+        }
+        
+        output?.didTapAddToBookmarksButton(at: indexPath.row, userPost: userPost)
+    }
+    
+    func postCellDidTapNotBookmarkButton(_ postCell: PostCell) {
+        guard
+            let indexPath = collectionView.indexPath(for: postCell),
+            let userPost = collectionViewDataSource.getUserPost(at: indexPath.row)
+        else {
+            return
+        }
+        
+        output?.didTapRemoveFromBookmarksButton(at: indexPath.row, userPost: userPost)
     }
 }

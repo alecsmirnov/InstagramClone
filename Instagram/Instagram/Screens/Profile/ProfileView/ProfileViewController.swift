@@ -50,7 +50,7 @@ final class ProfileViewController: CustomViewController<ProfileView> {
     // MARK: Constants
     
     private enum Images {
-        static let menu = UIImage(named: "gear")
+        static let menu = AppConstants.Images.close
     }
     
     // MARK: Lifecycle

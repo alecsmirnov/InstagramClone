@@ -1,32 +1,14 @@
 //
-//  CommentsInteractor.swift
+//  CommentsService.swift
 //  Instagram
 //
-//  Created by Admin on 26.02.2021.
+//  Created by Admin on 21.03.2021.
 //
 
 import Foundation
 
-protocol ICommentsInteractor: AnyObject {
-    func sendComment(userPost: UserPost, text: String)
-    
-    func fetchUserComments(userPost: UserPost)
-    func requestUserComments(userPost: UserPost)
-    func fetchSentUserComment(userPost: UserPost)
-}
-
-protocol ICommentsInteractorOutput: AnyObject {
-    func sendCommentSuccess()
-    func sendCommentFailure()
-    
-    func fetchUserCommentsSuccess(_ userComments: [UserComment])
-    func fetchUserCommentsFailure()
-}
-
-final class CommentsInteractor {
+final class CommentsService {
     // MARK: Properties
-    
-    weak var presenter: ICommentsInteractorOutput?
     
     private var lastRequestedUserCommentTimestamp: TimeInterval?
     private var beforeSentUserCommentTimestamp: TimeInterval?
@@ -38,10 +20,10 @@ final class CommentsInteractor {
     }
 }
 
-// MARK: - ICommentsInteractor
+// MARK: - CommentsServiceProtocol
 
-extension CommentsInteractor: ICommentsInteractor {
-    func sendComment(userPost: UserPost, text: String) {
+extension CommentsService: CommentsServiceProtocol {
+    func sendComment(userPost: UserPost, text: String, completion: @escaping () -> Void) {
         guard
             let senderIdentifier = FirebaseAuthService.currentUserIdentifier,
             let postOwnerIdentifier = userPost.postOwnerIdentifier,
@@ -54,20 +36,37 @@ extension CommentsInteractor: ICommentsInteractor {
             senderIdentifier: senderIdentifier,
             postOwnerIdentifier: postOwnerIdentifier,
             postIdentifier: postIdentifier,
-            text: text) { [self] error in
+            text: text) { error in
             if let error = error {
-                presenter?.sendCommentFailure()
-                
                 print("Failed to send comment: \(error.localizedDescription)")
             } else {
-                presenter?.sendCommentSuccess()
-                
-                print("Comment successfully sent")
+                completion()
             }
         }
     }
     
-    func fetchUserComments(userPost: UserPost) {
+    func fetchSentUserComment(userPost: UserPost, completion: @escaping (UserComment) -> Void) {
+        guard
+            let postOwnerIdentifier = userPost.postOwnerIdentifier,
+            let postIdentifier = userPost.postIdentifier
+        else {
+            return
+        }
+        
+        let timestamp = beforeSentUserCommentTimestamp ?? 0
+        
+        requestNextUserComments(
+            postOwnerIdentifier: postOwnerIdentifier,
+            postIdentifier: postIdentifier,
+            timestamp: timestamp,
+            limit: 1) { usersComments in
+            guard let userComment = usersComments.first else { return }
+            
+            completion(userComment)
+        }
+    }
+    
+    func fetchUserComments(userPost: UserPost, completion: @escaping ([UserComment]) -> Void) {
         guard
             let postOwnerIdentifier = userPost.postOwnerIdentifier,
             let postIdentifier = userPost.postIdentifier
@@ -78,22 +77,20 @@ extension CommentsInteractor: ICommentsInteractor {
         FirebaseDatabaseService.fetchUserCommentsFromBegin(
             userIdentifier: postOwnerIdentifier,
             postIdentifier: postIdentifier,
-            limit: Requests.commentLimit) { [self] result in
+            limit: Requests.commentLimit) { [weak self] result in
             switch result {
             case .success(let userComments):
-                lastRequestedUserCommentTimestamp = userComments.last?.comment.timestamp
-                beforeSentUserCommentTimestamp = lastRequestedUserCommentTimestamp
+                self?.lastRequestedUserCommentTimestamp = userComments.last?.comment.timestamp
+                self?.beforeSentUserCommentTimestamp = self?.lastRequestedUserCommentTimestamp
                 
-                presenter?.fetchUserCommentsSuccess(userComments)
+                completion(userComments)
             case .failure(let error):
-                presenter?.fetchUserCommentsFailure()
-
                 print("Failed to fetch user comments: \(error.localizedDescription)")
             }
         }
     }
     
-    func requestUserComments(userPost: UserPost) {
+    func requestUserComments(userPost: UserPost, completion: @escaping ([UserComment]) -> Void) {
         guard
             let postOwnerIdentifier = userPost.postOwnerIdentifier,
             let postIdentifier = userPost.postIdentifier,
@@ -107,47 +104,45 @@ extension CommentsInteractor: ICommentsInteractor {
         requestNextUserComments(
             postOwnerIdentifier: postOwnerIdentifier,
             postIdentifier: postIdentifier,
-            timestamp: timestamp)
-    }
-    
-    func fetchSentUserComment(userPost: UserPost) {
-        guard
-            let postOwnerIdentifier = userPost.postOwnerIdentifier,
-            let postIdentifier = userPost.postIdentifier
-        else {
-            return
-        }
-        
-        let timestamp = beforeSentUserCommentTimestamp ?? 0
-        
-        requestNextUserComments(
-            postOwnerIdentifier: postOwnerIdentifier,
-            postIdentifier: postIdentifier,
-            timestamp: timestamp)
+            timestamp: timestamp,
+            limit: Requests.commentLimit,
+            completion: completion)
     }
 }
 
 // MARK: - Private Methods
 
-private extension CommentsInteractor {
-    func requestNextUserComments(postOwnerIdentifier: String, postIdentifier: String, timestamp: TimeInterval) {
+private extension CommentsService {
+    func requestNextUserComments(
+        postOwnerIdentifier: String,
+        postIdentifier: String,
+        timestamp: TimeInterval,
+        limit: UInt,
+        completion: @escaping ([UserComment]) -> Void
+    ) {
+        var dropFirst = true
+        var dropLimit: UInt = 1
+        
+        if beforeSentUserCommentTimestamp == nil {
+            dropFirst = false
+            dropLimit = 0
+        }
+        
         FirebaseDatabaseService.fetchUserCommentsFromBegin(
             userIdentifier: postOwnerIdentifier,
             postIdentifier: postIdentifier,
             startAtTimestamp: timestamp,
-            dropFirst: true,
-            limit: Requests.commentLimit + 1) { [self] result in
+            dropFirst: dropFirst,
+            limit: limit + dropLimit) { [weak self] result in
             switch result {
             case .success(let userComments):
                 if !userComments.isEmpty {
-                    lastRequestedUserCommentTimestamp = userComments.last?.comment.timestamp
-                    beforeSentUserCommentTimestamp = lastRequestedUserCommentTimestamp
+                    self?.lastRequestedUserCommentTimestamp = userComments.last?.comment.timestamp
+                    self?.beforeSentUserCommentTimestamp = self?.lastRequestedUserCommentTimestamp
                 
-                    presenter?.fetchUserCommentsSuccess(userComments)
+                    completion(userComments)
                 }
             case .failure(let error):
-                presenter?.fetchUserCommentsFailure()
-
                 print("Failed to fetch user comments: \(error.localizedDescription)")
             }
         }

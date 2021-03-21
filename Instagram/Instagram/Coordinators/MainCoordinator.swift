@@ -34,7 +34,7 @@ private extension MainCoordinator {
     func showMainTabBarController() {
         let mainTabBarController = MainTabBarController()
         
-        let homeCoordinator = HomeCoordinator()
+        let homeCoordinator = HomeCoordinator(presenterController: mainTabBarController)
         let searchCoordinator = SearchCoordinator(presenterController: mainTabBarController)
         let profileCoordinator = ProfileCoordinator(presenterController: mainTabBarController, delegate: nil)
         
