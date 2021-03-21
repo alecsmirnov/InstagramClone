@@ -8,6 +8,8 @@
 import UIKit
 
 protocol ProfileViewControllerProtocol: AnyObject {
+    func enableMenu()
+    
     func setUser(_ user: User)
     func setUserStats(_ userStats: UserStats)
     func appendFirstPost(_ post: Post)
@@ -67,6 +69,10 @@ final class ProfileViewController: CustomViewController<ProfileView> {
 // MARK: - ProfileViewController Interface
 
 extension ProfileViewController: ProfileViewControllerProtocol {
+    func enableMenu() {
+        setupMenuButton()
+    }
+    
     func setUser(_ user: User) {
         navigationItem.title = user.username
         
@@ -159,7 +165,6 @@ extension ProfileViewController: ProfileViewOutputProtocol {
 private extension ProfileViewController {
     func setupAppearance() {
         customizeBackButton()
-        setupMenuButton()
     }
     
     func customizeBackButton() {

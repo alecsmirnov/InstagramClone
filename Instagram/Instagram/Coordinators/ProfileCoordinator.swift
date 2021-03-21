@@ -39,9 +39,10 @@ protocol FollowersFollowingCoordinatorProtocol: AnyObject {
     func showProfileViewController(user: User)
 }
 
-final class ProfileCoordinator: NSObject, CoordinatorProtocol {
+final class ProfileCoordinator: CoordinatorProtocol {
     // MARK: Properties
     
+    var menuEnabled = false
     var user: User?
     
     var navigationController: UINavigationController
@@ -56,7 +57,7 @@ final class ProfileCoordinator: NSObject, CoordinatorProtocol {
         self.navigationController = navigationController
     }
     
-    convenience override init() {
+    convenience init() {
         self.init(navigationController: UINavigationController())
     }
     
@@ -87,9 +88,11 @@ extension ProfileCoordinator {
     }
     
     func start(animated: Bool) {
-        let profileViewController = ProfileAssembly.createProfileViewController(user: user, coordinator: self)
+        let profileViewController = ProfileAssembly.createProfileViewController(
+            menuEnabled: menuEnabled,
+            user: user,
+            coordinator: self)
         
-        navigationController.delegate = self
         navigationController.pushViewController(profileViewController, animated: animated)
     }
 }
@@ -187,43 +190,8 @@ extension ProfileCoordinator: EditProfileBioCoordinatorProtocol {
 
 extension ProfileCoordinator: FollowersFollowingCoordinatorProtocol {
     func showProfileViewController(user: User) {        
-        let profileCoordinator = ProfileCoordinator(
-            navigationController: navigationController,
-            presenterController: presenterController,
-            delegate: nil)
+        let profileViewController = ProfileAssembly.createProfileViewController(user: user, coordinator: self)
         
-        profileCoordinator.user = user
-        profileCoordinator.start(animated: true)
-        
-        appendChildCoordinator(profileCoordinator)
-    }
-}
-
-// MARK: - UINavigationControllerDelegate
-
-extension ProfileCoordinator: UINavigationControllerDelegate {
-    func navigationController(
-        _ navigationController: UINavigationController,
-        didShow viewController: UIViewController,
-        animated: Bool
-    ) {
-        guard let fromViewController = navigationController.transitionCoordinator?.viewController(forKey: .from) else {
-            return
-        }
-
-        guard !navigationController.viewControllers.contains(fromViewController) else {
-            return
-        }
-        
-        // Not as right as I would like :\
-        guard
-            let profileViewController = fromViewController as? ProfileViewController,
-            let presenter = profileViewController.output as? ProfilePresenter,
-            let childCoordinator = presenter.coordinator as? CoordinatorProtocol
-        else {
-            return
-        }
-        
-        removeChildCoordinator(childCoordinator)
+        navigationController.pushViewController(profileViewController, animated: true)
     }
 }

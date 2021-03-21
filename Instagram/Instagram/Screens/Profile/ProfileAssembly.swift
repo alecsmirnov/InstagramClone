@@ -7,6 +7,7 @@
 
 enum ProfileAssembly {
     static func createProfileViewController(
+        menuEnabled: Bool = false,
         user: User? = nil,
         coordinator: ProfileCoordinatorProtocol? = nil
     ) -> ProfileViewController {
@@ -16,6 +17,8 @@ enum ProfileAssembly {
         viewController.output = presenter
         presenter.view = viewController
         presenter.coordinator = coordinator
+        
+        presenter.menuEnabled = menuEnabled
         
         presenter.profileService = ProfileService()
         

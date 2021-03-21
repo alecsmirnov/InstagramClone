@@ -40,6 +40,8 @@ private extension MainCoordinator {
         
         homeCoordinator.start()
         searchCoordinator.start()
+        
+        profileCoordinator.menuEnabled = true
         profileCoordinator.start()
   
         appendChildCoordinator(homeCoordinator)
@@ -49,7 +51,6 @@ private extension MainCoordinator {
         mainTabBarController.appendNavigationController(homeCoordinator.navigationController, item: .home)
         mainTabBarController.appendNavigationController(searchCoordinator.navigationController, item: .search)
         mainTabBarController.appendNavigationController(UINavigationController(), item: .plus)
-        mainTabBarController.appendNavigationController(UINavigationController(), item: .like)
         mainTabBarController.appendNavigationController(profileCoordinator.navigationController, item: .profile)
         
         mainTabBarController.didSelectPlusTabItem = { [weak self] in

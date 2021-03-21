@@ -15,6 +15,8 @@ final class ProfilePresenter {
     
     var profileService: ProfileServiceProtocol?
     
+    var menuEnabled = false
+    
     var user: User?
     
     private var followersCount = 0
@@ -40,6 +42,10 @@ final class ProfilePresenter {
 
 extension ProfilePresenter: ProfileViewControllerOutputProtocol {
     func viewDidLoad() {
+        if menuEnabled {
+            view?.enableMenu()
+        }
+        
         if let user = user, let userIdentifier = user.identifier {
             view?.setUser(user)
             
