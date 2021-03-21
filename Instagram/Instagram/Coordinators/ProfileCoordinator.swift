@@ -129,7 +129,7 @@ extension ProfileCoordinator: ProfileCoordinatorProtocol {
     }
     
     func showMenuViewController() {
-        FirebaseAuthService.signOut()
+        delegate?.profileCoordinatorDidFinishWork(self)
     }
 }
 

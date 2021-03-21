@@ -7,16 +7,30 @@
 
 import UIKit
 
+protocol MainCoordinatorDelegate: AnyObject {
+    func mainCoordinatorDidFinishWork(_ profileCoordinator: MainCoordinator, currentViewController: UIViewController)
+}
+
 final class MainCoordinator: CoordinatorProtocol {
     // MARK: Properties
     
     var navigationController: UINavigationController
     var childCoordinators: [CoordinatorProtocol] = []
     
+    private weak var delegate: MainCoordinatorDelegate?
+    
+    private var tabBarController: UITabBarController?
+    
     // MARK: Lifecycle
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
+    }
+    
+    convenience init(navigationController: UINavigationController, delegate: MainCoordinatorDelegate?) {
+        self.init(navigationController: navigationController)
+        
+        self.delegate = delegate
     }
 }
 
@@ -36,7 +50,7 @@ private extension MainCoordinator {
         
         let homeCoordinator = HomeCoordinator(presenterController: mainTabBarController)
         let searchCoordinator = SearchCoordinator(presenterController: mainTabBarController)
-        let profileCoordinator = ProfileCoordinator(presenterController: mainTabBarController, delegate: nil)
+        let profileCoordinator = ProfileCoordinator(presenterController: mainTabBarController, delegate: self)
         
         homeCoordinator.start()
         searchCoordinator.start()
@@ -61,6 +75,8 @@ private extension MainCoordinator {
             self?.appendChildCoordinator(newPostCoordinator)
         }
         
+        tabBarController = mainTabBarController
+        
         navigationController.pushViewController(mainTabBarController, animated: true)
     }
 }
@@ -70,5 +86,17 @@ private extension MainCoordinator {
 extension MainCoordinator: NewPostCoordinatorDelegate {
     func newPostCoordinatorDidClose(_ newPostCoordinator: NewPostCoordinator) {
         removeChildCoordinator(newPostCoordinator)
+    }
+}
+
+// MARK: - ProfileCoordinatorDelegate
+
+extension MainCoordinator: ProfileCoordinatorDelegate {
+    func profileCoordinatorDidFinishWork(_ profileCoordinator: ProfileCoordinator) {        
+        guard let tabBarController = tabBarController else { return }
+        
+        removeAllChildCoordinators()
+        
+        delegate?.mainCoordinatorDidFinishWork(self, currentViewController: tabBarController)
     }
 }

@@ -30,21 +30,11 @@ final class AppCoordinator: CoordinatorProtocol {
 
 extension AppCoordinator {
     func start() {
-        startAuthFlow()
-        
         if FirebaseAuthService.isUserSignedIn {
             startMainFlow()
+        } else {
+            startAuthFlow()
         }
-    }
-}
-
-// MARK: - AuthCoordinatorDelegate
-
-extension AppCoordinator: AuthCoordinatorDelegate {
-    func authCoordinatorDidFinishAuthentication(_ authCoordinator: AuthCoordinator) {
-        //removeAllChildCoordinators()
-        
-        startMainFlow()
     }
 }
 
@@ -60,10 +50,42 @@ private extension AppCoordinator {
     }
 
     func startMainFlow() {
-        let mainCoordinator = MainCoordinator(navigationController: navigationController)
+        let mainCoordinator = MainCoordinator(navigationController: navigationController, delegate: self)
         
         mainCoordinator.start()
         
         appendChildCoordinator(mainCoordinator)
+    }
+    
+    func backToAuthFlow(from currentViewController: UIViewController) {
+        FirebaseAuthService.signOut()
+        
+        removeAllChildCoordinators()
+        
+        let authCoordinator = AuthCoordinator(navigationController: navigationController, delegate: self)
+        let loginViewController = LoginAssembly.createLoginViewController(coordinator: authCoordinator)
+        
+        appendChildCoordinator(authCoordinator)
+        
+        navigationController.viewControllers = [loginViewController, currentViewController]
+        navigationController.popToViewController(loginViewController, animated: true)
+    }
+}
+
+// MARK: - AuthCoordinatorDelegate
+
+extension AppCoordinator: AuthCoordinatorDelegate {
+    func authCoordinatorDidFinishAuthentication(_ authCoordinator: AuthCoordinator) {
+        removeAllChildCoordinators()
+        
+        startMainFlow()
+    }
+}
+
+// MARK: - MainCoordinatorDelegate
+
+extension AppCoordinator: MainCoordinatorDelegate {
+    func mainCoordinatorDidFinishWork(_ profileCoordinator: MainCoordinator, currentViewController: UIViewController) {
+        backToAuthFlow(from: currentViewController)
     }
 }
