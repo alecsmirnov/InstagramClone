@@ -39,7 +39,7 @@ protocol FollowersFollowingCoordinatorProtocol: AnyObject {
     func showProfileViewController(user: User)
 }
 
-final class ProfileCoordinator: CoordinatorProtocol {
+final class ProfileCoordinator: NSObject, CoordinatorProtocol {
     // MARK: Properties
     
     var user: User?
@@ -56,12 +56,23 @@ final class ProfileCoordinator: CoordinatorProtocol {
         self.navigationController = navigationController
     }
     
-    convenience init() {
+    convenience override init() {
         self.init(navigationController: UINavigationController())
     }
     
     convenience init(presenterController: UIViewController?, delegate: ProfileCoordinatorDelegate?) {
         self.init()
+        
+        self.presenterController = presenterController
+        self.delegate = delegate
+    }
+    
+    convenience init(
+        navigationController: UINavigationController,
+        presenterController: UIViewController?,
+        delegate: ProfileCoordinatorDelegate?
+    ) {
+        self.init(navigationController: navigationController)
         
         self.presenterController = presenterController
         self.delegate = delegate
@@ -72,17 +83,14 @@ final class ProfileCoordinator: CoordinatorProtocol {
 
 extension ProfileCoordinator {
     func start() {
+        start(animated: false)
+    }
+    
+    func start(animated: Bool) {
         let profileViewController = ProfileAssembly.createProfileViewController(user: user, coordinator: self)
         
-        navigationController.pushViewController(profileViewController, animated: false)
-    }
-}
-
-// MARK: - ProfileCoordinatorDelegate
-
-extension ProfileCoordinator: ProfileCoordinatorDelegate {
-    func profileCoordinatorDidFinishWork(_ profileCoordinator: ProfileCoordinator) {
-        removeChildCoordinator(profileCoordinator)
+        navigationController.delegate = self
+        navigationController.pushViewController(profileViewController, animated: animated)
     }
 }
 
@@ -178,15 +186,44 @@ extension ProfileCoordinator: EditProfileBioCoordinatorProtocol {
 // MARK: - FollowersFollowingCoordinatorProtocol
 
 extension ProfileCoordinator: FollowersFollowingCoordinatorProtocol {
-    func showProfileViewController(user: User) {
-        print("open new profile")
-        
-        let profileCoordinator = ProfileCoordinator(navigationController: navigationController)//ProfileCoordinator(presenterController: presenterController, delegate: self)
+    func showProfileViewController(user: User) {        
+        let profileCoordinator = ProfileCoordinator(
+            navigationController: navigationController,
+            presenterController: presenterController,
+            delegate: nil)
         
         profileCoordinator.user = user
-        
-        profileCoordinator.start()
+        profileCoordinator.start(animated: true)
         
         appendChildCoordinator(profileCoordinator)
+    }
+}
+
+// MARK: - UINavigationControllerDelegate
+
+extension ProfileCoordinator: UINavigationControllerDelegate {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        didShow viewController: UIViewController,
+        animated: Bool
+    ) {
+        guard let fromViewController = navigationController.transitionCoordinator?.viewController(forKey: .from) else {
+            return
+        }
+
+        guard !navigationController.viewControllers.contains(fromViewController) else {
+            return
+        }
+        
+        // Not as right as I would like :\
+        guard
+            let profileViewController = fromViewController as? ProfileViewController,
+            let presenter = profileViewController.output as? ProfilePresenter,
+            let childCoordinator = presenter.coordinator as? CoordinatorProtocol
+        else {
+            return
+        }
+        
+        removeChildCoordinator(childCoordinator)
     }
 }

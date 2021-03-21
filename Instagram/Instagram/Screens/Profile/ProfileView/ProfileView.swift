@@ -142,19 +142,31 @@ extension ProfileView: ProfileViewProtocol {
     }
     
     func showEditButton() {
-        guard let headerView = getHeaderView() else { return }
+        guard let headerView = getHeaderView() else {
+            collectionViewDataSource.setInitialButtonState(.edit)
+            
+            return
+        }
         
         headerView.editFollowButtonState = .edit
     }
 
     func showFollowButton() {
-        guard let headerView = getHeaderView() else { return }
+        guard let headerView = getHeaderView() else {
+            collectionViewDataSource.setInitialButtonState(.follow)
+            
+            return
+        }
         
         headerView.editFollowButtonState = .follow
     }
 
     func showUnfollowButton() {
-        guard let headerView = getHeaderView() else { return }
+        guard let headerView = getHeaderView() else {
+            collectionViewDataSource.setInitialButtonState(.unfollow)
+            
+            return
+        }
         
         headerView.editFollowButtonState = .unfollow
     }

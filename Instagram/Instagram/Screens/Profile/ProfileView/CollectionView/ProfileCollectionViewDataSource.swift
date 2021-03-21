@@ -18,6 +18,7 @@ final class ProfileCollectionViewDataSource: NSObject {
     
     private var initialUser: User?
     private var initialUserStats: UserStats?
+    private var initialButtonState: ProfileHeaderView.EditFollowButtonState?
     
     private var posts: [Post] = []
 }
@@ -31,6 +32,10 @@ extension ProfileCollectionViewDataSource {
     
     func setInitialUserStats(_ userStats: UserStats) {
         initialUserStats = userStats
+    }
+    
+    func setInitialButtonState(_ buttonState: ProfileHeaderView.EditFollowButtonState) {
+        initialButtonState = buttonState
     }
     
     func insertFirstPost(_ post: Post) {
@@ -102,6 +107,10 @@ extension ProfileCollectionViewDataSource: UICollectionViewDataSource {
         
         if let initialUserStats = initialUserStats {
             headerView.setUserStats(initialUserStats)
+        }
+        
+        if let initialButtonState = initialButtonState {
+            headerView.editFollowButtonState = initialButtonState
         }
         
         return headerView
