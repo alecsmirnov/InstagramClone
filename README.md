@@ -1,6 +1,6 @@
 # Instagram Clone
 
-Сильно упрощённый вариант приложения Instagram, написанный с применением БД в реальном времени **Firebase** и архитектуры **MVP+Coordinator**. Вся вёрстка кодом.
+Сильно упрощённый вариант приложения Instagram, написанный с применением БД в реальном времени **Firebase** и архитектуры **MVP+Coordinator**.  
 
 Для создание динамических ячеек и хедеров **UICollectionView** использовался **UICollectionViewCompositionalLayout**. В ходе работы были выявлены несколько багов 
 из-за использования **UICollectionViewCompositionalLayout** с ДИНАМИЧЕСКИМИ размерами:
