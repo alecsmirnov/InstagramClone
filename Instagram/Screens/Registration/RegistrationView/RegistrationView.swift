@@ -205,6 +205,7 @@ private extension RegistrationView {
     
     func setupSignUpButtonAppearance() {
         signUpButton.mainStyle(title: "Sign Up", fontSize: LoginRegistrationConstants.Metrics.mainButtonFontSize)
+        signUpButton.activityIndicatorColor = .white
     }
     
     func setupSeparatorViewAppearance() {
