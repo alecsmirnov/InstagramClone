@@ -100,6 +100,7 @@ extension FirebaseDatabaseService {
             case .success(let userIdentifier):
                 updateUser(
                     userIdentifier: userIdentifier,
+                    email: email,
                     fullName: fullName,
                     username: username,
                     bio: nil,
@@ -114,6 +115,7 @@ extension FirebaseDatabaseService {
     
     static func updateUser(
         userIdentifier: String,
+        email: String?,
         fullName: String?,
         username: String,
         bio: String?,
@@ -131,6 +133,7 @@ extension FirebaseDatabaseService {
                 case .success(let profileImageURL):
                     createUserRecord(
                         userIdentifier: userIdentifier,
+                        email: email,
                         fullName: fullName,
                         username: lowercasedUsername,
                         profileImageURL: profileImageURL,
@@ -144,6 +147,7 @@ extension FirebaseDatabaseService {
         } else {
             createUserRecord(
                 userIdentifier: userIdentifier,
+                email: email,
                 fullName: fullName,
                 username: lowercasedUsername,
                 profileImageURL: nil,
@@ -338,7 +342,7 @@ extension FirebaseDatabaseService {
 private extension FirebaseDatabaseService {
     static func createUserRecord(
         userIdentifier: String,
-        email: String? = nil,
+        email: String?,
         fullName: String?,
         username: String,
         profileImageURL: String?,
@@ -357,11 +361,15 @@ private extension FirebaseDatabaseService {
             let userReference = databaseReference.child(Tables.users).child(userIdentifier)
             
             userReference.setValue(userDictionary) { error, _ in
+                print("after user record create")
+                
                 guard error == nil else {
                     completion(error)
                     
                     return
                 }
+                
+                print("Before email check: \(email)")
                 
                 guard let email = email else {
                     completion(nil)
@@ -370,6 +378,8 @@ private extension FirebaseDatabaseService {
                 }
                 
                 let userPrivateInfo = UserPrivateInfo(email: email, gender: nil, phone: nil)
+                
+                print("Create PRIVATE INFO")
                 
                 if let userPrivateInfoDictionary = JSONCoding.toDictionary(userPrivateInfo) {
                     databaseReference
