@@ -22,7 +22,7 @@ final class EditProfileBioPresenter {
     // MARK: Constants
     
     private enum Constants {
-        static let characterLimit = 150
+        static let characterLimit = 50
     }
 }
 

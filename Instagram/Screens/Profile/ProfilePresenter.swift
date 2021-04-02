@@ -154,6 +154,7 @@ private extension ProfilePresenter {
             self?.user = user
             
             self?.view?.setUser(user)
+            self?.view?.reloadData()
         }
         
         profileService?.fetchObserveUserStats(userIdentifier: userIdentifier) { [weak self] userStats in

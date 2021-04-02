@@ -112,6 +112,7 @@ private extension EditProfileService {
         
         FirebaseDatabaseService.updateUser(
             userIdentifier: currentUserIdentifier,
+            email: nil,
             fullName: fullName,
             username: username,
             bio: bio,

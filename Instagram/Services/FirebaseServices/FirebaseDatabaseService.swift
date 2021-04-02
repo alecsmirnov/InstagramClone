@@ -100,6 +100,7 @@ extension FirebaseDatabaseService {
             case .success(let userIdentifier):
                 updateUser(
                     userIdentifier: userIdentifier,
+                    email: email,
                     fullName: fullName,
                     username: username,
                     bio: nil,
@@ -114,6 +115,7 @@ extension FirebaseDatabaseService {
     
     static func updateUser(
         userIdentifier: String,
+        email: String?,
         fullName: String?,
         username: String,
         bio: String?,
@@ -131,6 +133,7 @@ extension FirebaseDatabaseService {
                 case .success(let profileImageURL):
                     createUserRecord(
                         userIdentifier: userIdentifier,
+                        email: email,
                         fullName: fullName,
                         username: lowercasedUsername,
                         profileImageURL: profileImageURL,
@@ -144,6 +147,7 @@ extension FirebaseDatabaseService {
         } else {
             createUserRecord(
                 userIdentifier: userIdentifier,
+                email: email,
                 fullName: fullName,
                 username: lowercasedUsername,
                 profileImageURL: nil,
@@ -338,7 +342,7 @@ extension FirebaseDatabaseService {
 private extension FirebaseDatabaseService {
     static func createUserRecord(
         userIdentifier: String,
-        email: String? = nil,
+        email: String?,
         fullName: String?,
         username: String,
         profileImageURL: String?,
