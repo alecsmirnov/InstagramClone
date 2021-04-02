@@ -78,9 +78,7 @@ extension EditProfilePresenter: EditProfileViewControllerOutputProtocol {
     }
     
     func didTapBioTextField() {
-        if let bio = user?.bio {
-            coordinator?.showEditProfileBioViewController(bio: bio, delegate: self)
-        }
+        coordinator?.showEditProfileBioViewController(bio: user?.bio, delegate: self)
     }
 }
 
