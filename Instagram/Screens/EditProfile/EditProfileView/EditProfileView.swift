@@ -13,12 +13,13 @@ protocol EditProfileViewDelegate: AnyObject {
 }
 
 protocol EditProfileViewProtocol: UIView {
-    var user: User? { get set }
     var profileImage: UIImage? { get set }
-    var name: String? { get }
-    var username: String? { get }
-    var website: String? { get }
-    var bio: String? { get }
+    var name: String? { get set }
+    var username: String? { get set }
+    var website: String? { get set }
+    var bio: String? { get set }
+    
+    func setUser(_ user: User)
 }
 
 protocol EditProfileViewOutputProtocol: AnyObject {
@@ -32,21 +33,6 @@ final class EditProfileView: UIView {
     
     weak var output: EditProfileViewOutputProtocol?
     
-    var user: User? {
-        didSet {
-            guard let user = user else { return }
-            
-            if let profileImageURL = user.profileImageURL {
-                profileImageButton.downloadImage(urlString: profileImageURL)
-            }
-            
-            nameTextField.text = user.fullName
-            usernameTextField.text = user.username
-            websiteTextField.text = user.website
-            bioTextField.text = user.bio
-        }
-    }
-    
     var profileImage: UIImage? {
         get {
             return profileImageButton.image(for: .normal)
@@ -57,19 +43,39 @@ final class EditProfileView: UIView {
     }
     
     var name: String? {
-        return nameTextField.text
+        get {
+            return nameTextField.text
+        }
+        set {
+            nameTextField.text = newValue
+        }
     }
     
     var username: String? {
-        return usernameTextField.text
+        get {
+            return usernameTextField.text
+        }
+        set {
+            usernameTextField.text = newValue
+        }
     }
     
     var website: String? {
-        return websiteTextField.text
+        get {
+            return websiteTextField.text
+        }
+        set {
+            websiteTextField.text = newValue
+        }
     }
     
     var bio: String? {
-        return bioTextField.text
+        get {
+            return bioTextField.text
+        }
+        set {
+            bioTextField.text = newValue
+        }
     }
     
     private lazy var keyboardAppearanceListener = KeyboardAppearanceListener(delegate: self)
@@ -78,7 +84,7 @@ final class EditProfileView: UIView {
     
     private enum Metrics {
         static let profileImageButtonTopSpace: CGFloat = 30
-        static let profileImageButtonSize: CGFloat = 100
+        static let profileImageButtonSize: CGFloat = AppConstants.Metrics.profileImageLargeSize
         
         static let changeProfileImageButtonTopSpace: CGFloat = 8
         
@@ -114,6 +120,21 @@ final class EditProfileView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// MARK: - Interface
+
+extension EditProfileView: EditProfileViewProtocol {
+    func setUser(_ user: User) {
+        if let profileImageURL = user.profileImageURL {
+            profileImageButton.downloadImage(urlString: profileImageURL)
+        }
+        
+        nameTextField.text = user.fullName
+        usernameTextField.text = user.username
+        websiteTextField.text = user.website
+        bioTextField.text = user.bio
     }
 }
 

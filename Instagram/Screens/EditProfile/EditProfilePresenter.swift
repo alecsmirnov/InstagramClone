@@ -89,31 +89,14 @@ extension EditProfilePresenter: EditProfileUsernamePresenterDelegate {
         _ editProfileUsernamePresenter: EditProfileUsernamePresenter,
         didChangeUsername username: String
     ) {
-        guard let user = user else { return }
-        
-        let newUser = User(
-            fullName: user.fullName,
-            username: username,
-            profileImageURL: user.profileImageURL,
-            bio: user.bio,
-            website: user.website,
-            identifier: user.identifier,
-            kind: user.kind)
-        
-        self.user = newUser
-        
-        view?.setUser(newUser)
+        view?.username = username
     }
 }
 
 // MARK: - EditProfileBioPresenterDelegate
 
 extension EditProfilePresenter: EditProfileBioPresenterDelegate {
-    func editProfileBioPresenter(_ editProfileBioPresenter: EditProfileBioPresenter, didChangeBio bio: String?) {
-        user?.bio = bio
-        
-        if let user = user {
-            view?.setUser(user)
-        }
+    func editProfileBioPresenter(_ editProfileBioPresenter: EditProfileBioPresenter, didChangeBio bio: String?) {        
+        view?.bio = bio
     }
 }

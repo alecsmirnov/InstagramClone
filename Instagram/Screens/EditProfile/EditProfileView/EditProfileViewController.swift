@@ -8,6 +8,12 @@
 import UIKit
 
 protocol EditProfileViewControllerProtocol: AnyObject {
+    var profileImage: UIImage? { get set }
+    var name: String? { get set }
+    var username: String? { get set }
+    var website: String? { get set }
+    var bio: String? { get set }
+    
     func setUser(_ user: User)
     
     func showLoadingView()
@@ -66,8 +72,53 @@ final class EditProfileViewController: CustomViewController<EditProfileView> {
 // MARK: - EditProfileViewController Interface
 
 extension EditProfileViewController: EditProfileViewControllerProtocol {
+    var profileImage: UIImage? {
+        get {
+            return customView?.profileImage
+        }
+        set {
+            customView?.profileImage = newValue
+        }
+    }
+    
+    var name: String? {
+        get {
+            return customView?.name
+        }
+        set {
+            customView?.name = newValue
+        }
+    }
+    
+    var username: String? {
+        get {
+            return customView?.username
+        }
+        set {
+            customView?.username = newValue
+        }
+    }
+    
+    var website: String? {
+        get {
+            return customView?.website
+        }
+        set {
+            customView?.website = newValue
+        }
+    }
+    
+    var bio: String? {
+        get {
+            return customView?.bio
+        }
+        set {
+            customView?.bio = newValue
+        }
+    }
+    
     func setUser(_ user: User) {
-        customView?.user = user
+        customView?.setUser(user)
     }
     
     func showLoadingView() {
