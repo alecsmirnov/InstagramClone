@@ -361,15 +361,11 @@ private extension FirebaseDatabaseService {
             let userReference = databaseReference.child(Tables.users).child(userIdentifier)
             
             userReference.setValue(userDictionary) { error, _ in
-                print("after user record create")
-                
                 guard error == nil else {
                     completion(error)
                     
                     return
                 }
-                
-                print("Before email check: \(email)")
                 
                 guard let email = email else {
                     completion(nil)
@@ -378,8 +374,6 @@ private extension FirebaseDatabaseService {
                 }
                 
                 let userPrivateInfo = UserPrivateInfo(email: email, gender: nil, phone: nil)
-                
-                print("Create PRIVATE INFO")
                 
                 if let userPrivateInfoDictionary = JSONCoding.toDictionary(userPrivateInfo) {
                     databaseReference
